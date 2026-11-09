@@ -1,0 +1,14 @@
+{
+  "target": "healthchecks",
+  "commit": "731c54529c94a795454745f0fec244669dd2be1e",
+  "cmd": "$PY manage.py test --parallel 4",
+  "image": "rt-target-healthchecks:latest",
+  "exit_code": 0,
+  "seconds": 25.0,
+  "timed_out": false,
+  "runner": "django",
+  "total": 1061,
+  "failed": 0,
+  "passed": 1061,
+  "failing_tests": []
+}

@@ -52,7 +52,7 @@ def scan_target(cfg: Config, t: Target, online: bool) -> Path:
     text = proc.stdout.replace(str(ROOT) + os.sep, "").replace(str(ROOT).replace("\\", "/") + "/", "")
     out = RAW / f"{t.name}.osv.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(json.loads(text), indent=2, sort_keys=True) + "\n")
+    out.write_text(json.dumps(json.loads(text), indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     return out
 
 
@@ -88,7 +88,8 @@ def _fixed_versions(records: list[dict], package: str) -> list[str]:
                 continue
             for rng in aff.get("ranges", []):
                 fixed.update(e["fixed"] for e in rng.get("events", []) if "fixed" in e)
-    return sorted(fixed, key=_vkey)
+    # Tie-break PEP 440-equal spellings ("2022.12.7" vs "2022.12.07") so the order never depends on set order.
+    return sorted(fixed, key=lambda v: (_vkey(v), len(v), v))
 
 
 def _vkey(v: str):
@@ -143,5 +144,6 @@ def normalise(t: Target, raw_path: Path) -> list[dict]:
 
 
 def write_findings(all_findings: list[dict]) -> None:
-    FINDINGS.write_text("".join(json.dumps(f, sort_keys=True) + "\n" for f in all_findings))
+    FINDINGS.write_text("".join(json.dumps(f, sort_keys=True) + "\n" for f in all_findings), encoding="utf-8",
+                        newline="\n")
     print(f"wrote {FINDINGS} ({len(all_findings)} findings)", file=sys.stderr)

@@ -60,12 +60,17 @@ def setup(t: Target, rebuild: bool = False) -> None:
         print(f"{t.name}: image {t.image} already built (use --rebuild to force)", file=sys.stderr)
 
 
+def _canon_pin(line: str) -> str:
+    name, _, ver = line.strip().partition("==")
+    return f"{re.sub(r'[-_.]+', '-', name).lower()}=={ver}"
+
+
 def verify_lock(t: Target) -> list[str]:
     """Freeze the image's venv and diff it against the committed test-env lock."""
     frozen = sandbox.py(t, "import importlib.metadata as m;"
                            "print('\\n'.join(sorted(f\"{d.metadata['Name']}=={d.version}\" for d in m.distributions())))")
-    have = {l.lower().replace("_", "-") for l in frozen.split() if "==" in l}
-    want = {l.strip().lower().replace("_", "-") for l in t.test_lockfile.read_text().splitlines()
+    have = {_canon_pin(l) for l in frozen.split() if "==" in l}
+    want = {_canon_pin(l) for l in t.test_lockfile.read_text(encoding="utf-8").splitlines()
             if "==" in l and not l.startswith("#")}
     return sorted(f"-{x}" for x in want - have) + sorted(f"+{x}" for x in have - want)
 
@@ -86,7 +91,7 @@ for d in m.distributions():
         if p[0].endswith((".dist-info", ".egg-info", ".data")) or p[0] in ("..", "bin", "__pycache__"):
             continue
         if len(p) > 1 or p[0].endswith(".py"):
-            tops.add(p[0].removesuffix(".py"))
+            tops.add(p[0][:-3] if p[0].endswith(".py") else p[0])
     out[name] = sorted(x for x in tops if x.isidentifier() and not x.startswith("_"))
 print(json.dumps(out, sort_keys=True))
 """

@@ -1,0 +1,358 @@
+{
+ "aiofiles": [
+  "aiofiles"
+ ],
+ "alembic": [
+  "alembic"
+ ],
+ "aniso8601": [
+  "aniso8601"
+ ],
+ "anyio": [
+  "anyio"
+ ],
+ "appdirs": [
+  "appdirs"
+ ],
+ "apprise": [
+  "apprise"
+ ],
+ "astroid": [
+  "astroid"
+ ],
+ "babel": [
+  "babel"
+ ],
+ "bcrypt": [
+  "bcrypt"
+ ],
+ "beautifulsoup4": [
+  "bs4"
+ ],
+ "black": [
+  "black",
+  "blackd",
+  "blib2to3"
+ ],
+ "certifi": [
+  "certifi"
+ ],
+ "cfgv": [
+  "cfgv"
+ ],
+ "charset-normalizer": [
+  "charset_normalizer"
+ ],
+ "click": [
+  "click"
+ ],
+ "colorama": [
+  "colorama"
+ ],
+ "coverage": [
+  "coverage"
+ ],
+ "coveragepy-lcov": [
+  "coveragepy_lcov"
+ ],
+ "dill": [
+  "dill"
+ ],
+ "distlib": [
+  "distlib"
+ ],
+ "ecdsa": [
+  "ecdsa"
+ ],
+ "extruct": [
+  "extruct"
+ ],
+ "fastapi": [
+  "fastapi"
+ ],
+ "filelock": [
+  "filelock"
+ ],
+ "ghp-import": [
+  "ghp_import"
+ ],
+ "greenlet": [
+  "greenlet"
+ ],
+ "gunicorn": [
+  "gunicorn"
+ ],
+ "h11": [
+  "h11"
+ ],
+ "html-text": [
+  "html_text"
+ ],
+ "html5lib": [
+  "html5lib"
+ ],
+ "httpcore": [
+  "httpcore"
+ ],
+ "httptools": [
+  "httptools"
+ ],
+ "httpx": [
+  "httpx"
+ ],
+ "identify": [
+  "identify"
+ ],
+ "idna": [
+  "idna"
+ ],
+ "iniconfig": [
+  "iniconfig"
+ ],
+ "isodate": [
+  "isodate"
+ ],
+ "isort": [
+  "isort"
+ ],
+ "jinja2": [
+  "jinja2"
+ ],
+ "jstyleson": [
+  "jstyleson"
+ ],
+ "lxml": [
+  "lxml"
+ ],
+ "mako": [
+  "mako"
+ ],
+ "markdown": [
+  "markdown"
+ ],
+ "markdown-it-py": [
+  "markdown_it"
+ ],
+ "markupsafe": [
+  "markupsafe"
+ ],
+ "mccabe": [
+  "mccabe"
+ ],
+ "mdurl": [
+  "mdurl"
+ ],
+ "mergedeep": [
+  "mergedeep"
+ ],
+ "mf2py": [
+  "mf2py"
+ ],
+ "mkdocs": [
+  "mkdocs"
+ ],
+ "mkdocs-material": [
+  "material"
+ ],
+ "mkdocs-material-extensions": [
+  "materialx"
+ ],
+ "mypy": [
+  "mypy",
+  "mypyc"
+ ],
+ "mypy-extensions": [
+  "mypy_extensions"
+ ],
+ "nodeenv": [
+  "nodeenv"
+ ],
+ "oauthlib": [
+  "oauthlib"
+ ],
+ "orjson": [
+  "orjson"
+ ],
+ "packaging": [
+  "packaging"
+ ],
+ "paginate": [
+  "paginate"
+ ],
+ "passlib": [
+  "passlib"
+ ],
+ "pathspec": [
+  "pathspec"
+ ],
+ "pillow": [
+  "PIL"
+ ],
+ "platformdirs": [
+  "platformdirs"
+ ],
+ "pluggy": [
+  "pluggy"
+ ],
+ "pre-commit": [
+  "pre_commit"
+ ],
+ "psycopg2-binary": [
+  "psycopg2"
+ ],
+ "pyasn1": [
+  "pyasn1"
+ ],
+ "pyasn1-modules": [
+  "pyasn1_modules"
+ ],
+ "pydantic": [
+  "pydantic"
+ ],
+ "pydantic-to-typescript": [
+  "pydantic2ts"
+ ],
+ "pygments": [
+  "pygments"
+ ],
+ "pyhumps": [
+  "humps"
+ ],
+ "pylint": [
+  "pylint"
+ ],
+ "pymdown-extensions": [
+  "pymdownx"
+ ],
+ "pyparsing": [
+  "pyparsing"
+ ],
+ "pyrdfa3": [
+  "pyRdfa",
+  "pyRdfaExtras"
+ ],
+ "pytest": [
+  "py",
+  "pytest"
+ ],
+ "pytest-asyncio": [
+  "pytest_asyncio"
+ ],
+ "python-dateutil": [
+  "dateutil"
+ ],
+ "python-dotenv": [
+  "dotenv"
+ ],
+ "python-jose": [
+  "jose"
+ ],
+ "python-ldap": [
+  "ldap",
+  "ldapurl",
+  "ldif",
+  "slapdtest"
+ ],
+ "python-multipart": [
+  "multipart"
+ ],
+ "python-slugify": [
+  "slugify"
+ ],
+ "pyyaml": [
+  "yaml"
+ ],
+ "pyyaml-env-tag": [
+  "yaml_env_tag"
+ ],
+ "rapidfuzz": [
+  "rapidfuzz"
+ ],
+ "rdflib": [
+  "rdflib"
+ ],
+ "recipe-scrapers": [
+  "recipe_scrapers"
+ ],
+ "regex": [
+  "regex"
+ ],
+ "requests": [
+  "requests"
+ ],
+ "requests-oauthlib": [
+  "requests_oauthlib"
+ ],
+ "rich": [
+  "rich"
+ ],
+ "rsa": [
+  "rsa"
+ ],
+ "ruff": [
+  "ruff"
+ ],
+ "setuptools": [
+  "pkg_resources",
+  "setuptools"
+ ],
+ "six": [
+  "six"
+ ],
+ "sniffio": [
+  "sniffio"
+ ],
+ "soupsieve": [
+  "soupsieve"
+ ],
+ "sqlalchemy": [
+  "sqlalchemy"
+ ],
+ "starlette": [
+  "starlette"
+ ],
+ "text-unidecode": [
+  "text_unidecode"
+ ],
+ "tomlkit": [
+  "tomlkit"
+ ],
+ "types-python-dateutil": [],
+ "types-python-slugify": [],
+ "types-pyyaml": [],
+ "types-requests": [],
+ "types-urllib3": [],
+ "typing-extensions": [
+  "typing_extensions"
+ ],
+ "tzdata": [
+  "tzdata"
+ ],
+ "urllib3": [
+  "urllib3"
+ ],
+ "uvicorn": [
+  "uvicorn"
+ ],
+ "uvloop": [
+  "uvloop"
+ ],
+ "virtualenv": [
+  "virtualenv"
+ ],
+ "w3lib": [
+  "w3lib"
+ ],
+ "watchdog": [
+  "watchdog"
+ ],
+ "watchfiles": [
+  "watchfiles"
+ ],
+ "webencodings": [
+  "webencodings"
+ ],
+ "websockets": [
+  "websockets"
+ ]
+}

@@ -1,0 +1,77 @@
+{
+ "asgiref": [
+  "asgiref"
+ ],
+ "certifi": [
+  "certifi"
+ ],
+ "cffi": [
+  "cffi"
+ ],
+ "charset-normalizer": [
+  "charset_normalizer"
+ ],
+ "cron-descriptor": [
+  "cron_descriptor"
+ ],
+ "cronsim": [
+  "cronsim"
+ ],
+ "cryptography": [
+  "cryptography"
+ ],
+ "django": [
+  "django"
+ ],
+ "django-appconf": [
+  "appconf"
+ ],
+ "django-compressor": [
+  "compressor"
+ ],
+ "fido2": [
+  "fido2"
+ ],
+ "idna": [
+  "idna"
+ ],
+ "psycopg2-binary": [
+  "psycopg2"
+ ],
+ "pycparser": [
+  "pycparser"
+ ],
+ "pyotp": [
+  "pyotp"
+ ],
+ "rcssmin": [
+  "rcssmin"
+ ],
+ "requests": [
+  "requests"
+ ],
+ "rjsmin": [
+  "rjsmin"
+ ],
+ "segno": [
+  "segno"
+ ],
+ "six": [
+  "six"
+ ],
+ "sqlparse": [
+  "sqlparse"
+ ],
+ "statsd": [
+  "statsd"
+ ],
+ "typing-extensions": [
+  "typing_extensions"
+ ],
+ "urllib3": [
+  "urllib3"
+ ],
+ "whitenoise": [
+  "whitenoise"
+ ]
+}

@@ -1,0 +1,8 @@
+<!doctype html>
+<div class="signup">
+  <form method="post" action="/subscribe"{{ attrs|xmlattr }}>
+    <input type="hidden" name="list" value="{{ list_id }}">
+    <input type="email" name="email" placeholder="you@example.com">
+    <button>Subscribe</button>
+  </form>
+</div>

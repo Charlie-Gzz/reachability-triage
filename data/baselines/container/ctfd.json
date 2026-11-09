@@ -1,0 +1,16 @@
+{
+  "target": "ctfd",
+  "commit": "7d56e59e1afcfbe919ce4050e458dfd6cba3fa00",
+  "cmd": "$PY -m pytest -q -n 8 -p no:randomly tests",
+  "image": "rt-target-ctfd:latest",
+  "exit_code": 1,
+  "seconds": 122.4,
+  "timed_out": false,
+  "runner": "pytest",
+  "passed": 483,
+  "failed": 1,
+  "skipped": 0,
+  "failing_tests": [
+    "tests/utils/test_updates.py::test_update_check_ignores_downgrades"
+  ]
+}

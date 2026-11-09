@@ -1,0 +1,446 @@
+{
+ "alabaster": [
+  "alabaster"
+ ],
+ "alembic": [
+  "alembic"
+ ],
+ "aniso8601": [
+  "aniso8601"
+ ],
+ "appdirs": [
+  "appdirs"
+ ],
+ "attrs": [
+  "attr"
+ ],
+ "aws-sam-translator": [
+  "samtranslator"
+ ],
+ "aws-xray-sdk": [
+  "aws_xray_sdk"
+ ],
+ "babel": [
+  "babel"
+ ],
+ "bandit": [
+  "bandit"
+ ],
+ "bcrypt": [
+  "bcrypt"
+ ],
+ "black": [
+  "black",
+  "blackd",
+  "blib2to3"
+ ],
+ "blinker": [
+  "blinker"
+ ],
+ "boto": [
+  "boto"
+ ],
+ "boto3": [
+  "boto3"
+ ],
+ "botocore": [
+  "botocore"
+ ],
+ "certifi": [
+  "certifi"
+ ],
+ "cffi": [
+  "cffi"
+ ],
+ "cfn-lint": [
+  "cfnlint"
+ ],
+ "chardet": [
+  "chardet"
+ ],
+ "click": [
+  "click"
+ ],
+ "cmarkgfm": [
+  "cmarkgfm"
+ ],
+ "coverage": [
+  "coverage"
+ ],
+ "cryptography": [
+  "cryptography"
+ ],
+ "dataset": [
+  "dataset"
+ ],
+ "docker": [
+  "docker"
+ ],
+ "docutils": [
+  "docutils"
+ ],
+ "ecdsa": [
+  "ecdsa"
+ ],
+ "execnet": [
+  "execnet"
+ ],
+ "faker": [
+  "faker"
+ ],
+ "flake8": [
+  "flake8"
+ ],
+ "flake8-bugbear": [
+  "bugbear"
+ ],
+ "flake8-comprehensions": [
+  "flake8_comprehensions"
+ ],
+ "flake8-isort": [
+  "flake8_isort"
+ ],
+ "flask": [
+  "flask"
+ ],
+ "flask-caching": [
+  "flask_caching"
+ ],
+ "flask-debugtoolbar": [
+  "flask_debugtoolbar"
+ ],
+ "flask-httpauth": [
+  "flask_httpauth"
+ ],
+ "flask-marshmallow": [
+  "flask_marshmallow"
+ ],
+ "flask-migrate": [
+  "flask_migrate"
+ ],
+ "flask-profiler": [
+  "flask_profiler"
+ ],
+ "flask-restx": [
+  "flask_restx"
+ ],
+ "flask-script": [
+  "flask_script"
+ ],
+ "flask-sqlalchemy": [
+  "flask_sqlalchemy"
+ ],
+ "freezegun": [
+  "freezegun"
+ ],
+ "gevent": [
+  "gevent"
+ ],
+ "gitdb": [
+  "gitdb"
+ ],
+ "gitpython": [
+  "git"
+ ],
+ "greenlet": [
+  "greenlet"
+ ],
+ "gunicorn": [
+  "gunicorn"
+ ],
+ "idna": [
+  "idna"
+ ],
+ "imagesize": [
+  "imagesize"
+ ],
+ "importlib-metadata": [
+  "importlib_metadata"
+ ],
+ "isort": [
+  "isort"
+ ],
+ "itsdangerous": [
+  "itsdangerous"
+ ],
+ "jinja2": [
+  "jinja2"
+ ],
+ "jmespath": [
+  "jmespath"
+ ],
+ "jschema-to-python": [
+  "jschema_to_python"
+ ],
+ "jsondiff": [
+  "jsondiff"
+ ],
+ "jsonpatch": [
+  "jsonpatch"
+ ],
+ "jsonpickle": [
+  "jsonpickle"
+ ],
+ "jsonpointer": [
+  "jsonpointer"
+ ],
+ "jsonschema": [
+  "jsonschema"
+ ],
+ "junit-xml": [
+  "junit_xml"
+ ],
+ "mako": [
+  "mako"
+ ],
+ "markupsafe": [
+  "markupsafe"
+ ],
+ "marshmallow": [
+  "marshmallow"
+ ],
+ "marshmallow-sqlalchemy": [
+  "marshmallow_sqlalchemy"
+ ],
+ "maxminddb": [
+  "maxminddb"
+ ],
+ "mccabe": [
+  "mccabe"
+ ],
+ "mock": [
+  "mock"
+ ],
+ "more-itertools": [
+  "more_itertools"
+ ],
+ "moto": [
+  "moto"
+ ],
+ "networkx": [
+  "networkx"
+ ],
+ "packaging": [
+  "packaging"
+ ],
+ "passlib": [
+  "passlib"
+ ],
+ "pathspec": [
+  "pathspec"
+ ],
+ "pbr": [
+  "pbr"
+ ],
+ "pip": [
+  "pip"
+ ],
+ "pip-tools": [
+  "piptools"
+ ],
+ "pipdeptree": [
+  "pipdeptree"
+ ],
+ "pluggy": [
+  "pluggy"
+ ],
+ "psycopg2-binary": [
+  "psycopg2"
+ ],
+ "py": [
+  "py"
+ ],
+ "pyasn1": [
+  "pyasn1"
+ ],
+ "pybluemonday": [
+  "pybluemonday",
+  "tests"
+ ],
+ "pycodestyle": [
+  "pycodestyle"
+ ],
+ "pycparser": [
+  "pycparser"
+ ],
+ "pydantic": [
+  "pydantic"
+ ],
+ "pyflakes": [
+  "pyflakes"
+ ],
+ "pygments": [
+  "pygments"
+ ],
+ "pymysql": [
+  "pymysql"
+ ],
+ "pyrsistent": [
+  "pvectorc",
+  "pyrsistent"
+ ],
+ "pytest": [
+  "pytest"
+ ],
+ "pytest-cov": [
+  "pytest_cov"
+ ],
+ "pytest-forked": [
+  "pytest_forked"
+ ],
+ "pytest-randomly": [
+  "pytest_randomly"
+ ],
+ "pytest-sugar": [
+  "pytest_sugar"
+ ],
+ "pytest-xdist": [
+  "xdist"
+ ],
+ "python-dateutil": [
+  "dateutil"
+ ],
+ "python-dotenv": [
+  "dotenv"
+ ],
+ "python-editor": [
+  "editor"
+ ],
+ "python-geoacumen-city": [
+  "geoacumen_city"
+ ],
+ "python-jose": [
+  "jose"
+ ],
+ "pytz": [
+  "pytz"
+ ],
+ "pyyaml": [
+  "yaml"
+ ],
+ "redis": [
+  "redis"
+ ],
+ "regex": [
+  "regex"
+ ],
+ "requests": [
+  "requests"
+ ],
+ "responses": [
+  "responses"
+ ],
+ "rsa": [
+  "rsa"
+ ],
+ "s3transfer": [
+  "s3transfer"
+ ],
+ "sarif-om": [
+  "sarif_om"
+ ],
+ "setuptools": [
+  "pkg_resources",
+  "setuptools"
+ ],
+ "simplejson": [
+  "simplejson"
+ ],
+ "six": [
+  "six"
+ ],
+ "smmap": [
+  "smmap"
+ ],
+ "snowballstemmer": [
+  "snowballstemmer"
+ ],
+ "sphinx": [
+  "sphinx"
+ ],
+ "sphinx-rtd-theme": [
+  "sphinx_rtd_theme"
+ ],
+ "sphinxcontrib-applehelp": [
+  "sphinxcontrib"
+ ],
+ "sphinxcontrib-devhelp": [
+  "sphinxcontrib"
+ ],
+ "sphinxcontrib-htmlhelp": [
+  "sphinxcontrib"
+ ],
+ "sphinxcontrib-jsmath": [
+  "sphinxcontrib"
+ ],
+ "sphinxcontrib-qthelp": [
+  "sphinxcontrib"
+ ],
+ "sphinxcontrib-serializinghtml": [
+  "sphinxcontrib"
+ ],
+ "sqlalchemy": [
+  "sqlalchemy"
+ ],
+ "sqlalchemy-utils": [
+  "sqlalchemy_utils"
+ ],
+ "sshpubkeys": [
+  "sshpubkeys"
+ ],
+ "stevedore": [
+  "stevedore"
+ ],
+ "tenacity": [
+  "tenacity"
+ ],
+ "termcolor": [
+  "termcolor"
+ ],
+ "testfixtures": [
+  "testfixtures"
+ ],
+ "text-unidecode": [
+  "text_unidecode"
+ ],
+ "toml": [
+  "toml"
+ ],
+ "typed-ast": [
+  "typed_ast"
+ ],
+ "types-pyyaml": [],
+ "typing-extensions": [
+  "typing_extensions"
+ ],
+ "urllib3": [
+  "urllib3"
+ ],
+ "wcwidth": [
+  "wcwidth"
+ ],
+ "websocket-client": [
+  "websocket"
+ ],
+ "werkzeug": [
+  "werkzeug"
+ ],
+ "wrapt": [
+  "wrapt"
+ ],
+ "wtforms": [
+  "wtforms"
+ ],
+ "xmltodict": [
+  "xmltodict"
+ ],
+ "zipp": [
+  "zipp"
+ ],
+ "zope-event": [
+  "zope"
+ ],
+ "zope-interface": [
+  "zope"
+ ]
+}
