@@ -1,0 +1,12 @@
+{
+  "target": "ctfd",
+  "commit": "7d56e59e1afcfbe919ce4050e458dfd6cba3fa00",
+  "cmd": "$PY -m pytest -q -n 8 -p no:randomly tests",
+  "exit_code": 0,
+  "seconds": 316.9,
+  "runner": "pytest",
+  "passed": 484,
+  "failed": 0,
+  "skipped": 0,
+  "failing_tests": []
+}

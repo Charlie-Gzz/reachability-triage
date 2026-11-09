@@ -1,0 +1,86 @@
+# Everything that makes Phase 0 reproducible lives in this file.
+# Commits are pinned so a tag being moved upstream can't change the inputs.
+
+scanner:
+  osv_scanner_version: "2.6.0"
+
+# Offline advisory DB, built from two public OSV-format advisory repos at pinned
+# commits. Pinning the DB means the same lockfile always yields the same findings,
+# which the evaluation depends on. `rt scan --online` queries osv.dev instead.
+advisory_db:
+  ghsa:
+    url: https://github.com/github/advisory-database
+    commit: 5702a80c5bce65fe34aeff774f03143b05c75e98   # 2026-09-18
+    path: advisories/github-reviewed
+    format: json
+  pypa:
+    url: https://github.com/pypa/advisory-database
+    commit: d839b3d6ce297217589850d8844f2a4a0ad6463c   # 2026-09-18
+    path: vulns
+    format: yaml
+
+# Per target:
+#   runtime_install: builds a venv with ONLY production deps. `rt lock` freezes it
+#                    to locks/<name>.runtime.txt, and that file is what gets scanned.
+#   test_install:    adds test tooling on top, for the red/green harness (Phase 3).
+#   app_dirs/test_dirs: first-party code (indexed, statically analysed) vs. its tests.
+# Install and test commands run inside the target's Linux container (docker/targets/),
+# with $PY = /opt/venv/bin/python and the checkout mounted at /app.
+#   declared:        where the project's *direct* deps are declared (for the
+#                    direct/transitive flag on each finding).
+# Commands run inside the checkout with $PY pointing at the venv's python.
+targets:
+  - name: healthchecks
+    url: https://github.com/healthchecks/healthchecks
+    ref: v1.25.0
+    commit: 731c54529c94a795454745f0fec244669dd2be1e
+    framework: django
+    python: "3.10"
+    license: BSD-3-Clause
+    app_dirs: [hc]
+    test_dirs: [hc/api/tests, hc/accounts/tests, hc/front/tests, hc/lib/tests, hc/payments/tests]
+    declared: {kind: requirements, path: requirements.txt}
+    runtime_install:
+      # psycopg2 source build needs pg_config; the binary wheel is the same code.
+      - sed 's/^psycopg2==/psycopg2-binary==/' requirements.txt > .rt-runtime.txt
+      - uv pip install -q -p "$PY" -r .rt-runtime.txt
+    test_install: []
+    test_cmd: $PY manage.py test --parallel 4
+
+  - name: ctfd
+    url: https://github.com/CTFd/CTFd
+    ref: 3.4.0
+    commit: 7d56e59e1afcfbe919ce4050e458dfd6cba3fa00
+    framework: flask
+    python: "3.8"
+    license: Apache-2.0
+    app_dirs: [CTFd]
+    test_dirs: [tests]
+    declared: {kind: requirements, path: requirements.in}
+    runtime_install:
+      - uv pip install -q -p "$PY" -r requirements.txt
+    test_install:
+      # codecov==2.1.7 was pulled from PyPI; it is only a CI uploader.
+      - grep -v '^codecov' development.txt > .rt-dev.txt
+      - uv pip install -q -p "$PY" -r .rt-dev.txt
+    test_cmd: $PY -m pytest -q -n 8 -p no:randomly tests
+
+  - name: mealie
+    url: https://github.com/mealie-recipes/mealie
+    ref: v1.0.0
+    commit: f0bbe796ce40ef32a4a00eecdfb0efe4eef9da07
+    framework: fastapi
+    python: "3.11"
+    license: AGPL-3.0
+    app_dirs: [mealie]
+    test_dirs: [tests]
+    declared: {kind: poetry, path: pyproject.toml}
+    system_packages: [libldap2-dev, libsasl2-dev]   # python-ldap builds from source
+    runtime_install:
+      - rt poetry-export --group main > .rt-runtime.txt
+      - uv pip install -q -p "$PY" --no-deps -r .rt-runtime.txt
+    test_install:
+      - rt poetry-export --group all > .rt-dev.txt
+      - uv pip install -q -p "$PY" --no-deps -r .rt-dev.txt
+    # Two tests compare a UTC timestamp against local date; pin TZ to keep them green.
+    test_cmd: TZ=UTC $PY -m pytest tests   # pyproject addopts already has -q; a second -q hides the summary
