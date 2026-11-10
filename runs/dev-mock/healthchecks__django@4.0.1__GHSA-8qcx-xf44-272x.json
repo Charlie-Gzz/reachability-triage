@@ -1,0 +1,818 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/GHSA-8qcx-xf44-272x",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-53878",
+   "GHSA-8qcx-xf44-272x"
+  ],
+  "cves": [
+   "CVE-2026-53878"
+  ],
+  "cwes": [
+   "CWE-144"
+  ],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/GHSA-8qcx-xf44-272x",
+  "first_fixed_above_installed": "5.2.16",
+  "fixed_versions": [
+   "5.2.16",
+   "6.0.7"
+  ],
+  "max_cvss": "6.1",
+  "package": "django",
+  "published": "2026-07-07T15:32:57Z",
+  "summary": "Django: DomainNameValidator permits newline characters that may enable HTTP header injection",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "GHSA-8qcx-xf44-272x"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "DomainNameValidator",
+   "CharField",
+   "HttpResponse"
+  ],
+  "reasoning": "mock: 25 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/accounts/forms.py:20",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/forms.py:37",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/forms.py:81",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "DomainNameValidator",
+  "CharField",
+  "HttpResponse"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/GHSA-8qcx-xf44-272x",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "GHSA-8qcx-xf44-272x",
+    "aliases": [
+     "CVE-2026-53878",
+     "GHSA-8qcx-xf44-272x"
+    ],
+    "summary": "Django: DomainNameValidator permits newline characters that may enable HTTP header injection",
+    "max_cvss": "6.1",
+    "fixed_versions": [
+     "5.2.16",
+     "6.0.7"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-8qcx-xf44-272x#0",
+      "score": 0.899,
+      "text": "GHSA-8qcx-xf44-272x (CVE-2026-53878)\npackage: django\nsummary: Django: DomainNameValidator permits newline characters that may enable HTTP header injection\naffected: >=0, <5.2.16; >=6.0.0, <6.0.7",
+      "vuln_id": "GHSA-8qcx-xf44-272x"
+     },
+     {
+      "id": "GHSA-8qcx-xf44-272x#1",
+      "score": 0.885,
+      "text": "GHSA-8qcx-xf44-272x (django) details:\nAn issue was discovered in Django 6.0 before 6.0.7 and 5.2 before 5.2.16.\n`DomainNameValidator` does not prohibit newlines in domain names (unless used via a form field, since `CharField` strips newlines). If an application uses values with newlines in an HTTP response, header injection can occur. Django itself is unaffected because `HttpResponse` prohibits newlines in HTTP headers.\nEarlier, unsupported Django series (such as 5.0.x, 4.1.x, and 3.2.x) were not evaluated and may also be affected.\nDjango would like to thank Bence Nagy for reporting this issue.",
+      "vuln_id": "GHSA-8qcx-xf44-272x"
+     },
+     {
+      "id": "GHSA-jh3w-4vvf-mjgr#1",
+      "score": 0.815,
+      "text": "GHSA-jh3w-4vvf-mjgr (django) details:\nIn Django 3.2 before 3.2.20, 4 before 4.1.10, and 4.2 before 4.2.3, `EmailValidator` and `URLValidator` are subject to a potential ReDoS (regular expression denial of service) attack via a very large number of domain name labels of emails and URLs.",
+      "vuln_id": "GHSA-jh3w-4vvf-mjgr"
+     },
+     {
+      "id": "GHSA-3f2c-jm6v-cr35#0",
+      "score": 0.81,
+      "text": "GHSA-3f2c-jm6v-cr35 (CVE-2016-9014)\npackage: django\nsummary: Django DNS Rebinding Vulnerability\naffected: >=1.10a1, <1.10.3; >=1.8a1, <1.8.16; >=1.9a1, <1.9.11",
+      "vuln_id": "GHSA-3f2c-jm6v-cr35"
+     }
+    ],
+    "symbols": [
+     "DomainNameValidator",
+     "CharField",
+     "HttpResponse"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 111.9,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "DomainNameValidator",
+     "CharField",
+     "HttpResponse"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [
+     {
+      "file": "hc/accounts/forms.py",
+      "line": 20,
+      "code": "class Base64Field(forms.CharField):",
+      "resolved": "django.forms.CharField",
+      "function": "hc.accounts.forms:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.forms:<module>"
+      ],
+      "snippet": "   17          return value.lower()\n   18  \n   19  \n   20  class Base64Field(forms.CharField):\n   21      def to_python(self, value):\n   22          if value is None:\n   23              return None"
+     },
+     {
+      "file": "hc/accounts/forms.py",
+      "line": 37,
+      "code": "tz = forms.CharField(required=False)",
+      "resolved": "django.forms.CharField",
+      "function": "hc.accounts.forms:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.forms:<module>"
+      ],
+      "snippet": "   34      identity = LowercaseEmailField(\n   35          error_messages={\"required\": \"Please enter your email address.\"}\n   36      )\n   37      tz = forms.CharField(required=False)\n   38  \n   39      def clean_identity(self):\n   40          v = self.cleaned_data[\"identity\"]"
+     },
+     {
+      "file": "hc/accounts/forms.py",
+      "line": 81,
+      "code": "password = forms.CharField()",
+      "resolved": "django.forms.CharField",
+      "function": "hc.accounts.forms:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.forms:<module>"
+      ],
+      "snippet": "   78  \n   79  class PasswordLoginForm(forms.Form):\n   80      email = LowercaseEmailField()\n   81      password = forms.CharField()\n   82  \n   83      def clean(self):\n   84          username = self.cleaned_data.get(\"email\")"
+     },
+     {
+      "file": "hc/accounts/forms.py",
+      "line": 101,
+      "code": "tz = forms.CharField()",
+      "resolved": "django.forms.CharField",
+      "function": "hc.accounts.forms:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.forms:<module>"
+      ],
+      "snippet": "   98  class ReportSettingsForm(forms.Form):\n   99      reports = forms.ChoiceField(choices=REPORT_CHOICES)\n  100      nag_period = forms.IntegerField(min_value=0, max_value=86400)\n  101      tz = forms.CharField()\n  102  \n  103      def clean_nag_period(self):\n  104          seconds = self.cleaned_data[\"nag_period\"]"
+     },
+     {
+      "file": "hc/accounts/forms.py",
+      "line": 122,
+      "code": "password = forms.CharField(min_length=8)",
+      "resolved": "django.forms.CharField",
+      "function": "hc.accounts.forms:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.forms:<module>"
+      ],
+      "snippet": "  119  \n  120  \n  121  class SetPasswordForm(forms.Form):\n  122      password = forms.CharField(min_length=8)\n  123  \n  124  \n  125  class ChangeEmailForm(forms.Form):"
+     },
+     {
+      "file": "hc/accounts/forms.py",
+      "line": 147,
+      "code": "name = forms.CharField(max_length=60)",
+      "resolved": "django.forms.CharField",
+      "function": "hc.accounts.forms:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.forms:<module>"
+      ],
+      "snippet": "  144  \n  145  \n  146  class ProjectNameForm(forms.Form):\n  147      name = forms.CharField(max_length=60)\n  148  \n  149  \n  150  class TransferForm(forms.Form):"
+     },
+     {
+      "file": "hc/accounts/forms.py",
+      "line": 155,
+      "code": "name = forms.CharField(max_length=100)",
+      "resolved": "django.forms.CharField",
+      "function": "hc.accounts.forms:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.forms:<module>"
+      ],
+      "snippet": "  152  \n  153  \n  154  class AddWebAuthnForm(forms.Form):\n  155      name = forms.CharField(max_length=100)\n  156      client_data_json = Base64Field()\n  157      attestation_object = Base64Field()\n  158  "
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 60,
+      "code": "reports = models.CharField(max_length=10, default=\"monthly\", choices=REPORT_CHOICES)",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ],
+      "snippet": "   57  class Profile(models.Model):\n   58      user = models.OneToOneField(User, models.CASCADE, blank=True, null=True)\n   59      next_report_date = models.DateTimeField(null=True, blank=True)\n   60      reports = models.CharField(max_length=10, default=\"monthly\", choices=REPORT_CHOICES)\n   61      nag_period = models.DurationField(default=NO_NAG, choices=NAG_PERIODS)\n   62      next_nag_date = models.DateTimeField(null=True, blank=True)\n   63      ping_log_limit = models.IntegerField(default=100)"
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 65,
+      "code": "token = models.CharField(max_length=128, blank=True)",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 76,
+      "code": "sort = models.CharField(max_length=20, default=\"created\")",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 79,
+      "code": "tz = models.CharField(max_length=36, default=\"UTC\")",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 80,
+      "code": "theme = models.CharField(max_length=10, null=True, blank=True)",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 82,
+      "code": "totp = models.CharField(max_length=32, null=True, blank=True)",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 324,
+      "code": "name = models.CharField(max_length=200, blank=True)",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 326,
+      "code": "api_key = models.CharField(max_length=128, blank=True, db_index=True)",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 327,
+      "code": "api_key_readonly = models.CharField(max_length=128, blank=True, db_index=True)",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 328,
+      "code": "badge_key = models.CharField(max_length=150, unique=True)",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 329,
+      "code": "ping_key = models.CharField(max_length=128, blank=True, null=True, unique=True)",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 431,
+      "code": "role = models.CharField(max_length=1, default=Role.REGULAR, choices=Role.choices)",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 450,
+      "code": "name = models.CharField(max_length=100)",
+      "resolved": "django.db.models.CharField",
+      "function": "hc.accounts.models:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:<module>"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 676,
+      "code": "return HttpResponse(status=404)",
+      "resolved": "django.http.HttpResponse",
+      "function": "hc.accounts.views:add_webauthn",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:add_webauthn"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 770,
+      "code": "return HttpResponse(status=404)",
+      "resolved": "django.http.HttpResponse",
+      "function": "hc.accounts.views:remove_credential",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:remove_credential"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 818,
+      "code": "return HttpResponse(status=500)",
+      "resolved": "django.http.HttpResponse",
+      "function": "hc.accounts.views:login_webauthn",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:login_webauthn"
+      ]
+     },
+     {
+      "file": "hc/api/decorators.py",
+      "line": 106,
+      "code": "response = HttpResponse(status=204)",
+      "resolved": "django.http.HttpResponse",
+      "function": "hc.api.decorators:wrapper",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:add_totp",
+       "hc.accounts.decorators:require_sudo_mode",
+       "hc.api.decorators:wrapper"
+      ]
+     },
+     {
+      "file": "hc/api/decorators.py",
+      "line": 110,
+      "code": "response = HttpResponse(status=405)",
+      "resolved": "django.http.HttpResponse",
+      "function": "hc.api.decorators:wrapper",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:add_totp",
+       "hc.accounts.decorators:require_sudo_mode",
+       "hc.api.decorators:wrapper"
+      ]
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 339,
+    "paths": [
+     [
+      "hc.accounts.forms:<module>"
+     ],
+     [
+      "hc.accounts.forms:<module>"
+     ],
+     [
+      "hc.accounts.forms:<module>"
+     ],
+     [
+      "hc.accounts.forms:<module>"
+     ],
+     [
+      "hc.accounts.forms:<module>"
+     ]
+    ],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols ['DomainNameValidator', 'CharField', 'HttpResponse']; 25 production call site(s) of those symbols, 25 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 36.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:hc/accounts/forms.py:101",
+      "score": 1.0,
+      "file": "hc/accounts/forms.py",
+      "start": 101,
+      "qualname": "hc.accounts.forms:<module>",
+      "text": "# hc/accounts/forms.py around line 101\n   98  class ReportSettingsForm(forms.Form):\n   99      reports = forms.ChoiceField(choices=REPORT_CHOICES)\n  100      nag_period = forms.IntegerField(min_value=0, max_value=86400)\n  101      tz = forms.CharField()\n  102  \n  103      def clean_nag_period(self):\n  104          seconds = self.cleaned_data[\"nag_period\"]"
+     },
+     {
+      "id": "site:hc/accounts/forms.py:81",
+      "score": 1.0,
+      "file": "hc/accounts/forms.py",
+      "start": 81,
+      "qualname": "hc.accounts.forms:<module>",
+      "text": "# hc/accounts/forms.py around line 81\n   78  \n   79  class PasswordLoginForm(forms.Form):\n   80      email = LowercaseEmailField()\n   81      password = forms.CharField()\n   82  \n   83      def clean(self):\n   84          username = self.cleaned_data.get(\"email\")"
+     },
+     {
+      "id": "site:hc/accounts/forms.py:37",
+      "score": 1.0,
+      "file": "hc/accounts/forms.py",
+      "start": 37,
+      "qualname": "hc.accounts.forms:<module>",
+      "text": "# hc/accounts/forms.py around line 37\n   34      identity = LowercaseEmailField(\n   35          error_messages={\"required\": \"Please enter your email address.\"}\n   36      )\n   37      tz = forms.CharField(required=False)\n   38  \n   39      def clean_identity(self):\n   40          v = self.cleaned_data[\"identity\"]"
+     },
+     {
+      "id": "site:hc/accounts/forms.py:20",
+      "score": 1.0,
+      "file": "hc/accounts/forms.py",
+      "start": 20,
+      "qualname": "hc.accounts.forms:<module>",
+      "text": "# hc/accounts/forms.py around line 20\n   17          return value.lower()\n   18  \n   19  \n   20  class Base64Field(forms.CharField):\n   21      def to_python(self, value):\n   22          if value is None:\n   23              return None"
+     },
+     {
+      "id": "healthchecks:hc/front/forms.py:29",
+      "score": 0.743,
+      "text": "# hc/front/forms.py:29-53  HeadersField.to_python\n    def to_python(self, value):\n        if not value:\n            return {}\n\n        headers = {}\n        for line in value.split(\"\\n\"):\n            if not line.strip():\n                continue\n\n            if \":\" not in line:\n                raise ValidationError(self.message)\n\n            n, v = line.split(\":\", maxsplit=1)\n            n, v = n.strip(), v.strip()\n            if not n or not v:\n                raise ValidationError(message=self.message)\n\n            if not _is_latin1(n):\n                raise ValidationError(\n                    message=\"Header names must not contain special characters\"\n                )\n\n            headers[n] = v\n\n        return headers",
+      "file": "hc/front/forms.py",
+      "start": 29,
+      "qualname": "HeadersField.to_python"
+     },
+     {
+      "id": "healthchecks:hc/front/forms.py:module",
+      "score": 0.727,
+      "text": "# hc/front/forms.py (module level)\nfrom datetime import timedelta as td\nimport json\nimport re\nfrom urllib.parse import quote, urlencode\nfrom django import forms\nfrom django.forms import URLField\nfrom django.conf import settings\nfrom django.core.exceptions import ValidationError\nfrom hc.front.validators import (\n    CronExpressionValidator,\n    TimezoneValidator,\n    WebhookValidator,\n)\nimport requests\nclass HeadersField(forms.Field):\n    message = \"\"\"Use \"Header-Name: value\" pairs, one per line.\"\"\"\nclass NameTagsForm(forms.Form):\n    name = forms.CharField(max_length=100, required=False)\n    tags = forms.CharField(max_length=500, required=False)\n    desc = forms.CharField(required=False)\nclass FilteringRulesForm(forms.Form):\n    filter_by_subject = forms.ChoiceField(choices=((\"no\", \"no\"), (\"yes\", \"yes\")))\n    subject = forms.CharField(required=False, max_length=200)\n    subject_fail = forms.CharField(required=False, max_length=200)\n    methods = forms.ChoiceField(required=False, choices=((\"\", \"Any\"), (\"POST\", \"POST\")))\n    manual_resume = forms.BooleanField(required=False)\nclass TimeoutForm(forms.Form):\n    timeout = forms.IntegerField(min_value=60, max_value=31536000)\n    grace = forms.IntegerField(min_value=60, max_value=31536000)\nclass CronForm(forms.Form):\n    schedule = forms.CharField(max_length=100, validators=[CronExpressionValidator()])\n    tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])\n    grace = forms.IntegerField(min_value=1, max_value=43200)\nclass AddOpsgenieForm(forms.Form):\n    error_css_class = \"has-error\"\n    region = forms.ChoiceField(initial=\"us\", choices=((\"us\", \"US\"), (\"eu\", \"EU\")))\n    key = forms.CharField(max_length=40)\nPRIO_CHOICES = [\n    (\"-2\", \"Lowest Priority\"),\n    (\"-1\", \"Low Priority\"),\n    (\"0\", \"Normal Priority\"),\n    (\"1\", \"High Priority\"),\n    (\"2\", \"Emergency Priority\"),\n]\nclass AddPushoverForm(forms.Form):\n    error_css_class = \"has-error\"\n    pushover_user_key = forms.CharField()\n    prio = forms.ChoiceField(initial=\"0\", choices=PRIO_CHOICES)\n    prio_up = forms.ChoiceField(initial=\"0\", choices=PRIO_CHOICES)\nclass EmailForm(forms.Form):\n    error_css_class = \"has-error\"\n    value = forms.EmailField(max_length=100)\n    down = forms.BooleanField(required=False, initial=True)\n    up = forms.BooleanField(required=False, initial=True)\nclass AddUrlForm(forms.Form):\n    error_css_class = \"has-error\"\n    value = forms.URLField(max_length=1000, validators=[WebhookValidator()])\nMETHODS = (\"GET\", \"POST\", \"PUT\")\nclass WebhookForm(forms.Form):\n    error_css_class = \"has-error\"",
+      "file": "hc/front/forms.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/api/urls.py:module",
+      "score": 0.725,
+      "text": "# hc/api/urls.py (module level)\nfrom urllib.parse import quote, unquote\nfrom django.urls import include, path, register_converter\nfrom hc.api import views\nclass QuoteConverter:\n    regex = r\"[\\w%~_.-]+\"\nclass SHA1Converter:\n    regex = \"[A-z0-9]{40}\"\nregister_converter(QuoteConverter, \"quoted\")\nregister_converter(SHA1Converter, \"sha1\")\nuuid_urls = [\n    path(\"\", views.ping),\n    path(\"fail\", views.ping, {\"action\": \"fail\"}),\n    path(\"start\", views.ping, {\"action\": \"start\"}),\n    path(\"<int:exitstatus>\", views.ping),\n]\nslug_urls = [\n    path(\"fail\", views.ping_by_slug, {\"action\": \"fail\"}),\n    path(\"start\", views.ping_by_slug, {\"action\": \"start\"}),\n    path(\"<int:exitstatus>\", views.ping_by_slug),\n]\nurlpatterns = [\n    path(\"ping/<uuid:code>\", views.ping),\n    path(\"ping/<uuid:code>/\", include(uuid_urls)),\n    path(\"ping/<slug:ping_key>/<slug:slug>\", views.ping_by_slug),\n    path(\"ping/<slug:ping_key>/<slug:slug>/\", include(slug_urls)),\n    path(\"api/v1/checks/\", views.checks),\n    path(\"api/v1/checks/<uuid:code>\", views.single, name=\"hc-api-single\"),\n    path(\"api/v1/checks/<sha1:unique_key>\", views.get_check_by_unique_key),\n    path(\"api/v1/checks/<uuid:code>/pause\", views.pause, name=\"hc-api-pause\"),\n    path(\n        \"api/v1/notifications/<uuid:code>/status\",\n        views.notification_status,\n        name=\"hc-api-notification-status\",\n    ),\n    path(\"api/v1/checks/<uuid:code>/pings/\", views.pings, name=\"hc-api-pings\"),\n    path(\"api/v1/checks/<uuid:code>/flips/\", views.flips_by_uuid, name=\"hc-api-flips\"),\n    path(\"api/v1/checks/<sha1:unique_key>/flips/\", views.flips_by_unique_key),\n    path(\"api/v1/channels/\", views.channels),\n    path(\"api/v1/badges/\", views.badges),\n    path(\n        \"badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.<slug:fmt>\",\n        views.badge,\n        name=\"hc-badge\",\n    ),\n    path(\n        \"badge/<slug:badge_key>/<slug:signature>.<slug:fmt>\",\n        views.badge,\n        {\"tag\": \"*\"},\n        name=\"hc-badge-all\",\n    ),\n    path(\"api/v1/metrics/\", views.metrics),\n    path(\"api/v1/status/\", views.status),\n]",
+      "file": "hc/api/urls.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "DomainNameValidator",
+     "CharField",
+     "HttpResponse"
+    ],
+    "reasoning": "mock: 25 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/accounts/forms.py:20",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/forms.py:37",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/forms.py:81",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2599,
+   "tokens_out": 102,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 25 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/accounts/forms.py:20\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/forms.py:37\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/forms.py:81\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"DomainNameValidator\", \"CharField\", \"HttpResponse\"]}",
+     "in": 2599,
+     "out": 102,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 2562,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2562,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 5161,
+  "tokens_out": 137,
+  "cost_usd_est": 0.0,
+  "seconds": 0.18
+ },
+ "created": "2026-11-10T00:06:09+00:00",
+ "code_version": "a3e1ef4"
+}

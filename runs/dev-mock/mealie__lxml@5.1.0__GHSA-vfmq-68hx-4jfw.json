@@ -1,0 +1,310 @@
+{
+ "finding_id": "mealie/lxml@5.1.0/GHSA-vfmq-68hx-4jfw",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-41066",
+   "GHSA-vfmq-68hx-4jfw",
+   "PYSEC-2026-87"
+  ],
+  "cves": [
+   "CVE-2026-41066"
+  ],
+  "cwes": [
+   "CWE-611"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/lxml@5.1.0/GHSA-vfmq-68hx-4jfw",
+  "first_fixed_above_installed": "6.1.0",
+  "fixed_versions": [
+   "6.1.0"
+  ],
+  "max_cvss": "7.5",
+  "package": "lxml",
+  "published": "2026-04-21T20:38:44Z",
+  "summary": "lxml: Default configuration of iterparse() and ETCompatXMLParser() allows XXE to local files",
+  "target": "mealie",
+  "version": "5.1.0",
+  "vuln_id": "GHSA-vfmq-68hx-4jfw"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "iterparse",
+   "ETCompatXMLParser",
+   "resolve_entities"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "iterparse",
+  "ETCompatXMLParser",
+  "resolve_entities"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/lxml@5.1.0/GHSA-vfmq-68hx-4jfw",
+    "package": "lxml",
+    "version": "5.1.0",
+    "vuln_id": "GHSA-vfmq-68hx-4jfw",
+    "aliases": [
+     "CVE-2026-41066",
+     "GHSA-vfmq-68hx-4jfw",
+     "PYSEC-2026-87"
+    ],
+    "summary": "lxml: Default configuration of iterparse() and ETCompatXMLParser() allows XXE to local files",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "6.1.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-vfmq-68hx-4jfw#0",
+      "score": 0.88,
+      "text": "GHSA-vfmq-68hx-4jfw (CVE-2026-41066)\npackage: lxml\nsummary: lxml: Default configuration of iterparse() and ETCompatXMLParser() allows XXE to local files\naffected: >=0, <6.1.0",
+      "vuln_id": "GHSA-vfmq-68hx-4jfw"
+     },
+     {
+      "id": "GHSA-vfmq-68hx-4jfw#1",
+      "score": 0.815,
+      "text": "GHSA-vfmq-68hx-4jfw (lxml) details:\n### Impact\nUsing either of the two parsers in the default configuration (with `resolve_entities=True`) allows untrusted XML input to read local files.\n\n### Patches\nlxml 6.1.0 changes the default to `resolve_entities='internal'`, thus disallowing local file access by default.\n\n### Workarounds\nSetting the `resolve_entities` option explicitly to `resolve_entities='internal'` or `resolve_entities=False` disables the local file access.\n\n### Resources\nOriginal report: https://bugs.launchpad.net/lxml/+bug/2146291\n\nThe default option was changed to `resolve_entities='internal'` for the normal XML and HTML parsers in lxml 5.0. The default was not changed for `iterparse()` and `ETCompatXMLParser()` at the time. lxml 6.1 makes the safe option the default for all parsers.",
+      "vuln_id": "GHSA-vfmq-68hx-4jfw"
+     },
+     {
+      "id": "GHSA-55x5-fj6c-h6m8#0",
+      "score": 0.765,
+      "text": "GHSA-55x5-fj6c-h6m8 (CVE-2021-43818)\npackage: lxml\nsummary: lxml's HTML Cleaner allows crafted and SVG embedded scripts to pass through\naffected: >=0, <4.6.5",
+      "vuln_id": "GHSA-55x5-fj6c-h6m8"
+     },
+     {
+      "id": "GHSA-pgww-xf46-h92r#0",
+      "score": 0.763,
+      "text": "GHSA-pgww-xf46-h92r (CVE-2020-27783)\npackage: lxml\nsummary: lxml vulnerable to Cross-site Scripting\naffected: >=0, <4.6.2",
+      "vuln_id": "GHSA-pgww-xf46-h92r"
+     }
+    ],
+    "symbols": [
+     "iterparse",
+     "ETCompatXMLParser",
+     "resolve_entities"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 33.2,
+   "output": {
+    "package": "lxml",
+    "import_names": [
+     "lxml"
+    ],
+    "symbols": [
+     "iterparse",
+     "ETCompatXMLParser",
+     "resolve_entities"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "lxml: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['iterparse', 'ETCompatXMLParser', 'resolve_entities']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 34.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/schema/recipe/recipe_asset.py:module",
+      "score": 0.655,
+      "text": "# mealie/schema/recipe/recipe_asset.py (module level)\nfrom mealie.schema._mealie import MealieModel\nclass RecipeAsset(MealieModel):\n    name: str\n    icon: str\n    file_name: str | None\n    class Config:\n        orm_mode = True",
+      "file": "mealie/schema/recipe/recipe_asset.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/schema/recipe/recipe_scraper.py:module",
+      "score": 0.65,
+      "text": "# mealie/schema/recipe/recipe_scraper.py (module level)\nfrom mealie.schema._mealie.mealie_model import MealieModel\nclass ScrapeRecipeTest(MealieModel):\n    url: str\nclass ScrapeRecipe(MealieModel):\n    url: str\n    include_tags: bool = False\n    class Config:\n        schema_extra = {\n            \"example\": {\n                \"url\": \"https://myfavoriterecipes.com/recipes\",\n                \"includeTags\": True,\n            },\n        }",
+      "file": "mealie/schema/recipe/recipe_scraper.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/schema/group/group_migration.py:module",
+      "score": 0.648,
+      "text": "# mealie/schema/group/group_migration.py (module level)\nimport enum\nfrom mealie.schema._mealie import MealieModel\nclass SupportedMigrations(str, enum.Enum):\n    nextcloud = \"nextcloud\"\n    chowdown = \"chowdown\"\n    copymethat = \"copymethat\"\n    paprika = \"paprika\"\n    mealie_alpha = \"mealie_alpha\"\n    tandoor = \"tandoor\"\n    plantoeat = \"plantoeat\"\nclass DataMigrationCreate(MealieModel):\n    source_type: SupportedMigrations",
+      "file": "mealie/schema/group/group_migration.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/pkgs/i18n/provider_factory.py:25",
+      "score": 0.646,
+      "text": "# mealie/pkgs/i18n/provider_factory.py:25-29  ProviderFactory._load\n    def _load(self, locale: str) -> JsonProvider:\n        filename = self.filename_format.format(locale=locale, format=\"json\")\n        path = self.directory / filename\n\n        return JsonProvider(path) if path.exists() else JsonProvider(self.fallback_file)",
+      "file": "mealie/pkgs/i18n/provider_factory.py",
+      "start": 25,
+      "qualname": "ProviderFactory._load"
+     },
+     {
+      "id": "mealie:mealie/schema/admin/__init__.py:module",
+      "score": 0.645,
+      "text": "# mealie/schema/admin/__init__.py (module level)\n# This file is auto-generated by gen_schema_exports.py\nfrom .about import AdminAboutInfo, AppInfo, AppStartupInfo, AppStatistics, AppTheme, CheckAppConfig\nfrom .backup import AllBackups, BackupFile, BackupOptions, CreateBackup, ImportJob\nfrom .email import EmailReady, EmailSuccess, EmailTest\nfrom .maintenance import MaintenanceLogs, MaintenanceStorageDetails, MaintenanceSummary\nfrom .migration import ChowdownURL, MigrationFile, MigrationImport, Migrations\nfrom .restore import (\n    CommentImport,\n    CustomPageImport,\n    GroupImport,\n    ImportBase,\n    NotificationImport,\n    RecipeImport,\n    SettingsImport,\n    UserImport,\n)\nfrom .settings import CustomPageBase, CustomPageOut\n__all__ = [\n    \"AllBackups\",\n    \"BackupFile\",\n    \"BackupOptions\",\n    \"CreateBackup\",\n    \"ImportJob\",\n    \"MaintenanceLogs\",\n    \"MaintenanceStorageDetails\",\n    \"MaintenanceSummary\",\n    \"AdminAboutInfo\",\n    \"AppInfo\",\n    \"AppStartupInfo\",\n    \"AppStatistics\",\n    \"AppTheme\",\n    \"CheckAppConfig\",\n    \"EmailReady\",\n    \"EmailSuccess\",\n    \"EmailTest\",\n    \"CustomPageBase\",\n    \"CustomPageOut\",\n    \"ChowdownURL\",\n    \"MigrationFile\",\n    \"MigrationImport\",\n    \"Migrations\",\n    \"CommentImport\",\n    \"CustomPageImport\",\n    \"GroupImport\",\n    \"ImportBase\",\n    \"NotificationImport\",\n    \"RecipeImport\",\n    \"SettingsImport\",\n    \"UserImport\",\n]",
+      "file": "mealie/schema/admin/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "iterparse",
+     "ETCompatXMLParser",
+     "resolve_entities"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1479,
+   "tokens_out": 48,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"iterparse\", \"ETCompatXMLParser\", \"resolve_entities\"]}",
+     "in": 1479,
+     "out": 48,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1411,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1411,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2890,
+  "tokens_out": 84,
+  "cost_usd_est": 0.0,
+  "seconds": 0.1
+ },
+ "created": "2026-11-10T00:06:24+00:00",
+ "code_version": "a3e1ef4"
+}

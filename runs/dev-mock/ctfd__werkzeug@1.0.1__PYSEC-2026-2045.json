@@ -1,0 +1,454 @@
+{
+ "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2026-2045",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-49766",
+   "GHSA-f9vj-2wh5-fj8j",
+   "PYSEC-2026-2045"
+  ],
+  "cves": [
+   "CVE-2024-49766"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2026-2045",
+  "first_fixed_above_installed": "3.0.6",
+  "fixed_versions": [
+   "3.0.6"
+  ],
+  "max_cvss": "6.3",
+  "package": "werkzeug",
+  "published": "2026-07-07T14:34:43.390514Z",
+  "summary": "Werkzeug safe_join not safe on Windows",
+  "target": "ctfd",
+  "version": "1.0.1",
+  "vuln_id": "PYSEC-2026-2045"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "safe_join",
+   "os.path.isabs",
+   "isabs"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "CTFd/__init__.py:13",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/__init__.py:14",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/errors.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "safe_join",
+  "os.path.isabs",
+  "isabs"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2026-2045",
+    "package": "werkzeug",
+    "version": "1.0.1",
+    "vuln_id": "PYSEC-2026-2045",
+    "aliases": [
+     "CVE-2024-49766",
+     "GHSA-f9vj-2wh5-fj8j",
+     "PYSEC-2026-2045"
+    ],
+    "summary": "Werkzeug safe_join not safe on Windows",
+    "max_cvss": "6.3",
+    "fixed_versions": [
+     "3.0.6"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 31.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-f9vj-2wh5-fj8j#0",
+      "score": 0.899,
+      "text": "GHSA-f9vj-2wh5-fj8j (CVE-2024-49766)\npackage: werkzeug\nsummary: Werkzeug safe_join not safe on Windows\naffected: >=0, <3.0.6",
+      "vuln_id": "GHSA-f9vj-2wh5-fj8j"
+     },
+     {
+      "id": "GHSA-f9vj-2wh5-fj8j#1",
+      "score": 0.848,
+      "text": "GHSA-f9vj-2wh5-fj8j (werkzeug) details:\nOn Python < 3.11 on Windows, `os.path.isabs()` does not catch UNC paths like `//server/share`. Werkzeug's `safe_join()` relies on this check, and so can produce a path that is not safe, potentially allowing unintended access to data. Applications using Python >= 3.11, or not using Windows, are not vulnerable.",
+      "vuln_id": "GHSA-f9vj-2wh5-fj8j"
+     },
+     {
+      "id": "GHSA-87hc-h4r5-73f7#0",
+      "score": 0.869,
+      "text": "GHSA-87hc-h4r5-73f7 (CVE-2026-21860)\npackage: werkzeug\nsummary:  Werkzeug safe_join() allows Windows special device names with compound extensions\naffected: >=0, <3.1.5",
+      "vuln_id": "GHSA-87hc-h4r5-73f7"
+     },
+     {
+      "id": "GHSA-hgf8-39gv-g3f2#0",
+      "score": 0.856,
+      "text": "GHSA-hgf8-39gv-g3f2 (CVE-2025-66221)\npackage: werkzeug\nsummary: Werkzeug safe_join() allows Windows special device names\naffected: >=0, <3.1.4",
+      "vuln_id": "GHSA-hgf8-39gv-g3f2"
+     }
+    ],
+    "symbols": [
+     "safe_join",
+     "os.path.isabs",
+     "isabs"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 58.3,
+   "output": {
+    "package": "werkzeug",
+    "import_names": [
+     "werkzeug"
+    ],
+    "symbols": [
+     "safe_join",
+     "os.path.isabs",
+     "isabs"
+    ],
+    "imported": true,
+    "import_locations": [
+     "CTFd/__init__.py:13",
+     "CTFd/__init__.py:14",
+     "CTFd/errors.py:3",
+     "CTFd/utils/initialization/__init__.py:8",
+     "CTFd/utils/sessions/__init__.py:6",
+     "CTFd/utils/uploads/uploaders.py:10"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 17,
+    "vulnerable_call_sites": [
+     {
+      "file": "CTFd/__init__.py",
+      "line": 130,
+      "code": "template = safe_join(theme_name, \"templates\", template)",
+      "resolved": "flask.helpers.safe_join",
+      "function": "CTFd:ThemeLoader.get_source",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.models:Awards.__init__",
+       "CTFd:ThemeLoader.__init__",
+       "CTFd:ThemeLoader.get_source"
+      ],
+      "snippet": "  127                  raise jinja2.TemplateNotFound(template)\n  128              template = template[len(self._ADMIN_THEME_PREFIX) :]\n  129          theme_name = self.theme_name or str(utils.get_config(\"ctf_theme\"))\n  130          template = safe_join(theme_name, \"templates\", template)\n  131          return super(ThemeLoader, self).get_source(environment, template)\n  132  \n  133  "
+     },
+     {
+      "file": "CTFd/utils/uploads/uploaders.py",
+      "line": 64,
+      "code": "return send_file(safe_join(self.base_path, filename), as_attachment=True)",
+      "resolved": "flask.helpers.safe_join",
+      "function": "CTFd.utils.uploads.uploaders:FilesystemUploader.download",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.views:files",
+       "CTFd.utils.uploads.uploaders:FilesystemUploader.download"
+      ],
+      "snippet": "   61          return self.store(file_obj, file_path)\n   62  \n   63      def download(self, filename):\n   64          return send_file(safe_join(self.base_path, filename), as_attachment=True)\n   65  \n   66      def delete(self, filename):\n   67          if os.path.exists(os.path.join(self.base_path, filename)):"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/__init__.py:37",
+      "code": "@cached_property",
+      "function": "CTFd:CTFdRequest.path",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:250",
+      "code": "app.wsgi_app = ProxyFix(app.wsgi_app, *proxyfix_args)",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:252",
+      "code": "app.wsgi_app = ProxyFix(",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:8",
+      "code": "isinstance(error, InternalServerError)",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:9",
+      "code": "and error.description == InternalServerError.description",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/initialization/__init__.py:307",
+      "code": "app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {application_root: app})",
+      "function": "CTFd.utils.initialization:init_request_processors",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/sessions/__init__.py:28",
+      "code": "CallbackDict.__init__(self, initial, on_update)",
+      "function": "CTFd.utils.sessions:CachedSession.__init__",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:57",
+      "code": "filename = secure_filename(filename)",
+      "function": "CTFd.utils.uploads.uploaders:FilesystemUploader.upload",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:105",
+      "code": "self._clean_filename, secure_filename(filename).replace(\" \", \"_\")",
+      "function": "CTFd.utils.uploads.uploaders:S3Uploader.upload",
+      "in_test": false
+     }
+    ],
+    "entry_points": 252,
+    "paths": [
+     [
+      "CTFd.models:Awards.__init__",
+      "CTFd:ThemeLoader.__init__",
+      "CTFd:ThemeLoader.get_source"
+     ],
+     [
+      "CTFd.views:files",
+      "CTFd.utils.uploads.uploaders:FilesystemUploader.download"
+     ]
+    ],
+    "summary": "werkzeug: imported in 6 non-test location(s); 17 package call/reference site(s); named vulnerable symbols ['safe_join', 'os.path.isabs', 'isabs']; 0 production call site(s) of those symbols (+2 weak name-only), 2 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 27.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:CTFd/utils/uploads/uploaders.py:64",
+      "score": 1.0,
+      "file": "CTFd/utils/uploads/uploaders.py",
+      "start": 64,
+      "qualname": "CTFd.utils.uploads.uploaders:FilesystemUploader.download",
+      "text": "# CTFd/utils/uploads/uploaders.py around line 64\n   61          return self.store(file_obj, file_path)\n   62  \n   63      def download(self, filename):\n   64          return send_file(safe_join(self.base_path, filename), as_attachment=True)\n   65  \n   66      def delete(self, filename):\n   67          if os.path.exists(os.path.join(self.base_path, filename)):"
+     },
+     {
+      "id": "site:CTFd/__init__.py:130",
+      "score": 1.0,
+      "file": "CTFd/__init__.py",
+      "start": 130,
+      "qualname": "CTFd:ThemeLoader.get_source",
+      "text": "# CTFd/__init__.py around line 130\n  127                  raise jinja2.TemplateNotFound(template)\n  128              template = template[len(self._ADMIN_THEME_PREFIX) :]\n  129          theme_name = self.theme_name or str(utils.get_config(\"ctf_theme\"))\n  130          template = safe_join(theme_name, \"templates\", template)\n  131          return super(ThemeLoader, self).get_source(environment, template)\n  132  \n  133  "
+     },
+     {
+      "id": "ctfd:CTFd/utils/security/sanitize.py:module",
+      "score": 0.697,
+      "text": "# CTFd/utils/security/sanitize.py (module level)\nfrom pybluemonday import UGCPolicy\n# Copied from lxml:\n# https://github.com/lxml/lxml/blob/e986a9cb5d54827c59aefa8803bc90954d67221e/src/lxml/html/defs.py#L38\n# fmt: off\nSAFE_ATTRS = (\n    'abbr', 'accept', 'accept-charset', 'accesskey', 'action', 'align',\n    'alt', 'axis', 'border', 'cellpadding', 'cellspacing', 'char', 'charoff',\n    'charset', 'checked', 'cite', 'class', 'clear', 'cols', 'colspan',\n    'color', 'compact', 'coords', 'datetime', 'dir', 'disabled', 'enctype',\n    'for', 'frame', 'headers', 'height', 'href', 'hreflang', 'hspace', 'id',\n    'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'media', 'method',\n    'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt', 'readonly',\n    'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape',\n    'size', 'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title',\n    'type', 'usemap', 'valign', 'value', 'vspace', 'width'\n)\n# fmt: on\nPAGE_STRUCTURE_TAGS = {\n    \"title\": [],\n}\nMETA_TAGS = {\n    \"meta\": [\"name\", \"content\", \"property\"],\n}\nFORM_TAGS = {\n    \"form\": [\"method\", \"action\"],\n    \"button\": [\"name\", \"type\", \"value\", \"disabled\"],\n    \"input\": [\"name\", \"type\", \"value\", \"placeholder\"],\n    \"select\": [\"name\", \"value\", \"placeholder\"],\n    \"option\": [\"value\"],\n    \"textarea\": [\"name\", \"value\", \"placeholder\"],\n    \"label\": [\"for\"],\n}\nANNOYING_TAGS = {\n    \"blink\": [],\n    \"marquee\": [],\n}\nMEDIA_TAGS = {\n    \"audio\": [\"autoplay\", \"controls\", \"crossorigin\", \"loop\", \"muted\", \"preload\", \"src\"],\n    \"video\": [\n        \"autoplay\",\n        \"buffered\",\n        \"controls\",\n        \"crossorigin\",\n        \"loop\",\n        \"muted\",\n        \"playsinline\",\n        \"poster\",\n        \"preload\",\n        \"src\",\n    ],\n    \"source\": [\"src\", \"type\"],\n    \"iframe\": [\"width\", \"height\", \"src\", \"frameborder\", \"allow\", \"allowfullscreen\"],\n}\nSANITIZER = UGCPolicy()\nfor TAGS in (PAGE_STRUCTURE_TAGS, META_TAGS, FORM_TAGS, ANNOYING_TAGS, MEDIA_TAGS):\n    for element in TAGS:\n        SANITIZER.AllowElements(element)\n        SANITIZER.AllowAttrs(*TAGS[element]).OnElements(element)\n# Allow safe attrs copied from lxml\nSANITIZER.AllowAttrs(*SAFE_ATTRS).Globally()",
+      "file": "CTFd/utils/security/sanitize.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:14",
+      "score": 0.661,
+      "text": "# CTFd/utils/validators/__init__.py:14-17  is_safe_url\ndef is_safe_url(target):\n    ref_url = urlparse(request.host_url)\n    test_url = urlparse(urljoin(request.host_url, target))\n    return test_url.scheme in (\"http\", \"https\") and ref_url.netloc == test_url.netloc",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 14,
+      "qualname": "is_safe_url"
+     },
+     {
+      "id": "ctfd:CTFd/utils/formatters/__init__.py:4",
+      "score": 0.656,
+      "text": "# CTFd/utils/formatters/__init__.py:4-11  safe_format\ndef safe_format(fmt, **kwargs):\n    \"\"\"\n    Function that safely formats strings with arbitrary potentially user-supplied format strings\n    Looks for interpolation placeholders like {target} or {{ target }}\n    \"\"\"\n    return re.sub(\n        r\"\\{?\\{([^{}]*)\\}\\}?\", lambda m: kwargs.get(m.group(1).strip(), m.group(0)), fmt\n    )",
+      "file": "CTFd/utils/formatters/__init__.py",
+      "start": 4,
+      "qualname": "safe_format"
+     },
+     {
+      "id": "ctfd:CTFd/utils/exports/__init__.py:84",
+      "score": 0.653,
+      "text": "# CTFd/utils/exports/__init__.py:84-358  import_ctf\ndef import_ctf(backup, erase=True):\n    if not zipfile.is_zipfile(backup):\n        raise zipfile.BadZipfile\n\n    backup = zipfile.ZipFile(backup)\n\n    members = backup.namelist()\n    max_content_length = get_app_config(\"MAX_CONTENT_LENGTH\")\n    for f in members:\n        if f.startswith(\"/\") or \"..\" in f:\n            # Abort on malicious zip files\n            raise zipfile.BadZipfile\n        info = backup.getinfo(f)\n        if max_content_length:\n            if info.file_size > max_content_length:\n                raise zipfile.LargeZipFile\n\n    # Get list of directories in zipfile\n    member_dirs = [os.path.split(m)[0] for m in members if \"/\" in m]\n    if \"db\" not in member_dirs:\n        raise Exception(\n            'CTFd couldn\\'t find the \"db\" folder in this backup. '\n            \"The backup may be malformed or corrupted and the import process cannot continue.\"\n        )\n\n    try:\n        alembic_version = json.loads(backup.open(\"db/alembic_version.json\").read())\n        alembic_version = alembic_version[\"results\"][0][\"version_num\"]\n    except Exception:\n        raise Exception(\n            \"Could not determine appropriate database version. This backup cannot be automatically imported.\"\n        )\n\n    # Check if the alembic version is from CTFd 1.x\n    if alembic_version in (\n        \"1ec4a28fe0ff\",\n        \"2539d8b5082e\",\n        \"7e9efd084c5a\",\n        \"87733981ca0e\",\n        \"a4e30c94c360\",\n        \"c12d2a1b0926\",\n        \"c7225db614c1\",\n        \"cb3cfcc47e2f\",\n        \"cbf5620f8e15\",\n        \"d5a224bf5862\",\n        \"d6514ec92738\",\n        \"dab615389702\",\n        \"e62fd69bd417\",\n    ):\n        raise Exception(\n            \"The version of CTFd that this backup is from is too old to be automatically imported.\"\n        )\n\n    sqlite = get_app_config(\"SQLALCHEMY_DATABASE_URI\").startswith(\"sqlite\")\n    postgres = get_app_config(\"SQLALCHEMY_DATABASE_URI\").startswith(\"postgres\")\n    mysql = get_app_config(\"SQLALCHEMY_DATABASE_URI\").startswith(\"mysql\")\n\n    if erase:\n        # Clear out existing connections to release any locks\n        db.session.close()",
+      "file": "CTFd/utils/exports/__init__.py",
+      "start": 84,
+      "qualname": "import_ctf"
+     },
+     {
+      "id": "ctfd:CTFd/schemas/teams.py:module",
+      "score": 0.647,
+      "text": "# CTFd/schemas/teams.py (module level)\nfrom marshmallow import ValidationError, post_dump, pre_load, validate\nfrom marshmallow.fields import Nested\nfrom marshmallow_sqlalchemy import field_for\nfrom sqlalchemy.orm import load_only\nfrom CTFd.models import TeamFieldEntries, TeamFields, Teams, Users, ma\nfrom CTFd.schemas.fields import TeamFieldEntriesSchema\nfrom CTFd.utils import get_config, string_types\nfrom CTFd.utils.crypto import verify_password\nfrom CTFd.utils.user import get_current_team, get_current_user, is_admin\nfrom CTFd.utils.validators import validate_country_code\nclass TeamSchema(ma.ModelSchema):\n    class Meta:\n        model = Teams\n        include_fk = True\n        dump_only = (\"id\", \"oauth_id\", \"created\", \"members\")\n        load_only = (\"password\",)\n    name = field_for(\n        Teams,\n        \"name\",\n        required=True,\n        allow_none=False,\n        validate=[\n            validate.Length(min=1, max=128, error=\"Team names must not be empty\")\n        ],\n    )\n    email = field_for(\n        Teams,\n        \"email\",\n        allow_none=False,\n        validate=validate.Email(\"Emails must be a properly formatted email address\"),\n    )\n    password = field_for(Teams, \"password\", required=True, allow_none=False)\n    website = field_for(\n        Teams,\n        \"website\",\n        validate=[\n            # This is a dirty hack to let website accept empty strings so you can remove your website\n            lambda website: validate.URL(\n                error=\"Websites must be a proper URL starting with http or https\",\n                schemes={\"http\", \"https\"},\n            )(website)\n            if website\n            else True\n        ],\n    )\n    country = field_for(Teams, \"country\", validate=[validate_country_code])\n    fields = Nested(\n        TeamFieldEntriesSchema, partial=True, many=True, attribute=\"field_entries\"\n    )\n    @pre_load\n    @pre_load\n    @pre_load\n    @pre_load\n    @pre_load\n    @post_dump\n    views = {\n        \"user\": [\n            \"website\",\n            \"name\",\n            \"country\",",
+      "file": "CTFd/schemas/teams.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "safe_join",
+     "os.path.isabs",
+     "isabs"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "CTFd/__init__.py:13",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/__init__.py:14",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/errors.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2320,
+   "tokens_out": 96,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"CTFd/__init__.py:13\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/__init__.py:14\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/errors.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"safe_join\", \"os.path.isabs\", \"isabs\"]}",
+     "in": 2320,
+     "out": 96,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 2280,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2280,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4600,
+  "tokens_out": 132,
+  "cost_usd_est": 0.0,
+  "seconds": 0.12
+ },
+ "created": "2026-11-10T00:06:21+00:00",
+ "code_version": "a3e1ef4"
+}

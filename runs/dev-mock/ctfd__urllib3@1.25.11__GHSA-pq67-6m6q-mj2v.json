@@ -1,0 +1,341 @@
+{
+ "finding_id": "ctfd/urllib3@1.25.11/GHSA-pq67-6m6q-mj2v",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-50181",
+   "GHSA-pq67-6m6q-mj2v",
+   "PYSEC-2026-1999"
+  ],
+  "cves": [
+   "CVE-2025-50181"
+  ],
+  "cwes": [
+   "CWE-601"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/urllib3@1.25.11/GHSA-pq67-6m6q-mj2v",
+  "first_fixed_above_installed": "2.5.0",
+  "fixed_versions": [
+   "2.5.0"
+  ],
+  "max_cvss": "5.3",
+  "package": "urllib3",
+  "published": "2025-06-18T17:50:00Z",
+  "summary": "urllib3 redirects are not disabled when retries are disabled on PoolManager instantiation",
+  "target": "ctfd",
+  "version": "1.25.11",
+  "vuln_id": "GHSA-pq67-6m6q-mj2v"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "urllib3.request",
+   "urllib3.PoolManager",
+   "urllib3.Retry",
+   "retries",
+   "PoolManager"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "urllib3.request",
+  "urllib3.PoolManager",
+  "urllib3.Retry",
+  "retries",
+  "PoolManager",
+  "request",
+  "Retry",
+  "MaxRetryError"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/urllib3@1.25.11/GHSA-pq67-6m6q-mj2v",
+    "package": "urllib3",
+    "version": "1.25.11",
+    "vuln_id": "GHSA-pq67-6m6q-mj2v",
+    "aliases": [
+     "CVE-2025-50181",
+     "GHSA-pq67-6m6q-mj2v",
+     "PYSEC-2026-1999"
+    ],
+    "summary": "urllib3 redirects are not disabled when retries are disabled on PoolManager instantiation",
+    "max_cvss": "5.3",
+    "fixed_versions": [
+     "2.5.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-pq67-6m6q-mj2v#0",
+      "score": 0.925,
+      "text": "GHSA-pq67-6m6q-mj2v (CVE-2025-50181)\npackage: urllib3\nsummary: urllib3 redirects are not disabled when retries are disabled on PoolManager instantiation\naffected: >=0, <2.5.0",
+      "vuln_id": "GHSA-pq67-6m6q-mj2v"
+     },
+     {
+      "id": "GHSA-pq67-6m6q-mj2v#2",
+      "score": 0.867,
+      "text": "GHSA-pq67-6m6q-mj2v (urllib3) details:\nHowever, the `retries` parameter is currently ignored, which means all the above examples don't disable redirects.\n\n## Affected usages\n\nPassing `retries` on `PoolManager` instantiation to disable redirects or restrict their number.\n\nBy default, requests and botocore users are not affected.\n\n## Impact\n\nRedirects are often used to exploit SSRF vulnerabilities. An application attempting to mitigate SSRF or open redirect vulnerabilities by disabling redirects at the PoolManager level will remain vulnerable.\n\n## Remediation\n\nYou can remediate this vulnerability with the following steps:",
+      "vuln_id": "GHSA-pq67-6m6q-mj2v"
+     },
+     {
+      "id": "GHSA-pq67-6m6q-mj2v#1",
+      "score": 0.865,
+      "text": "GHSA-pq67-6m6q-mj2v (urllib3) details:\nurllib3 handles redirects and retries using the same mechanism, which is controlled by the `Retry` object. The most common way to disable redirects is at the request level, as follows:\n\n```python\nresp = urllib3.request(\"GET\", \"https://httpbin.org/redirect/1\", redirect=False)\nprint(resp.status)\n# 302\n```\n\nHowever, it is also possible to disable redirects, for all requests, by instantiating a `PoolManager` and specifying `retries` in a way that disable redirects:\n\n```python\nimport urllib3\n\nhttp = urllib3.PoolManager(retries=0)  # should raise MaxRetryError on redirect\nhttp = urllib3.PoolManager(retries=urllib3.Retry(redirect=0))  # equivalent to the above\nhttp = urllib3.PoolManager(retries=False)  # should return the first response\n\nresp = http.request(\"GET\", \"https://httpbin.org/redirect/1\")\n```",
+      "vuln_id": "GHSA-pq67-6m6q-mj2v"
+     },
+     {
+      "id": "GHSA-pq67-6m6q-mj2v#3",
+      "score": 0.79,
+      "text": "GHSA-pq67-6m6q-mj2v (urllib3) details:\n* Upgrade to a patched version of urllib3. If your organization would benefit from the continued support of urllib3 1.x, please contact [sethmichaellarson@gmail.com](mailto:sethmichaellarson@gmail.com) to discuss sponsorship or contribution opportunities.\n * Disable redirects at the `request()` level instead of the `PoolManager()` level.",
+      "vuln_id": "GHSA-pq67-6m6q-mj2v"
+     },
+     {
+      "id": "GHSA-48p4-8xcf-vxj5#2",
+      "score": 0.832,
+      "text": "GHSA-48p4-8xcf-vxj5 (urllib3) details:\nRedirects are often used to exploit SSRF vulnerabilities. An application attempting to mitigate SSRF or open redirect vulnerabilities by disabling redirects may remain vulnerable if a Pyodide runtime redirect mechanism is unsuitable.\n\n## Remediation\n\nIf you use urllib3 in Node.js, upgrade to a patched version of urllib3.\n\nUnfortunately, browsers provide no suitable way which urllib3 can use: `XMLHttpRequest` provides no control over redirects, the Fetch API returns `opaqueredirect` responses lacking data when redirects are controlled manually. Expect default browser behavior for redirects.",
+      "vuln_id": "GHSA-48p4-8xcf-vxj5"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#3",
+      "score": 0.828,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\nIf upgrading is not immediately possible, disable [redirects](https://urllib3.readthedocs.io/en/2.6.2/user-guide.html#retrying-requests) by setting `redirect=False` for requests to untrusted source.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     }
+    ],
+    "symbols": [
+     "urllib3.request",
+     "urllib3.PoolManager",
+     "urllib3.Retry",
+     "retries",
+     "PoolManager",
+     "request",
+     "Retry",
+     "MaxRetryError"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 102.8,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "urllib3.request",
+     "urllib3.PoolManager",
+     "urllib3.Retry",
+     "retries",
+     "PoolManager",
+     "request",
+     "Retry",
+     "MaxRetryError"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['urllib3.request', 'urllib3.PoolManager', 'urllib3.Retry', 'retries', 'PoolManager', 'request', 'Retry', 'MaxRetryError']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 46.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/auth.py:449",
+      "score": 0.67,
+      "text": "# CTFd/auth.py:449-566  oauth_redirect\ndef oauth_redirect():\n    oauth_code = request.args.get(\"code\")\n    state = request.args.get(\"state\")\n    if session[\"nonce\"] != state:\n        log(\"logins\", \"[{date}] {ip} - OAuth State validation mismatch\")\n        error_for(endpoint=\"auth.login\", message=\"OAuth State validation mismatch.\")\n        return redirect(url_for(\"auth.login\"))\n\n    if oauth_code:\n        url = (\n            get_app_config(\"OAUTH_TOKEN_ENDPOINT\")\n            or get_config(\"oauth_token_endpoint\")\n            or \"https://auth.majorleaguecyber.org/oauth/token\"\n        )\n\n        client_id = get_app_config(\"OAUTH_CLIENT_ID\") or get_config(\"oauth_client_id\")\n        client_secret = get_app_config(\"OAUTH_CLIENT_SECRET\") or get_config(\n            \"oauth_client_secret\"\n        )\n        headers = {\"content-type\": \"application/x-www-form-urlencoded\"}\n        data = {\n            \"code\": oauth_code,\n            \"client_id\": client_id,\n            \"client_secret\": client_secret,\n            \"grant_type\": \"authorization_code\",\n        }\n        token_request = requests.post(url, data=data, headers=headers)\n\n        if token_request.status_code == requests.codes.ok:\n            token = token_request.json()[\"access_token\"]\n            user_url = (\n                get_app_config(\"OAUTH_API_ENDPOINT\")\n                or get_config(\"oauth_api_endpoint\")\n                or \"https://api.majorleaguecyber.org/user\"\n            )\n\n            headers = {\n                \"Authorization\": \"Bearer \" + str(token),\n                \"Content-type\": \"application/json\",\n            }\n            api_data = requests.get(url=user_url, headers=headers).json()\n\n            user_id = api_data[\"id\"]\n            user_name = api_data[\"name\"]\n            user_email = api_data[\"email\"]\n\n            user = Users.query.filter_by(email=user_email).first()\n            if user is None:\n                # Check if we are allowing registration before creating users\n                if registration_visible() or mlc_registration():\n                    user = Users(\n                        name=user_name,\n                        email=user_email,\n                        oauth_id=user_id,\n                        verified=True,\n                    )\n                    db.session.add(user)\n                    db.session.commit()\n                else:\n                    log(\"logins\", \"[{date}] {ip} - Public registration via MLC blocked\")",
+      "file": "CTFd/auth.py",
+      "start": 449,
+      "qualname": "oauth_redirect"
+     },
+     {
+      "id": "ctfd:CTFd/utils/decorators/visibility.py:55",
+      "score": 0.66,
+      "text": "# CTFd/utils/decorators/visibility.py:55-80  check_challenge_visibility\ndef check_challenge_visibility(f):\n    @functools.wraps(f)\n    def _check_challenge_visibility(*args, **kwargs):\n        v = get_config(ConfigTypes.CHALLENGE_VISIBILITY)\n        if v == ChallengeVisibilityTypes.PUBLIC:\n            return f(*args, **kwargs)\n\n        elif v == ChallengeVisibilityTypes.PRIVATE:\n            if authed():\n                return f(*args, **kwargs)\n            else:\n                if request.content_type == \"application/json\":\n                    abort(403)\n                else:\n                    return redirect(url_for(\"auth.login\", next=request.full_path))\n\n        elif v == ChallengeVisibilityTypes.ADMINS:\n            if is_admin():\n                return f(*args, **kwargs)\n            else:\n                if authed():\n                    abort(403)\n                else:\n                    return redirect(url_for(\"auth.login\", next=request.full_path))\n\n    return _check_challenge_visibility",
+      "file": "CTFd/utils/decorators/visibility.py",
+      "start": 55,
+      "qualname": "check_challenge_visibility"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/unlocks.py:73",
+      "score": 0.66,
+      "text": "# CTFd/api/v1/unlocks.py:73-85  UnlockList.get\n    def get(self, query_args):\n        q = query_args.pop(\"q\", None)\n        field = str(query_args.pop(\"field\", None))\n        filters = build_model_filters(model=Unlocks, query=q, field=field)\n\n        unlocks = Unlocks.query.filter_by(**query_args).filter(*filters).all()\n        schema = UnlockSchema()\n        response = schema.dump(unlocks)\n\n        if response.errors:\n            return {\"success\": False, \"errors\": response.errors}, 400\n\n        return {\"success\": True, \"data\": response.data}",
+      "file": "CTFd/api/v1/unlocks.py",
+      "start": 73,
+      "qualname": "UnlockList.get"
+     },
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:14",
+      "score": 0.66,
+      "text": "# CTFd/utils/validators/__init__.py:14-17  is_safe_url\ndef is_safe_url(target):\n    ref_url = urlparse(request.host_url)\n    test_url = urlparse(urljoin(request.host_url, target))\n    return test_url.scheme in (\"http\", \"https\") and ref_url.netloc == test_url.netloc",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 14,
+      "qualname": "is_safe_url"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/challenges.py:349",
+      "score": 0.659,
+      "text": "# CTFd/api/v1/challenges.py:349-499  Challenge.get\n    def get(self, challenge_id):\n        if is_admin():\n            chal = Challenges.query.filter(Challenges.id == challenge_id).first_or_404()\n        else:\n            chal = Challenges.query.filter(\n                Challenges.id == challenge_id,\n                and_(Challenges.state != \"hidden\", Challenges.state != \"locked\"),\n            ).first_or_404()\n\n        try:\n            chal_class = get_chal_class(chal.type)\n        except KeyError:\n            abort(\n                500,\n                f\"The underlying challenge type ({chal.type}) is not installed. This challenge can not be loaded.\",\n            )\n\n        if chal.requirements:\n            requirements = chal.requirements.get(\"prerequisites\", [])\n            anonymize = chal.requirements.get(\"anonymize\")\n            # Gather all challenge IDs so that we can determine invalid challenge prereqs\n            all_challenge_ids = {\n                c.id for c in Challenges.query.with_entities(Challenges.id).all()\n            }\n            if challenges_visible():\n                user = get_current_user()\n                if user:\n                    solve_ids = (\n                        Solves.query.with_entities(Solves.challenge_id)\n                        .filter_by(account_id=user.account_id)\n                        .order_by(Solves.challenge_id.asc())\n                        .all()\n                    )\n                else:\n                    # We need to handle the case where a user is viewing challenges anonymously\n                    solve_ids = []\n                solve_ids = {value for value, in solve_ids}\n                prereqs = set(requirements).intersection(all_challenge_ids)\n                if solve_ids >= prereqs or is_admin():\n                    pass\n                else:\n                    if anonymize:\n                        return {\n                            \"success\": True,\n                            \"data\": {\n                                \"id\": chal.id,\n                                \"type\": \"hidden\",\n                                \"name\": \"???\",\n                                \"value\": 0,\n                                \"solves\": None,\n                                \"solved_by_me\": False,\n                                \"category\": \"???\",\n                                \"tags\": [],\n                                \"template\": \"\",\n                                \"script\": \"\",\n                            },\n                        }\n                    abort(403)\n            else:\n                abort(403)",
+      "file": "CTFd/api/v1/challenges.py",
+      "start": 349,
+      "qualname": "Challenge.get"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "urllib3.request",
+     "urllib3.PoolManager",
+     "urllib3.Retry",
+     "retries",
+     "PoolManager"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2413,
+   "tokens_out": 56,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"urllib3.request\", \"urllib3.PoolManager\", \"urllib3.Retry\", \"retries\", \"PoolManager\"]}",
+     "in": 2413,
+     "out": 56,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2345,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2345,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4758,
+  "tokens_out": 92,
+  "cost_usd_est": 0.0,
+  "seconds": 0.19
+ },
+ "created": "2026-11-10T00:06:19+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,488 @@
+{
+ "finding_id": "mealie/starlette@0.27.0/GHSA-2c2j-9gv5-cj73",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-54121",
+   "GHSA-2c2j-9gv5-cj73",
+   "PYSEC-2026-1941"
+  ],
+  "cves": [
+   "CVE-2025-54121"
+  ],
+  "cwes": [
+   "CWE-770"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/starlette@0.27.0/GHSA-2c2j-9gv5-cj73",
+  "first_fixed_above_installed": "0.47.2",
+  "fixed_versions": [
+   "0.47.2"
+  ],
+  "max_cvss": "5.3",
+  "package": "starlette",
+  "published": "2025-07-21T19:34:23Z",
+  "summary": "Starlette has possible denial-of-service vector when parsing large files in multipart forms",
+  "target": "mealie",
+  "version": "0.27.0",
+  "vuln_id": "GHSA-2c2j-9gv5-cj73"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "SpooledTemporaryFile._rolled",
+   "UploadFile",
+   "SpooledTemporaryFile",
+   "rolled_to_disk",
+   "run_in_threadpool"
+  ],
+  "reasoning": "mock: 1 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/services/scheduler/runner.py:69",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/routes/_base/controller.py:13",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/routes/media/media_recipe.py:5",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "SpooledTemporaryFile._rolled",
+  "UploadFile",
+  "SpooledTemporaryFile",
+  "rolled_to_disk",
+  "run_in_threadpool"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/starlette@0.27.0/GHSA-2c2j-9gv5-cj73",
+    "package": "starlette",
+    "version": "0.27.0",
+    "vuln_id": "GHSA-2c2j-9gv5-cj73",
+    "aliases": [
+     "CVE-2025-54121",
+     "GHSA-2c2j-9gv5-cj73",
+     "PYSEC-2026-1941"
+    ],
+    "summary": "Starlette has possible denial-of-service vector when parsing large files in multipart forms",
+    "max_cvss": "5.3",
+    "fixed_versions": [
+     "0.47.2"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 28.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-2c2j-9gv5-cj73#0",
+      "score": 0.912,
+      "text": "GHSA-2c2j-9gv5-cj73 (CVE-2025-54121)\npackage: starlette\nsummary: Starlette has possible denial-of-service vector when parsing large files in multipart forms\naffected: >=0, <0.47.2",
+      "vuln_id": "GHSA-2c2j-9gv5-cj73"
+     },
+     {
+      "id": "GHSA-2c2j-9gv5-cj73#3",
+      "score": 0.802,
+      "text": "GHSA-2c2j-9gv5-cj73 (starlette) details:\n### Impact\nTo be honest, very low and not many users will be impacted. Parsing large forms is already CPU intensive so the additional IO block doesn't slow down `starlette` that much on systems with modern HDDs/SSDs. If someone is running on tape they might see a greater impact.",
+      "vuln_id": "GHSA-2c2j-9gv5-cj73"
+     },
+     {
+      "id": "GHSA-2c2j-9gv5-cj73#1",
+      "score": 0.773,
+      "text": "GHSA-2c2j-9gv5-cj73 (starlette) details:\n### Summary\nWhen parsing a multi-part form with large files (greater than the [default max spool size](https://github.com/encode/starlette/blob/fa5355442753f794965ae1af0f87f9fec1b9a3de/starlette/formparsers.py#L126)) `starlette` will block the main thread to roll the file over to disk. This blocks the event thread which means we can't accept new connections.\n\n### Details\nPlease see this discussion for details: https://github.com/encode/starlette/discussions/2927#discussioncomment-13721403. In summary the following UploadFile code (copied from [here](https://github.com/encode/starlette/blob/fa5355442753f794965ae1af0f87f9fec1b9a3de/starlette/datastructures.py#L436C5-L447C14)) has a minor bug. Instead of just checking for `self._in_memory` we should also check if the additional bytes will cause a rollover.\n\n```python",
+      "vuln_id": "GHSA-2c2j-9gv5-cj73"
+     },
+     {
+      "id": "GHSA-2c2j-9gv5-cj73#2",
+      "score": 0.64,
+      "text": "GHSA-2c2j-9gv5-cj73 (starlette) details:\n@property\n    def _in_memory(self) -> bool:\n        # check for SpooledTemporaryFile._rolled\n        rolled_to_disk = getattr(self.file, \"_rolled\", True)\n        return not rolled_to_disk\n\nasync def write(self, data: bytes) -> None:\n        if self.size is not None:\n            self.size += len(data)\n\nif self._in_memory:\n            self.file.write(data)\n        else:\n            await run_in_threadpool(self.file.write, data)\n```\n\nI have already created a PR which fixes the problem: https://github.com/encode/starlette/pull/2962\n\n### PoC\nSee the discussion [here](https://github.com/encode/starlette/discussions/2927#discussioncomment-13721403) for steps on how to reproduce.",
+      "vuln_id": "GHSA-2c2j-9gv5-cj73"
+     },
+     {
+      "id": "GHSA-f96h-pmfr-66vw#0",
+      "score": 0.854,
+      "text": "GHSA-f96h-pmfr-66vw (CVE-2024-47874)\npackage: starlette\nsummary: Starlette Denial of service (DoS) via multipart/form-data\naffected: >=0, <0.40.0",
+      "vuln_id": "GHSA-f96h-pmfr-66vw"
+     },
+     {
+      "id": "GHSA-f96h-pmfr-66vw#2",
+      "score": 0.839,
+      "text": "GHSA-f96h-pmfr-66vw (starlette) details:\napp = Starlette(routes=[\n    Route('/', poc, methods=[\"POST\"]),\n])\n```\n\n```sh\ncurl http://localhost:8000 -F 'big=</dev/urandom'\n```\n\n### Impact\nThis Denial of service (DoS) vulnerability affects all applications built with Starlette (or FastAPI) accepting form requests.",
+      "vuln_id": "GHSA-f96h-pmfr-66vw"
+     }
+    ],
+    "symbols": [
+     "SpooledTemporaryFile._rolled",
+     "UploadFile",
+     "SpooledTemporaryFile",
+     "rolled_to_disk",
+     "run_in_threadpool"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 50.2,
+   "output": {
+    "package": "starlette",
+    "import_names": [
+     "starlette"
+    ],
+    "symbols": [
+     "SpooledTemporaryFile._rolled",
+     "UploadFile",
+     "SpooledTemporaryFile",
+     "rolled_to_disk",
+     "run_in_threadpool"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/routes/_base/controller.py:13",
+     "mealie/routes/media/media_recipe.py:5",
+     "mealie/routes/media/media_user.py:3",
+     "mealie/routes/recipe/recipe_crud_routes.py:12",
+     "mealie/routes/spa/__init__.py:10",
+     "mealie/routes/utility_routes.py:4",
+     "mealie/services/scheduler/runner.py:12"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 25,
+    "vulnerable_call_sites": [
+     {
+      "file": "mealie/services/scheduler/runner.py",
+      "line": 69,
+      "code": "await run_in_threadpool(func)",
+      "resolved": "starlette.concurrency.run_in_threadpool",
+      "function": "mealie.services.scheduler.runner:loop",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.app.app_about:get_startup_info",
+       "mealie.db.models.users.users:User.__init__",
+       "mealie.db.models._model_utils.auto_init:auto_init",
+       "mealie.services.scheduler.runner:decorator",
+       "mealie.services.scheduler.runner:wrapped",
+       "mealie.services.scheduler.runner:loop"
+      ],
+      "snippet": "   66                          if is_coroutine:\n   67                              await func()  # type: ignore\n   68                          else:\n   69                              await run_in_threadpool(func)\n   70                          repetitions += 1\n   71                      except Exception as exc:\n   72                          if logger is not None:"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/routes/_base/controller.py:119",
+      "code": "route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:123",
+      "code": "routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:178",
+      "code": "def _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:",
+      "function": "mealie.routes._base.controller:_update_cbv_route_endpoint_signature",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:33",
+      "code": "return FileResponse(recipe_image)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_img",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:51",
+      "code": "return FileResponse(timeline_event_image)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_timeline_event_img",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:62",
+      "code": "return FileResponse(file)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_asset",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:22",
+      "code": "return FileResponse(recipe_image, media_type=\"image/webp\")",
+      "function": "mealie.routes.media.media_user:get_user_image",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:15",
+      "code": "@router.get(\"/{user_id}/{file_name}\", response_class=FileResponse)",
+      "function": "mealie.routes.media.media_user:get_user_image",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:115",
+      "code": "return FileResponse(file)",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:104",
+      "code": "@router_exports.get(\"/{slug}/exports\", response_class=FileResponse)",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:133",
+      "code": "return FileResponse(temp_path, filename=f\"{slug}.zip\")",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_zip",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/spa/__init__.py:32",
+      "code": "except HTTPException as ex:",
+      "function": "mealie.routes.spa:SPAStaticFiles.get_response",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/utility_routes.py:27",
+      "code": "return FileResponse(file_path, media_type=\"application/octet-stream\", filename=file_path.name)",
+      "function": "mealie.routes.utility_routes:download_file",
+      "in_test": false
+     },
+     {
+      "location": "mealie/services/scheduler/runner.py:69",
+      "code": "await run_in_threadpool(func)",
+      "function": "mealie.services.scheduler.runner:loop",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [
+     [
+      "mealie.routes.app.app_about:get_startup_info",
+      "mealie.db.models.users.users:User.__init__",
+      "mealie.db.models._model_utils.auto_init:auto_init",
+      "mealie.services.scheduler.runner:decorator",
+      "mealie.services.scheduler.runner:wrapped",
+      "mealie.services.scheduler.runner:loop"
+     ]
+    ],
+    "summary": "starlette: imported in 7 non-test location(s); 25 package call/reference site(s); named vulnerable symbols ['SpooledTemporaryFile._rolled', 'UploadFile', 'SpooledTemporaryFile', 'rolled_to_disk', 'run_in_threadpool']; 1 production call site(s) of those symbols, 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 34.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:mealie/services/scheduler/runner.py:69",
+      "score": 1.0,
+      "file": "mealie/services/scheduler/runner.py",
+      "start": 69,
+      "qualname": "mealie.services.scheduler.runner:loop",
+      "text": "# mealie/services/scheduler/runner.py around line 69\n   66                          if is_coroutine:\n   67                              await func()  # type: ignore\n   68                          else:\n   69                              await run_in_threadpool(func)\n   70                          repetitions += 1\n   71                      except Exception as exc:\n   72                          if logger is not None:"
+     },
+     {
+      "id": "mealie:mealie/services/scheduler/tasks/purge_group_exports.py:36",
+      "score": 0.661,
+      "text": "# mealie/services/scheduler/tasks/purge_group_exports.py:36-49  purge_excess_files\ndef purge_excess_files() -> None:\n    \"\"\"Purges all files in the uploads directory that are older than 2 days\"\"\"\n    directories = get_app_dirs()\n    logger = root_logger.get_logger()\n\n    limit = datetime.datetime.now() - datetime.timedelta(minutes=ONE_DAY_AS_MINUTES * 2)\n\n    for file in directories.GROUPS_DIR.glob(\"**/export/*.zip\"):\n        # TODO: fix comparison types\n        if file.stat().st_mtime < limit:  # type: ignore\n            file.unlink()\n            logger.debug(f\"excess group file removed '{file}'\")\n\n    logger.info(\"finished purging excess files\")",
+      "file": "mealie/services/scheduler/tasks/purge_group_exports.py",
+      "start": 36,
+      "qualname": "purge_excess_files"
+     },
+     {
+      "id": "mealie:mealie/services/scraper/scraper_strategies.py:27",
+      "score": 0.659,
+      "text": "# mealie/services/scraper/scraper_strategies.py:27-70  safe_scrape_html\nasync def safe_scrape_html(url: str) -> str:\n    \"\"\"\n    Scrapes the html from a url but will cancel the request\n    if the request takes longer than 15 seconds. This is used to mitigate\n    DDOS attacks from users providing a url with arbitrary large content.\n    \"\"\"\n    async with AsyncClient() as client:\n        html_bytes = b\"\"\n        async with client.stream(\"GET\", url, timeout=SCRAPER_TIMEOUT, headers={\"User-Agent\": _FIREFOX_UA}) as resp:\n            start_time = time.time()\n\n            async for chunk in resp.aiter_bytes(chunk_size=1024):\n                html_bytes += chunk\n\n                if time.time() - start_time > SCRAPER_TIMEOUT:\n                    raise ForceTimeoutException()\n\n        # =====================================\n        # Copied from requests text property\n\n        # Try charset from content-type\n        content = None\n        encoding = resp.encoding\n\n        if not html_bytes:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if encoding is None:\n            encoding = resp.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(html_bytes, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(html_bytes, errors=\"replace\")\n\n        return content",
+      "file": "mealie/services/scraper/scraper_strategies.py",
+      "start": 27,
+      "qualname": "safe_scrape_html"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:151",
+      "score": 0.654,
+      "text": "# mealie/core/dependencies/dependencies.py:151-175  validate_file_token\ndef validate_file_token(token: str | None = None) -> Path:\n    \"\"\"\n    Args:\n        token (Optional[str], optional): _description_. Defaults to None.\n\n    Raises:\n        HTTPException: 400 Bad Request when no token or the file doesn't exist\n        HTTPException: 401 Unauthorized when the token is invalid\n    \"\"\"\n    if not token:\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    try:\n        payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])\n        file_path = Path(payload.get(\"file\"))\n    except JWTError as e:\n        raise HTTPException(\n            status_code=status.HTTP_401_UNAUTHORIZED,\n            detail=\"could not validate file token\",\n        ) from e\n\n    if not file_path.exists():\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    return file_path",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 151,
+      "qualname": "validate_file_token"
+     },
+     {
+      "id": "mealie:mealie/routes/admin/admin_backups.py:76",
+      "score": 0.651,
+      "text": "# mealie/routes/admin/admin_backups.py:76-96  AdminBackupController.upload_one\n    def upload_one(self, archive: UploadFile = File(...)):\n        \"\"\"Upload a .zip File to later be imported into Mealie\"\"\"\n        if \".\" not in archive.filename:\n            raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n        if archive.filename.split(\".\")[-1] != \"zip\":\n            raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n        name = Path(archive.filename).stem\n\n        app_dirs = get_app_dirs()\n        dest = app_dirs.BACKUP_DIR.joinpath(f\"{name}.zip\")\n\n        if dest.absolute().parent != app_dirs.BACKUP_DIR:\n            raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n        with dest.open(\"wb\") as buffer:\n            shutil.copyfileobj(archive.file, buffer)\n\n        if not dest.is_file():\n            raise HTTPException(status.HTTP_400_BAD_REQUEST)",
+      "file": "mealie/routes/admin/admin_backups.py",
+      "start": 76,
+      "qualname": "AdminBackupController.upload_one"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/bulk_actions.py:51",
+      "score": 0.645,
+      "text": "# mealie/routes/recipe/bulk_actions.py:51-58  RecipeBulkActionsController.get_exported_data_token\n    def get_exported_data_token(self, path: Path):\n        \"\"\"Returns a token to download a file\"\"\"\n        path = Path(path).resolve()\n\n        if not path.is_relative_to(self.folders.DATA_DIR):\n            raise HTTPException(400, \"path must be relative to data directory\")\n\n        return {\"fileToken\": create_file_token(path)}",
+      "file": "mealie/routes/recipe/bulk_actions.py",
+      "start": 51,
+      "qualname": "RecipeBulkActionsController.get_exported_data_token"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "SpooledTemporaryFile._rolled",
+     "UploadFile",
+     "SpooledTemporaryFile",
+     "rolled_to_disk",
+     "run_in_threadpool"
+    ],
+    "reasoning": "mock: 1 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/services/scheduler/runner.py:69",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:13",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:5",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2487,
+   "tokens_out": 126,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 1 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/services/scheduler/runner.py:69\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/routes/_base/controller.py:13\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/routes/media/media_recipe.py:5\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"SpooledTemporaryFile._rolled\", \"UploadFile\", \"SpooledTemporaryFile\", \"rolled_to_disk\", \"run_in_threadpool\"]}",
+     "in": 2487,
+     "out": 126,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 2460,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2460,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4947,
+  "tokens_out": 161,
+  "cost_usd_est": 0.0,
+  "seconds": 0.12
+ },
+ "created": "2026-11-10T00:06:31+00:00",
+ "code_version": "a3e1ef4"
+}

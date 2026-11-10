@@ -1,0 +1,306 @@
+{
+ "finding_id": "healthchecks/urllib3@1.26.20/GHSA-gm62-xv2j-4w53",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-66418",
+   "GHSA-gm62-xv2j-4w53",
+   "PYSEC-2026-1998"
+  ],
+  "cves": [
+   "CVE-2025-66418"
+  ],
+  "cwes": [
+   "CWE-770"
+  ],
+  "direct_dependency": false,
+  "finding_id": "healthchecks/urllib3@1.26.20/GHSA-gm62-xv2j-4w53",
+  "first_fixed_above_installed": "2.6.0",
+  "fixed_versions": [
+   "2.6.0"
+  ],
+  "max_cvss": "8.9",
+  "package": "urllib3",
+  "published": "2025-12-05T18:15:19Z",
+  "summary": "urllib3 allows an unbounded number of links in the decompression chain",
+  "target": "healthchecks",
+  "version": "1.26.20",
+  "vuln_id": "GHSA-gm62-xv2j-4w53"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "preload_content"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "preload_content"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/urllib3@1.26.20/GHSA-gm62-xv2j-4w53",
+    "package": "urllib3",
+    "version": "1.26.20",
+    "vuln_id": "GHSA-gm62-xv2j-4w53",
+    "aliases": [
+     "CVE-2025-66418",
+     "GHSA-gm62-xv2j-4w53",
+     "PYSEC-2026-1998"
+    ],
+    "summary": "urllib3 allows an unbounded number of links in the decompression chain",
+    "max_cvss": "8.9",
+    "fixed_versions": [
+     "2.6.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-gm62-xv2j-4w53#0",
+      "score": 0.899,
+      "text": "GHSA-gm62-xv2j-4w53 (CVE-2025-66418)\npackage: urllib3\nsummary: urllib3 allows an unbounded number of links in the decompression chain\naffected: >=1.24, <2.6.0",
+      "vuln_id": "GHSA-gm62-xv2j-4w53"
+     },
+     {
+      "id": "GHSA-gm62-xv2j-4w53#1",
+      "score": 0.861,
+      "text": "GHSA-gm62-xv2j-4w53 (urllib3) details:\n## Impact\n\nurllib3 supports chained HTTP encoding algorithms for response content according to RFC 9110 (e.g., `Content-Encoding: gzip, zstd`).\n\nHowever, the number of links in the decompression chain was unbounded allowing a malicious server to insert a virtually unlimited number of compression steps leading to high CPU usage and massive memory allocation for the decompressed data.\n\n## Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier for HTTP requests to untrusted sources unless they disable content decoding explicitly.\n\n## Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library limits the number of links to 5.",
+      "vuln_id": "GHSA-gm62-xv2j-4w53"
+     },
+     {
+      "id": "GHSA-gm62-xv2j-4w53#2",
+      "score": 0.682,
+      "text": "GHSA-gm62-xv2j-4w53 (urllib3) details:\nIf upgrading is not immediately possible, use [`preload_content=False`](https://urllib3.readthedocs.io/en/2.5.0/advanced-usage.html#streaming-and-i-o) and ensure that `resp.headers[\"content-encoding\"]` contains a safe number of encodings before reading the response content.",
+      "vuln_id": "GHSA-gm62-xv2j-4w53"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#2",
+      "score": 0.816,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\nThe decompression logic could cause urllib3 to fully decode a small amount of highly compressed data in a single operation. This can result in excessive resource consumption (high CPU usage and massive memory allocation for the decompressed data; CWE-409) on the client side, even if the application only requested a small chunk of data.\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier to stream large compressed responses or content from untrusted sources.\n\n`stream()`, `read(amt=256)`, `read1(amt=256)`, `read_chunked(amt=256)`, `readinto(b)` are examples of `urllib3.HTTPResponse` method calls using the affected logic unless decoding is disabled explicitly.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library avoids decompressing data that exceeds the requested amount.",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#2",
+      "score": 0.812,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\nHowever, for HTTP redirect responses, the library would read the entire response body to drain the connection and decompress the content unnecessarily. This decompression occurred even before any read methods were called, and configured read limits did not restrict the amount of decompressed data. As a result, there was no safeguard against decompression bombs. A malicious server could exploit this to trigger excessive resource consumption on the client (high CPU usage and large memory allocations for decompressed data; CWE-409).\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.6.2 and earlier to stream content from untrusted sources by setting `preload_content=False` when they do not disable redirects.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.3 in which the library does not decode content of redirect responses when `preload_content=False`.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     }
+    ],
+    "symbols": [
+     "preload_content"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 63.9,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "preload_content"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['preload_content']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 35.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/api/transports.py:33",
+      "score": 0.677,
+      "text": "# hc/api/transports.py:33-37  tmpl\ndef tmpl(template_name, **ctx) -> str:\n    template_path = \"integrations/%s\" % template_name\n    # \\xa0 is non-breaking space. It causes SMS messages to use UCS2 encoding\n    # and cost twice the money.\n    return render_to_string(template_path, ctx).strip().replace(\"\\xa0\", \" \")",
+      "file": "hc/api/transports.py",
+      "start": 33,
+      "qualname": "tmpl"
+     },
+     {
+      "id": "healthchecks:hc/front/urls.py:module",
+      "score": 0.665,
+      "text": "# hc/front/urls.py (module level)\nfrom django.urls import include, path\nfrom hc.front import views\ncheck_urls = [\n    path(\"name/\", views.update_name, name=\"hc-update-name\"),\n    path(\"details/\", views.details, name=\"hc-details\"),\n    path(\"filtering_rules/\", views.filtering_rules, name=\"hc-filtering-rules\"),\n    path(\"timeout/\", views.update_timeout, name=\"hc-update-timeout\"),\n    path(\"pause/\", views.pause, name=\"hc-pause\"),\n    path(\"resume/\", views.resume, name=\"hc-resume\"),\n    path(\"remove/\", views.remove_check, name=\"hc-remove-check\"),\n    path(\"log/\", views.log, name=\"hc-log\"),\n    path(\"status/\", views.status_single, name=\"hc-status-single\"),\n    path(\"last_ping/\", views.ping_details, name=\"hc-last-ping\"),\n    path(\"transfer/\", views.transfer, name=\"hc-transfer\"),\n    path(\"copy/\", views.copy, name=\"hc-copy\"),\n    path(\n        \"channels/<uuid:channel_code>/enabled\",\n        views.switch_channel,\n        name=\"hc-switch-channel\",\n    ),\n    path(\"pings/<int:n>/\", views.ping_details, name=\"hc-ping-details\"),\n]\nchannel_urls = [\n    path(\"add_pushbullet/\", views.add_pushbullet_complete),\n    path(\"add_discord/\", views.add_discord_complete),\n    path(\"add_linenotify/\", views.add_linenotify_complete),\n    path(\"add_pagerduty/\", views.add_pd_complete, name=\"hc-add-pd-complete\"),\n    path(\"add_pushover/\", views.pushover_help, name=\"hc-pushover-help\"),\n    path(\"telegram/\", views.telegram_help, name=\"hc-telegram-help\"),\n    path(\"telegram/bot/\", views.telegram_bot, name=\"hc-telegram-webhook\"),\n    path(\"pagerduty/\", views.pd_help, name=\"hc-pagerduty-help\"),\n    path(\"add_slack/\", views.slack_help, name=\"hc-slack-help\"),\n    path(\"add_slack_btn/\", views.add_slack_complete),\n    path(\"add_telegram/\", views.add_telegram, name=\"hc-add-telegram\"),\n    path(\"add_trello/settings/\", views.trello_settings, name=\"hc-trello-settings\"),\n    path(\"<uuid:code>/checks/\", views.channel_checks, name=\"hc-channel-checks\"),\n    path(\"<uuid:code>/name/\", views.update_channel_name, name=\"hc-channel-name\"),\n    path(\"<uuid:code>/edit/\", views.edit_channel, name=\"hc-edit-channel\"),\n    path(\"<uuid:code>/test/\", views.send_test_notification, name=\"hc-channel-test\"),\n    path(\"<uuid:code>/remove/\", views.remove_channel, name=\"hc-remove-channel\"),\n    path(\n        \"<uuid:code>/verify/<slug:token>/\", views.verify_email, name=\"hc-verify-email\"\n    ),\n    path(\n        \"<uuid:code>/unsub/<str:signed_token>/\",\n        views.unsubscribe_email,\n        name=\"hc-unsubscribe-alerts\",\n    ),\n]\nproject_urls = [\n    path(\"add_apprise/\", views.add_apprise, name=\"hc-add-apprise\"),\n    path(\"add_call/\", views.add_call, name=\"hc-add-call\"),\n    path(\"add_discord/\", views.add_discord, name=\"hc-add-discord\"),\n    path(\"add_email/\", views.email_form, name=\"hc-add-email\"),\n    path(\"add_linenotify/\", views.add_linenotify, name=\"hc-add-linenotify\"),\n    path(\"add_matrix/\", views.add_matrix, name=\"hc-add-matrix\"),\n    path(\"add_mattermost/\", views.add_mattermost, name=\"hc-add-mattermost\"),\n    path(\"add_msteams/\", views.add_msteams, name=\"hc-add-msteams\"),\n    path(\"add_opsgenie/\", views.add_opsgenie, name=\"hc-add-opsgenie\"),\n    path(\"add_pagertree/\", views.add_pagertree, name=\"hc-add-pagertree\"),",
+      "file": "hc/front/urls.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/api/admin.py:195",
+      "score": 0.656,
+      "text": "# hc/api/admin.py:195-200  ChannelsAdmin.transport\n    def transport(self, obj):\n        note = \"\"\n        if obj.kind == \"email\" and not obj.email_verified:\n            note = \" (not verified)\"\n\n        return f'<span class=\"ic-{ obj.kind }\"></span> &nbsp; {obj.kind}{note}'",
+      "file": "hc/api/admin.py",
+      "start": 195,
+      "qualname": "ChannelsAdmin.transport"
+     },
+     {
+      "id": "healthchecks:hc/api/models.py:475",
+      "score": 0.652,
+      "text": "# hc/api/models.py:475-480  Channel.get_unsub_link\n    def get_unsub_link(self):\n        signer = TimestampSigner(salt=\"alerts\")\n        signed_token = signer.sign(self.make_token())\n        args = [self.code, signed_token]\n        verify_link = reverse(\"hc-unsubscribe-alerts\", args=args)\n        return settings.SITE_ROOT + verify_link",
+      "file": "hc/api/models.py",
+      "start": 475,
+      "qualname": "Channel.get_unsub_link"
+     },
+     {
+      "id": "healthchecks:hc/lib/badges.py:module",
+      "score": 0.649,
+      "text": "# hc/lib/badges.py (module level)\nfrom django.conf import settings\nfrom django.core.signing import base64_hmac\nfrom django.template.loader import render_to_string\nfrom django.urls import reverse\nWIDTHS = {\n    \"a\": 7,\n    \"b\": 7,\n    \"c\": 6,\n    \"d\": 7,\n    \"e\": 6,\n    \"f\": 4,\n    \"g\": 7,\n    \"h\": 7,\n    \"i\": 3,\n    \"j\": 3,\n    \"k\": 7,\n    \"l\": 3,\n    \"m\": 10,\n    \"n\": 7,\n    \"o\": 7,\n    \"p\": 7,\n    \"q\": 7,\n    \"r\": 4,\n    \"s\": 6,\n    \"t\": 5,\n    \"u\": 7,\n    \"v\": 7,\n    \"w\": 9,\n    \"x\": 6,\n    \"y\": 7,\n    \"z\": 7,\n    \"0\": 7,\n    \"1\": 6,\n    \"2\": 7,\n    \"3\": 7,\n    \"4\": 7,\n    \"5\": 7,\n    \"6\": 7,\n    \"7\": 7,\n    \"8\": 7,\n    \"9\": 7,\n    \"A\": 8,\n    \"B\": 7,\n    \"C\": 8,\n    \"D\": 8,\n    \"E\": 7,\n    \"F\": 6,\n    \"G\": 9,\n    \"H\": 8,\n    \"I\": 3,\n    \"J\": 4,\n    \"K\": 7,\n    \"L\": 6,\n    \"M\": 10,\n    \"N\": 8,\n    \"O\": 9,\n    \"P\": 6,\n    \"Q\": 9,\n    \"R\": 7,\n    \"S\": 7,",
+      "file": "hc/lib/badges.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "preload_content"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2020,
+   "tokens_out": 39,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"preload_content\"]}",
+     "in": 2020,
+     "out": 39,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.6,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1953,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1953,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3973,
+  "tokens_out": 75,
+  "cost_usd_est": 0.0,
+  "seconds": 0.13
+ },
+ "created": "2026-11-10T00:06:14+00:00",
+ "code_version": "a3e1ef4"
+}

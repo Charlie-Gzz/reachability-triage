@@ -1,0 +1,481 @@
+{
+ "finding_id": "mealie/pillow@10.2.0/GHSA-8v84-f9pq-wr9x",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-54059",
+   "GHSA-8v84-f9pq-wr9x",
+   "PYSEC-2026-2253"
+  ],
+  "cves": [
+   "CVE-2026-54059"
+  ],
+  "cwes": [
+   "CWE-789"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/pillow@10.2.0/GHSA-8v84-f9pq-wr9x",
+  "first_fixed_above_installed": "12.3.0",
+  "fixed_versions": [
+   "12.3.0"
+  ],
+  "max_cvss": "7.5",
+  "package": "pillow",
+  "published": "2026-07-20T21:08:27Z",
+  "summary": "Pillow `PcfFontFile._load_bitmaps()`: `Image.frombytes()` called without `_decompression_bomb_check()` \u2014 bomb protection bypass via PCF font loading",
+  "target": "mealie",
+  "version": "10.2.0",
+  "vuln_id": "GHSA-8v84-f9pq-wr9x"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "PIL.PcfFontFile",
+   "PIL.Image",
+   "PcfFontFile._load_bitmaps",
+   "PcfFontFile",
+   "_load_bitmaps"
+  ],
+  "reasoning": "mock: 4 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/pkgs/img/minify.py:15",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:68",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:76",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "PIL.PcfFontFile",
+  "PIL.Image",
+  "PcfFontFile._load_bitmaps",
+  "PcfFontFile",
+  "_load_bitmaps",
+  "Image.frombytes",
+  "frombytes",
+  "_decompression_bomb_check"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pillow@10.2.0/GHSA-8v84-f9pq-wr9x",
+    "package": "pillow",
+    "version": "10.2.0",
+    "vuln_id": "GHSA-8v84-f9pq-wr9x",
+    "aliases": [
+     "CVE-2026-54059",
+     "GHSA-8v84-f9pq-wr9x",
+     "PYSEC-2026-2253"
+    ],
+    "summary": "Pillow `PcfFontFile._load_bitmaps()`: `Image.frombytes()` called without `_decompression_bomb_check()` \u2014 bomb protection bypass via PCF font loading",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "12.3.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 40.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-8v84-f9pq-wr9x#0",
+      "score": 0.888,
+      "text": "GHSA-8v84-f9pq-wr9x (CVE-2026-54059)\npackage: pillow\nsummary: Pillow `PcfFontFile._load_bitmaps()`: `Image.frombytes()` called without `_decompression_bomb_check()` \u2014 bomb protection bypass via PCF font loading\naffected: >=0, <12.3.0",
+      "vuln_id": "GHSA-8v84-f9pq-wr9x"
+     },
+     {
+      "id": "GHSA-8v84-f9pq-wr9x#7",
+      "score": 0.854,
+      "text": "GHSA-8v84-f9pq-wr9x (pillow) details:\n## Impact\n- **Availability**: HIGH \u2014 up to 1.07 GB per glyph, no limit per font file\n- **Confidentiality**: None\n- **Integrity**: None\n- Any service loading PCF fonts from untrusted sources (e.g., `PcfFontFile(fp)`) is affected\n- `PcfFontFile` is never loaded via `Image.open()`, so the bomb check protection is completely absent from the entire PCF font loading path\n- Confirmed unpatched on `python-pillow/Pillow` `main` branch as of 2026-06-07",
+      "vuln_id": "GHSA-8v84-f9pq-wr9x"
+     },
+     {
+      "id": "GHSA-8v84-f9pq-wr9x#2",
+      "score": 0.801,
+      "text": "GHSA-8v84-f9pq-wr9x (pillow) details:\n`Image.frombytes()` calls `Image.new()` first (allocating the full C-heap buffer), **then** attempts to fill it. This creates two distinct attack paths:\n\n- **Persistent attack**: Provide matching bitmap data \u2192 `frombytes()` succeeds \u2192 image stored in `font.glyph[ch]` permanently\n- **Transient attack**: Provide a 148-byte PCF file with large declared dimensions but no data \u2192 `Image.new()` allocates the full buffer \u2192 `ValueError` \u2192 buffer freed \u2192 but the spike occurs before Python can respond\n\n## Steps to reproduce\n\n**Proof of Concept script:**\n\n```python\n#!/usr/bin/env python3\n\"\"\"PoC: PcfFontFile bomb bypass \u2014 148-byte PCF \u2192 23 MB allocation\"\"\"\nimport io, struct, tracemalloc, warnings\nwarnings.filterwarnings(\"ignore\")\n\nfrom PIL.PcfFontFile import PcfFontFile\nfrom PIL.Image import _decompression_bomb_check, DecompressionBombWarning, DecompressionBombError",
+      "vuln_id": "GHSA-8v84-f9pq-wr9x"
+     },
+     {
+      "id": "GHSA-8v84-f9pq-wr9x#1",
+      "score": 0.781,
+      "text": "GHSA-8v84-f9pq-wr9x (pillow) details:\n## Description\n`PIL/PcfFontFile.py` `_load_bitmaps()` (line 227) reads glyph dimensions from the PCF `METRICS` section and passes them directly to `Image.frombytes()` without calling `Image._decompression_bomb_check()`. Dimensions originate from unsigned 16-bit values:\n\n```\nxsize = right - left          (max: 65535 \u2212 0 = 65535)\nysize = ascent + descent      (max: 65535 + 65535 = 131070)\n```\n\nMaximum exploitable pixel count: **65,535 \u00d7 131,070 = 8,589,734,450 pixels** \u2014 **48\u00d7 the DecompressionBombError threshold**.\n\n**Vulnerable code (`PIL/PcfFontFile.py` line 224\u2013227):**\n```python\nfor i in range(nbitmaps):\n    xsize, ysize = metrics[i][:2]    # from PCF METRICS \u2014 attacker-controlled\n    b, e = offsets[i : i + 2]\n    bitmaps.append(\n        Image.frombytes(\"1\", (xsize, ysize), data[b:e], \"raw\", mode, pad(xsize))\n        # \u2191 NO _decompression_bomb_check()!\n    )\n```",
+      "vuln_id": "GHSA-8v84-f9pq-wr9x"
+     },
+     {
+      "id": "GHSA-45hq-cxwh-f6vc#0",
+      "score": 0.835,
+      "text": "GHSA-45hq-cxwh-f6vc (CVE-2026-55379)\npackage: pillow\nsummary: Pillow `BdfFontFile`: `Image.new()` called without `_decompression_bomb_check()` \u2014 bomb protection bypass via font loading\naffected: >=0, <12.3.0",
+      "vuln_id": "GHSA-45hq-cxwh-f6vc"
+     },
+     {
+      "id": "GHSA-5x94-69rx-g8h2#8",
+      "score": 0.832,
+      "text": "GHSA-5x94-69rx-g8h2 (pillow) details:\n**Affected call paths:**\n- `BdfFontFile.BdfFontFile(fp).to_imagefont()` \u2192 `FontFile.compile()`\n- `BdfFontFile.BdfFontFile(fp).save(filename)` \u2192 `FontFile.compile()`\n- `PcfFontFile.PcfFontFile(fp).to_imagefont()` \u2192 `FontFile.compile()`\n- `PcfFontFile.PcfFontFile(fp).save(filename)` \u2192 `FontFile.compile()`\n\nNeither `BdfFontFile` nor `PcfFontFile` is loaded via `Image.open()`, so the standard decompression bomb guard is **entirely absent** from the font loading code path. `compile()` is the only point where the combined allocation size is known, and it has no check.\n\nConfirmed unpatched on `python-pillow/Pillow` `main` branch as of 2026-06-08.",
+      "vuln_id": "GHSA-5x94-69rx-g8h2"
+     }
+    ],
+    "symbols": [
+     "PIL.PcfFontFile",
+     "PIL.Image",
+     "PcfFontFile._load_bitmaps",
+     "PcfFontFile",
+     "_load_bitmaps",
+     "Image.frombytes",
+     "frombytes",
+     "_decompression_bomb_check"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 73.5,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [
+     "PIL.PcfFontFile",
+     "PIL.Image",
+     "PcfFontFile._load_bitmaps",
+     "PcfFontFile",
+     "_load_bitmaps",
+     "Image.frombytes",
+     "frombytes",
+     "_decompression_bomb_check"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/pkgs/img/minify.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 10,
+    "vulnerable_call_sites": [
+     {
+      "file": "mealie/pkgs/img/minify.py",
+      "line": 15,
+      "code": "img = Image.open(image)",
+      "resolved": "PIL.Image.open",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": false,
+      "path": [],
+      "snippet": "   12  \n   13  \n   14  def get_format(image: Path) -> str:\n   15      img = Image.open(image)\n   16      return img.format\n   17  \n   18  "
+     },
+     {
+      "file": "mealie/pkgs/img/minify.py",
+      "line": 68,
+      "code": "img = Image.open(image_file)",
+      "resolved": "PIL.Image.open",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.users.images:UserImageController.update_user_image",
+       "mealie.pkgs.img.minify:PillowMinifier.to_webp"
+      ],
+      "snippet": "   65          Converts an image to the webp format in-place. The original image is not\n   66          removed By default, the quality is set to 100.\n   67          \"\"\"\n   68          img = Image.open(image_file)\n   69  \n   70          dest = dest or image_file.with_suffix(WEBP)\n   71          img.save(dest, FORMAT, quality=quality)"
+     },
+     {
+      "file": "mealie/pkgs/img/minify.py",
+      "line": 76,
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "resolved": "PIL.Image",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.users.images:UserImageController.update_user_image",
+       "mealie.pkgs.img.minify:PillowMinifier.crop_center"
+      ],
+      "snippet": "   73          return dest\n   74  \n   75      @staticmethod\n   76      def crop_center(pil_img: Image, crop_width=300, crop_height=300):\n   77          img_width, img_height = pil_img.size\n   78          return pil_img.crop(\n   79              ("
+     },
+     {
+      "file": "mealie/pkgs/img/minify.py",
+      "line": 120,
+      "code": "img = Image.open(image_file)",
+      "resolved": "PIL.Image.open",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.users.images:UserImageController.update_user_image",
+       "mealie.pkgs.img.minify:PillowMinifier.minify"
+      ],
+      "snippet": "  117              if not force and tiny_dest.exists():\n  118                  self._logger.info(f\"{image_file.name} already minified\")\n  119              else:\n  120                  img = Image.open(image_file)\n  121                  tiny_image = PillowMinifier.crop_center(img)\n  122                  tiny_image.save(tiny_dest, FORMAT, quality=70)\n  123                  self._logger.info(\"Tiny image saved\")"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "code": "img = Image.open(image)",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [
+     [
+      "mealie.routes.users.images:UserImageController.update_user_image",
+      "mealie.pkgs.img.minify:PillowMinifier.to_webp"
+     ],
+     [
+      "mealie.routes.users.images:UserImageController.update_user_image",
+      "mealie.pkgs.img.minify:PillowMinifier.crop_center"
+     ],
+     [
+      "mealie.routes.users.images:UserImageController.update_user_image",
+      "mealie.pkgs.img.minify:PillowMinifier.minify"
+     ]
+    ],
+    "summary": "pillow: imported in 1 non-test location(s); 10 package call/reference site(s); named vulnerable symbols ['PIL.PcfFontFile', 'PIL.Image', 'PcfFontFile._load_bitmaps', 'PcfFontFile', '_load_bitmaps', 'Image.frombytes', 'frombytes', '_decompression_bomb_check']; 4 production call site(s) of those symbols, 3 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 45.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:mealie/pkgs/img/minify.py:120",
+      "score": 1.0,
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 120,
+      "qualname": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "text": "# mealie/pkgs/img/minify.py around line 120\n  117              if not force and tiny_dest.exists():\n  118                  self._logger.info(f\"{image_file.name} already minified\")\n  119              else:\n  120                  img = Image.open(image_file)\n  121                  tiny_image = PillowMinifier.crop_center(img)\n  122                  tiny_image.save(tiny_dest, FORMAT, quality=70)\n  123                  self._logger.info(\"Tiny image saved\")"
+     },
+     {
+      "id": "site:mealie/pkgs/img/minify.py:76",
+      "score": 1.0,
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 76,
+      "qualname": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "text": "# mealie/pkgs/img/minify.py around line 76\n   73          return dest\n   74  \n   75      @staticmethod\n   76      def crop_center(pil_img: Image, crop_width=300, crop_height=300):\n   77          img_width, img_height = pil_img.size\n   78          return pil_img.crop(\n   79              ("
+     },
+     {
+      "id": "site:mealie/pkgs/img/minify.py:68",
+      "score": 1.0,
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 68,
+      "qualname": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "text": "# mealie/pkgs/img/minify.py around line 68\n   65          Converts an image to the webp format in-place. The original image is not\n   66          removed By default, the quality is set to 100.\n   67          \"\"\"\n   68          img = Image.open(image_file)\n   69  \n   70          dest = dest or image_file.with_suffix(WEBP)\n   71          img.save(dest, FORMAT, quality=quality)"
+     },
+     {
+      "id": "site:mealie/pkgs/img/minify.py:15",
+      "score": 1.0,
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 15,
+      "qualname": "mealie.pkgs.img.minify:get_format",
+      "text": "# mealie/pkgs/img/minify.py around line 15\n   12  \n   13  \n   14  def get_format(image: Path) -> str:\n   15      img = Image.open(image)\n   16      return img.format\n   17  \n   18  "
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:87",
+      "score": 0.714,
+      "text": "# mealie/pkgs/img/minify.py:87-127  PillowMinifier.minify\n    def minify(self, image_file: Path, force=True):\n        if not image_file.exists():\n            raise FileNotFoundError(f\"{image_file.name} does not exist\")\n\n        org_dest = image_file.parent.joinpath(\"original.webp\")\n        min_dest = image_file.parent.joinpath(\"min-original.webp\")\n        tiny_dest = image_file.parent.joinpath(\"tiny-original.webp\")\n\n        if not force and min_dest.exists() and tiny_dest.exists() and org_dest.exists():\n            self._logger.info(f\"{image_file.name} already minified\")\n            return\n\n        success = False\n\n        if self._opts.original:\n            if not force and org_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, org_dest, quality=70)\n                success = True\n\n        if self._opts.miniature:\n            if not force and min_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, min_dest, quality=70)\n                self._logger.info(f\"{image_file.name} minified\")\n                success = True\n\n        if self._opts.tiny:\n            if not force and tiny_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                img = Image.open(image_file)\n                tiny_image = PillowMinifier.crop_center(img)\n                tiny_image.save(tiny_dest, FORMAT, quality=70)\n                self._logger.info(\"Tiny image saved\")\n                success = True\n\n        if self._purge and success:\n            self.purge(image_file)",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 87,
+      "qualname": "PillowMinifier.minify"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:63",
+      "score": 0.68,
+      "text": "# mealie/pkgs/img/minify.py:63-73  PillowMinifier.to_webp\n    def to_webp(image_file: Path, dest: Path | None = None, quality: int = 100) -> Path:\n        \"\"\"\n        Converts an image to the webp format in-place. The original image is not\n        removed By default, the quality is set to 100.\n        \"\"\"\n        img = Image.open(image_file)\n\n        dest = dest or image_file.with_suffix(WEBP)\n        img.save(dest, FORMAT, quality=quality)\n\n        return dest",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 63,
+      "qualname": "PillowMinifier.to_webp"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:module",
+      "score": 0.679,
+      "text": "# mealie/pkgs/img/minify.py (module level)\nfrom abc import ABC, abstractmethod\nfrom dataclasses import dataclass\nfrom logging import Logger\nfrom pathlib import Path\nfrom PIL import Image\nWEBP = \".webp\"\nFORMAT = \"WEBP\"\nIMAGE_EXTENSIONS = {\".jpg\", \".jpeg\", \".png\", \".webp\"}\n@dataclass\nclass MinifierOptions:\n    original: bool = True\n    miniature: bool = True\n    tiny: bool = True\nclass ABCMinifier(ABC):\n    @abstractmethod\nclass PillowMinifier(ABCMinifier):\n    @staticmethod\n    @staticmethod",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "PIL.PcfFontFile",
+     "PIL.Image",
+     "PcfFontFile._load_bitmaps",
+     "PcfFontFile",
+     "_load_bitmaps"
+    ],
+    "reasoning": "mock: 4 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2569,
+   "tokens_out": 116,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 4 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/pkgs/img/minify.py:15\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/pkgs/img/minify.py:68\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/pkgs/img/minify.py:76\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"PIL.PcfFontFile\", \"PIL.Image\", \"PcfFontFile._load_bitmaps\", \"PcfFontFile\", \"_load_bitmaps\"]}",
+     "in": 2569,
+     "out": 116,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 2536,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2536,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 5105,
+  "tokens_out": 151,
+  "cost_usd_est": 0.0,
+  "seconds": 0.16
+ },
+ "created": "2026-11-10T00:06:25+00:00",
+ "code_version": "a3e1ef4"
+}

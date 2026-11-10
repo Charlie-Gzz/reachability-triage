@@ -1,0 +1,300 @@
+{
+ "finding_id": "ctfd/gunicorn@20.0.4/GHSA-hc5x-x2vx-497g",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-6827",
+   "GHSA-hc5x-x2vx-497g",
+   "PYSEC-2026-1433"
+  ],
+  "cves": [
+   "CVE-2024-6827"
+  ],
+  "cwes": [
+   "CWE-444"
+  ],
+  "direct_dependency": true,
+  "finding_id": "ctfd/gunicorn@20.0.4/GHSA-hc5x-x2vx-497g",
+  "first_fixed_above_installed": "22.0.0",
+  "fixed_versions": [
+   "22.0.0"
+  ],
+  "max_cvss": "7.5",
+  "package": "gunicorn",
+  "published": "2025-03-20T12:32:45Z",
+  "summary": "Gunicorn HTTP Request/Response Smuggling vulnerability",
+  "target": "ctfd",
+  "version": "20.0.4",
+  "vuln_id": "GHSA-hc5x-x2vx-497g"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "TE.CL"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "TE.CL"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/gunicorn@20.0.4/GHSA-hc5x-x2vx-497g",
+    "package": "gunicorn",
+    "version": "20.0.4",
+    "vuln_id": "GHSA-hc5x-x2vx-497g",
+    "aliases": [
+     "CVE-2024-6827",
+     "GHSA-hc5x-x2vx-497g",
+     "PYSEC-2026-1433"
+    ],
+    "summary": "Gunicorn HTTP Request/Response Smuggling vulnerability",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "22.0.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 26.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-hc5x-x2vx-497g#0",
+      "score": 0.856,
+      "text": "GHSA-hc5x-x2vx-497g (CVE-2024-6827)\npackage: gunicorn\nsummary: Gunicorn HTTP Request/Response Smuggling vulnerability\naffected: >=0, <22.0.0",
+      "vuln_id": "GHSA-hc5x-x2vx-497g"
+     },
+     {
+      "id": "GHSA-hc5x-x2vx-497g#1",
+      "score": 0.811,
+      "text": "GHSA-hc5x-x2vx-497g (gunicorn) details:\nGunicorn version 21.2.0 does not properly validate the value of the 'Transfer-Encoding' header as specified in the RFC standards, which leads to the default fallback method of 'Content-Length,' making it vulnerable to TE.CL request smuggling. This vulnerability can lead to cache poisoning, data exposure, session manipulation, SSRF, XSS, DoS, data integrity compromise, security bypass, information leakage, and business logic abuse.",
+      "vuln_id": "GHSA-hc5x-x2vx-497g"
+     },
+     {
+      "id": "GHSA-w3h3-4rj7-4ph4#0",
+      "score": 0.833,
+      "text": "GHSA-w3h3-4rj7-4ph4 (CVE-2024-1135)\npackage: gunicorn\nsummary: Request smuggling leading to endpoint restriction bypass in Gunicorn\naffected: >=0, <22.0.0",
+      "vuln_id": "GHSA-w3h3-4rj7-4ph4"
+     },
+     {
+      "id": "GHSA-w3h3-4rj7-4ph4#1",
+      "score": 0.828,
+      "text": "GHSA-w3h3-4rj7-4ph4 (gunicorn) details:\nGunicorn fails to properly validate Transfer-Encoding headers, leading to HTTP Request Smuggling (HRS) vulnerabilities. By crafting requests with conflicting Transfer-Encoding headers, attackers can bypass security restrictions and access restricted endpoints. This issue is due to Gunicorn's handling of Transfer-Encoding headers, where it incorrectly processes requests with multiple, conflicting Transfer-Encoding headers, treating them as chunked regardless of the final encoding specified. This vulnerability has been shown to allow access to endpoints restricted by gunicorn. This issue has been addressed in version 22.0.0.\n\nTo be affected users must have a network path which does not filter out invalid requests. These users are advised to block access to restricted endpoints via a firewall or other mechanism if they are unable to update.",
+      "vuln_id": "GHSA-w3h3-4rj7-4ph4"
+     }
+    ],
+    "symbols": [
+     "TE.CL"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 41.5,
+   "output": {
+    "package": "gunicorn",
+    "import_names": [
+     "gunicorn"
+    ],
+    "symbols": [
+     "TE.CL"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "gunicorn: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['TE.CL']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 26.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/api/v1/config.py:258",
+      "score": 0.673,
+      "text": "# CTFd/api/v1/config.py:258-273  Field.patch\n    def patch(self, field_id):\n        field = Fields.query.filter_by(id=field_id).first_or_404()\n        schema = FieldSchema()\n\n        req = request.get_json()\n\n        response = schema.load(req, session=db.session, instance=field)\n        if response.errors:\n            return {\"success\": False, \"errors\": response.errors}, 400\n\n        db.session.commit()\n\n        response = schema.dump(response.data)\n        db.session.close()\n\n        return {\"success\": True, \"data\": response.data}",
+      "file": "CTFd/api/v1/config.py",
+      "start": 258,
+      "qualname": "Field.patch"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/config.py:156",
+      "score": 0.672,
+      "text": "# CTFd/api/v1/config.py:156-179  Config.patch\n    def patch(self, config_key):\n        config = Configs.query.filter_by(key=config_key).first()\n        data = request.get_json()\n        if config:\n            schema = ConfigSchema(instance=config, partial=True)\n            response = schema.load(data)\n        else:\n            schema = ConfigSchema()\n            data[\"key\"] = config_key\n            response = schema.load(data)\n\n        if response.errors:\n            return {\"success\": False, \"errors\": response.errors}, 400\n\n        db.session.add(response.data)\n        db.session.commit()\n\n        response = schema.dump(response.data)\n        db.session.close()\n\n        clear_config()\n        clear_standings()\n\n        return {\"success\": True, \"data\": response.data}",
+      "file": "CTFd/api/v1/config.py",
+      "start": 156,
+      "qualname": "Config.patch"
+     },
+     {
+      "id": "ctfd:CTFd/utils/user/__init__.py:145",
+      "score": 0.665,
+      "text": "# CTFd/utils/user/__init__.py:145-167  get_ip\ndef get_ip(req=None):\n    \"\"\" Returns the IP address of the currently in scope request. The approach is to define a list of trusted proxies\n     (in this case the local network), and only trust the most recently defined untrusted IP address.\n     Taken from http://stackoverflow.com/a/22936947/4285524 but the generator there makes no sense.\n     The trusted_proxies regexes is taken from Ruby on Rails.\n\n     This has issues if the clients are also on the local network so you can remove proxies from config.py.\n\n     CTFd does not use IP address for anything besides cursory tracking of teams and it is ill-advised to do much\n     more than that if you do not know what you're doing.\n    \"\"\"\n    if req is None:\n        req = request\n    trusted_proxies = app.config[\"TRUSTED_PROXIES\"]\n    combined = \"(\" + \")|(\".join(trusted_proxies) + \")\"\n    route = req.access_route + [req.remote_addr]\n    for addr in reversed(route):\n        if not re.match(combined, addr):  # IP is not trusted but we trust the proxies\n            remote_addr = addr\n            break\n    else:\n        remote_addr = req.remote_addr\n    return remote_addr",
+      "file": "CTFd/utils/user/__init__.py",
+      "start": 145,
+      "qualname": "get_ip"
+     },
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:14",
+      "score": 0.664,
+      "text": "# CTFd/utils/validators/__init__.py:14-17  is_safe_url\ndef is_safe_url(target):\n    ref_url = urlparse(request.host_url)\n    test_url = urlparse(urljoin(request.host_url, target))\n    return test_url.scheme in (\"http\", \"https\") and ref_url.netloc == test_url.netloc",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 14,
+      "qualname": "is_safe_url"
+     },
+     {
+      "id": "ctfd:CTFd/__init__.py:38",
+      "score": 0.662,
+      "text": "# CTFd/__init__.py:38-46  CTFdRequest.path\n    def path(self):\n        \"\"\"\n        Hijack the original Flask request path because it does not account for subdirectory deployments in an intuitive\n        manner. We append script_root so that the path always points to the full path as seen in the browser.\n        e.g. /subdirectory/path/route vs /path/route\n\n        :return: string\n        \"\"\"\n        return self.script_root + super(CTFdRequest, self).path",
+      "file": "CTFd/__init__.py",
+      "start": 38,
+      "qualname": "CTFdRequest.path"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "TE.CL"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1663,
+   "tokens_out": 37,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"TE.CL\"]}",
+     "in": 1663,
+     "out": 37,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1595,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1595,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3258,
+  "tokens_out": 73,
+  "cost_usd_est": 0.0,
+  "seconds": 0.1
+ },
+ "created": "2026-11-10T00:06:15+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,304 @@
+{
+ "finding_id": "mealie/idna@3.4/GHSA-jjg7-2v4v-x38h",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-3651",
+   "GHSA-jjg7-2v4v-x38h"
+  ],
+  "cves": [
+   "CVE-2024-3651"
+  ],
+  "cwes": [
+   "CWE-1333",
+   "CWE-400"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/idna@3.4/GHSA-jjg7-2v4v-x38h",
+  "first_fixed_above_installed": "3.7",
+  "fixed_versions": [
+   "3.7"
+  ],
+  "max_cvss": "6.9",
+  "package": "idna",
+  "published": "2024-04-11T21:32:40Z",
+  "summary": "Internationalized Domain Names in Applications (IDNA) vulnerable to denial of service from specially crafted inputs to idna.encode",
+  "target": "mealie",
+  "version": "3.4",
+  "vuln_id": "GHSA-jjg7-2v4v-x38h"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "idna.encode",
+   "encode"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "idna.encode",
+  "encode"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/idna@3.4/GHSA-jjg7-2v4v-x38h",
+    "package": "idna",
+    "version": "3.4",
+    "vuln_id": "GHSA-jjg7-2v4v-x38h",
+    "aliases": [
+     "CVE-2024-3651",
+     "GHSA-jjg7-2v4v-x38h"
+    ],
+    "summary": "Internationalized Domain Names in Applications (IDNA) vulnerable to denial of service from specially crafted inputs to idna.encode",
+    "max_cvss": "6.9",
+    "fixed_versions": [
+     "3.7"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-jjg7-2v4v-x38h#0",
+      "score": 0.868,
+      "text": "GHSA-jjg7-2v4v-x38h (CVE-2024-3651)\npackage: idna\nsummary: Internationalized Domain Names in Applications (IDNA) vulnerable to denial of service from specially crafted inputs to idna.encode\naffected: >=0, <3.7",
+      "vuln_id": "GHSA-jjg7-2v4v-x38h"
+     },
+     {
+      "id": "GHSA-jjg7-2v4v-x38h#1",
+      "score": 0.791,
+      "text": "GHSA-jjg7-2v4v-x38h (idna) details:\n### Impact\nA specially crafted argument to the `idna.encode()` function could consume significant resources. This may lead to a denial-of-service.\n\n### Patches\nThe function has been refined to reject such strings without the associated resource consumption in version 3.7.\n\n### Workarounds\nDomain names cannot exceed 253 characters in length, if this length limit is enforced prior to passing the domain to the `idna.encode()` function it should no longer consume significant resources. This is triggered by arbitrarily large inputs that would not occur in normal usage, but may be passed to the library assuming there is no preliminary input validation by the higher-level application.",
+      "vuln_id": "GHSA-jjg7-2v4v-x38h"
+     },
+     {
+      "id": "GHSA-65pc-fj4g-8rjx#0",
+      "score": 0.827,
+      "text": "GHSA-65pc-fj4g-8rjx (CVE-2026-45409)\npackage: idna\nsummary: Internationalized Domain Names in Applications (IDNA): Specially crafted inputs to idna.encode() can bypass CVE-2024-3651 fix\naffected: >=0, <3.15",
+      "vuln_id": "GHSA-65pc-fj4g-8rjx"
+     },
+     {
+      "id": "GHSA-65pc-fj4g-8rjx#1",
+      "score": 0.77,
+      "text": "GHSA-65pc-fj4g-8rjx (idna) details:\nThis is the same issue as CVE-2024-3651, however the original remediation in 2024 was not a complete fix. Payloads such as `\"\\u0660\" * N` or `\"\\u30fb\" * N + \"\\u6f22\"` utilize the `valid_contexto` function prior to length rejection, and for high values of `N` will take a long time to process.\n\n### Impact\nA specially crafted argument to the `idna.encode()` function could consume significant resources. This may lead to a denial-of-service.\n\n### Patches\nStarting in version 3.14, the function rejects long inputs as soon as practicable prior to any further processing to minimize resource consumption. In version 3.15, this approach was extended to lesser used alternate functions (i.e. per-label conversions and codec support).",
+      "vuln_id": "GHSA-65pc-fj4g-8rjx"
+     }
+    ],
+    "symbols": [
+     "idna.encode",
+     "encode"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 24.9,
+   "output": {
+    "package": "idna",
+    "import_names": [
+     "idna"
+    ],
+    "symbols": [
+     "idna.encode",
+     "encode"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "idna: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['idna.encode', 'encode']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 33.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/lang/providers.py:21",
+      "score": 0.614,
+      "text": "# mealie/lang/providers.py:21-25  _load_factory\ndef _load_factory() -> i18n.ProviderFactory:\n    return i18n.ProviderFactory(\n        directory=TRANSLATIONS,\n        fallback_locale=\"en-US\",\n    )",
+      "file": "mealie/lang/providers.py",
+      "start": 21,
+      "qualname": "_load_factory"
+     },
+     {
+      "id": "mealie:mealie/pkgs/i18n/provider_factory.py:module",
+      "score": 0.595,
+      "text": "# mealie/pkgs/i18n/provider_factory.py (module level)\nfrom dataclasses import dataclass, field\nfrom pathlib import Path\nfrom .json_provider import JsonProvider\n@dataclass(slots=True)\nclass InUseProvider:\n    provider: JsonProvider\n    locks: int\n@dataclass(slots=True)\nclass ProviderFactory:\n    directory: Path\n    fallback_locale: str = \"en-US\"\n    filename_format = \"{locale}.{format}\"\n    _store: dict[str, InUseProvider] = field(default_factory=dict)\n    @property",
+      "file": "mealie/pkgs/i18n/provider_factory.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:105",
+      "score": 0.593,
+      "text": "# mealie/services/recipe/recipe_data_service.py:105-116  RecipeDataService._validate_image_url\n    def _validate_image_url(url: str) -> bool:\n        # sourcery skip: invert-any-all, use-any\n        \"\"\"\n        Validates that the URL is of an allowed source and restricts certain sources to prevent\n        malicious images from being downloaded.\n        \"\"\"\n        invalid_domains = {\"127.0.0.1\", \"localhost\"}\n        for domain in invalid_domains:\n            if domain in url:\n                return False\n\n        return True",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 105,
+      "qualname": "RecipeDataService._validate_image_url"
+     },
+     {
+      "id": "mealie:mealie/routes/spa/__init__.py:74",
+      "score": 0.591,
+      "text": "# mealie/routes/spa/__init__.py:74-76  inject_recipe_json\ndef inject_recipe_json(contents: str, schema: dict) -> str:\n    schema_as_html_tag = f\"\"\"<script type=\"application/ld+json\">{json.dumps(jsonable_encoder(schema))}</script>\"\"\"\n    return contents.replace(\"</head>\", schema_as_html_tag + \"\\n</head>\", 1)",
+      "file": "mealie/routes/spa/__init__.py",
+      "start": 74,
+      "qualname": "inject_recipe_json"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:119",
+      "score": 0.59,
+      "text": "# mealie/core/dependencies/dependencies.py:119-131  get_integration_id\nasync def get_integration_id(token: str = Depends(oauth2_scheme)) -> str:\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},\n    )\n\n    try:\n        decoded_token = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])\n        return decoded_token.get(\"integration_id\", DEFAULT_INTEGRATION_ID)\n\n    except JWTError as e:\n        raise credentials_exception from e",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 119,
+      "qualname": "get_integration_id"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.6,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "idna.encode",
+     "encode"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1459,
+   "tokens_out": 41,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"idna.encode\", \"encode\"]}",
+     "in": 1459,
+     "out": 41,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1391,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1391,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2850,
+  "tokens_out": 77,
+  "cost_usd_est": 0.0,
+  "seconds": 0.09
+ },
+ "created": "2026-11-10T00:06:23+00:00",
+ "code_version": "a3e1ef4"
+}

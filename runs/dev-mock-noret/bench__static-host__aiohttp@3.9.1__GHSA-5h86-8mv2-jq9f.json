@@ -1,0 +1,238 @@
+{
+ "finding_id": "bench/static-host/aiohttp@3.9.1/GHSA-5h86-8mv2-jq9f",
+ "config": "dev-mock-noret",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/static-host",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-23334",
+   "GHSA-5h86-8mv2-jq9f",
+   "PYSEC-2024-24"
+  ],
+  "cves": [
+   "CVE-2024-23334"
+  ],
+  "cwes": [
+   "CWE-22"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/static-host/aiohttp@3.9.1/GHSA-5h86-8mv2-jq9f",
+  "first_fixed_above_installed": "3.9.2",
+  "fixed_versions": [
+   "3.9.2",
+   "1c335944d6a8b1298baf179b7c0b3069f10c514b"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+  "package": "aiohttp",
+  "published": "2024-01-29T22:31:03Z",
+  "split": "dev",
+  "summary": "aiohttp is vulnerable to directory traversal",
+  "target": "bench/static-host",
+  "version": "3.9.1",
+  "vuln_id": "GHSA-5h86-8mv2-jq9f"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "host/server.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/static-host/aiohttp@3.9.1/GHSA-5h86-8mv2-jq9f",
+    "package": "aiohttp",
+    "version": "3.9.1",
+    "vuln_id": "GHSA-5h86-8mv2-jq9f",
+    "aliases": [
+     "CVE-2024-23334",
+     "GHSA-5h86-8mv2-jq9f",
+     "PYSEC-2024-24"
+    ],
+    "summary": "aiohttp is vulnerable to directory traversal",
+    "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+    "fixed_versions": [
+     "3.9.2",
+     "1c335944d6a8b1298baf179b7c0b3069f10c514b"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.1,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.5,
+   "output": {
+    "package": "aiohttp",
+    "import_names": [
+     "aiohttp"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "host/server.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 11,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "entry_points": 1,
+    "paths": [],
+    "summary": "aiohttp: imported in 1 non-test location(s); 11 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 2.5,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "host/server.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 415,
+   "tokens_out": 50,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"host/server.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 415,
+     "out": 50,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 1.0,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 354,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 354,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 769,
+  "tokens_out": 85,
+  "cost_usd_est": 0.0,
+  "seconds": 0.01
+ },
+ "created": "2026-11-10T00:00:22+00:00",
+ "code_version": "a3e1ef4"
+}

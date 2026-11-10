@@ -1,0 +1,366 @@
+{
+ "finding_id": "bench/query-console/sqlparse@0.4.1/GHSA-p5w8-wqhj-9hhf",
+ "config": "dev-mock",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/query-console",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-32839",
+   "GHSA-p5w8-wqhj-9hhf",
+   "PYSEC-2021-333"
+  ],
+  "cves": [
+   "CVE-2021-32839"
+  ],
+  "cwes": [
+   "CWE-400"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/query-console/sqlparse@0.4.1/GHSA-p5w8-wqhj-9hhf",
+  "first_fixed_above_installed": "0.4.2",
+  "fixed_versions": [
+   "0.4.2",
+   "8238a9e450ed1524e40cb3a8b0b3c00606903aeb"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+  "package": "sqlparse",
+  "published": "2021-09-10T17:56:06Z",
+  "split": "test",
+  "summary": "StripComments filter contains a regular expression that is vulnerable to ReDOS (Regular Expression Denial of Service)",
+  "target": "bench/query-console",
+  "version": "0.4.1",
+  "vuln_id": "GHSA-p5w8-wqhj-9hhf"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "sqlformat.format",
+   "sqlformat",
+   "StripComments",
+   "strip_comments"
+  ],
+  "reasoning": "mock: 1 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "console/formatting.py:6",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "console/formatting.py:1",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "sqlformat.format",
+  "sqlformat",
+  "StripComments",
+  "strip_comments"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/query-console/sqlparse@0.4.1/GHSA-p5w8-wqhj-9hhf",
+    "package": "sqlparse",
+    "version": "0.4.1",
+    "vuln_id": "GHSA-p5w8-wqhj-9hhf",
+    "aliases": [
+     "CVE-2021-32839",
+     "GHSA-p5w8-wqhj-9hhf",
+     "PYSEC-2021-333"
+    ],
+    "summary": "StripComments filter contains a regular expression that is vulnerable to ReDOS (Regular Expression Denial of Service)",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+    "fixed_versions": [
+     "0.4.2",
+     "8238a9e450ed1524e40cb3a8b0b3c00606903aeb"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-p5w8-wqhj-9hhf#0",
+      "score": 0.921,
+      "text": "GHSA-p5w8-wqhj-9hhf (CVE-2021-32839)\npackage: sqlparse\nsummary: StripComments filter contains a regular expression that is vulnerable to ReDOS (Regular Expression Denial of Service)\naffected: >=0.4.0, <0.4.2",
+      "vuln_id": "GHSA-p5w8-wqhj-9hhf"
+     },
+     {
+      "id": "GHSA-p5w8-wqhj-9hhf#1",
+      "score": 0.832,
+      "text": "GHSA-p5w8-wqhj-9hhf (sqlparse) details:\n### Impact\nThe formatter function that strips comments from a SQL contains a regular expression that is vulnerable to [ReDoS](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS) (Regular Expression Denial of Service). The regular expression may cause exponential backtracking on strings containing many repetitions of '\\r\\n' in SQL comments.\n\n### Patches\nThe issues has been fixed in sqlparse 0.4.2.\n\n### Workarounds\nOnly the formatting feature that removes comments from SQL statements is affected by this regular expression. As a workaround don't use the `sqlformat.format` function with keyword `strip_comments=True` or the `--strip-comments` command line flag when using the `sqlformat` command line tool.",
+      "vuln_id": "GHSA-p5w8-wqhj-9hhf"
+     },
+     {
+      "id": "GHSA-rrm6-wvj7-cwh2#1",
+      "score": 0.858,
+      "text": "GHSA-rrm6-wvj7-cwh2 (sqlparse) details:\n### Impact\nThe SQL parser contains a regular expression that is vulnerable to [ReDoS](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS) (Regular Expression Denial of Service). The vulnerability may lead to Denial of Service (DoS).\n\n### Patches\nThis issues has been fixed in sqlparse 0.4.4.\n\n### Workarounds\nNone.",
+      "vuln_id": "GHSA-rrm6-wvj7-cwh2"
+     },
+     {
+      "id": "GHSA-prg7-hcfm-mfcr#9",
+      "score": 0.844,
+      "text": "GHSA-prg7-hcfm-mfcr (sqlparse) details:\nThis is a **Regular Expression Denial of Service (ReDoS)** vulnerability. Any application or service that passes user-controlled SQL text to `sqlparse.parse()`, `sqlparse.format()`, or `sqlparse.split()` is affected. No authentication, special configuration, or elevated privileges are required \u2014 a single crafted HTTP request (or any other input channel carrying SQL text) is sufficient.\n\nUnder sustained attack, one or more CPU cores can be kept at 100% utilization, degrading or completely blocking service for all other users. Because the grouping-stage token limit fires only after the regex work is done, it provides no protection against this attack.\n\nAffected use cases include: web applications that accept and display or format SQL; database administration tools; ORM query inspectors; SQL linters and formatters exposed as APIs.\n\n### Reproduction artifacts\n\n#### `Dockerfile`",
+      "vuln_id": "GHSA-prg7-hcfm-mfcr"
+     }
+    ],
+    "symbols": [
+     "sqlformat.format",
+     "sqlformat",
+     "StripComments",
+     "strip_comments"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.0,
+   "output": {
+    "package": "sqlparse",
+    "import_names": [
+     "sqlparse"
+    ],
+    "symbols": [
+     "sqlformat.format",
+     "sqlformat",
+     "StripComments",
+     "strip_comments"
+    ],
+    "imported": true,
+    "import_locations": [
+     "console/formatting.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 5,
+    "vulnerable_call_sites": [
+     {
+      "file": "console/formatting.py",
+      "line": 6,
+      "code": "return sqlparse.format(sql, strip_comments=True, reindent=False).strip()  [strip_comments=True]",
+      "resolved": "sqlparse.format",
+      "function": "console.formatting:normalize",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "console.routes:run_query",
+       "console.formatting:normalize"
+      ],
+      "snippet": "    3  \n    4  def normalize(sql: str) -> str:\n    5      \"\"\"Strip comments so the audit log stores just the statement.\"\"\"\n    6      return sqlparse.format(sql, strip_comments=True, reindent=False).strip()"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "console/formatting.py:6",
+      "code": "return sqlparse.format(sql, strip_comments=True, reindent=False).strip()",
+      "function": "console.formatting:normalize",
+      "in_test": false
+     }
+    ],
+    "entry_points": 1,
+    "paths": [
+     [
+      "console.routes:run_query",
+      "console.formatting:normalize"
+     ]
+    ],
+    "summary": "sqlparse: imported in 1 non-test location(s); 5 package call/reference site(s); named vulnerable symbols ['sqlformat.format', 'sqlformat', 'StripComments', 'strip_comments']; 1 production call site(s) of those symbols, 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 28.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:console/formatting.py:6",
+      "score": 1.0,
+      "file": "console/formatting.py",
+      "start": 6,
+      "qualname": "console.formatting:normalize",
+      "text": "# console/formatting.py around line 6\n    3  \n    4  def normalize(sql: str) -> str:\n    5      \"\"\"Strip comments so the audit log stores just the statement.\"\"\"\n    6      return sqlparse.format(sql, strip_comments=True, reindent=False).strip()"
+     },
+     {
+      "id": "bench/query-console:console/formatting.py:4",
+      "score": 0.799,
+      "text": "# console/formatting.py:4-6  normalize\ndef normalize(sql: str) -> str:\n    \"\"\"Strip comments so the audit log stores just the statement.\"\"\"\n    return sqlparse.format(sql, strip_comments=True, reindent=False).strip()",
+      "file": "console/formatting.py",
+      "start": 4,
+      "qualname": "normalize"
+     },
+     {
+      "id": "bench/query-console:console/formatting.py:module",
+      "score": 0.672,
+      "text": "# console/formatting.py (module level)\nimport sqlparse",
+      "file": "console/formatting.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/query-console:console/routes.py:15",
+      "score": 0.602,
+      "text": "# console/routes.py:15-17  run_query\ndef run_query(q: Query):\n    AUDIT.append(normalize(q.sql))\n    return {\"queued\": True, \"position\": len(AUDIT)}",
+      "file": "console/routes.py",
+      "start": 15,
+      "qualname": "run_query"
+     },
+     {
+      "id": "bench/query-console:console/routes.py:module",
+      "score": 0.594,
+      "text": "# console/routes.py (module level)\nfrom fastapi import APIRouter\nfrom pydantic import BaseModel\nfrom console.formatting import normalize\nrouter = APIRouter()\nAUDIT = []\nclass Query(BaseModel):\n    sql: str\n@router.post(\"/console/run\")",
+      "file": "console/routes.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "sqlformat.format",
+     "sqlformat",
+     "StripComments",
+     "strip_comments"
+    ],
+    "reasoning": "mock: 1 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "console/formatting.py:6",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "console/formatting.py:1",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1358,
+   "tokens_out": 87,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 1 call sites, imported=True\", \"evidence\": [{\"location\": \"console/formatting.py:6\", \"explanation\": \"static evidence\"}, {\"location\": \"console/formatting.py:1\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"sqlformat.format\", \"sqlformat\", \"StripComments\", \"strip_comments\"]}",
+     "in": 1358,
+     "out": 87,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 1310,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1310,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2668,
+  "tokens_out": 122,
+  "cost_usd_est": 0.0,
+  "seconds": 0.07
+ },
+ "created": "2026-11-10T00:06:34+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,288 @@
+{
+ "finding_id": "ctfd/pymysql@0.9.3/GHSA-v9hf-5j83-6xpp",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-36039",
+   "GHSA-v9hf-5j83-6xpp",
+   "PYSEC-2026-502"
+  ],
+  "cves": [
+   "CVE-2024-36039"
+  ],
+  "cwes": [
+   "CWE-89"
+  ],
+  "direct_dependency": true,
+  "finding_id": "ctfd/pymysql@0.9.3/GHSA-v9hf-5j83-6xpp",
+  "first_fixed_above_installed": "1.1.1",
+  "fixed_versions": [
+   "1.1.1"
+  ],
+  "max_cvss": "9.8",
+  "package": "pymysql",
+  "published": "2024-05-21T18:31:23Z",
+  "summary": "PyMySQL SQL Injection vulnerability",
+  "target": "ctfd",
+  "version": "0.9.3",
+  "vuln_id": "GHSA-v9hf-5j83-6xpp"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "escape_dict"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "escape_dict"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/pymysql@0.9.3/GHSA-v9hf-5j83-6xpp",
+    "package": "pymysql",
+    "version": "0.9.3",
+    "vuln_id": "GHSA-v9hf-5j83-6xpp",
+    "aliases": [
+     "CVE-2024-36039",
+     "GHSA-v9hf-5j83-6xpp",
+     "PYSEC-2026-502"
+    ],
+    "summary": "PyMySQL SQL Injection vulnerability",
+    "max_cvss": "9.8",
+    "fixed_versions": [
+     "1.1.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-v9hf-5j83-6xpp#0",
+      "score": 0.84,
+      "text": "GHSA-v9hf-5j83-6xpp (CVE-2024-36039)\npackage: pymysql\nsummary: PyMySQL SQL Injection vulnerability\naffected: >=0, <1.1.1",
+      "vuln_id": "GHSA-v9hf-5j83-6xpp"
+     },
+     {
+      "id": "GHSA-v9hf-5j83-6xpp#1",
+      "score": 0.788,
+      "text": "GHSA-v9hf-5j83-6xpp (pymysql) details:\nPyMySQL through 1.1.0 allows SQL injection if used with untrusted JSON input because keys are not escaped by `escape_dict`.",
+      "vuln_id": "GHSA-v9hf-5j83-6xpp"
+     }
+    ],
+    "symbols": [
+     "escape_dict"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 42.6,
+   "output": {
+    "package": "pymysql",
+    "import_names": [
+     "pymysql"
+    ],
+    "symbols": [
+     "escape_dict"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "pymysql: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['escape_dict']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 23.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/api/v1/helpers/schemas.py:8",
+      "score": 0.716,
+      "text": "# CTFd/api/v1/helpers/schemas.py:8-37  sqlalchemy_to_pydantic\ndef sqlalchemy_to_pydantic(\n    db_model: Type, *, include: Dict[str, type] = None, exclude: Container[str] = None\n) -> Type[BaseModel]:\n    \"\"\"\n    Mostly copied from https://github.com/tiangolo/pydantic-sqlalchemy\n    \"\"\"\n    if exclude is None:\n        exclude = []\n    mapper = inspect(db_model)\n    fields = {}\n    for attr in mapper.attrs:\n        if isinstance(attr, ColumnProperty):\n            if attr.columns:\n                column = attr.columns[0]\n                python_type = column.type.python_type\n                name = attr.key\n                if name in exclude:\n                    continue\n                default = None\n                if column.default is None and not column.nullable:\n                    default = ...\n                fields[name] = (python_type, default)\n    if bool(include):\n        for name, python_type in include.items():\n            default = None\n            fields[name] = (python_type, default)\n    pydantic_model = create_model(\n        db_model.__name__, **fields  # type: ignore\n    )\n    return pydantic_model",
+      "file": "CTFd/api/v1/helpers/schemas.py",
+      "start": 8,
+      "qualname": "sqlalchemy_to_pydantic"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/unlocks.py:module",
+      "score": 0.707,
+      "text": "# CTFd/api/v1/unlocks.py (module level)\nfrom typing import List\nfrom flask import request\nfrom flask_restx import Namespace, Resource\nfrom CTFd.api.v1.helpers.request import validate_args\nfrom CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic\nfrom CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse\nfrom CTFd.cache import clear_standings\nfrom CTFd.constants import RawEnum\nfrom CTFd.models import Unlocks, db, get_class_by_tablename\nfrom CTFd.schemas.awards import AwardSchema\nfrom CTFd.schemas.unlocks import UnlockSchema\nfrom CTFd.utils.decorators import (\n    admins_only,\n    authed_only,\n    during_ctf_time_only,\n    require_verified_emails,\n)\nfrom CTFd.utils.helpers.models import build_model_filters\nfrom CTFd.utils.user import get_current_user\nunlocks_namespace = Namespace(\"unlocks\", description=\"Endpoint to retrieve Unlocks\")\nUnlockModel = sqlalchemy_to_pydantic(Unlocks)\nTransientUnlockModel = sqlalchemy_to_pydantic(Unlocks, exclude=[\"id\"])\nclass UnlockDetailedSuccessResponse(APIDetailedSuccessResponse):\n    data: UnlockModel\nclass UnlockListSuccessResponse(APIListSuccessResponse):\n    data: List[UnlockModel]\nunlocks_namespace.schema_model(\n    \"UnlockDetailedSuccessResponse\", UnlockDetailedSuccessResponse.apidoc()\n)\nunlocks_namespace.schema_model(\n    \"UnlockListSuccessResponse\", UnlockListSuccessResponse.apidoc()\n)\n@unlocks_namespace.route(\"\")\nclass UnlockList(Resource):\n    @admins_only\n    @unlocks_namespace.doc(\n        description=\"Endpoint to get unlock objects in bulk\",\n        responses={\n            200: (\"Success\", \"UnlockListSuccessResponse\"),\n            400: (\n                \"An error occured processing the provided or stored data\",\n                \"APISimpleErrorResponse\",\n            ),\n        },\n    )\n    @validate_args(\n        {\n            \"user_id\": (int, None),\n            \"team_id\": (int, None),\n            \"target\": (int, None),\n            \"type\": (str, None),\n            \"q\": (str, None),\n            \"field\": (\n                RawEnum(\"UnlockFields\", {\"target\": \"target\", \"type\": \"type\"}),\n                None,\n            ),\n        },\n        location=\"query\",\n    )\n    @during_ctf_time_only",
+      "file": "CTFd/api/v1/unlocks.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/submissions.py:module",
+      "score": 0.705,
+      "text": "# CTFd/api/v1/submissions.py (module level)\nfrom typing import List\nfrom flask_restx import Namespace, Resource\nfrom CTFd.api.v1.helpers.request import validate_args\nfrom CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic\nfrom CTFd.api.v1.schemas import (\n    APIDetailedSuccessResponse,\n    PaginatedAPIListSuccessResponse,\n)\nfrom CTFd.cache import clear_standings\nfrom CTFd.constants import RawEnum\nfrom CTFd.models import Submissions, db\nfrom CTFd.schemas.submissions import SubmissionSchema\nfrom CTFd.utils.decorators import admins_only\nfrom CTFd.utils.helpers.models import build_model_filters\nsubmissions_namespace = Namespace(\n    \"submissions\", description=\"Endpoint to retrieve Submission\"\n)\nSubmissionModel = sqlalchemy_to_pydantic(Submissions)\nTransientSubmissionModel = sqlalchemy_to_pydantic(Submissions, exclude=[\"id\"])\nclass SubmissionDetailedSuccessResponse(APIDetailedSuccessResponse):\n    data: SubmissionModel\nclass SubmissionListSuccessResponse(PaginatedAPIListSuccessResponse):\n    data: List[SubmissionModel]\nsubmissions_namespace.schema_model(\n    \"SubmissionDetailedSuccessResponse\", SubmissionDetailedSuccessResponse.apidoc()\n)\nsubmissions_namespace.schema_model(\n    \"SubmissionListSuccessResponse\", SubmissionListSuccessResponse.apidoc()\n)\n@submissions_namespace.route(\"\")\nclass SubmissionsList(Resource):\n    @admins_only\n    @submissions_namespace.doc(\n        description=\"Endpoint to get submission objects in bulk\",\n        responses={\n            200: (\"Success\", \"SubmissionListSuccessResponse\"),\n            400: (\n                \"An error occured processing the provided or stored data\",\n                \"APISimpleErrorResponse\",\n            ),\n        },\n    )\n    @validate_args(\n        {\n            \"challenge_id\": (int, None),\n            \"user_id\": (int, None),\n            \"team_id\": (int, None),\n            \"ip\": (str, None),\n            \"provided\": (str, None),\n            \"type\": (str, None),\n            \"q\": (str, None),\n            \"field\": (\n                RawEnum(\n                    \"SubmissionFields\",\n                    {\n                        \"challenge_id\": \"challenge_id\",\n                        \"user_id\": \"user_id\",\n                        \"team_id\": \"team_id\",\n                        \"ip\": \"ip\",\n                        \"provided\": \"provided\",",
+      "file": "CTFd/api/v1/submissions.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/exports/freeze.py:module",
+      "score": 0.702,
+      "text": "# CTFd/utils/exports/freeze.py (module level)\nfrom sqlalchemy.exc import OperationalError, ProgrammingError\nfrom CTFd.utils.exports.serializers import JSONSerializer",
+      "file": "CTFd/utils/exports/freeze.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/unlocks.py:73",
+      "score": 0.699,
+      "text": "# CTFd/api/v1/unlocks.py:73-85  UnlockList.get\n    def get(self, query_args):\n        q = query_args.pop(\"q\", None)\n        field = str(query_args.pop(\"field\", None))\n        filters = build_model_filters(model=Unlocks, query=q, field=field)\n\n        unlocks = Unlocks.query.filter_by(**query_args).filter(*filters).all()\n        schema = UnlockSchema()\n        response = schema.dump(unlocks)\n\n        if response.errors:\n            return {\"success\": False, \"errors\": response.errors}, 400\n\n        return {\"success\": True, \"data\": response.data}",
+      "file": "CTFd/api/v1/unlocks.py",
+      "start": 73,
+      "qualname": "UnlockList.get"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "escape_dict"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1720,
+   "tokens_out": 38,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"escape_dict\"]}",
+     "in": 1720,
+     "out": 38,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1652,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1652,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3372,
+  "tokens_out": 74,
+  "cost_usd_est": 0.0,
+  "seconds": 0.1
+ },
+ "created": "2026-11-10T00:06:17+00:00",
+ "code_version": "a3e1ef4"
+}

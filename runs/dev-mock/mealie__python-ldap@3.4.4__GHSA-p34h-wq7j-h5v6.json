@@ -1,0 +1,433 @@
+{
+ "finding_id": "mealie/python-ldap@3.4.4/GHSA-p34h-wq7j-h5v6",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-61912",
+   "GHSA-p34h-wq7j-h5v6",
+   "PYSEC-2026-1846"
+  ],
+  "cves": [
+   "CVE-2025-61912"
+  ],
+  "cwes": [
+   "CWE-116",
+   "CWE-170"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/python-ldap@3.4.4/GHSA-p34h-wq7j-h5v6",
+  "first_fixed_above_installed": "3.4.5",
+  "fixed_versions": [
+   "3.4.5"
+  ],
+  "max_cvss": "5.5",
+  "package": "python-ldap",
+  "published": "2025-10-10T22:53:25Z",
+  "summary": "python-ldap is Vulnerable to Improper Encoding or Escaping of Output and Improper Null Termination",
+  "target": "mealie",
+  "version": "3.4.4",
+  "vuln_id": "GHSA-p34h-wq7j-h5v6"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "ldap.dn.escape_dn_chars",
+   "add_s",
+   "modify_s",
+   "ename_s",
+   "escape_dn_chars"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/core/security/ldap.py:1",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/core/security/ldap.py:2",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "ldap.dn.escape_dn_chars",
+  "add_s",
+  "modify_s",
+  "ename_s",
+  "escape_dn_chars",
+  "ValueError"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/python-ldap@3.4.4/GHSA-p34h-wq7j-h5v6",
+    "package": "python-ldap",
+    "version": "3.4.4",
+    "vuln_id": "GHSA-p34h-wq7j-h5v6",
+    "aliases": [
+     "CVE-2025-61912",
+     "GHSA-p34h-wq7j-h5v6",
+     "PYSEC-2026-1846"
+    ],
+    "summary": "python-ldap is Vulnerable to Improper Encoding or Escaping of Output and Improper Null Termination",
+    "max_cvss": "5.5",
+    "fixed_versions": [
+     "3.4.5"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-p34h-wq7j-h5v6#0",
+      "score": 0.88,
+      "text": "GHSA-p34h-wq7j-h5v6 (CVE-2025-61912)\npackage: python-ldap\nsummary: python-ldap is Vulnerable to Improper Encoding or Escaping of Output and Improper Null Termination\naffected: >=0, <3.4.5",
+      "vuln_id": "GHSA-p34h-wq7j-h5v6"
+     },
+     {
+      "id": "GHSA-p34h-wq7j-h5v6#2",
+      "score": 0.819,
+      "text": "GHSA-p34h-wq7j-h5v6 (python-ldap) details:\nThis produces Python strings which, when passed to python-ldap APIs (e.g., `add_s`, `modify_s`, r`ename_s`, or used as search bases), contain an embedded NUL. python-ldap then raises ValueError: embedded null character (or otherwise fails) before any network I/O.\nWith correct RFC-4514 encoding (`\\00`), the client proceeds and the server can apply its own syntax rules (e.g., AD will reject NUL in CN with result: 34), proving the failure originates in the escaping helper.\n\nWhy it matters: Projects follow the docs which state this function \u201cshould be used when building LDAP DN strings from arbitrary input.\u201d The function\u2019s guarantee is therefore relied upon as a safety API. A single NUL in attacker-controlled input reliably breaks client workflows (crash/unhandled exception, stuck retries, poison queue record), i.e., a DoS.",
+      "vuln_id": "GHSA-p34h-wq7j-h5v6"
+     },
+     {
+      "id": "GHSA-p34h-wq7j-h5v6#6",
+      "score": 0.794,
+      "text": "GHSA-p34h-wq7j-h5v6 (python-ldap) details:\nWho is impacted: Any application that uses ldap.dn.escape_dn_chars() to build DNs from (partially) untrusted input\u2014e.g., user `creation/rename tools`, `sync/ETL jobs`, portals allowing self-service attributes, device onboarding, batch imports. A single crafted value with `\\x00` reliably forces exceptions/failures and can crash handlers or jam pipelines with poison records.",
+      "vuln_id": "GHSA-p34h-wq7j-h5v6"
+     },
+     {
+      "id": "GHSA-p34h-wq7j-h5v6#1",
+      "score": 0.78,
+      "text": "GHSA-p34h-wq7j-h5v6 (python-ldap) details:\n### Summary\n\n`ldap.dn.escape_dn_chars()` escapes `\\x00` incorrectly by emitting a backslash followed by a literal NUL byte instead of the RFC-4514 hex form `\\00`. Any application that uses this helper to construct DNs from untrusted input can be made to consistently fail before a request is sent to the LDAP server (e.g., AD), resulting in a client-side denial of service.\n\n### Details\n\nAffected function: `ldap.dn.escape_dn_chars(s)`\n\nFile: Lib/ldap/dn.py\n\nBuggy behavior:\nFor NUL, the function does:\n\n`s = s.replace('\\000', '\\\\\\000')  # backslash + literal NUL`",
+      "vuln_id": "GHSA-p34h-wq7j-h5v6"
+     },
+     {
+      "id": "GHSA-r7r6-cc7p-4v5m#3",
+      "score": 0.814,
+      "text": "GHSA-r7r6-cc7p-4v5m (python-ldap) details:\nWith Python being a dynamically typed language, and the commonly used `JSON` format supporting `list` and `dict`, it is to be expected that Python applications may commonly forward unchecked and potentially malicious `list` and `dict` objects to the vulnerable sanitization method.\n\nThe vulnerable `escape_mode=1` configuration does not appear to be widely used.\n\n### Suggested Fix\nAdd a type check at the start of the `ldap.filter.escape_filter_chars` method to raise an exception when the supplied `assertion_value` parameter is not of type `str`.",
+      "vuln_id": "GHSA-r7r6-cc7p-4v5m"
+     },
+     {
+      "id": "GHSA-r7r6-cc7p-4v5m#0",
+      "score": 0.806,
+      "text": "GHSA-r7r6-cc7p-4v5m (CVE-2025-61911)\npackage: python-ldap\nsummary: python-ldap has sanitization bypass in ldap.filter.escape_filter_chars\naffected: >=0, <3.4.5",
+      "vuln_id": "GHSA-r7r6-cc7p-4v5m"
+     }
+    ],
+    "symbols": [
+     "ldap.dn.escape_dn_chars",
+     "add_s",
+     "modify_s",
+     "ename_s",
+     "escape_dn_chars",
+     "ValueError"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 55.7,
+   "output": {
+    "package": "python-ldap",
+    "import_names": [
+     "ldap",
+     "ldapurl",
+     "ldif",
+     "slapdtest"
+    ],
+    "symbols": [
+     "ldap.dn.escape_dn_chars",
+     "add_s",
+     "modify_s",
+     "ename_s",
+     "escape_dn_chars",
+     "ValueError"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/core/security/ldap.py:1",
+     "mealie/core/security/ldap.py:2"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 33,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/core/security/ldap.py:13",
+      "code": "def search_user(conn: LDAPObject, username: str) -> list[tuple[str, dict[str, list[bytes]]]] | None:",
+      "function": "mealie.core.security.ldap:search_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/security/ldap.py:39",
+      "code": "ldap.SCOPE_SUBTREE,",
+      "function": "mealie.core.security.ldap:search_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/security/ldap.py:43",
+      "code": "except ldap.FILTER_ERROR:",
+      "function": "mealie.core.security.ldap:search_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/security/ldap.py:75",
+      "code": "ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)",
+      "function": "mealie.core.security.ldap:get_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/security/ldap.py:77",
+      "code": "conn = ldap.initialize(settings.LDAP_SERVER_URL)",
+      "function": "mealie.core.security.ldap:get_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/security/ldap.py:78",
+      "code": "conn.set_option(ldap.OPT_PROTOCOL_VERSION, 3)",
+      "function": "mealie.core.security.ldap:get_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/security/ldap.py:79",
+      "code": "conn.set_option(ldap.OPT_REFERRALS, 0)",
+      "function": "mealie.core.security.ldap:get_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/security/ldap.py:82",
+      "code": "conn.set_option(ldap.OPT_X_TLS_CACERTFILE, settings.LDAP_TLS_CACERTFILE)",
+      "function": "mealie.core.security.ldap:get_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/security/ldap.py:83",
+      "code": "conn.set_option(ldap.OPT_X_TLS_NEWCTX, 0)",
+      "function": "mealie.core.security.ldap:get_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/security/ldap.py:90",
+      "code": "except (ldap.INVALID_CREDENTIALS, ldap.NO_SUCH_OBJECT):",
+      "function": "mealie.core.security.ldap:get_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/security/ldap.py:104",
+      "code": "except (ldap.INVALID_CREDENTIALS, ldap.NO_SUCH_OBJECT):",
+      "function": "mealie.core.security.ldap:get_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/security/ldap.py:145",
+      "code": "should_be_admin = len(conn.search_s(user_dn, ldap.SCOPE_BASE, settings.LDAP_ADMIN_FILTER, [])) > 0",
+      "function": "mealie.core.security.ldap:get_user",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "python-ldap: imported in 2 non-test location(s); 33 package call/reference site(s); named vulnerable symbols ['ldap.dn.escape_dn_chars', 'add_s', 'modify_s', 'ename_s', 'escape_dn_chars', 'ValueError']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 38.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/core/security/ldap.py:63",
+      "score": 0.701,
+      "text": "# mealie/core/security/ldap.py:63-152  get_user\ndef get_user(db: AllRepositories, username: str, password: str) -> PrivateUser | bool:\n    \"\"\"Given a username and password, tries to authenticate by BINDing to an\n    LDAP server\n\n    If the BIND succeeds, it will either create a new user of that username on\n    the server or return an existing one.\n    Returns False on failure.\n    \"\"\"\n\n    settings = get_app_settings()\n\n    if settings.LDAP_TLS_INSECURE:\n        ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)\n\n    conn = ldap.initialize(settings.LDAP_SERVER_URL)\n    conn.set_option(ldap.OPT_PROTOCOL_VERSION, 3)\n    conn.set_option(ldap.OPT_REFERRALS, 0)\n\n    if settings.LDAP_TLS_CACERTFILE:\n        conn.set_option(ldap.OPT_X_TLS_CACERTFILE, settings.LDAP_TLS_CACERTFILE)\n        conn.set_option(ldap.OPT_X_TLS_NEWCTX, 0)\n\n    if settings.LDAP_ENABLE_STARTTLS:\n        conn.start_tls_s()\n\n    try:\n        conn.simple_bind_s(settings.LDAP_QUERY_BIND, settings.LDAP_QUERY_PASSWORD)\n    except (ldap.INVALID_CREDENTIALS, ldap.NO_SUCH_OBJECT):\n        logger.error(\"[LDAP] Unable to bind to with provided user/password\")\n        conn.unbind_s()\n        return False\n\n    user_entry = search_user(conn, username)\n    if not user_entry:\n        return False\n    user_dn, user_attr = user_entry[0]\n\n    # Check the credentials of the user\n    try:\n        logger.debug(f\"[LDAP] Attempting to bind with '{user_dn}' using the provided password\")\n        conn.simple_bind_s(user_dn, password)\n    except (ldap.INVALID_CREDENTIALS, ldap.NO_SUCH_OBJECT):\n        logger.error(\"[LDAP] Bind failed\")\n        conn.unbind_s()\n        return False\n\n    # Check for existing user\n    user = db.users.get_one(username, \"email\", any_case=True)\n    if not user:\n        user = db.users.get_one(username, \"username\", any_case=True)\n\n    if user is None:\n        logger.debug(\"[LDAP] User is not in Mealie. Creating a new account\")\n\n        attribute_keys = {\n            settings.LDAP_ID_ATTRIBUTE: \"username\",\n            settings.LDAP_NAME_ATTRIBUTE: \"name\",\n            settings.LDAP_MAIL_ATTRIBUTE: \"mail\",\n        }\n        attributes = {}",
+      "file": "mealie/core/security/ldap.py",
+      "start": 63,
+      "qualname": "get_user"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/utils.py:89",
+      "score": 0.676,
+      "text": "# mealie/services/parser_services/crfpp/utils.py:89-99  insideParenthesis\ndef insideParenthesis(token, tokens):\n    \"\"\"\n    Returns true if the word is inside parenthesis in the phrase.\n    \"\"\"\n    if token in [\"(\", \")\"]:\n        return True\n    else:\n        line = \" \".join(tokens)\n        return (\n            re.match(r\".*\\(.*\" + re.escape(token) + r\".*\\).*\", line) is not None  # noqa: W605 - invalid dscape sequence\n        )",
+      "file": "mealie/services/parser_services/crfpp/utils.py",
+      "start": 89,
+      "qualname": "insideParenthesis"
+     },
+     {
+      "id": "mealie:mealie/core/security/ldap.py:13",
+      "score": 0.665,
+      "text": "# mealie/core/security/ldap.py:13-60  search_user\ndef search_user(conn: LDAPObject, username: str) -> list[tuple[str, dict[str, list[bytes]]]] | None:\n    \"\"\"\n    Searches for a user by LDAP_ID_ATTRIBUTE, LDAP_MAIL_ATTRIBUTE, and the provided LDAP_USER_FILTER.\n    If none or multiple users are found, return False\n    \"\"\"\n    settings = get_app_settings()\n\n    user_filter = \"\"\n    if settings.LDAP_USER_FILTER:\n        # fill in the template provided by the user to maintain backwards compatibility\n        user_filter = settings.LDAP_USER_FILTER.format(\n            id_attribute=settings.LDAP_ID_ATTRIBUTE, mail_attribute=settings.LDAP_MAIL_ATTRIBUTE, input=username\n        )\n    # Don't assume the provided search filter has (|({id_attribute}={input})({mail_attribute}={input}))\n    search_filter = \"(&(|({id_attribute}={input})({mail_attribute}={input})){filter})\".format(\n        id_attribute=settings.LDAP_ID_ATTRIBUTE,\n        mail_attribute=settings.LDAP_MAIL_ATTRIBUTE,\n        input=username,\n        filter=user_filter,\n    )\n\n    user_entry: list[tuple[str, dict[str, list[bytes]]]] | None = None\n    try:\n        logger.debug(f\"[LDAP] Starting search with filter: {search_filter}\")\n        user_entry = conn.search_s(\n            settings.LDAP_BASE_DN,\n            ldap.SCOPE_SUBTREE,\n            search_filter,\n            [settings.LDAP_ID_ATTRIBUTE, settings.LDAP_NAME_ATTRIBUTE, settings.LDAP_MAIL_ATTRIBUTE],\n        )\n    except ldap.FILTER_ERROR:\n        logger.error(\"[LDAP] Bad user search filter\")\n\n    if not user_entry:\n        conn.unbind_s()\n        logger.error(\"[LDAP] No user was found with the provided user filter\")\n        return None\n\n    # we only want the entries that have a dn\n    user_entry = [(dn, attr) for dn, attr in user_entry if dn]\n\n    if len(user_entry) > 1:\n        logger.warning(\"[LDAP] Multiple users found with the provided user filter\")\n        logger.debug(f\"[LDAP] The following entries were returned: {user_entry}\")\n        conn.unbind_s()\n        return None\n\n    return user_entry",
+      "file": "mealie/core/security/ldap.py",
+      "start": 13,
+      "qualname": "search_user"
+     },
+     {
+      "id": "mealie:mealie/core/settings/settings.py:160",
+      "score": 0.66,
+      "text": "# mealie/core/settings/settings.py:160-170  AppSettings.LDAP_ENABLED\n    def LDAP_ENABLED(self) -> bool:\n        \"\"\"Validates LDAP settings are all set\"\"\"\n        required = {\n            self.LDAP_SERVER_URL,\n            self.LDAP_BASE_DN,\n            self.LDAP_ID_ATTRIBUTE,\n            self.LDAP_MAIL_ATTRIBUTE,\n            self.LDAP_NAME_ATTRIBUTE,\n        }\n        not_none = None not in required\n        return self.LDAP_AUTH_ENABLED and not_none",
+      "file": "mealie/core/settings/settings.py",
+      "start": 160,
+      "qualname": "AppSettings.LDAP_ENABLED"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/pre_processor.py:19",
+      "score": 0.66,
+      "text": "# mealie/services/parser_services/crfpp/pre_processor.py:19-24  replace_common_abbreviations\ndef replace_common_abbreviations(string: str) -> str:\n    for k, v in replace_abbreviations.items():\n        regex = rf\"(?<=\\d)\\s?({k}\\bs?)\"\n        string = re.sub(regex, v, string)\n\n    return string",
+      "file": "mealie/services/parser_services/crfpp/pre_processor.py",
+      "start": 19,
+      "qualname": "replace_common_abbreviations"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "ldap.dn.escape_dn_chars",
+     "add_s",
+     "modify_s",
+     "ename_s",
+     "escape_dn_chars"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/core/security/ldap.py:1",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/core/security/ldap.py:2",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2253,
+   "tokens_out": 94,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/core/security/ldap.py:1\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/core/security/ldap.py:2\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"ldap.dn.escape_dn_chars\", \"add_s\", \"modify_s\", \"ename_s\", \"escape_dn_chars\"]}",
+     "in": 2253,
+     "out": 94,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 2210,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2210,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4463,
+  "tokens_out": 130,
+  "cost_usd_est": 0.0,
+  "seconds": 0.13
+ },
+ "created": "2026-11-10T00:06:28+00:00",
+ "code_version": "a3e1ef4"
+}

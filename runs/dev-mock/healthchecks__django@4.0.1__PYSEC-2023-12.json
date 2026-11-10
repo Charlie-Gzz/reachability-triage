@@ -1,0 +1,430 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/PYSEC-2023-12",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-23969",
+   "GHSA-q2jf-h9jm-m7p4",
+   "PYSEC-2023-12"
+  ],
+  "cves": [
+   "CVE-2023-23969"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/PYSEC-2023-12",
+  "first_fixed_above_installed": "4.0.9",
+  "fixed_versions": [
+   "3.2.17",
+   "4.0.9",
+   "4.1.6"
+  ],
+  "max_cvss": null,
+  "package": "django",
+  "published": "2023-02-01T19:15:00Z",
+  "summary": "In Django 3.2 before 3.2.17, 4.0 before 4.0.9, and 4.1 before 4.1.6, the parsed values of Accept-Language headers are cached in order to avoid repetitive parsing. This leads to a potential denial-of-s",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "PYSEC-2023-12"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/accounts/admin.py:1",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:2",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/PYSEC-2023-12",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "PYSEC-2023-12",
+    "aliases": [
+     "CVE-2023-23969",
+     "GHSA-q2jf-h9jm-m7p4",
+     "PYSEC-2023-12"
+    ],
+    "summary": "In Django 3.2 before 3.2.17, 4.0 before 4.0.9, and 4.1 before 4.1.6, the parsed values of Accept-Language headers are cached in order to avoid repetitive parsing. This leads to a potential denial-of-s",
+    "max_cvss": null,
+    "fixed_versions": [
+     "3.2.17",
+     "4.0.9",
+     "4.1.6"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 40.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-q2jf-h9jm-m7p4#1",
+      "score": 0.885,
+      "text": "GHSA-q2jf-h9jm-m7p4 (django) details:\nIn Django 3.2 before 3.2.17, 4.0 before 4.0.9, and 4.1 before 4.1.6, the parsed values of Accept-Language headers are cached in order to avoid repetitive parsing. This leads to a potential denial-of-service vector via excessive memory usage if the raw value of Accept-Language headers is very large.",
+      "vuln_id": "GHSA-q2jf-h9jm-m7p4"
+     },
+     {
+      "id": "GHSA-q2jf-h9jm-m7p4#0",
+      "score": 0.74,
+      "text": "GHSA-q2jf-h9jm-m7p4 (CVE-2023-23969)\npackage: django\nsummary: Django contains Uncontrolled Resource Consumption via cached header\naffected: >=3.2a1, <3.2.17; >=4.0a1, <4.0.9; >=4.1a1, <4.1.6",
+      "vuln_id": "GHSA-q2jf-h9jm-m7p4"
+     },
+     {
+      "id": "GHSA-q7q2-qf2q-rw3w#0",
+      "score": 0.812,
+      "text": "GHSA-q7q2-qf2q-rw3w (CVE-2014-1418)\npackage: django\nsummary: Django Vulnerable to Cache Poisoning\naffected: >=1.4, <1.4.13; >=1.5, <1.5.8; >=1.6, <1.6.5; >=1.7a1, <1.7b4",
+      "vuln_id": "GHSA-q7q2-qf2q-rw3w"
+     },
+     {
+      "id": "GHSA-923m-gv2p-w5qp#1",
+      "score": 0.803,
+      "text": "GHSA-923m-gv2p-w5qp (django) details:\nAn issue was discovered in Django 5.2 before 5.2.15 and 6.0 before 6.0.6.\n`django.utils.cache.has_vary_header()` in Django does not strip leading or trailing whitespace from `Vary` response header values before comparison, which allows remote attackers to read cached responses via requests to URLs whose responses contain whitespace-padded Vary header values.\nEarlier, unsupported Django series (such as 5.0.x, 4.1.x, and 3.2.x) were not evaluated and may also be affected.\nDjango would like to thank Navid Rezazadeh for reporting this issue.",
+      "vuln_id": "GHSA-923m-gv2p-w5qp"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 45.7,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 43.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/api/urls.py:module",
+      "score": 0.716,
+      "text": "# hc/api/urls.py (module level)\nfrom urllib.parse import quote, unquote\nfrom django.urls import include, path, register_converter\nfrom hc.api import views\nclass QuoteConverter:\n    regex = r\"[\\w%~_.-]+\"\nclass SHA1Converter:\n    regex = \"[A-z0-9]{40}\"\nregister_converter(QuoteConverter, \"quoted\")\nregister_converter(SHA1Converter, \"sha1\")\nuuid_urls = [\n    path(\"\", views.ping),\n    path(\"fail\", views.ping, {\"action\": \"fail\"}),\n    path(\"start\", views.ping, {\"action\": \"start\"}),\n    path(\"<int:exitstatus>\", views.ping),\n]\nslug_urls = [\n    path(\"fail\", views.ping_by_slug, {\"action\": \"fail\"}),\n    path(\"start\", views.ping_by_slug, {\"action\": \"start\"}),\n    path(\"<int:exitstatus>\", views.ping_by_slug),\n]\nurlpatterns = [\n    path(\"ping/<uuid:code>\", views.ping),\n    path(\"ping/<uuid:code>/\", include(uuid_urls)),\n    path(\"ping/<slug:ping_key>/<slug:slug>\", views.ping_by_slug),\n    path(\"ping/<slug:ping_key>/<slug:slug>/\", include(slug_urls)),\n    path(\"api/v1/checks/\", views.checks),\n    path(\"api/v1/checks/<uuid:code>\", views.single, name=\"hc-api-single\"),\n    path(\"api/v1/checks/<sha1:unique_key>\", views.get_check_by_unique_key),\n    path(\"api/v1/checks/<uuid:code>/pause\", views.pause, name=\"hc-api-pause\"),\n    path(\n        \"api/v1/notifications/<uuid:code>/status\",\n        views.notification_status,\n        name=\"hc-api-notification-status\",\n    ),\n    path(\"api/v1/checks/<uuid:code>/pings/\", views.pings, name=\"hc-api-pings\"),\n    path(\"api/v1/checks/<uuid:code>/flips/\", views.flips_by_uuid, name=\"hc-api-flips\"),\n    path(\"api/v1/checks/<sha1:unique_key>/flips/\", views.flips_by_unique_key),\n    path(\"api/v1/channels/\", views.channels),\n    path(\"api/v1/badges/\", views.badges),\n    path(\n        \"badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.<slug:fmt>\",\n        views.badge,\n        name=\"hc-badge\",\n    ),\n    path(\n        \"badge/<slug:badge_key>/<slug:signature>.<slug:fmt>\",\n        views.badge,\n        {\"tag\": \"*\"},\n        name=\"hc-badge-all\",\n    ),\n    path(\"api/v1/metrics/\", views.metrics),\n    path(\"api/v1/status/\", views.status),\n]",
+      "file": "hc/api/urls.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/front/templatetags/hc_extras.py:module",
+      "score": 0.705,
+      "text": "# hc/front/templatetags/hc_extras.py (module level)\nimport re\nfrom django import template\nfrom django.conf import settings\nfrom django.templatetags.static import static\nfrom django.utils.html import escape\nfrom django.utils.safestring import mark_safe\nfrom django.utils.timezone import now\nfrom hc.lib.date import format_duration, format_approx_duration, format_hms\nregister = template.Library()\n@register.filter\n@register.filter\n@register.filter\n@register.simple_tag\n@register.simple_tag\n@register.filter\n@register.simple_tag\n@register.simple_tag\n@register.simple_tag\n@register.simple_tag\n@register.filter\n@register.filter\n@register.filter\n@register.filter\n@register.filter\n@register.filter\n@register.simple_tag\n@register.filter\nFORMATTED_PING_ENDPOINT = (\n    f\"\"\"<span class=\"base hidden-md\">{settings.PING_ENDPOINT}</span>\"\"\"\n)\n@register.filter\n@register.filter",
+      "file": "hc/front/templatetags/hc_extras.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/front/templatetags/hc_extras.py:172",
+      "score": 0.7,
+      "text": "# hc/front/templatetags/hc_extras.py:172-173  format_headers\ndef format_headers(headers):\n    return \"\\n\".join(\"%s: %s\" % (k, v) for k, v in headers.items())",
+      "file": "hc/front/templatetags/hc_extras.py",
+      "start": 172,
+      "qualname": "format_headers"
+     },
+     {
+      "id": "healthchecks:hc/api/views.py:module",
+      "score": 0.697,
+      "text": "# hc/api/views.py (module level)\nfrom datetime import timedelta as td\nimport time\nfrom django.conf import settings\nfrom django.db import connection\nfrom django.http import (\n    HttpResponse,\n    HttpResponseForbidden,\n    HttpResponseNotFound,\n    HttpResponseBadRequest,\n    JsonResponse,\n)\nfrom django.shortcuts import get_object_or_404\nfrom django.utils import timezone\nfrom django.views.decorators.cache import never_cache\nfrom django.views.decorators.csrf import csrf_exempt\nfrom django.views.decorators.http import require_POST\nfrom hc.accounts.models import Profile\nfrom hc.api import schemas\nfrom hc.api.decorators import authorize, authorize_read, cors, validate_json\nfrom hc.api.forms import FlipsFiltersForm\nfrom hc.api.models import MAX_DELTA, Flip, Channel, Check, Notification, Ping\nfrom hc.lib.badges import check_signature, get_badge_svg, get_badge_url\nclass BadChannelException(Exception):\n@csrf_exempt\n@never_cache\n@csrf_exempt\n@authorize_read\n@validate_json(schemas.check)\n@authorize\n@csrf_exempt\n@cors(\"GET\", \"POST\")\n@cors(\"GET\")\n@csrf_exempt\n@authorize\n@authorize_read\n@cors(\"GET\")\n@csrf_exempt\n@authorize_read\n@validate_json(schemas.check)\n@authorize\n@authorize\n@csrf_exempt\n@cors(\"POST\", \"DELETE\", \"GET\")\n@cors(\"POST\")\n@csrf_exempt\n@validate_json()\n@authorize\n@cors(\"GET\")\n@csrf_exempt\n@validate_json()\n@authorize\n@cors(\"GET\")\n@csrf_exempt\n@authorize_read\n@cors(\"GET\")\n@csrf_exempt\n@authorize_read\n@cors(\"GET\")\n@csrf_exempt\n@authorize_read",
+      "file": "hc/api/views.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/payments/admin.py:module",
+      "score": 0.692,
+      "text": "# hc/payments/admin.py (module level)\nfrom django.contrib import admin\nfrom django.urls import reverse\nfrom django.utils.safestring import mark_safe\nfrom hc.accounts.models import Profile\nfrom hc.payments.models import Subscription\n@admin.register(Subscription)\nclass SubsAdmin(admin.ModelAdmin):\n    readonly_fields = (\"email\",)\n    search_fields = (\n        \"customer_id\",\n        \"payment_method_token\",\n        \"subscription_id\",\n        \"user__email\",\n    )\n    list_display = (\n        \"id\",\n        \"email\",\n        \"customer_id\",\n        \"address_id\",\n        \"payment_method_token\",\n        \"subscription_id\",\n        \"plan_id\",\n        \"plan_name\",\n        \"profile\",\n    )\n    list_filter = (\"plan_id\",)\n    raw_id_fields = (\"user\",)\n    actions = (\"cancel\",)\n    @mark_safe",
+      "file": "hc/payments/admin.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/accounts/admin.py:1",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:2",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2064,
+   "tokens_out": 88,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/accounts/admin.py:1\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:2\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 2064,
+     "out": 88,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 2026,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2026,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4090,
+  "tokens_out": 123,
+  "cost_usd_est": 0.0,
+  "seconds": 0.13
+ },
+ "created": "2026-11-10T00:06:11+00:00",
+ "code_version": "a3e1ef4"
+}

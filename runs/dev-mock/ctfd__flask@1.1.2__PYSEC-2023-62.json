@@ -1,0 +1,820 @@
+{
+ "finding_id": "ctfd/flask@1.1.2/PYSEC-2023-62",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-30861",
+   "GHSA-m2qf-hxjv-5gpq",
+   "PYSEC-2023-62"
+  ],
+  "cves": [
+   "CVE-2023-30861"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "ctfd/flask@1.1.2/PYSEC-2023-62",
+  "first_fixed_above_installed": "2.2.5",
+  "fixed_versions": [
+   "2.2.5",
+   "2.3.2",
+   "70f906c51ce49c485f1d355703e9cc3386b1cc2b",
+   "afd63b16170b7c047f5758eb910c416511e9c965"
+  ],
+  "max_cvss": null,
+  "package": "flask",
+  "published": "2023-05-02T18:15:00Z",
+  "summary": "Flask is a lightweight WSGI web application framework. When all of the following conditions are met, a response containing data intended for one client may be cached and subsequently sent by the proxy",
+  "target": "ctfd",
+  "version": "1.1.2",
+  "vuln_id": "PYSEC-2023-62"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "session"
+  ],
+  "reasoning": "mock: 26 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "CTFd/api/v1/comments.py:131",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/api/v1/teams.py:287",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/api/v1/teams.py:328",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "session"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/flask@1.1.2/PYSEC-2023-62",
+    "package": "flask",
+    "version": "1.1.2",
+    "vuln_id": "PYSEC-2023-62",
+    "aliases": [
+     "CVE-2023-30861",
+     "GHSA-m2qf-hxjv-5gpq",
+     "PYSEC-2023-62"
+    ],
+    "summary": "Flask is a lightweight WSGI web application framework. When all of the following conditions are met, a response containing data intended for one client may be cached and subsequently sent by the proxy",
+    "max_cvss": null,
+    "fixed_versions": [
+     "2.2.5",
+     "2.3.2",
+     "70f906c51ce49c485f1d355703e9cc3386b1cc2b",
+     "afd63b16170b7c047f5758eb910c416511e9c965"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 34.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-m2qf-hxjv-5gpq#0",
+      "score": 0.734,
+      "text": "GHSA-m2qf-hxjv-5gpq (CVE-2023-30861)\npackage: flask\nsummary: Flask vulnerable to possible disclosure of permanent session cookie due to missing Vary: Cookie header\naffected: >=0, <2.2.5; >=2.3.0, <2.3.2",
+      "vuln_id": "GHSA-m2qf-hxjv-5gpq"
+     },
+     {
+      "id": "GHSA-m2qf-hxjv-5gpq#1",
+      "score": 0.726,
+      "text": "GHSA-m2qf-hxjv-5gpq (flask) details:\nWhen all of the following conditions are met, a response containing data intended for one client may be cached and subsequently sent by a proxy to other clients. If the proxy also caches `Set-Cookie` headers, it may send one client's `session` cookie to other clients. The severity depends on the application's use of the session, and the proxy's behavior regarding cookies. The risk depends on _all_ these conditions being met.",
+      "vuln_id": "GHSA-m2qf-hxjv-5gpq"
+     },
+     {
+      "id": "GHSA-m2qf-hxjv-5gpq#2",
+      "score": 0.72,
+      "text": "GHSA-m2qf-hxjv-5gpq (flask) details:\n1. The application must be hosted behind a caching proxy that does not strip cookies or ignore responses with cookies.\n2. The application sets [`session.permanent = True`](https://flask.palletsprojects.com/en/2.3.x/api/#flask.session.permanent).\n2. The application does not access or modify the session at any point during a request.\n4. [`SESSION_REFRESH_EACH_REQUEST`](https://flask.palletsprojects.com/en/2.3.x/config/#SESSION_REFRESH_EACH_REQUEST) is enabled (the default).\n5. The application does not set a `Cache-Control` header to indicate that a page is private or should not be cached.\n\nThis happens because vulnerable versions of Flask only set the `Vary: Cookie` header when the session is accessed or modified, not when it is refreshed (re-sent to update the expiration) without being accessed or modified.",
+      "vuln_id": "GHSA-m2qf-hxjv-5gpq"
+     },
+     {
+      "id": "GHSA-562c-5r94-xh97#0",
+      "score": 0.751,
+      "text": "GHSA-562c-5r94-xh97 (CVE-2018-1000656)\npackage: flask\nsummary: Flask is vulnerable to Denial of Service via incorrect encoding of JSON data\naffected: >=0, <0.12.3",
+      "vuln_id": "GHSA-562c-5r94-xh97"
+     },
+     {
+      "id": "GHSA-562c-5r94-xh97#1",
+      "score": 0.747,
+      "text": "GHSA-562c-5r94-xh97 (flask) details:\nThe Pallets Project flask version Before 0.12.3 contains a CWE-20: Improper Input Validation vulnerability in flask that can result in Large amount of memory usage possibly leading to denial of service. This attack appear to be exploitable via Attacker provides JSON data in incorrect encoding. This vulnerability appears to have been fixed in 0.12.3.",
+      "vuln_id": "GHSA-562c-5r94-xh97"
+     }
+    ],
+    "symbols": [
+     "session"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 48.0,
+   "output": {
+    "package": "flask",
+    "import_names": [
+     "flask"
+    ],
+    "symbols": [
+     "session"
+    ],
+    "imported": true,
+    "import_locations": [
+     "CTFd/__init__.py:8",
+     "CTFd/__init__.py:9",
+     "CTFd/admin/__init__.py:6",
+     "CTFd/admin/__init__.py:7",
+     "CTFd/admin/__init__.py:8",
+     "CTFd/admin/challenges.py:1",
+     "CTFd/admin/notifications.py:1",
+     "CTFd/admin/pages.py:1",
+     "CTFd/admin/scoreboard.py:1",
+     "CTFd/admin/statistics.py:1",
+     "CTFd/admin/submissions.py:1",
+     "CTFd/admin/teams.py:1",
+     "CTFd/admin/users.py:1",
+     "CTFd/api/__init__.py:1",
+     "CTFd/api/v1/awards.py:3",
+     "CTFd/api/v1/challenges.py:4",
+     "CTFd/api/v1/comments.py:3",
+     "CTFd/api/v1/config.py:3",
+     "CTFd/api/v1/files.py:3",
+     "CTFd/api/v1/flags.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 1481,
+    "vulnerable_call_sites": [
+     {
+      "file": "CTFd/api/v1/comments.py",
+      "line": 131,
+      "code": "req[\"author_id\"] = session[\"id\"]",
+      "resolved": "flask.session",
+      "function": "CTFd.api.v1.comments:CommentList.post",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.api.v1.comments:CommentList.post"
+      ],
+      "snippet": "  128      def post(self):\n  129          req = request.get_json()\n  130          # Always force author IDs to be the actual user\n  131          req[\"author_id\"] = session[\"id\"]\n  132          CommentModel = get_comment_model(data=req)\n  133  \n  134          m = CommentModel(**req)"
+     },
+     {
+      "file": "CTFd/api/v1/teams.py",
+      "line": 287,
+      "code": "if team.captain_id != session[\"id\"]:",
+      "resolved": "flask.session",
+      "function": "CTFd.api.v1.teams:TeamPrivate.patch",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.api.v1.teams:TeamPrivate.patch"
+      ],
+      "snippet": "  284      )\n  285      def patch(self):\n  286          team = get_current_team()\n  287          if team.captain_id != session[\"id\"]:\n  288              return (\n  289                  {\n  290                      \"success\": False,"
+     },
+     {
+      "file": "CTFd/api/v1/teams.py",
+      "line": 328,
+      "code": "if team.captain_id != session[\"id\"]:",
+      "resolved": "flask.session",
+      "function": "CTFd.api.v1.teams:TeamPrivate.delete",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.api.v1.teams:TeamPrivate.delete"
+      ],
+      "snippet": "  325              )\n  326  \n  327          team = get_current_team()\n  328          if team.captain_id != session[\"id\"]:\n  329              return (\n  330                  {\n  331                      \"success\": False,"
+     },
+     {
+      "file": "CTFd/api/v1/teams.py",
+      "line": 383,
+      "code": "if team.captain_id != session[\"id\"]:",
+      "resolved": "flask.session",
+      "function": "CTFd.api.v1.teams:TeamPrivateMembers.post",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.api.v1.teams:TeamPrivateMembers.post"
+      ],
+      "snippet": "  380      @require_team\n  381      def post(self):\n  382          team = get_current_team()\n  383          if team.captain_id != session[\"id\"]:\n  384              return (\n  385                  {\n  386                      \"success\": False,"
+     },
+     {
+      "file": "CTFd/api/v1/tokens.py",
+      "line": 124,
+      "code": "id=token_id, user_id=session[\"id\"]",
+      "resolved": "flask.session",
+      "function": "CTFd.api.v1.tokens:TokenDetail.get",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.api.v1.tokens:TokenDetail.get"
+      ],
+      "snippet": "  121              token = Tokens.query.filter_by(id=token_id).first_or_404()\n  122          else:\n  123              token = Tokens.query.filter_by(\n  124                  id=token_id, user_id=session[\"id\"]\n  125              ).first_or_404()\n  126  \n  127          user_type = get_current_user_type(fallback=\"user\")"
+     },
+     {
+      "file": "CTFd/api/v1/users.py",
+      "line": 222,
+      "code": "if data[\"id\"] == session[\"id\"] and (",
+      "resolved": "flask.session",
+      "function": "CTFd.api.v1.users:UserPublic.patch",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.api.v1.users:UserPublic.patch"
+      ],
+      "snippet": "  219          data[\"id\"] = user_id\n  220  \n  221          # Admins should not be able to ban themselves\n  222          if data[\"id\"] == session[\"id\"] and (\n  223              data.get(\"banned\") is True or data.get(\"banned\") == \"true\"\n  224          ):\n  225              return ("
+     },
+     {
+      "file": "CTFd/api/v1/users.py",
+      "line": 255,
+      "code": "if user_id == session[\"id\"]:",
+      "resolved": "flask.session",
+      "function": "CTFd.api.v1.users:UserPublic.delete",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.api.v1.users:UserPublic.delete"
+      ],
+      "snippet": "  252      )\n  253      def delete(self, user_id):\n  254          # Admins should not be able to delete themselves\n  255          if user_id == session[\"id\"]:\n  256              return (\n  257                  {\"success\": False, \"errors\": {\"id\": \"You cannot delete yourself\"}},\n  258                  400,"
+     },
+     {
+      "file": "CTFd/auth.py",
+      "line": 73,
+      "code": "user = Users.query.filter_by(id=session[\"id\"]).first_or_404()",
+      "resolved": "flask.session",
+      "function": "CTFd.auth:confirm",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.auth:confirm"
+      ],
+      "snippet": "   70      if current_user.authed() is False:\n   71          return redirect(url_for(\"auth.login\"))\n   72  \n   73      user = Users.query.filter_by(id=session[\"id\"]).first_or_404()\n   74      if user.verified:\n   75          return redirect(url_for(\"views.settings\"))\n   76  "
+     },
+     {
+      "file": "CTFd/auth.py",
+      "line": 385,
+      "code": "session.regenerate()",
+      "resolved": "flask.session.regenerate",
+      "function": "CTFd.auth:login",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.auth:login"
+      ]
+     },
+     {
+      "file": "CTFd/auth.py",
+      "line": 442,
+      "code": "endpoint=endpoint, client_id=client_id, scope=scope, state=session[\"nonce\"]",
+      "resolved": "flask.session",
+      "function": "CTFd.auth:oauth_login",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.auth:oauth_login"
+      ]
+     },
+     {
+      "file": "CTFd/auth.py",
+      "line": 452,
+      "code": "if session[\"nonce\"] != state:",
+      "resolved": "flask.session",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.auth:oauth_redirect"
+      ]
+     },
+     {
+      "file": "CTFd/constants/sessions.py",
+      "line": 7,
+      "code": "return session.get(\"id\", 0)",
+      "resolved": "flask.session.get",
+      "function": "CTFd.constants.sessions:_SessionWrapper.id",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.admin.challenges:challenges_detail",
+       "CTFd.constants.sessions:_SessionWrapper.id"
+      ]
+     },
+     {
+      "file": "CTFd/constants/sessions.py",
+      "line": 11,
+      "code": "return session.get(\"nonce\")",
+      "resolved": "flask.session.get",
+      "function": "CTFd.constants.sessions:_SessionWrapper.nonce",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": false,
+      "path": []
+     },
+     {
+      "file": "CTFd/constants/sessions.py",
+      "line": 15,
+      "code": "return session.get(\"hash\")",
+      "resolved": "flask.session.get",
+      "function": "CTFd.constants.sessions:_SessionWrapper.hash",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.models:Teams.validate_password",
+       "CTFd.utils.crypto:hash_password",
+       "CTFd.constants.sessions:_SessionWrapper.hash"
+      ]
+     },
+     {
+      "file": "CTFd/forms/__init__.py",
+      "line": 9,
+      "code": "return session.get(\"nonce\")",
+      "resolved": "flask.session.get",
+      "function": "CTFd.forms:CTFdCSRF.generate_csrf_token",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": false,
+      "path": []
+     },
+     {
+      "file": "CTFd/forms/self.py",
+      "line": 30,
+      "code": "field_entries_kwargs={\"user_id\": session[\"id\"]},",
+      "resolved": "flask.session",
+      "function": "CTFd.forms.self:_SettingsForm.extra",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": false,
+      "path": []
+     },
+     {
+      "file": "CTFd/utils/initialization/__init__.py",
+      "line": 216,
+      "code": "ip=get_ip(), user_id=session[\"id\"]",
+      "resolved": "flask.session",
+      "function": "CTFd.utils.initialization:tracker",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.utils.initialization:tracker"
+      ]
+     },
+     {
+      "file": "CTFd/utils/initialization/__init__.py",
+      "line": 222,
+      "code": "track = Tracking(ip=get_ip(), user_id=session[\"id\"])",
+      "resolved": "flask.session",
+      "function": "CTFd.utils.initialization:tracker",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.utils.initialization:tracker"
+      ]
+     },
+     {
+      "file": "CTFd/utils/initialization/__init__.py",
+      "line": 233,
+      "code": "clear_user_recent_ips(user_id=session[\"id\"])",
+      "resolved": "flask.session",
+      "function": "CTFd.utils.initialization:tracker",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.utils.initialization:tracker"
+      ]
+     },
+     {
+      "file": "CTFd/utils/initialization/__init__.py",
+      "line": 287,
+      "code": "if not session.get(\"nonce\"):",
+      "resolved": "flask.session.get",
+      "function": "CTFd.utils.initialization:csrf",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.utils.initialization:csrf"
+      ]
+     },
+     {
+      "file": "CTFd/utils/initialization/__init__.py",
+      "line": 288,
+      "code": "session[\"nonce\"] = generate_nonce()",
+      "resolved": "flask.session",
+      "function": "CTFd.utils.initialization:csrf",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.utils.initialization:csrf"
+      ]
+     },
+     {
+      "file": "CTFd/utils/initialization/__init__.py",
+      "line": 291,
+      "code": "if session[\"nonce\"] != request.headers.get(\"CSRF-Token\"):",
+      "resolved": "flask.session",
+      "function": "CTFd.utils.initialization:csrf",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.utils.initialization:csrf"
+      ]
+     },
+     {
+      "file": "CTFd/utils/initialization/__init__.py",
+      "line": 294,
+      "code": "if session[\"nonce\"] != request.form.get(\"nonce\"):",
+      "resolved": "flask.session",
+      "function": "CTFd.utils.initialization:csrf",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.utils.initialization:csrf"
+      ]
+     },
+     {
+      "file": "CTFd/utils/logging/__init__.py",
+      "line": 13,
+      "code": "\"id\": session.get(\"id\"),",
+      "resolved": "flask.session.get",
+      "function": "CTFd.utils.logging:log",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.api.v1.challenges:ChallengeAttempt.post",
+       "CTFd.utils.logging:log"
+      ]
+     },
+     {
+      "file": "CTFd/utils/security/auth.py",
+      "line": 15,
+      "code": "session[\"id\"] = user.id",
+      "resolved": "flask.session",
+      "function": "CTFd.utils.security.auth:login_user",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.auth:login",
+       "CTFd.utils.security.auth:login_user"
+      ]
+     }
+    ],
+    "config_references": [
+     {
+      "location": "CTFd/__init__.py:53",
+      "value": "session",
+      "symbol": "session",
+      "in_test": false
+     }
+    ],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/__init__.py:61",
+      "code": "Flask.__init__(self, *args, **kwargs)",
+      "function": "CTFd:CTFdFlask.__init__",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:130",
+      "code": "template = safe_join(theme_name, \"templates\", template)",
+      "function": "CTFd:ThemeLoader.get_source",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:17",
+      "code": "admin = Blueprint(\"admin\", __name__)",
+      "function": "CTFd.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:58",
+      "code": "return redirect(url_for(\"admin.statistics\"))",
+      "function": "CTFd.admin:view",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:59",
+      "code": "return redirect(url_for(\"auth.login\"))",
+      "function": "CTFd.admin:view",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:65",
+      "code": "if request.method == \"GET\":",
+      "function": "CTFd.admin:plugin",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:66",
+      "code": "plugins_path = os.path.join(app.root_path, \"plugins\")",
+      "function": "CTFd.admin:plugin",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:76",
+      "code": "os.path.join(app.root_path, \"plugins\", plugin, \"config.html\")",
+      "function": "CTFd.admin:plugin",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:78",
+      "code": "return render_template_string(config_html)",
+      "function": "CTFd.admin:plugin",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:79",
+      "code": "abort(404)",
+      "function": "CTFd.admin:plugin",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:80",
+      "code": "elif request.method == \"POST\":",
+      "function": "CTFd.admin:plugin",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:81",
+      "code": "for k, v in request.form.items():",
+      "function": "CTFd.admin:plugin",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:85",
+      "code": "with app.app_context():",
+      "function": "CTFd.admin:plugin",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:93",
+      "code": "backup = request.files[\"backup\"]",
+      "function": "CTFd.admin:import_ctf",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/admin/__init__.py:104",
+      "code": "return redirect(url_for(\"admin.config\"))",
+      "function": "CTFd.admin:import_ctf",
+      "in_test": false
+     }
+    ],
+    "entry_points": 252,
+    "paths": [
+     [
+      "CTFd.api.v1.comments:CommentList.post"
+     ],
+     [
+      "CTFd.api.v1.teams:TeamPrivate.patch"
+     ],
+     [
+      "CTFd.api.v1.teams:TeamPrivate.delete"
+     ],
+     [
+      "CTFd.api.v1.teams:TeamPrivateMembers.post"
+     ],
+     [
+      "CTFd.api.v1.tokens:TokenDetail.get"
+     ]
+    ],
+    "summary": "flask: imported in 82 non-test location(s); 1481 package call/reference site(s); named vulnerable symbols ['session']; 25 production call site(s) of those symbols, 22 with a path from an entry point; 1 config/string reference(s)"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 31.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:CTFd/api/v1/teams.py:383",
+      "score": 1.0,
+      "file": "CTFd/api/v1/teams.py",
+      "start": 383,
+      "qualname": "CTFd.api.v1.teams:TeamPrivateMembers.post",
+      "text": "# CTFd/api/v1/teams.py around line 383\n  380      @require_team\n  381      def post(self):\n  382          team = get_current_team()\n  383          if team.captain_id != session[\"id\"]:\n  384              return (\n  385                  {\n  386                      \"success\": False,"
+     },
+     {
+      "id": "site:CTFd/api/v1/teams.py:328",
+      "score": 1.0,
+      "file": "CTFd/api/v1/teams.py",
+      "start": 328,
+      "qualname": "CTFd.api.v1.teams:TeamPrivate.delete",
+      "text": "# CTFd/api/v1/teams.py around line 328\n  325              )\n  326  \n  327          team = get_current_team()\n  328          if team.captain_id != session[\"id\"]:\n  329              return (\n  330                  {\n  331                      \"success\": False,"
+     },
+     {
+      "id": "site:CTFd/api/v1/teams.py:287",
+      "score": 1.0,
+      "file": "CTFd/api/v1/teams.py",
+      "start": 287,
+      "qualname": "CTFd.api.v1.teams:TeamPrivate.patch",
+      "text": "# CTFd/api/v1/teams.py around line 287\n  284      )\n  285      def patch(self):\n  286          team = get_current_team()\n  287          if team.captain_id != session[\"id\"]:\n  288              return (\n  289                  {\n  290                      \"success\": False,"
+     },
+     {
+      "id": "site:CTFd/api/v1/comments.py:131",
+      "score": 1.0,
+      "file": "CTFd/api/v1/comments.py",
+      "start": 131,
+      "qualname": "CTFd.api.v1.comments:CommentList.post",
+      "text": "# CTFd/api/v1/comments.py around line 131\n  128      def post(self):\n  129          req = request.get_json()\n  130          # Always force author IDs to be the actual user\n  131          req[\"author_id\"] = session[\"id\"]\n  132          CommentModel = get_comment_model(data=req)\n  133  \n  134          m = CommentModel(**req)"
+     },
+     {
+      "id": "ctfd:CTFd/constants/sessions.py:module",
+      "score": 0.749,
+      "text": "# CTFd/constants/sessions.py (module level)\nfrom flask import session\nclass _SessionWrapper:\n    @property\n    @property\n    @property\nSession = _SessionWrapper()",
+      "file": "CTFd/constants/sessions.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/sessions/__init__.py:module",
+      "score": 0.742,
+      "text": "# CTFd/utils/sessions/__init__.py (module level)\nfrom uuid import uuid4\nfrom flask.json.tag import TaggedJSONSerializer\nfrom flask.sessions import SessionInterface, SessionMixin\nfrom itsdangerous import BadSignature, want_bytes\nfrom werkzeug.datastructures import CallbackDict\nfrom CTFd.cache import cache\nfrom CTFd.utils import text_type\nfrom CTFd.utils.security.signing import sign, unsign\nclass CachedSession(CallbackDict, SessionMixin):\n    \"\"\"\n    This code is mostly based off of the ServerSideSession from Flask-Session.\n    https://github.com/fengsp/flask-session/blob/master/flask_session/sessions.py#L37\n    \"\"\"\nclass CachingSessionInterface(SessionInterface):\n    \"\"\"\n    This code is partially based off of the RedisSessionInterface from Flask-Session with updates to properly\n    interoperate with Flask-Caching and be more inline with modern Flask (i.e. doesn't use pickle).\n    https://github.com/fengsp/flask-session/blob/master/flask_session/sessions.py#L90\n    \"\"\"\n    serializer = TaggedJSONSerializer()\n    session_class = CachedSession",
+      "file": "CTFd/utils/sessions/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/__init__.py:27",
+      "score": 0.695,
+      "text": "# CTFd/utils/__init__.py:27-44  _get_config\ndef _get_config(key):\n    config = db.session.execute(\n        Configs.__table__.select().where(Configs.key == key)\n    ).fetchone()\n    if config and config.value:\n        value = config.value\n        if value and value.isdigit():\n            return int(value)\n        elif value and isinstance(value, string_types):\n            if value.lower() == \"true\":\n                return True\n            elif value.lower() == \"false\":\n                return False\n            else:\n                return value\n    # Flask-Caching is unable to roundtrip a value of None.\n    # Return an exception so that we can still cache and avoid the db hit\n    return KeyError",
+      "file": "CTFd/utils/__init__.py",
+      "start": 27,
+      "qualname": "_get_config"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "session"
+    ],
+    "reasoning": "mock: 26 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "CTFd/api/v1/comments.py:131",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/api/v1/teams.py:287",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/api/v1/teams.py:328",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2414,
+   "tokens_out": 93,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 26 call sites, imported=True\", \"evidence\": [{\"location\": \"CTFd/api/v1/comments.py:131\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/api/v1/teams.py:287\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/api/v1/teams.py:328\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"session\"]}",
+     "in": 2414,
+     "out": 93,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 2379,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2379,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4793,
+  "tokens_out": 128,
+  "cost_usd_est": 0.0,
+  "seconds": 0.12
+ },
+ "created": "2026-11-10T00:06:15+00:00",
+ "code_version": "a3e1ef4"
+}

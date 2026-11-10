@@ -1,0 +1,354 @@
+{
+ "finding_id": "bench/billing-sync/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+ "config": "dev-mock",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/billing-sync",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2020-14343",
+   "GHSA-8q59-q68h-6hv4",
+   "PYSEC-2021-142"
+  ],
+  "cves": [
+   "CVE-2020-14343"
+  ],
+  "cwes": [
+   "CWE-20"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/billing-sync/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+  "first_fixed_above_installed": "5.4",
+  "fixed_versions": [
+   "5.4"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "pyyaml",
+  "published": "2021-03-25T21:26:26Z",
+  "split": "dev",
+  "summary": "Improper Input Validation in PyYAML",
+  "target": "bench/billing-sync",
+  "version": "5.3.1",
+  "vuln_id": "GHSA-8q59-q68h-6hv4"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "FullLoader",
+   "full_load"
+  ],
+  "reasoning": "mock: 1 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "billing/legacy.py:7",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "billing/legacy.py:2",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "FullLoader",
+  "full_load"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/billing-sync/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+    "package": "pyyaml",
+    "version": "5.3.1",
+    "vuln_id": "GHSA-8q59-q68h-6hv4",
+    "aliases": [
+     "CVE-2020-14343",
+     "GHSA-8q59-q68h-6hv4",
+     "PYSEC-2021-142"
+    ],
+    "summary": "Improper Input Validation in PyYAML",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "5.4"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-8q59-q68h-6hv4#1",
+      "score": 0.855,
+      "text": "GHSA-8q59-q68h-6hv4 (pyyaml) details:\nA vulnerability was discovered in the PyYAML library in versions before 5.4, where it is susceptible to arbitrary code execution when it processes untrusted YAML files through the full_load method or with the FullLoader loader. Applications that use the library to process untrusted input may be vulnerable to this flaw. This flaw allows an attacker to execute arbitrary code on the system by abusing the python/object/new constructor. This flaw is due to an incomplete fix for CVE-2020-1747.",
+      "vuln_id": "GHSA-8q59-q68h-6hv4"
+     },
+     {
+      "id": "GHSA-8q59-q68h-6hv4#0",
+      "score": 0.851,
+      "text": "GHSA-8q59-q68h-6hv4 (CVE-2020-14343)\npackage: pyyaml\nsummary: Improper Input Validation in PyYAML\naffected: >=0, <5.4",
+      "vuln_id": "GHSA-8q59-q68h-6hv4"
+     },
+     {
+      "id": "GHSA-6757-jp84-gxfx#0",
+      "score": 0.834,
+      "text": "GHSA-6757-jp84-gxfx (CVE-2020-1747)\npackage: pyyaml\nsummary: Improper Input Validation in PyYAML\naffected: >=5.1b7, <5.3.1",
+      "vuln_id": "GHSA-6757-jp84-gxfx"
+     },
+     {
+      "id": "GHSA-6757-jp84-gxfx#1",
+      "score": 0.828,
+      "text": "GHSA-6757-jp84-gxfx (pyyaml) details:\nA vulnerability was discovered in the PyYAML library in versions before 5.3.1, where it is susceptible to arbitrary code execution when it processes untrusted YAML files through the full_load method or with the FullLoader loader. Applications that use the library to process untrusted input may be vulnerable to this flaw. An attacker could use this flaw to execute arbitrary code on the system by abusing the python/object/new constructor.",
+      "vuln_id": "GHSA-6757-jp84-gxfx"
+     }
+    ],
+    "symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.3,
+   "output": {
+    "package": "pyyaml",
+    "import_names": [
+     "yaml"
+    ],
+    "symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "imported": true,
+    "import_locations": [
+     "billing/legacy.py:2"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3,
+    "vulnerable_call_sites": [
+     {
+      "file": "billing/legacy.py",
+      "line": 7,
+      "code": "doc = yaml.full_load(f)",
+      "resolved": "yaml.full_load",
+      "function": "billing.legacy:import_v1_plans",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": false,
+      "path": [],
+      "snippet": "    4  \n    5  def import_v1_plans(path):\n    6      with open(path) as f:\n    7          doc = yaml.full_load(f)\n    8      return [{\"id\": p[\"code\"], \"amount\": p[\"cents\"], \"interval\": p[\"period\"]} for p in doc[\"plans\"]]"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "billing/legacy.py:7",
+      "code": "doc = yaml.full_load(f)",
+      "function": "billing.legacy:import_v1_plans",
+      "in_test": false
+     }
+    ],
+    "entry_points": 1,
+    "paths": [],
+    "summary": "pyyaml: imported in 1 non-test location(s); 3 package call/reference site(s); named vulnerable symbols ['FullLoader', 'full_load']; 1 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 24.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:billing/legacy.py:7",
+      "score": 1.0,
+      "file": "billing/legacy.py",
+      "start": 7,
+      "qualname": "billing.legacy:import_v1_plans",
+      "text": "# billing/legacy.py around line 7\n    4  \n    5  def import_v1_plans(path):\n    6      with open(path) as f:\n    7          doc = yaml.full_load(f)\n    8      return [{\"id\": p[\"code\"], \"amount\": p[\"cents\"], \"interval\": p[\"period\"]} for p in doc[\"plans\"]]"
+     },
+     {
+      "id": "bench/billing-sync:billing/legacy.py:module",
+      "score": 0.647,
+      "text": "# billing/legacy.py (module level)\n\"\"\"Format used by the 2019 billing system.\"\"\"\nimport yaml",
+      "file": "billing/legacy.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/billing-sync:billing/client.py:module",
+      "score": 0.602,
+      "text": "# billing/client.py (module level)\nclass StripeLikeClient:",
+      "file": "billing/client.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/billing-sync:billing/legacy.py:5",
+      "score": 0.587,
+      "text": "# billing/legacy.py:5-8  import_v1_plans\ndef import_v1_plans(path):\n    with open(path) as f:\n        doc = yaml.full_load(f)\n    return [{\"id\": p[\"code\"], \"amount\": p[\"cents\"], \"interval\": p[\"period\"]} for p in doc[\"plans\"]]",
+      "file": "billing/legacy.py",
+      "start": 5,
+      "qualname": "import_v1_plans"
+     },
+     {
+      "id": "bench/billing-sync:billing/client.py:2",
+      "score": 0.558,
+      "text": "# billing/client.py:2-3  StripeLikeClient.__init__\n    def __init__(self):\n        self.plans = {}",
+      "file": "billing/client.py",
+      "start": 2,
+      "qualname": "StripeLikeClient.__init__"
+     },
+     {
+      "id": "bench/billing-sync:billing/sync.py:module",
+      "score": 0.549,
+      "text": "# billing/sync.py (module level)\nimport json\nfrom pathlib import Path\nfrom billing.client import StripeLikeClient\nif __name__ == \"__main__\":\n    import sys\n    print(sync_plans(sys.argv[1]))",
+      "file": "billing/sync.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "reasoning": "mock: 1 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "billing/legacy.py:7",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "billing/legacy.py:2",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1031,
+   "tokens_out": 75,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 1 call sites, imported=True\", \"evidence\": [{\"location\": \"billing/legacy.py:7\", \"explanation\": \"static evidence\"}, {\"location\": \"billing/legacy.py:2\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"FullLoader\", \"full_load\"]}",
+     "in": 1031,
+     "out": 75,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 981,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 981,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2012,
+  "tokens_out": 110,
+  "cost_usd_est": 0.0,
+  "seconds": 0.06
+ },
+ "created": "2026-11-10T00:06:34+00:00",
+ "code_version": "a3e1ef4"
+}

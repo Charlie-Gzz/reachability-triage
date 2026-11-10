@@ -1,0 +1,340 @@
+{
+ "finding_id": "mealie/soupsieve@2.3.2.post1/GHSA-j934-xhv5-fg8f",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-85999",
+   "GHSA-j934-xhv5-fg8f"
+  ],
+  "cves": [
+   "CVE-2026-85999"
+  ],
+  "cwes": [
+   "CWE-1333",
+   "CWE-400"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/soupsieve@2.3.2.post1/GHSA-j934-xhv5-fg8f",
+  "first_fixed_above_installed": "2.9.0",
+  "fixed_versions": [
+   "2.9.0"
+  ],
+  "max_cvss": "5.3",
+  "package": "soupsieve",
+  "published": "2026-09-17T20:32:53Z",
+  "summary": "Soup Sieve: Polynomial-time ReDoS (O(n\u00b2)) in the whitespace/comment trimming regex `RE_WS_END` (triggers on VALID selectors)",
+  "target": "mealie",
+  "version": "2.3.2.post1",
+  "vuln_id": "GHSA-j934-xhv5-fg8f"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "soupsieve.compile",
+   "soupsieve.select",
+   "soup.select",
+   "soup.select_one",
+   "perf_counter"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "soupsieve.compile",
+  "soupsieve.select",
+  "soup.select",
+  "soup.select_one",
+  "perf_counter",
+  "compile",
+  "search",
+  "time.perf_counter"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/soupsieve@2.3.2.post1/GHSA-j934-xhv5-fg8f",
+    "package": "soupsieve",
+    "version": "2.3.2.post1",
+    "vuln_id": "GHSA-j934-xhv5-fg8f",
+    "aliases": [
+     "CVE-2026-85999",
+     "GHSA-j934-xhv5-fg8f"
+    ],
+    "summary": "Soup Sieve: Polynomial-time ReDoS (O(n\u00b2)) in the whitespace/comment trimming regex `RE_WS_END` (triggers on VALID selectors)",
+    "max_cvss": "5.3",
+    "fixed_versions": [
+     "2.9.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 34.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-j934-xhv5-fg8f#0",
+      "score": 0.893,
+      "text": "GHSA-j934-xhv5-fg8f (CVE-2026-85999)\npackage: soupsieve\nsummary: Soup Sieve: Polynomial-time ReDoS (O(n\u00b2)) in the whitespace/comment trimming regex `RE_WS_END` (triggers on VALID selectors)\naffected: >=0, <2.9.0",
+      "vuln_id": "GHSA-j934-xhv5-fg8f"
+     },
+     {
+      "id": "GHSA-j934-xhv5-fg8f#4",
+      "score": 0.804,
+      "text": "GHSA-j934-xhv5-fg8f (soupsieve) details:\n- git HEAD `751c57b` (2.9, `PYTHONPATH=src`): `cd src && python3 ../poc/poc_redos_ws_trim.py`.\n- Published PyPI `soupsieve 2.8.4` (fresh `uv pip install soupsieve beautifulsoup4`): `cd poc && ../.venv-published/bin/python poc_redos_ws_trim.py` \u2192 same O(n\u00b2) (evidence: `poc/evidence_redos_ws_trim_PUBLISHED_2.8.4.log`).\n- Python 3.11.15 and 3.14.6 both reproduce.\n\n## PoC (`poc/poc_redos_ws_trim.py`)\n\n```python\nimport sys, time\nsys.path.insert(0, \".\")\nimport soupsieve as sv\n\ndef ct(sel):\n    t0 = time.perf_counter()\n    try:\n        sv.compile(sel); st = \"ok\"\n    except Exception as e:\n        st = type(e).__name__\n    return time.perf_counter() - t0, st\n\nprint(f\"soupsieve {sv.__version__}\\n\")",
+      "vuln_id": "GHSA-j934-xhv5-fg8f"
+     },
+     {
+      "id": "GHSA-j934-xhv5-fg8f#2",
+      "score": 0.794,
+      "text": "GHSA-j934-xhv5-fg8f (soupsieve) details:\nThe selector string is the input, reaching this code via `soupsieve.compile()`, the `soupsieve.select/iselect/match/filter` helpers, and BeautifulSoup's `soup.select(selector)` / `soup.select_one(selector)`. Exploitable wherever an application passes a user-controlled CSS selector to BeautifulSoup/soupsieve. Applications using only hard-coded selectors are unaffected.\n\n## Root cause (exact anchors) \u2014 `src/soupsieve/css_parser.py`\n\n```python\n# line 185-186\nRE_WS_BEGIN = re.compile(fr'^{WSC}*')   # anchored at start -> .search() only tries pos 0 -> linear (safe)\nRE_WS_END   = re.compile(fr'{WSC}*$')   # NOT anchored at start -> .search() tries every offset\n\n# selector_iter, lines ~1322-1326\nm = RE_WS_BEGIN.search(pattern)\nindex = m.end(0) if m else 0\nm = RE_WS_END.search(pattern)                     # <-- O(n^2) here\nend = (m.start(0) - 1) if m else (len(pattern) - 1)\n```",
+      "vuln_id": "GHSA-j934-xhv5-fg8f"
+     },
+     {
+      "id": "GHSA-j934-xhv5-fg8f#3",
+      "score": 0.786,
+      "text": "GHSA-j934-xhv5-fg8f (soupsieve) details:\n`WSC = (?:{WS}|{COMMENTS})`. For `RE_WS_END = (?:WS|COMMENTS)*$`, `.search()` walks start offsets 0..n. Whenever the offset lands inside a long whitespace/comment run, `(?:WS|COMMENTS)*` greedily consumes to the run's end, then `$` fails (a non-whitespace char follows), the engine backtracks the whole run, the offset advances by one, and the work repeats \u2014 O(n) offsets \u00d7 O(n) per attempt = O(n\u00b2). `RE_WS_BEGIN` avoids this because `^` pins it to a single start offset.\n\nThe intent (trim trailing whitespace/comments) can be met with an anchored/loopless approach; the current unanchored `.search()` of a `*$` pattern is the defect.\n\n## Reproduction environment (discipline #12 \u2014 published artifact)",
+      "vuln_id": "GHSA-j934-xhv5-fg8f"
+     },
+     {
+      "id": "GHSA-836r-79rf-4m37#1",
+      "score": 0.828,
+      "text": "GHSA-836r-79rf-4m37 (soupsieve) details:\n### Summary\n\nThe CSS selector parser in soupsieve (the CSS selector engine for Beautiful Soup 4) contains a regular expression vulnerable to catastrophic backtracking. When processing an attribute selector with an unterminated quoted value, the `VALUE` regex pattern in `css_parser.py` enters exponential backtracking. A payload of only **300 bytes** causes the regex engine to hang for **over 3 seconds**, enabling a trivial Regular Expression Denial of Service (ReDoS) attack.\n\nTo be completely transparent, AI tools helped surface this issue. However, this was independently reproduced and carefully validated.\n\nAny application that passes untrusted CSS selector strings to `soupsieve.compile()` or Beautiful Soup's `.select()` / `.select_one()` is affected.\n\n### Details\n\n**Affected code:** `soupsieve/css_parser.py`, line ~121 - `RE_VALUES` / `VALUE` regex pattern",
+      "vuln_id": "GHSA-836r-79rf-4m37"
+     },
+     {
+      "id": "GHSA-gjv8-xp57-g29c#0",
+      "score": 0.824,
+      "text": "GHSA-gjv8-xp57-g29c (CVE-2026-86000)\npackage: soupsieve\nsummary: Soup Sieve: Polynomial-time ReDoS (O(n\u00b2)) in the `IDENTIFIER` / `VALUE` selector sub-patterns\naffected: >=0, <2.9.0",
+      "vuln_id": "GHSA-gjv8-xp57-g29c"
+     }
+    ],
+    "symbols": [
+     "soupsieve.compile",
+     "soupsieve.select",
+     "soup.select",
+     "soup.select_one",
+     "perf_counter",
+     "compile",
+     "search",
+     "time.perf_counter"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 76.5,
+   "output": {
+    "package": "soupsieve",
+    "import_names": [
+     "soupsieve"
+    ],
+    "symbols": [
+     "soupsieve.compile",
+     "soupsieve.select",
+     "soup.select",
+     "soup.select_one",
+     "perf_counter",
+     "compile",
+     "search",
+     "time.perf_counter"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "soupsieve: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['soupsieve.compile', 'soupsieve.select', 'soup.select', 'soup.select_one', 'perf_counter', 'compile', 'search', 'time.perf_counter']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 40.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/services/scraper/cleaner.py:module",
+      "score": 0.711,
+      "text": "# mealie/services/scraper/cleaner.py (module level)\nimport contextlib\nimport functools\nimport html\nimport json\nimport operator\nimport re\nimport typing\nfrom datetime import datetime, timedelta\nfrom slugify import slugify\nfrom mealie.core.root_logger import get_logger\nlogger = get_logger(\"recipe-scraper\")\nMATCH_DIGITS = re.compile(r\"\\d+([.,]\\d+)?\")\n\"\"\" Allow for commas as decimals (common in Europe) \"\"\"\nMATCH_ISO_STR = re.compile(\n    r\"^P((\\d+)Y)?((\\d+)M)?((?P<days>\\d+)D)?\" r\"T((?P<hours>\\d+)H)?((?P<minutes>\\d+)M)?((?P<seconds>\\d+(?:\\.\\d+)?)S)?$\",\n)\n\"\"\" Match Duration Strings \"\"\"\nMATCH_HTML_TAGS = re.compile(r\"<[^<]+?>\")\n\"\"\" Matches HTML tags `<p>Text</p>` -> `Text` \"\"\"\nMATCH_MULTI_SPACE = re.compile(r\" +\")\n\"\"\" Matches multiple spaces `Hello    World` -> `Hello World` \"\"\"\nMATCH_ERRONEOUS_WHITE_SPACE = re.compile(r\"\\n\\s*\\n\")\n\"\"\" Matches multiple new lines and removes erroneous white space \"\"\"\n            # should probably raise exception\n            # raise TypeError(f\"Unexpected type for tags: {type(data)}, {data}\")",
+      "file": "mealie/services/scraper/cleaner.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/_helpers/string_utils.py:module",
+      "score": 0.706,
+      "text": "# mealie/services/parser_services/_helpers/string_utils.py (module level)\nimport re\ncompiled_match = re.compile(r\"(.){1,6}\\s\\((.[^\\(\\)])+\\)\\s\")\ncompiled_search = re.compile(r\"\\((.[^\\(])+\\)\")",
+      "file": "mealie/services/parser_services/_helpers/string_utils.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/pre_processor.py:69",
+      "score": 0.683,
+      "text": "# mealie/services/parser_services/crfpp/pre_processor.py:69-85  pre_process_string\ndef pre_process_string(string: str) -> str:\n    \"\"\"\n    Series of preprocessing functions to make best use of the CRF++ model. The ideal string looks something like...\n\n    {qty} {unit} {food}, {additional}\n    1 tbs. wine, expensive or other white wine, plus more\n\n    \"\"\"\n    string = string.lower()\n    string = replace_fraction_unicode(string)\n    string = remove_periods(string)\n    string = replace_common_abbreviations(string)\n\n    if \" or \" in string:\n        string = wrap_or_clause(string)\n\n    return string",
+      "file": "mealie/services/parser_services/crfpp/pre_processor.py",
+      "start": 69,
+      "qualname": "pre_process_string"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/pre_processor.py:module",
+      "score": 0.68,
+      "text": "# mealie/services/parser_services/crfpp/pre_processor.py (module level)\nimport re\nimport unicodedata\nreplace_abbreviations = {\n    \"cup\": \" cup \",\n    \"g\": \" gram \",\n    \"kg\": \" kilogram \",\n    \"lb\": \" pound \",\n    \"ml\": \" milliliter \",\n    \"oz\": \" ounce \",\n    \"pint\": \" pint \",\n    \"qt\": \" quart \",\n    \"tbsp\": \" tablespoon \",\n    \"tbs\": \" tablespoon \",  # Order Matters!, 'tsb' must come after 'tbsp' in case of duplicate matches\n    \"tsp\": \" teaspoon \",\n}",
+      "file": "mealie/services/parser_services/crfpp/pre_processor.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/brute/process.py:91",
+      "score": 0.679,
+      "text": "# mealie/services/parser_services/brute/process.py:91-106  parse_ingredient_with_comma\ndef parse_ingredient_with_comma(tokens) -> tuple[str, str]:\n    ingredient = \"\"\n    note = \"\"\n    start = 0\n    # search for first occurrence of an argument ending in a comma\n    while start < len(tokens) and not tokens[start].endswith(\",\"):\n        start += 1\n    if start == len(tokens):\n        # no token ending in a comma found -> use everything as ingredient\n        ingredient = \" \".join(tokens)\n    else:\n        ingredient = \" \".join(tokens[: start + 1])[:-1]\n\n        note_end = start + 1\n        note = \" \".join(tokens[note_end:])\n    return ingredient, note",
+      "file": "mealie/services/parser_services/brute/process.py",
+      "start": 91,
+      "qualname": "parse_ingredient_with_comma"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "soupsieve.compile",
+     "soupsieve.select",
+     "soup.select",
+     "soup.select_one",
+     "perf_counter"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2156,
+   "tokens_out": 57,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"soupsieve.compile\", \"soupsieve.select\", \"soup.select\", \"soup.select_one\", \"perf_counter\"]}",
+     "in": 2156,
+     "out": 57,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.6,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2088,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2088,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4244,
+  "tokens_out": 93,
+  "cost_usd_est": 0.0,
+  "seconds": 0.16
+ },
+ "created": "2026-11-10T00:06:31+00:00",
+ "code_version": "a3e1ef4"
+}

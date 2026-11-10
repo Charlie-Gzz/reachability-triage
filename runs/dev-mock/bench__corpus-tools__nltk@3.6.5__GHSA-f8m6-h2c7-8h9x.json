@@ -1,0 +1,362 @@
+{
+ "finding_id": "bench/corpus-tools/nltk@3.6.5/GHSA-f8m6-h2c7-8h9x",
+ "config": "dev-mock",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/corpus-tools",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-43854",
+   "GHSA-f8m6-h2c7-8h9x",
+   "PYSEC-2021-859"
+  ],
+  "cves": [
+   "CVE-2021-43854"
+  ],
+  "cwes": [
+   "CWE-400"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/corpus-tools/nltk@3.6.5/GHSA-f8m6-h2c7-8h9x",
+  "first_fixed_above_installed": "3.6.6",
+  "fixed_versions": [
+   "3.6.5",
+   "3.6.6",
+   "1405aad979c6b8080dbbc8e0858f89b2e3690341"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+  "package": "nltk",
+  "published": "2022-01-06T17:38:45Z",
+  "split": "test",
+  "summary": "Inefficient Regular Expression Complexity in nltk (word_tokenize, sent_tokenize)",
+  "target": "bench/corpus-tools",
+  "version": "3.6.5",
+  "vuln_id": "GHSA-f8m6-h2c7-8h9x"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "nltk.tokenize",
+   "word_tokenize",
+   "sent_tokenize",
+   "PunktSentenceTokenizer",
+   "time"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "nltk.tokenize",
+  "word_tokenize",
+  "sent_tokenize",
+  "PunktSentenceTokenizer",
+  "time",
+  "time.time",
+  "start_t"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/corpus-tools/nltk@3.6.5/GHSA-f8m6-h2c7-8h9x",
+    "package": "nltk",
+    "version": "3.6.5",
+    "vuln_id": "GHSA-f8m6-h2c7-8h9x",
+    "aliases": [
+     "CVE-2021-43854",
+     "GHSA-f8m6-h2c7-8h9x",
+     "PYSEC-2021-859"
+    ],
+    "summary": "Inefficient Regular Expression Complexity in nltk (word_tokenize, sent_tokenize)",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+    "fixed_versions": [
+     "3.6.5",
+     "3.6.6",
+     "1405aad979c6b8080dbbc8e0858f89b2e3690341"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-f8m6-h2c7-8h9x#0",
+      "score": 0.893,
+      "text": "GHSA-f8m6-h2c7-8h9x (CVE-2021-43854)\npackage: nltk\nsummary: Inefficient Regular Expression Complexity in nltk (word_tokenize, sent_tokenize)\naffected: >=0, <3.6.6",
+      "vuln_id": "GHSA-f8m6-h2c7-8h9x"
+     },
+     {
+      "id": "GHSA-f8m6-h2c7-8h9x#1",
+      "score": 0.846,
+      "text": "GHSA-f8m6-h2c7-8h9x (nltk) details:\n### Impact\nThe vulnerability is present in [`PunktSentenceTokenizer`](https://www.nltk.org/api/nltk.tokenize.punkt.html#nltk.tokenize.punkt.PunktSentenceTokenizer), [`sent_tokenize`](https://www.nltk.org/api/nltk.tokenize.html#nltk.tokenize.sent_tokenize)  and [`word_tokenize`](https://www.nltk.org/api/nltk.tokenize.html#nltk.tokenize.word_tokenize). Any users of this class, or these two functions, are vulnerable to a Regular Expression Denial of Service (ReDoS) attack. \nIn short, a specifically crafted long input to any of these vulnerable functions will cause them to take a significant amount of execution time. The effect of this vulnerability is noticeable with the following example:\n```python\nfrom nltk.tokenize import word_tokenize",
+      "vuln_id": "GHSA-f8m6-h2c7-8h9x"
+     },
+     {
+      "id": "GHSA-f8m6-h2c7-8h9x#2",
+      "score": 0.767,
+      "text": "GHSA-f8m6-h2c7-8h9x (nltk) details:\nn = 8\nfor length in [10**i for i in range(2, n)]:\n    # Prepare a malicious input\n    text = \"a\" * length\n    start_t = time.time()\n    # Call `word_tokenize` and naively measure the execution time\n    word_tokenize(text)\n    print(f\"A length of {length:<{n}} takes {time.time() - start_t:.4f}s\")\n```\nWhich gave the following output during testing:\n```python\nA length of 100      takes 0.0060s\nA length of 1000     takes 0.0060s\nA length of 10000    takes 0.6320s\nA length of 100000   takes 56.3322s\n...\n```\nI canceled the execution of the program after running it for several hours.\n\nIf your program relies on any of the vulnerable functions for tokenizing unpredictable user input, then we would strongly recommend upgrading to a version of NLTK without the vulnerability, or applying the workaround described below.",
+      "vuln_id": "GHSA-f8m6-h2c7-8h9x"
+     },
+     {
+      "id": "GHSA-f8m6-h2c7-8h9x#3",
+      "score": 0.765,
+      "text": "GHSA-f8m6-h2c7-8h9x (nltk) details:\n### Patches\nThe problem has been patched in NLTK 3.6.6. After the fix, running the above program gives the following result:\n```python\nA length of 100      takes 0.0070s\nA length of 1000     takes 0.0010s\nA length of 10000    takes 0.0060s\nA length of 100000   takes 0.0400s\nA length of 1000000  takes 0.3520s\nA length of 10000000 takes 3.4641s\n```\nThis output shows a linear relationship in execution time versus input length, which is desirable for regular expressions.\nWe recommend updating to NLTK 3.6.6+ if possible.\n\n### Workarounds\nThe execution time of the vulnerable functions is exponential to the length of a malicious input. With other words, the execution time can be bounded by limiting the maximum length of an input to any of the vulnerable functions. Our recommendation is to implement such a limit.",
+      "vuln_id": "GHSA-f8m6-h2c7-8h9x"
+     },
+     {
+      "id": "GHSA-2ww3-fxvq-293j#1",
+      "score": 0.801,
+      "text": "GHSA-2ww3-fxvq-293j (nltk) details:\nThe nltk package is vulnerable to ReDoS (regular expression denial of service). An attacker that is able to provide as an input to the [`_read_comparison_block()`(https://github.com/nltk/nltk/blob/23f4b1c4b4006b0cb3ec278e801029557cec4e82/nltk/corpus/reader/comparative_sents.py#L259) function in the file `nltk/corpus/reader/comparative_sents.py` may cause an application to consume an excessive amount of CPU.",
+      "vuln_id": "GHSA-2ww3-fxvq-293j"
+     },
+     {
+      "id": "GHSA-qx2g-xrx7-vfh8#1",
+      "score": 0.791,
+      "text": "GHSA-qx2g-xrx7-vfh8 (nltk) details:\nThe URLS regular expression in nltk/tokenize/casual.py, compiled into TweetTokenizer.WORD_RE and applied by TweetTokenizer.tokenize, contains a naked-domain branch whose domain-label prefix [a-z0-9]+(?:[.\\-][a-z0-9]+)* is unbounded. Input consisting of many alternating label separators can be partitioned in exponentially many ways, and because the branch also requires a trailing top-level domain that such input never supplies, the engine explores those partitions before failing at each offset. A few kilobytes of input therefore consumes seconds to minutes of single-threaded CPU, and the HANG_RE substitution performed before matching does not collapse the pattern. TweetTokenizer is intended for tokenizing untrusted social-media text, so any service that applies it, or the module-level casual_tokenize, to submitted text can be stalled per request without authentication. Version 3.10.1 bounds the label repetition.",
+      "vuln_id": "GHSA-qx2g-xrx7-vfh8"
+     }
+    ],
+    "symbols": [
+     "nltk.tokenize",
+     "word_tokenize",
+     "sent_tokenize",
+     "PunktSentenceTokenizer",
+     "time",
+     "time.time",
+     "start_t"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.9,
+   "output": {
+    "package": "nltk",
+    "import_names": [
+     "nltk"
+    ],
+    "symbols": [
+     "nltk.tokenize",
+     "word_tokenize",
+     "sent_tokenize",
+     "PunktSentenceTokenizer",
+     "time",
+     "time.time",
+     "start_t"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": true,
+    "package_call_sites": 2,
+    "vulnerable_call_sites": [
+     {
+      "file": "tests/test_counts.py",
+      "line": 8,
+      "code": "assert abs(len(tokens(text)) - len([t for t in word_tokenize(text) if t.isalpha()])) <= 1",
+      "resolved": "nltk.tokenize.word_tokenize",
+      "function": "tests.test_counts:test_counts_close_to_nltk",
+      "in_test": true,
+      "weak": false,
+      "reachable_from_entry": false,
+      "path": []
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "tests/test_counts.py:8",
+      "code": "assert abs(len(tokens(text)) - len([t for t in word_tokenize(text) if t.isalpha()])) <= 1",
+      "function": "tests.test_counts:test_counts_close_to_nltk",
+      "in_test": true
+     }
+    ],
+    "entry_points": 0,
+    "paths": [],
+    "summary": "nltk: imported in 0 non-test location(s) and 1 test location(s); 2 package call/reference site(s); named vulnerable symbols ['nltk.tokenize', 'word_tokenize', 'sent_tokenize', 'PunktSentenceTokenizer', 'time', 'time.time', 'start_t']; 0 production call site(s) of those symbols, 0 with a path from an entry point; 1 only in tests"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "bench/corpus-tools:tests/test_counts.py:6",
+      "score": 0.679,
+      "text": "# tests/test_counts.py:6-8  test_counts_close_to_nltk\ndef test_counts_close_to_nltk():\n    text = \"The quick brown fox jumps over the lazy dog.\"\n    assert abs(len(tokens(text)) - len([t for t in word_tokenize(text) if t.isalpha()])) <= 1",
+      "file": "tests/test_counts.py",
+      "start": 6,
+      "qualname": "test_counts_close_to_nltk"
+     },
+     {
+      "id": "bench/corpus-tools:corpus/stats.py:4",
+      "score": 0.657,
+      "text": "# corpus/stats.py:4-5  tokens\ndef tokens(text: str) -> list:\n    return [t.strip(\".,;:!?\\\"'()\").lower() for t in text.split() if t.strip(\".,;:!?\\\"'()\")]",
+      "file": "corpus/stats.py",
+      "start": 4,
+      "qualname": "tokens"
+     },
+     {
+      "id": "bench/corpus-tools:tests/test_counts.py:module",
+      "score": 0.64,
+      "text": "# tests/test_counts.py (module level)\nfrom corpus.stats import tokens\nfrom nltk.tokenize import word_tokenize",
+      "file": "tests/test_counts.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/corpus-tools:corpus/stats.py:8",
+      "score": 0.599,
+      "text": "# corpus/stats.py:8-9  top_words\ndef top_words(text: str, n: int = 20) -> list:\n    return Counter(tokens(text)).most_common(n)",
+      "file": "corpus/stats.py",
+      "start": 8,
+      "qualname": "top_words"
+     },
+     {
+      "id": "bench/corpus-tools:corpus/__main__.py:module",
+      "score": 0.582,
+      "text": "# corpus/__main__.py (module level)\nimport sys\nfrom corpus.stats import top_words\nfor word, count in top_words(open(sys.argv[1]).read()):\n    print(f\"{count:>6}  {word}\")",
+      "file": "corpus/__main__.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "nltk.tokenize",
+     "word_tokenize",
+     "sent_tokenize",
+     "PunktSentenceTokenizer",
+     "time"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1753,
+   "tokens_out": 56,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"nltk.tokenize\", \"word_tokenize\", \"sent_tokenize\", \"PunktSentenceTokenizer\", \"time\"]}",
+     "in": 1753,
+     "out": 56,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1685,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1685,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3438,
+  "tokens_out": 92,
+  "cost_usd_est": 0.0,
+  "seconds": 0.07
+ },
+ "created": "2026-11-10T00:06:36+00:00",
+ "code_version": "a3e1ef4"
+}

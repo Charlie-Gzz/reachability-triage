@@ -1,0 +1,303 @@
+{
+ "finding_id": "bench/repo-mirror/gitpython@3.1.29/GHSA-hcpj-qp55-gfph",
+ "config": "dev-mock",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/repo-mirror",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-24439",
+   "GHSA-hcpj-qp55-gfph",
+   "PYSEC-2022-42992"
+  ],
+  "cves": [
+   "CVE-2022-24439"
+  ],
+  "cwes": [
+   "CWE-20",
+   "CWE-94"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/repo-mirror/gitpython@3.1.29/GHSA-hcpj-qp55-gfph",
+  "first_fixed_above_installed": "3.1.30",
+  "fixed_versions": [
+   "3.1.30"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "gitpython",
+  "published": "2022-12-06T06:30:17Z",
+  "split": "test",
+  "summary": "GitPython vulnerable to Remote Code Execution due to improper user input validation",
+  "target": "bench/repo-mirror",
+  "version": "3.1.29",
+  "vuln_id": "GHSA-hcpj-qp55-gfph"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mirror/service.py:4",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/repo-mirror/gitpython@3.1.29/GHSA-hcpj-qp55-gfph",
+    "package": "gitpython",
+    "version": "3.1.29",
+    "vuln_id": "GHSA-hcpj-qp55-gfph",
+    "aliases": [
+     "CVE-2022-24439",
+     "GHSA-hcpj-qp55-gfph",
+     "PYSEC-2022-42992"
+    ],
+    "summary": "GitPython vulnerable to Remote Code Execution due to improper user input validation",
+    "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "3.1.30"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 28.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-hcpj-qp55-gfph#1",
+      "score": 0.895,
+      "text": "GHSA-hcpj-qp55-gfph (gitpython) details:\nAll versions of package gitpython are vulnerable to Remote Code Execution (RCE) due to improper user input validation, which makes it possible to inject a maliciously crafted remote URL into the clone command. Exploiting this vulnerability is possible because the library makes external calls to git without sufficient sanitization of input arguments.",
+      "vuln_id": "GHSA-hcpj-qp55-gfph"
+     },
+     {
+      "id": "GHSA-hcpj-qp55-gfph#0",
+      "score": 0.888,
+      "text": "GHSA-hcpj-qp55-gfph (CVE-2022-24439)\npackage: gitpython\nsummary: GitPython vulnerable to Remote Code Execution due to improper user input validation\naffected: >=0, <3.1.30",
+      "vuln_id": "GHSA-hcpj-qp55-gfph"
+     },
+     {
+      "id": "GHSA-pr76-5cm5-w9cj#0",
+      "score": 0.88,
+      "text": "GHSA-pr76-5cm5-w9cj (CVE-2023-40267)\npackage: gitpython\nsummary: GitPython vulnerable to remote code execution due to insufficient sanitization of input arguments\naffected: >=0, <3.1.32",
+      "vuln_id": "GHSA-pr76-5cm5-w9cj"
+     },
+     {
+      "id": "GHSA-pr76-5cm5-w9cj#1",
+      "score": 0.855,
+      "text": "GHSA-pr76-5cm5-w9cj (gitpython) details:\nGitPython before 3.1.32 does not block insecure non-multi options in `clone` and `clone_from`, making it vulnerable to Remote Code Execution (RCE) due to improper user input validation, which makes it possible to inject a maliciously crafted remote URL into the clone command. Exploiting this vulnerability is possible because the library makes external calls to git without sufficient sanitization of input arguments. NOTE: this issue exists because of an incomplete fix for CVE-2022-24439.",
+      "vuln_id": "GHSA-pr76-5cm5-w9cj"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.4,
+   "output": {
+    "package": "gitpython",
+    "import_names": [
+     "git"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "mirror/service.py:4"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mirror/service.py:11",
+      "code": "Repo.clone_from(url, dest, mirror=True)",
+      "function": "mirror.service:create_mirror",
+      "in_test": false
+     }
+    ],
+    "entry_points": 1,
+    "paths": [],
+    "summary": "gitpython: imported in 1 non-test location(s); 3 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 22.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "bench/repo-mirror:mirror/service.py:module",
+      "score": 0.589,
+      "text": "# mirror/service.py (module level)\nimport tempfile\nfrom pathlib import Path\nfrom git import Repo\nMIRRORS = Path(tempfile.gettempdir()) / \"mirrors\"",
+      "file": "mirror/service.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/repo-mirror:mirror/api.py:module",
+      "score": 0.57,
+      "text": "# mirror/api.py (module level)\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel\nfrom mirror.service import create_mirror\napp = FastAPI()\nclass MirrorRequest(BaseModel):\n    url: str\n    name: str\n@app.post(\"/mirrors\")",
+      "file": "mirror/api.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/repo-mirror:mirror/api.py:15",
+      "score": 0.554,
+      "text": "# mirror/api.py:15-16  add_mirror\ndef add_mirror(req: MirrorRequest):\n    return {\"path\": create_mirror(req.url, req.name)}",
+      "file": "mirror/api.py",
+      "start": 15,
+      "qualname": "add_mirror"
+     },
+     {
+      "id": "bench/repo-mirror:mirror/service.py:9",
+      "score": 0.534,
+      "text": "# mirror/service.py:9-12  create_mirror\ndef create_mirror(url: str, name: str) -> str:\n    dest = MIRRORS / name\n    Repo.clone_from(url, dest, mirror=True)\n    return str(dest)",
+      "file": "mirror/service.py",
+      "start": 9,
+      "qualname": "create_mirror"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.4,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mirror/service.py:4",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 947,
+   "tokens_out": 51,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mirror/service.py:4\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 947,
+     "out": 51,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 887,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 887,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 1834,
+  "tokens_out": 86,
+  "cost_usd_est": 0.0,
+  "seconds": 0.06
+ },
+ "created": "2026-11-10T00:06:35+00:00",
+ "code_version": "a3e1ef4"
+}

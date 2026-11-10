@@ -1,0 +1,339 @@
+{
+ "finding_id": "mealie/soupsieve@2.3.2.post1/GHSA-2wc2-fm75-p42x",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-49476",
+   "GHSA-2wc2-fm75-p42x",
+   "PYSEC-2026-3071"
+  ],
+  "cves": [
+   "CVE-2026-49476"
+  ],
+  "cwes": [
+   "CWE-400",
+   "CWE-770"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/soupsieve@2.3.2.post1/GHSA-2wc2-fm75-p42x",
+  "first_fixed_above_installed": "2.8.4",
+  "fixed_versions": [
+   "2.8.4"
+  ],
+  "max_cvss": "7.5",
+  "package": "soupsieve",
+  "published": "2026-07-09T13:37:40Z",
+  "summary": "Soup Sieve has Memory Exhaustion via Large Comma-Separated Selector Lists",
+  "target": "mealie",
+  "version": "2.3.2.post1",
+  "vuln_id": "GHSA-2wc2-fm75-p42x"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "soupsieve.compile",
+   "beautifulsoup4",
+   "select",
+   "compile",
+   "select_one"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "soupsieve.compile",
+  "beautifulsoup4",
+  "select",
+  "compile",
+  "select_one",
+  "start",
+  "tracemalloc.start"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/soupsieve@2.3.2.post1/GHSA-2wc2-fm75-p42x",
+    "package": "soupsieve",
+    "version": "2.3.2.post1",
+    "vuln_id": "GHSA-2wc2-fm75-p42x",
+    "aliases": [
+     "CVE-2026-49476",
+     "GHSA-2wc2-fm75-p42x",
+     "PYSEC-2026-3071"
+    ],
+    "summary": "Soup Sieve has Memory Exhaustion via Large Comma-Separated Selector Lists",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "2.8.4"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 32.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-2wc2-fm75-p42x#0",
+      "score": 0.899,
+      "text": "GHSA-2wc2-fm75-p42x (CVE-2026-49476)\npackage: soupsieve\nsummary: Soup Sieve has Memory Exhaustion via Large Comma-Separated Selector Lists\naffected: >=0, <2.8.4",
+      "vuln_id": "GHSA-2wc2-fm75-p42x"
+     },
+     {
+      "id": "GHSA-2wc2-fm75-p42x#1",
+      "score": 0.854,
+      "text": "GHSA-2wc2-fm75-p42x (soupsieve) details:\n### Summary\n\nThe CSS selector parser in soupsieve (the CSS selector engine for Beautiful Soup 4) allocates unbounded memory when compiling large comma-separated selector lists. An attacker who can supply a crafted CSS selector string to `soupsieve.compile()` or Beautiful Soup's `.select()` / `.select_one()` can cause the application to allocate hundreds of megabytes of heap memory from a relatively small input, leading to memory exhaustion and denial of service.\n\nTo be completely transparent, AI tools helped surface this issue. However, it was independently reproduced and carefully validated. Researchers follow responsible disclosure practices and originally shared this report privately.\n\nA **500 KB** selector string triggers allocation of approximately **244 MB** of heap memory - a 488x\u2014 amplification ratio**.\n\n### Details",
+      "vuln_id": "GHSA-2wc2-fm75-p42x"
+     },
+     {
+      "id": "GHSA-2wc2-fm75-p42x#3",
+      "score": 0.846,
+      "text": "GHSA-2wc2-fm75-p42x (soupsieve) details:\n**Root cause:** No limit is enforced on the number of selectors in a comma-separated list. The parser will attempt to parse and store an arbitrary number of selectors, with each selector object consuming approximately **976 bytes** of heap memory. The total allocation scales linearly with the number of list items, but the amplification ratio (output memory / input bytes) is extremely high because each single-character selector like `a` expands into a complex object graph.\n\n**Attack surface:** Any application that passes user-supplied CSS selectors to `soupsieve.compile()` or Beautiful Soup's `.select()` / `.select_one()`.\n\n### Proof of Concept\n\n```python\nimport tracemalloc\nimport soupsieve as sv\n\ntracemalloc.start()",
+      "vuln_id": "GHSA-2wc2-fm75-p42x"
+     },
+     {
+      "id": "GHSA-2wc2-fm75-p42x#6",
+      "score": 0.827,
+      "text": "GHSA-2wc2-fm75-p42x (soupsieve) details:\n**Scalability of attack:** The memory allocation scales linearly - doubling the selector count doubles memory usage. An attacker can tune the payload to exactly exhaust a target's memory limits. Multiple concurrent requests multiply the effect.\n\n**Downstream exposure:** soupsieve is an automatic dependency of `beautifulsoup4`, one of the most widely installed Python packages. Any web application accepting CSS selectors from users (e.g., web scraping APIs, content filtering tools, CMS preview features) is potentially affected.\n\n---\n### Credit\n\nDiscovered by a security research team from the University of Sydney, focused on detecting open source software vulnerabilities.\nLiyi Zhou: https://lzhou1110.github.io/\nZiyue Wang: https://zyy0530.github.io/\nStrick: https://str1ckl4nd.github.io/\nMaurice: https://maurice.busystar.org/\nChenchen Yu: https://7thparkk.github.io/",
+      "vuln_id": "GHSA-2wc2-fm75-p42x"
+     },
+     {
+      "id": "GHSA-836r-79rf-4m37#1",
+      "score": 0.81,
+      "text": "GHSA-836r-79rf-4m37 (soupsieve) details:\n### Summary\n\nThe CSS selector parser in soupsieve (the CSS selector engine for Beautiful Soup 4) contains a regular expression vulnerable to catastrophic backtracking. When processing an attribute selector with an unterminated quoted value, the `VALUE` regex pattern in `css_parser.py` enters exponential backtracking. A payload of only **300 bytes** causes the regex engine to hang for **over 3 seconds**, enabling a trivial Regular Expression Denial of Service (ReDoS) attack.\n\nTo be completely transparent, AI tools helped surface this issue. However, this was independently reproduced and carefully validated.\n\nAny application that passes untrusted CSS selector strings to `soupsieve.compile()` or Beautiful Soup's `.select()` / `.select_one()` is affected.\n\n### Details\n\n**Affected code:** `soupsieve/css_parser.py`, line ~121 - `RE_VALUES` / `VALUE` regex pattern",
+      "vuln_id": "GHSA-836r-79rf-4m37"
+     },
+     {
+      "id": "GHSA-gjv8-xp57-g29c#9",
+      "score": 0.808,
+      "text": "GHSA-gjv8-xp57-g29c (soupsieve) details:\n- Confirmed: quadratic CPU consumption per `compile()`/`select()` call on an attacker-controlled selector. ~8 KB \u2192 ~8 s; ~12 KB \u2192 ~17 s; scaling ~\u00d74 per input doubling. A handful of such requests exhausts a worker/thread and degrades or stalls the service (single-threaded regex holds the GIL).\n- Realistic exposure: services that accept user-supplied CSS selectors and feed them to BeautifulSoup/soupsieve.\n- NOT claimed: exponential blowup, memory corruption, or code execution. This is strictly an availability (DoS) issue, and only where selectors are attacker-influenced. Applications using only fixed selectors are unaffected \u2014 stated to avoid inflation.\n\n## Remediation",
+      "vuln_id": "GHSA-gjv8-xp57-g29c"
+     }
+    ],
+    "symbols": [
+     "soupsieve.compile",
+     "beautifulsoup4",
+     "select",
+     "compile",
+     "select_one",
+     "start",
+     "tracemalloc.start"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 71.8,
+   "output": {
+    "package": "soupsieve",
+    "import_names": [
+     "soupsieve"
+    ],
+    "symbols": [
+     "soupsieve.compile",
+     "beautifulsoup4",
+     "select",
+     "compile",
+     "select_one",
+     "start",
+     "tracemalloc.start"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "soupsieve: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['soupsieve.compile', 'beautifulsoup4', 'select', 'compile', 'select_one', 'start', 'tracemalloc.start']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 35.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/services/parser_services/_helpers/string_utils.py:module",
+      "score": 0.708,
+      "text": "# mealie/services/parser_services/_helpers/string_utils.py (module level)\nimport re\ncompiled_match = re.compile(r\"(.){1,6}\\s\\((.[^\\(\\)])+\\)\\s\")\ncompiled_search = re.compile(r\"\\((.[^\\(])+\\)\")",
+      "file": "mealie/services/parser_services/_helpers/string_utils.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/scraper/cleaner.py:module",
+      "score": 0.691,
+      "text": "# mealie/services/scraper/cleaner.py (module level)\nimport contextlib\nimport functools\nimport html\nimport json\nimport operator\nimport re\nimport typing\nfrom datetime import datetime, timedelta\nfrom slugify import slugify\nfrom mealie.core.root_logger import get_logger\nlogger = get_logger(\"recipe-scraper\")\nMATCH_DIGITS = re.compile(r\"\\d+([.,]\\d+)?\")\n\"\"\" Allow for commas as decimals (common in Europe) \"\"\"\nMATCH_ISO_STR = re.compile(\n    r\"^P((\\d+)Y)?((\\d+)M)?((?P<days>\\d+)D)?\" r\"T((?P<hours>\\d+)H)?((?P<minutes>\\d+)M)?((?P<seconds>\\d+(?:\\.\\d+)?)S)?$\",\n)\n\"\"\" Match Duration Strings \"\"\"\nMATCH_HTML_TAGS = re.compile(r\"<[^<]+?>\")\n\"\"\" Matches HTML tags `<p>Text</p>` -> `Text` \"\"\"\nMATCH_MULTI_SPACE = re.compile(r\" +\")\n\"\"\" Matches multiple spaces `Hello    World` -> `Hello World` \"\"\"\nMATCH_ERRONEOUS_WHITE_SPACE = re.compile(r\"\\n\\s*\\n\")\n\"\"\" Matches multiple new lines and removes erroneous white space \"\"\"\n            # should probably raise exception\n            # raise TypeError(f\"Unexpected type for tags: {type(data)}, {data}\")",
+      "file": "mealie/services/scraper/cleaner.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/scraper/scraper_strategies.py:module",
+      "score": 0.678,
+      "text": "# mealie/services/scraper/scraper_strategies.py (module level)\nimport time\nfrom abc import ABC, abstractmethod\nfrom collections.abc import Callable\nfrom typing import Any\nimport extruct\nfrom fastapi import HTTPException, status\nfrom httpx import AsyncClient\nfrom recipe_scrapers import NoSchemaFoundInWildMode, SchemaScraperFactory, scrape_html\nfrom slugify import slugify\nfrom w3lib.html import get_base_url\nfrom mealie.core.root_logger import get_logger\nfrom mealie.schema.recipe.recipe import Recipe, RecipeStep\nfrom mealie.services.scraper.scraped_extras import ScrapedExtras\nfrom . import cleaner\n_FIREFOX_UA = \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0\"\nSCRAPER_TIMEOUT = 15\nclass ForceTimeoutException(Exception):\n    pass\nclass ABCScraperStrategy(ABC):\n    \"\"\"\n    Abstract class for all recipe parsers.\n    \"\"\"\n    url: str\n    @abstractmethod\n    @abstractmethod\nclass RecipeScraperPackage(ABCScraperStrategy):\nclass RecipeScraperOpenGraph(ABCScraperStrategy):",
+      "file": "mealie/services/scraper/scraper_strategies.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/schema/recipe/recipe_scraper.py:module",
+      "score": 0.674,
+      "text": "# mealie/schema/recipe/recipe_scraper.py (module level)\nfrom mealie.schema._mealie.mealie_model import MealieModel\nclass ScrapeRecipeTest(MealieModel):\n    url: str\nclass ScrapeRecipe(MealieModel):\n    url: str\n    include_tags: bool = False\n    class Config:\n        schema_extra = {\n            \"example\": {\n                \"url\": \"https://myfavoriterecipes.com/recipes\",\n                \"includeTags\": True,\n            },\n        }",
+      "file": "mealie/schema/recipe/recipe_scraper.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/pre_processor.py:69",
+      "score": 0.671,
+      "text": "# mealie/services/parser_services/crfpp/pre_processor.py:69-85  pre_process_string\ndef pre_process_string(string: str) -> str:\n    \"\"\"\n    Series of preprocessing functions to make best use of the CRF++ model. The ideal string looks something like...\n\n    {qty} {unit} {food}, {additional}\n    1 tbs. wine, expensive or other white wine, plus more\n\n    \"\"\"\n    string = string.lower()\n    string = replace_fraction_unicode(string)\n    string = remove_periods(string)\n    string = replace_common_abbreviations(string)\n\n    if \" or \" in string:\n        string = wrap_or_clause(string)\n\n    return string",
+      "file": "mealie/services/parser_services/crfpp/pre_processor.py",
+      "start": 69,
+      "qualname": "pre_process_string"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "soupsieve.compile",
+     "beautifulsoup4",
+     "select",
+     "compile",
+     "select_one"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2381,
+   "tokens_out": 53,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"soupsieve.compile\", \"beautifulsoup4\", \"select\", \"compile\", \"select_one\"]}",
+     "in": 2381,
+     "out": 53,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2313,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2313,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4694,
+  "tokens_out": 89,
+  "cost_usd_est": 0.0,
+  "seconds": 0.14
+ },
+ "created": "2026-11-10T00:06:31+00:00",
+ "code_version": "a3e1ef4"
+}

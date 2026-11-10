@@ -1,0 +1,329 @@
+{
+ "finding_id": "ctfd/setuptools@75.3.4/GHSA-h35f-9h28-mq5c",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-59890",
+   "GHSA-h35f-9h28-mq5c",
+   "PYSEC-2026-3447"
+  ],
+  "cves": [
+   "CVE-2026-59890"
+  ],
+  "cwes": [
+   "CWE-176",
+   "CWE-697"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/setuptools@75.3.4/GHSA-h35f-9h28-mq5c",
+  "first_fixed_above_installed": "83.0.0",
+  "fixed_versions": [
+   "83.0.0"
+  ],
+  "max_cvss": "6.1",
+  "package": "setuptools",
+  "published": "2026-07-21T19:09:21Z",
+  "summary": "setuptools: MANIFEST.in exclusion bypass in sdist via Unicode normalization collision (NFC/NFD) on macOS APFS/HFS+",
+  "target": "ctfd",
+  "version": "75.3.4",
+  "vuln_id": "GHSA-h35f-9h28-mq5c"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "MANIFEST.in",
+   "FileList",
+   "exclude",
+   "prune"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "MANIFEST.in",
+  "FileList",
+  "exclude",
+  "prune"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/setuptools@75.3.4/GHSA-h35f-9h28-mq5c",
+    "package": "setuptools",
+    "version": "75.3.4",
+    "vuln_id": "GHSA-h35f-9h28-mq5c",
+    "aliases": [
+     "CVE-2026-59890",
+     "GHSA-h35f-9h28-mq5c",
+     "PYSEC-2026-3447"
+    ],
+    "summary": "setuptools: MANIFEST.in exclusion bypass in sdist via Unicode normalization collision (NFC/NFD) on macOS APFS/HFS+",
+    "max_cvss": "6.1",
+    "fixed_versions": [
+     "83.0.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 31.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-h35f-9h28-mq5c#0",
+      "score": 0.857,
+      "text": "GHSA-h35f-9h28-mq5c (CVE-2026-59890)\npackage: setuptools\nsummary: setuptools: MANIFEST.in exclusion bypass in sdist via Unicode normalization collision (NFC/NFD) on macOS APFS/HFS+\naffected: >=0, <83.0.0",
+      "vuln_id": "GHSA-h35f-9h28-mq5c"
+     },
+     {
+      "id": "GHSA-h35f-9h28-mq5c#1",
+      "score": 0.824,
+      "text": "GHSA-h35f-9h28-mq5c (setuptools) details:\n## Summary\n\nWhen building a source distribution (`python -m build --sdist` / `setup.py sdist`), setuptools' `FileList` applies `MANIFEST.in` directives (`exclude`, `global-exclude`, `recursive-exclude`, `prune`) by matching a compiled glob against on-disk file names **byte-for-byte, with no Unicode normalization**. On normalization-preserving filesystems (notably macOS APFS and HFS+), a file written in NFD and a `MANIFEST.in` rule written in NFC refer to the same file but are byte-distinct, so the exclusion silently fails to match. A file the maintainer intended to exclude is then packed into the `.tar.gz` and, if published, uploaded to the public, immutable PyPI index.\n\n## Details",
+      "vuln_id": "GHSA-h35f-9h28-mq5c"
+     },
+     {
+      "id": "GHSA-h35f-9h28-mq5c#5",
+      "score": 0.804,
+      "text": "GHSA-h35f-9h28-mq5c (setuptools) details:\nand an on-disk file `secret_caf\u00e9.txt` written in NFD, `python -m build --sdist` packs the secret file into the resulting `.tar.gz`, while an ASCII control file excluded by the same directive is correctly dropped \u2014 isolating the bypass to the NFC-pattern vs. NFD-name mismatch. Reproduced on macOS APFS with setuptools 82.0.1.\n\n## Remediation\n\nNormalize both the walked path and each `MANIFEST.in` pattern to a single canonical form before matching, in both `setuptools/command/egg_info.py` (`FileList`) and the vendored `setuptools/_distutils/filelist.py`. For an exclusion list, err toward excluding more, and document that `MANIFEST.in` matching is normalization-insensitive on macOS.\n\n## Credit\n\nReported by Tomas Illuminati. Coordinated via CERT/CC VINCE VU#604762.",
+      "vuln_id": "GHSA-h35f-9h28-mq5c"
+     },
+     {
+      "id": "GHSA-h35f-9h28-mq5c#4",
+      "score": 0.753,
+      "text": "GHSA-h35f-9h28-mq5c (setuptools) details:\n`MANIFEST.in` exclusions are the documented mechanism maintainers use to keep secrets, local configs, and private fixtures out of the published sdist. A non-ASCII excluded file may be published to the public, immutable PyPI index despite the rule \u2014 an irreversible disclosure with no visual cue (NFC and NFD forms render identically). Exposure is filesystem-dependent and most relevant on macOS APFS/HFS+, where many maintainers build and publish. Pure-ASCII rules are unaffected.\n\n## Proof of concept\n\nWith a project containing `MANIFEST.in`:\n\n```\nglobal-include *.txt *.json\nglobal-exclude secret_caf\u00e9.txt    # rule saved NFC\n```",
+      "vuln_id": "GHSA-h35f-9h28-mq5c"
+     },
+     {
+      "id": "GHSA-27x4-j476-jp5f#0",
+      "score": 0.789,
+      "text": "GHSA-27x4-j476-jp5f (CVE-2013-1633)\npackage: setuptools\nsummary: Setuptools vulnerable to Man-in-the-middle attacks\naffected: >=0, <0.7",
+      "vuln_id": "GHSA-27x4-j476-jp5f"
+     },
+     {
+      "id": "GHSA-5rjg-fvgr-3xxf#0",
+      "score": 0.788,
+      "text": "GHSA-5rjg-fvgr-3xxf (CVE-2025-47273)\npackage: setuptools\nsummary: setuptools has a path traversal vulnerability in PackageIndex.download that leads to Arbitrary File Write\naffected: >=0, <78.1.1",
+      "vuln_id": "GHSA-5rjg-fvgr-3xxf"
+     }
+    ],
+    "symbols": [
+     "MANIFEST.in",
+     "FileList",
+     "exclude",
+     "prune"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 65.7,
+   "output": {
+    "package": "setuptools",
+    "import_names": [
+     "pkg_resources",
+     "setuptools"
+    ],
+    "symbols": [
+     "MANIFEST.in",
+     "FileList",
+     "exclude",
+     "prune"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "setuptools: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['MANIFEST.in', 'FileList', 'exclude', 'prune']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/security/sanitize.py:module",
+      "score": 0.642,
+      "text": "# CTFd/utils/security/sanitize.py (module level)\nfrom pybluemonday import UGCPolicy\n# Copied from lxml:\n# https://github.com/lxml/lxml/blob/e986a9cb5d54827c59aefa8803bc90954d67221e/src/lxml/html/defs.py#L38\n# fmt: off\nSAFE_ATTRS = (\n    'abbr', 'accept', 'accept-charset', 'accesskey', 'action', 'align',\n    'alt', 'axis', 'border', 'cellpadding', 'cellspacing', 'char', 'charoff',\n    'charset', 'checked', 'cite', 'class', 'clear', 'cols', 'colspan',\n    'color', 'compact', 'coords', 'datetime', 'dir', 'disabled', 'enctype',\n    'for', 'frame', 'headers', 'height', 'href', 'hreflang', 'hspace', 'id',\n    'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'media', 'method',\n    'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt', 'readonly',\n    'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape',\n    'size', 'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title',\n    'type', 'usemap', 'valign', 'value', 'vspace', 'width'\n)\n# fmt: on\nPAGE_STRUCTURE_TAGS = {\n    \"title\": [],\n}\nMETA_TAGS = {\n    \"meta\": [\"name\", \"content\", \"property\"],\n}\nFORM_TAGS = {\n    \"form\": [\"method\", \"action\"],\n    \"button\": [\"name\", \"type\", \"value\", \"disabled\"],\n    \"input\": [\"name\", \"type\", \"value\", \"placeholder\"],\n    \"select\": [\"name\", \"value\", \"placeholder\"],\n    \"option\": [\"value\"],\n    \"textarea\": [\"name\", \"value\", \"placeholder\"],\n    \"label\": [\"for\"],\n}\nANNOYING_TAGS = {\n    \"blink\": [],\n    \"marquee\": [],\n}\nMEDIA_TAGS = {\n    \"audio\": [\"autoplay\", \"controls\", \"crossorigin\", \"loop\", \"muted\", \"preload\", \"src\"],\n    \"video\": [\n        \"autoplay\",\n        \"buffered\",\n        \"controls\",\n        \"crossorigin\",\n        \"loop\",\n        \"muted\",\n        \"playsinline\",\n        \"poster\",\n        \"preload\",\n        \"src\",\n    ],\n    \"source\": [\"src\", \"type\"],\n    \"iframe\": [\"width\", \"height\", \"src\", \"frameborder\", \"allow\", \"allowfullscreen\"],\n}\nSANITIZER = UGCPolicy()\nfor TAGS in (PAGE_STRUCTURE_TAGS, META_TAGS, FORM_TAGS, ANNOYING_TAGS, MEDIA_TAGS):\n    for element in TAGS:\n        SANITIZER.AllowElements(element)\n        SANITIZER.AllowAttrs(*TAGS[element]).OnElements(element)\n# Allow safe attrs copied from lxml\nSANITIZER.AllowAttrs(*SAFE_ATTRS).Globally()",
+      "file": "CTFd/utils/security/sanitize.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/initialization/__init__.py:183",
+      "score": 0.636,
+      "text": "# CTFd/utils/initialization/__init__.py:183-307  init_request_processors\ndef init_request_processors(app):\n    @app.url_defaults\n    def inject_theme(endpoint, values):\n        if \"theme\" not in values and app.url_map.is_endpoint_expecting(\n            endpoint, \"theme\"\n        ):\n            values[\"theme\"] = ctf_theme()\n\n    @app.before_request\n    def needs_setup():\n        if is_setup() is False:\n            if request.endpoint in (\n                \"views.setup\",\n                \"views.integrations\",\n                \"views.themes\",\n                \"views.files\",\n            ):\n                return\n            else:\n                return redirect(url_for(\"views.setup\"))\n\n    @app.before_request\n    def tracker():\n        if request.endpoint == \"views.themes\":\n            return\n\n        if authed():\n            user_ips = get_current_user_recent_ips()\n            ip = get_ip()\n\n            track = None\n            if (ip not in user_ips) or (request.method != \"GET\"):\n                track = Tracking.query.filter_by(\n                    ip=get_ip(), user_id=session[\"id\"]\n                ).first()\n\n                if track:\n                    track.date = datetime.datetime.utcnow()\n                else:\n                    track = Tracking(ip=get_ip(), user_id=session[\"id\"])\n                    db.session.add(track)\n\n            if track:\n                try:\n                    db.session.commit()\n                except (InvalidRequestError, IntegrityError):\n                    db.session.rollback()\n                    db.session.close()\n                    logout_user()\n                else:\n                    clear_user_recent_ips(user_id=session[\"id\"])\n\n    @app.before_request\n    def banned():\n        if request.endpoint == \"views.themes\":\n            return\n\n        if authed():\n            user = get_current_user_attrs()\n            team = get_current_team_attrs()",
+      "file": "CTFd/utils/initialization/__init__.py",
+      "start": 183,
+      "qualname": "init_request_processors"
+     },
+     {
+      "id": "ctfd:CTFd/views.py:65",
+      "score": 0.621,
+      "text": "# CTFd/views.py:65-266  setup\ndef setup():\n    errors = get_errors()\n    if not config.is_setup():\n        if not session.get(\"nonce\"):\n            session[\"nonce\"] = generate_nonce()\n        if request.method == \"POST\":\n            # General\n            ctf_name = request.form.get(\"ctf_name\")\n            ctf_description = request.form.get(\"ctf_description\")\n            user_mode = request.form.get(\"user_mode\", USERS_MODE)\n            set_config(\"ctf_name\", ctf_name)\n            set_config(\"ctf_description\", ctf_description)\n            set_config(\"user_mode\", user_mode)\n\n            # Style\n            ctf_logo = request.files.get(\"ctf_logo\")\n            if ctf_logo:\n                f = upload_file(file=ctf_logo)\n                set_config(\"ctf_logo\", f.location)\n\n            ctf_small_icon = request.files.get(\"ctf_small_icon\")\n            if ctf_small_icon:\n                f = upload_file(file=ctf_small_icon)\n                set_config(\"ctf_small_icon\", f.location)\n\n            theme = request.form.get(\"ctf_theme\", DEFAULT_THEME)\n            set_config(\"ctf_theme\", theme)\n            theme_color = request.form.get(\"theme_color\")\n            theme_header = get_config(\"theme_header\")\n            if theme_color and bool(theme_header) is False:\n                # Uses {{ and }} to insert curly braces while using the format method\n                css = (\n                    '<style id=\"theme-color\">\\n'\n                    \":root {{--theme-color: {theme_color};}}\\n\"\n                    \".navbar{{background-color: var(--theme-color) !important;}}\\n\"\n                    \".jumbotron{{background-color: var(--theme-color) !important;}}\\n\"\n                    \"</style>\\n\"\n                ).format(theme_color=theme_color)\n                set_config(\"theme_header\", css)\n\n            # DateTime\n            start = request.form.get(\"start\")\n            end = request.form.get(\"end\")\n            set_config(\"start\", start)\n            set_config(\"end\", end)\n            set_config(\"freeze\", None)\n\n            # Administration\n            name = request.form[\"name\"]\n            email = request.form[\"email\"]\n            password = request.form[\"password\"]\n\n            name_len = len(name) == 0\n            names = Users.query.add_columns(\"name\", \"id\").filter_by(name=name).first()\n            emails = (\n                Users.query.add_columns(\"email\", \"id\").filter_by(email=email).first()\n            )\n            pass_short = len(password) == 0\n            pass_long = len(password) > 128\n            valid_email = validators.validate_email(request.form[\"email\"])",
+      "file": "CTFd/views.py",
+      "start": 65,
+      "qualname": "setup"
+     },
+     {
+      "id": "ctfd:CTFd/utils/helpers/__init__.py:31",
+      "score": 0.621,
+      "text": "# CTFd/utils/helpers/__init__.py:31-41  env_asset_url_default\ndef env_asset_url_default(endpoint, values):\n    \"\"\"Create asset URLs dependent on the current env\"\"\"\n    if endpoint == \"views.themes\":\n        path = values.get(\"path\", \"\")\n        static_asset = path.endswith(\".js\") or path.endswith(\".css\")\n        direct_access = \".dev\" in path or \".min\" in path\n        if static_asset and not direct_access:\n            env = values.get(\"env\", current_app.env)\n            mode = \".dev\" if env == \"development\" else \".min\"\n            base, ext = os.path.splitext(path)\n            values[\"path\"] = base + mode + ext",
+      "file": "CTFd/utils/helpers/__init__.py",
+      "start": 31,
+      "qualname": "env_asset_url_default"
+     },
+     {
+      "id": "ctfd:CTFd/plugins/__init__.py:24",
+      "score": 0.62,
+      "text": "# CTFd/plugins/__init__.py:24-41  register_plugin_assets_directory\ndef register_plugin_assets_directory(app, base_path, admins_only=False, endpoint=None):\n    \"\"\"\n    Registers a directory to serve assets\n\n    :param app: A CTFd application\n    :param string base_path: The path to the directory\n    :param boolean admins_only: Whether or not the assets served out of the directory should be accessible to the public\n    :return:\n    \"\"\"\n    base_path = base_path.strip(\"/\")\n    if endpoint is None:\n        endpoint = base_path.replace(\"/\", \".\")\n\n    def assets_handler(path):\n        return send_from_directory(base_path, path)\n\n    rule = \"/\" + base_path + \"/<path:path>\"\n    app.add_url_rule(rule=rule, endpoint=endpoint, view_func=assets_handler)",
+      "file": "CTFd/plugins/__init__.py",
+      "start": 24,
+      "qualname": "register_plugin_assets_directory"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "MANIFEST.in",
+     "FileList",
+     "exclude",
+     "prune"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2629,
+   "tokens_out": 46,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"MANIFEST.in\", \"FileList\", \"exclude\", \"prune\"]}",
+     "in": 2629,
+     "out": 46,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2561,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2561,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 5190,
+  "tokens_out": 82,
+  "cost_usd_est": 0.0,
+  "seconds": 0.13
+ },
+ "created": "2026-11-10T00:06:19+00:00",
+ "code_version": "a3e1ef4"
+}

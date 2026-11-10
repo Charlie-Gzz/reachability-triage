@@ -1,0 +1,292 @@
+{
+ "finding_id": "ctfd/urllib3@1.25.11/GHSA-q2q7-5pp4-w6pg",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-33503",
+   "GHSA-q2q7-5pp4-w6pg",
+   "PYSEC-2021-108"
+  ],
+  "cves": [
+   "CVE-2021-33503"
+  ],
+  "cwes": [
+   "CWE-400"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/urllib3@1.25.11/GHSA-q2q7-5pp4-w6pg",
+  "first_fixed_above_installed": "1.26.5",
+  "fixed_versions": [
+   "1.26.5",
+   "2d4a3fee6de2fa45eb82169361918f759269b4ec"
+  ],
+  "max_cvss": "8.7",
+  "package": "urllib3",
+  "published": "2021-06-01T21:19:32Z",
+  "summary": "Catastrophic backtracking in URL authority parser when passed URL containing many @ characters",
+  "target": "ctfd",
+  "version": "1.25.11",
+  "vuln_id": "GHSA-q2q7-5pp4-w6pg"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/urllib3@1.25.11/GHSA-q2q7-5pp4-w6pg",
+    "package": "urllib3",
+    "version": "1.25.11",
+    "vuln_id": "GHSA-q2q7-5pp4-w6pg",
+    "aliases": [
+     "CVE-2021-33503",
+     "GHSA-q2q7-5pp4-w6pg",
+     "PYSEC-2021-108"
+    ],
+    "summary": "Catastrophic backtracking in URL authority parser when passed URL containing many @ characters",
+    "max_cvss": "8.7",
+    "fixed_versions": [
+     "1.26.5",
+     "2d4a3fee6de2fa45eb82169361918f759269b4ec"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 35.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-q2q7-5pp4-w6pg#0",
+      "score": 0.892,
+      "text": "GHSA-q2q7-5pp4-w6pg (CVE-2021-33503)\npackage: urllib3\nsummary: Catastrophic backtracking in URL authority parser when passed URL containing many @ characters\naffected: >=1.25.4, <1.26.5",
+      "vuln_id": "GHSA-q2q7-5pp4-w6pg"
+     },
+     {
+      "id": "GHSA-q2q7-5pp4-w6pg#1",
+      "score": 0.881,
+      "text": "GHSA-q2q7-5pp4-w6pg (urllib3) details:\n### Impact\n\nWhen provided with a URL containing many `@` characters in the authority component the authority regular expression exhibits catastrophic backtracking causing a denial of service if a URL were passed as a parameter or redirected to via an HTTP redirect.\n\n### Patches\n\nThe issue has been fixed in urllib3 v1.26.5.",
+      "vuln_id": "GHSA-q2q7-5pp4-w6pg"
+     },
+     {
+      "id": "GHSA-gm62-xv2j-4w53#1",
+      "score": 0.784,
+      "text": "GHSA-gm62-xv2j-4w53 (urllib3) details:\n## Impact\n\nurllib3 supports chained HTTP encoding algorithms for response content according to RFC 9110 (e.g., `Content-Encoding: gzip, zstd`).\n\nHowever, the number of links in the decompression chain was unbounded allowing a malicious server to insert a virtually unlimited number of compression steps leading to high CPU usage and massive memory allocation for the decompressed data.\n\n## Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier for HTTP requests to untrusted sources unless they disable content decoding explicitly.\n\n## Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library limits the number of links to 5.",
+      "vuln_id": "GHSA-gm62-xv2j-4w53"
+     },
+     {
+      "id": "GHSA-v4w5-p2hg-8fh6#1",
+      "score": 0.772,
+      "text": "GHSA-v4w5-p2hg-8fh6 (urllib3) details:\nVersions 1.17 and 1.18 of the Python urllib3 library suffer from a vulnerability that can cause them, in certain configurations, to not correctly validate TLS certificates. This places users of the library with those configurations at risk of man-in-the-middle and information leakage attacks. This vulnerability affects users using versions 1.17 and 1.18 of the urllib3 library, who are using the optional PyOpenSSL support for TLS instead of the regular standard library TLS backend, and who are using OpenSSL 1.1.0 via PyOpenSSL. This is an extremely uncommon configuration, so the security impact of this vulnerability is low.",
+      "vuln_id": "GHSA-v4w5-p2hg-8fh6"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 37.6,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 38.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/constants/users.py:module",
+      "score": 0.687,
+      "text": "# CTFd/constants/users.py (module level)\nfrom collections import namedtuple\nUserAttrs = namedtuple(\n    \"UserAttrs\",\n    [\n        \"id\",\n        \"oauth_id\",\n        \"name\",\n        \"email\",\n        \"type\",\n        \"secret\",\n        \"website\",\n        \"affiliation\",\n        \"country\",\n        \"bracket\",\n        \"hidden\",\n        \"banned\",\n        \"verified\",\n        \"team_id\",\n        \"created\",\n    ],\n)\nclass _UserAttrsWrapper:\n    @property\n    @property\nUser = _UserAttrsWrapper()",
+      "file": "CTFd/constants/users.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/constants/teams.py:module",
+      "score": 0.675,
+      "text": "# CTFd/constants/teams.py (module level)\nfrom collections import namedtuple\nTeamAttrs = namedtuple(\n    \"TeamAttrs\",\n    [\n        \"id\",\n        \"oauth_id\",\n        \"name\",\n        \"email\",\n        \"secret\",\n        \"website\",\n        \"affiliation\",\n        \"country\",\n        \"bracket\",\n        \"hidden\",\n        \"banned\",\n        \"captain_id\",\n        \"created\",\n    ],\n)\nclass _TeamAttrsWrapper:\n    @property\n    @property\nTeam = _TeamAttrsWrapper()",
+      "file": "CTFd/constants/teams.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/encoding/__init__.py:39",
+      "score": 0.661,
+      "text": "# CTFd/utils/encoding/__init__.py:39-48  base64decode\ndef base64decode(s):\n    if isinstance(s, string_types):\n        s = s.encode(\"utf-8\")\n\n    decoded = base64.urlsafe_b64decode(s.ljust(len(s) + len(s) % 4, b\"=\"))\n    try:\n        decoded = decoded.decode(\"utf-8\")\n    except UnicodeDecodeError:\n        pass\n    return decoded",
+      "file": "CTFd/utils/encoding/__init__.py",
+      "start": 39,
+      "qualname": "base64decode"
+     },
+     {
+      "id": "ctfd:CTFd/utils/security/sanitize.py:module",
+      "score": 0.656,
+      "text": "# CTFd/utils/security/sanitize.py (module level)\nfrom pybluemonday import UGCPolicy\n# Copied from lxml:\n# https://github.com/lxml/lxml/blob/e986a9cb5d54827c59aefa8803bc90954d67221e/src/lxml/html/defs.py#L38\n# fmt: off\nSAFE_ATTRS = (\n    'abbr', 'accept', 'accept-charset', 'accesskey', 'action', 'align',\n    'alt', 'axis', 'border', 'cellpadding', 'cellspacing', 'char', 'charoff',\n    'charset', 'checked', 'cite', 'class', 'clear', 'cols', 'colspan',\n    'color', 'compact', 'coords', 'datetime', 'dir', 'disabled', 'enctype',\n    'for', 'frame', 'headers', 'height', 'href', 'hreflang', 'hspace', 'id',\n    'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'media', 'method',\n    'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt', 'readonly',\n    'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape',\n    'size', 'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title',\n    'type', 'usemap', 'valign', 'value', 'vspace', 'width'\n)\n# fmt: on\nPAGE_STRUCTURE_TAGS = {\n    \"title\": [],\n}\nMETA_TAGS = {\n    \"meta\": [\"name\", \"content\", \"property\"],\n}\nFORM_TAGS = {\n    \"form\": [\"method\", \"action\"],\n    \"button\": [\"name\", \"type\", \"value\", \"disabled\"],\n    \"input\": [\"name\", \"type\", \"value\", \"placeholder\"],\n    \"select\": [\"name\", \"value\", \"placeholder\"],\n    \"option\": [\"value\"],\n    \"textarea\": [\"name\", \"value\", \"placeholder\"],\n    \"label\": [\"for\"],\n}\nANNOYING_TAGS = {\n    \"blink\": [],\n    \"marquee\": [],\n}\nMEDIA_TAGS = {\n    \"audio\": [\"autoplay\", \"controls\", \"crossorigin\", \"loop\", \"muted\", \"preload\", \"src\"],\n    \"video\": [\n        \"autoplay\",\n        \"buffered\",\n        \"controls\",\n        \"crossorigin\",\n        \"loop\",\n        \"muted\",\n        \"playsinline\",\n        \"poster\",\n        \"preload\",\n        \"src\",\n    ],\n    \"source\": [\"src\", \"type\"],\n    \"iframe\": [\"width\", \"height\", \"src\", \"frameborder\", \"allow\", \"allowfullscreen\"],\n}\nSANITIZER = UGCPolicy()\nfor TAGS in (PAGE_STRUCTURE_TAGS, META_TAGS, FORM_TAGS, ANNOYING_TAGS, MEDIA_TAGS):\n    for element in TAGS:\n        SANITIZER.AllowElements(element)\n        SANITIZER.AllowAttrs(*TAGS[element]).OnElements(element)\n# Allow safe attrs copied from lxml\nSANITIZER.AllowAttrs(*SAFE_ATTRS).Globally()",
+      "file": "CTFd/utils/security/sanitize.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:20",
+      "score": 0.654,
+      "text": "# CTFd/utils/validators/__init__.py:20-21  validate_url\ndef validate_url(url):\n    return urlparse(url).scheme.startswith(\"http\")",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 20,
+      "qualname": "validate_url"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.2,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1672,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": []}",
+     "in": 1672,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.8,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1604,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1604,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3276,
+  "tokens_out": 71,
+  "cost_usd_est": 0.0,
+  "seconds": 0.12
+ },
+ "created": "2026-11-10T00:06:20+00:00",
+ "code_version": "a3e1ef4"
+}

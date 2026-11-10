@@ -1,0 +1,451 @@
+{
+ "finding_id": "mealie/starlette@0.27.0/GHSA-82w8-qh3p-5jfq",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-54283",
+   "GHSA-82w8-qh3p-5jfq",
+   "PYSEC-2026-249"
+  ],
+  "cves": [
+   "CVE-2026-54283"
+  ],
+  "cwes": [
+   "CWE-770"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/starlette@0.27.0/GHSA-82w8-qh3p-5jfq",
+  "first_fixed_above_installed": "1.3.1",
+  "fixed_versions": [
+   "1.3.1"
+  ],
+  "max_cvss": "7.5",
+  "package": "starlette",
+  "published": "2026-06-15T20:39:53Z",
+  "summary": "Starlette: request.form() limits silently ignored for application/x-www-form-urlencoded enable DoS",
+  "target": "mealie",
+  "version": "0.27.0",
+  "vuln_id": "GHSA-82w8-qh3p-5jfq"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "request.form",
+   "max_fields",
+   "max_part_size",
+   "max_files",
+   "form"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/routes/_base/controller.py:13",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/routes/media/media_recipe.py:5",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/routes/media/media_user.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "request.form",
+  "max_fields",
+  "max_part_size",
+  "max_files",
+  "form"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/starlette@0.27.0/GHSA-82w8-qh3p-5jfq",
+    "package": "starlette",
+    "version": "0.27.0",
+    "vuln_id": "GHSA-82w8-qh3p-5jfq",
+    "aliases": [
+     "CVE-2026-54283",
+     "GHSA-82w8-qh3p-5jfq",
+     "PYSEC-2026-249"
+    ],
+    "summary": "Starlette: request.form() limits silently ignored for application/x-www-form-urlencoded enable DoS",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "1.3.1"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-82w8-qh3p-5jfq#0",
+      "score": 0.899,
+      "text": "GHSA-82w8-qh3p-5jfq (CVE-2026-54283)\npackage: starlette\nsummary: Starlette: request.form() limits silently ignored for application/x-www-form-urlencoded enable DoS\naffected: >=0.4.1, <1.3.1",
+      "vuln_id": "GHSA-82w8-qh3p-5jfq"
+     },
+     {
+      "id": "GHSA-82w8-qh3p-5jfq#4",
+      "score": 0.827,
+      "text": "GHSA-82w8-qh3p-5jfq (starlette) details:\n### Impact\nThis Denial of service (DoS) vulnerability affects all applications built with Starlette (or FastAPI) that call `request.form()` on `application/x-www-form-urlencoded` requests. A single request with a very large number of fields blocks the event loop for several seconds, and a single request with a very large field forces unbounded memory allocation; in either case, parallel requests can render the service unusable. A reverse proxy that enforces a request body size limit reduces but does not eliminate the exposure, since a sub-10MB body is already enough to block the event loop.",
+      "vuln_id": "GHSA-82w8-qh3p-5jfq"
+     },
+     {
+      "id": "GHSA-82w8-qh3p-5jfq#1",
+      "score": 0.782,
+      "text": "GHSA-82w8-qh3p-5jfq (starlette) details:\n### Summary\n`request.form()` accepts `max_fields` and `max_part_size` to bound resource consumption while parsing form data. These limits are enforced for `multipart/form-data`, but silently ignored for `application/x-www-form-urlencoded`. An unauthenticated attacker can therefore send a urlencoded body with an arbitrarily large number of fields or an arbitrarily large field, even when the application configured limits it believed would apply.",
+      "vuln_id": "GHSA-82w8-qh3p-5jfq"
+     },
+     {
+      "id": "GHSA-82w8-qh3p-5jfq#2",
+      "score": 0.778,
+      "text": "GHSA-82w8-qh3p-5jfq (starlette) details:\n### Details\n`request.form()` dispatches to a different parser depending on the `Content-Type`. For `multipart/form-data` the `max_files`, `max_fields`, and `max_part_size` limits are forwarded to the parser, but for `application/x-www-form-urlencoded` the parser is constructed without them. It has no `max_fields` or `max_part_size` parameter to receive them, and it appends every field with no count check and accumulates each field's name and value with no size check. The configured limits are therefore both unreachable and unenforced for url-encoded bodies.\n\nBecause the url-encoded parser does its work synchronously between stream reads, the two attack shapes have different effects:",
+      "vuln_id": "GHSA-82w8-qh3p-5jfq"
+     },
+     {
+      "id": "GHSA-f96h-pmfr-66vw#1",
+      "score": 0.809,
+      "text": "GHSA-f96h-pmfr-66vw (starlette) details:\n### Summary\nStarlette treats `multipart/form-data` parts without a `filename` as text form fields and buffers those in byte strings with no size limit. This allows an attacker to upload arbitrary large form fields and cause Starlette to both slow down significantly due to excessive memory allocations and copy operations, and also consume more and more memory until the server starts swapping and grinds to a halt, or the OS terminates the server process with an OOM error. Uploading multiple such requests in parallel may be enough to render a service practically unusable, even if reasonable request size limits are enforced by a reverse proxy in front of Starlette.\n\n### PoC\n\n```python\nfrom starlette.applications import Starlette\nfrom starlette.routing import Route\n\nasync def poc(request):\n    async with request.form():\n        pass",
+      "vuln_id": "GHSA-f96h-pmfr-66vw"
+     },
+     {
+      "id": "GHSA-f96h-pmfr-66vw#2",
+      "score": 0.809,
+      "text": "GHSA-f96h-pmfr-66vw (starlette) details:\napp = Starlette(routes=[\n    Route('/', poc, methods=[\"POST\"]),\n])\n```\n\n```sh\ncurl http://localhost:8000 -F 'big=</dev/urandom'\n```\n\n### Impact\nThis Denial of service (DoS) vulnerability affects all applications built with Starlette (or FastAPI) accepting form requests.",
+      "vuln_id": "GHSA-f96h-pmfr-66vw"
+     }
+    ],
+    "symbols": [
+     "request.form",
+     "max_fields",
+     "max_part_size",
+     "max_files",
+     "form"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 51.6,
+   "output": {
+    "package": "starlette",
+    "import_names": [
+     "starlette"
+    ],
+    "symbols": [
+     "request.form",
+     "max_fields",
+     "max_part_size",
+     "max_files",
+     "form"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/routes/_base/controller.py:13",
+     "mealie/routes/media/media_recipe.py:5",
+     "mealie/routes/media/media_user.py:3",
+     "mealie/routes/recipe/recipe_crud_routes.py:12",
+     "mealie/routes/spa/__init__.py:10",
+     "mealie/routes/utility_routes.py:4",
+     "mealie/services/scheduler/runner.py:12"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 25,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/routes/_base/controller.py:119",
+      "code": "route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:123",
+      "code": "routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:178",
+      "code": "def _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:",
+      "function": "mealie.routes._base.controller:_update_cbv_route_endpoint_signature",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:33",
+      "code": "return FileResponse(recipe_image)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_img",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:51",
+      "code": "return FileResponse(timeline_event_image)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_timeline_event_img",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:62",
+      "code": "return FileResponse(file)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_asset",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:22",
+      "code": "return FileResponse(recipe_image, media_type=\"image/webp\")",
+      "function": "mealie.routes.media.media_user:get_user_image",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:15",
+      "code": "@router.get(\"/{user_id}/{file_name}\", response_class=FileResponse)",
+      "function": "mealie.routes.media.media_user:get_user_image",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:115",
+      "code": "return FileResponse(file)",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:104",
+      "code": "@router_exports.get(\"/{slug}/exports\", response_class=FileResponse)",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:133",
+      "code": "return FileResponse(temp_path, filename=f\"{slug}.zip\")",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_zip",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/spa/__init__.py:32",
+      "code": "except HTTPException as ex:",
+      "function": "mealie.routes.spa:SPAStaticFiles.get_response",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/utility_routes.py:27",
+      "code": "return FileResponse(file_path, media_type=\"application/octet-stream\", filename=file_path.name)",
+      "function": "mealie.routes.utility_routes:download_file",
+      "in_test": false
+     },
+     {
+      "location": "mealie/services/scheduler/runner.py:69",
+      "code": "await run_in_threadpool(func)",
+      "function": "mealie.services.scheduler.runner:loop",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "starlette: imported in 7 non-test location(s); 25 package call/reference site(s); named vulnerable symbols ['request.form', 'max_fields', 'max_part_size', 'max_files', 'form']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 39.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:28",
+      "score": 0.68,
+      "text": "# mealie/services/recipe/recipe_data_service.py:28-44  largest_content_len\nasync def largest_content_len(urls: list[str]) -> tuple[str, int]:\n    largest_url = \"\"\n    largest_len = 0\n\n    async def do(client: AsyncClient, url: str) -> Response:\n        return await client.head(url, headers={\"User-Agent\": _FIREFOX_UA})\n\n    async with AsyncClient() as client:\n        tasks = [do(client, url) for url in urls]\n        responses: list[Response] = await gather_with_concurrency(10, *tasks, ignore_exceptions=True)\n        for response in responses:\n            len_int = int(response.headers.get(\"Content-Length\", 0))\n            if len_int > largest_len:\n                largest_url = str(response.url)\n                largest_len = len_int\n\n    return largest_url, largest_len",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 28,
+      "qualname": "largest_content_len"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:19",
+      "score": 0.673,
+      "text": "# mealie/pkgs/img/minify.py:19-27  sizeof_fmt\ndef sizeof_fmt(file_path: Path, decimal_places=2):\n    if not file_path.exists():\n        return \"(File Not Found)\"\n    size: int | float = file_path.stat().st_size\n    for unit in [\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\"]:\n        if size < 1024 or unit == \"PiB\":\n            break\n        size /= 1024\n    return f\"{size:.{decimal_places}f} {unit}\"",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 19,
+      "qualname": "sizeof_fmt"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:151",
+      "score": 0.65,
+      "text": "# mealie/core/dependencies/dependencies.py:151-175  validate_file_token\ndef validate_file_token(token: str | None = None) -> Path:\n    \"\"\"\n    Args:\n        token (Optional[str], optional): _description_. Defaults to None.\n\n    Raises:\n        HTTPException: 400 Bad Request when no token or the file doesn't exist\n        HTTPException: 401 Unauthorized when the token is invalid\n    \"\"\"\n    if not token:\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    try:\n        payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])\n        file_path = Path(payload.get(\"file\"))\n    except JWTError as e:\n        raise HTTPException(\n            status_code=status.HTTP_401_UNAUTHORIZED,\n            detail=\"could not validate file token\",\n        ) from e\n\n    if not file_path.exists():\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    return file_path",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 151,
+      "qualname": "validate_file_token"
+     },
+     {
+      "id": "mealie:mealie/pkgs/stats/fs_stats.py:8",
+      "score": 0.645,
+      "text": "# mealie/pkgs/stats/fs_stats.py:8-22  pretty_size\ndef pretty_size(size: int) -> str:\n    \"\"\"\n    Pretty size takes in a integer value of a file size and returns the most applicable\n    file unit and the size.\n    \"\"\"\n    if size < 1024:\n        return f\"{size} bytes\"\n    elif size < 1024**2:\n        return f\"{round(size / 1024, 2)} KB\"\n    elif size < 1024**2 * 1024:\n        return f\"{round(size / 1024 / 1024, 2)} MB\"\n    elif size < 1024**2 * 1024 * 1024:\n        return f\"{round(size / 1024 / 1024 / 1024, 2)} GB\"\n    else:\n        return f\"{round(size / 1024 / 1024 / 1024 / 1024, 2)} TB\"",
+      "file": "mealie/pkgs/stats/fs_stats.py",
+      "start": 8,
+      "qualname": "pretty_size"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/bulk_actions.py:51",
+      "score": 0.643,
+      "text": "# mealie/routes/recipe/bulk_actions.py:51-58  RecipeBulkActionsController.get_exported_data_token\n    def get_exported_data_token(self, path: Path):\n        \"\"\"Returns a token to download a file\"\"\"\n        path = Path(path).resolve()\n\n        if not path.is_relative_to(self.folders.DATA_DIR):\n            raise HTTPException(400, \"path must be relative to data directory\")\n\n        return {\"fileToken\": create_file_token(path)}",
+      "file": "mealie/routes/recipe/bulk_actions.py",
+      "start": 51,
+      "qualname": "RecipeBulkActionsController.get_exported_data_token"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "request.form",
+     "max_fields",
+     "max_part_size",
+     "max_files",
+     "form"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/routes/_base/controller.py:13",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:5",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2121,
+   "tokens_out": 116,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/routes/_base/controller.py:13\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/routes/media/media_recipe.py:5\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/routes/media/media_user.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"request.form\", \"max_fields\", \"max_part_size\", \"max_files\", \"form\"]}",
+     "in": 2121,
+     "out": 116,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 2095,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2095,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4216,
+  "tokens_out": 152,
+  "cost_usd_est": 0.0,
+  "seconds": 0.13
+ },
+ "created": "2026-11-10T00:06:31+00:00",
+ "code_version": "a3e1ef4"
+}

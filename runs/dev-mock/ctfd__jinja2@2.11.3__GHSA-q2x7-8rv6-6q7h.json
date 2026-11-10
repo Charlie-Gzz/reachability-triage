@@ -1,0 +1,392 @@
+{
+ "finding_id": "ctfd/jinja2@2.11.3/GHSA-q2x7-8rv6-6q7h",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-56326",
+   "GHSA-q2x7-8rv6-6q7h",
+   "PYSEC-2026-1475"
+  ],
+  "cves": [
+   "CVE-2024-56326"
+  ],
+  "cwes": [
+   "CWE-693"
+  ],
+  "direct_dependency": true,
+  "finding_id": "ctfd/jinja2@2.11.3/GHSA-q2x7-8rv6-6q7h",
+  "first_fixed_above_installed": "3.1.5",
+  "fixed_versions": [
+   "3.1.5"
+  ],
+  "max_cvss": "7.8",
+  "package": "jinja2",
+  "published": "2024-12-23T17:56:08Z",
+  "summary": "Jinja has a sandbox breakout through indirect reference to format method",
+  "target": "ctfd",
+  "version": "2.11.3",
+  "vuln_id": "GHSA-q2x7-8rv6-6q7h"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "str.format",
+   "format"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "CTFd/__init__.py:7",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/__init__.py:11",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/__init__.py:12",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "str.format",
+  "format"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/jinja2@2.11.3/GHSA-q2x7-8rv6-6q7h",
+    "package": "jinja2",
+    "version": "2.11.3",
+    "vuln_id": "GHSA-q2x7-8rv6-6q7h",
+    "aliases": [
+     "CVE-2024-56326",
+     "GHSA-q2x7-8rv6-6q7h",
+     "PYSEC-2026-1475"
+    ],
+    "summary": "Jinja has a sandbox breakout through indirect reference to format method",
+    "max_cvss": "7.8",
+    "fixed_versions": [
+     "3.1.5"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 28.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-q2x7-8rv6-6q7h#1",
+      "score": 0.858,
+      "text": "GHSA-q2x7-8rv6-6q7h (jinja2) details:\nAn oversight in how the Jinja sandboxed environment detects calls to `str.format` allows an attacker that controls the content of a template to execute arbitrary Python code.\n\nTo exploit the vulnerability, an attacker needs to control the content of a template. Whether that is the case depends on the type of application using Jinja. This vulnerability impacts users of applications which execute untrusted templates.\n\nJinja's sandbox does catch calls to `str.format` and ensures they don't escape the sandbox. However, it's possible to store a reference to a malicious string's `format` method, then pass that to a filter that calls it. No such filters are built-in to Jinja, but could be present through custom filters in an application. After the fix, such indirect calls are also handled by the sandbox.",
+      "vuln_id": "GHSA-q2x7-8rv6-6q7h"
+     },
+     {
+      "id": "GHSA-q2x7-8rv6-6q7h#0",
+      "score": 0.848,
+      "text": "GHSA-q2x7-8rv6-6q7h (CVE-2024-56326)\npackage: jinja2\nsummary: Jinja has a sandbox breakout through indirect reference to format method\naffected: >=0, <3.1.5",
+      "vuln_id": "GHSA-q2x7-8rv6-6q7h"
+     },
+     {
+      "id": "GHSA-462w-v97r-4m45#0",
+      "score": 0.825,
+      "text": "GHSA-462w-v97r-4m45 (CVE-2019-10906)\npackage: jinja2\nsummary: Jinja2 sandbox escape via string formatting\naffected: >=0, <2.10.1",
+      "vuln_id": "GHSA-462w-v97r-4m45"
+     },
+     {
+      "id": "GHSA-gmj6-6f8f-6699#1",
+      "score": 0.822,
+      "text": "GHSA-gmj6-6f8f-6699 (jinja2) details:\nA bug in the Jinja compiler allows an attacker that controls both the content and filename of a template to execute arbitrary Python code, regardless of if Jinja's sandbox is used.\n\nTo exploit the vulnerability, an attacker needs to control both the filename and the contents of a template. Whether that is the case depends on the type of application using Jinja. This vulnerability impacts users of applications which execute untrusted templates where the template author can also choose the template filename.",
+      "vuln_id": "GHSA-gmj6-6f8f-6699"
+     }
+    ],
+    "symbols": [
+     "str.format",
+     "format"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 51.2,
+   "output": {
+    "package": "jinja2",
+    "import_names": [
+     "jinja2"
+    ],
+    "symbols": [
+     "str.format",
+     "format"
+    ],
+    "imported": true,
+    "import_locations": [
+     "CTFd/__init__.py:7",
+     "CTFd/__init__.py:11",
+     "CTFd/__init__.py:12",
+     "CTFd/errors.py:1",
+     "CTFd/views.py:7"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 25,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/__init__.py:74",
+      "code": "SandboxedEnvironment.__init__(self, **options)",
+      "function": "CTFd:SandboxedBaseEnvironment.__init__",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:127",
+      "code": "raise jinja2.TemplateNotFound(template)",
+      "function": "CTFd:ThemeLoader.get_source",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:161",
+      "code": "loaders.append(jinja2.DictLoader(app.overridden_templates))",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:173",
+      "code": "loaders.append(jinja2.PrefixLoader(prefix_loader_dict))",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:180",
+      "code": "plugin_loader = jinja2.FileSystemLoader(",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:183",
+      "code": "loaders.append(jinja2.PrefixLoader({\"plugins\": plugin_loader}))",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:185",
+      "code": "app.jinja_loader = jinja2.ChoiceLoader(loaders)",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:19",
+      "code": "except jinja2.exceptions.TemplateNotFound:",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/views.py:262",
+      "code": "except TemplateNotFound:",
+      "function": "CTFd.views:setup",
+      "in_test": false
+     }
+    ],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "jinja2: imported in 5 non-test location(s); 25 package call/reference site(s); named vulnerable symbols ['str.format', 'format']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 26.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/constants/__init__.py:55",
+      "score": 0.724,
+      "text": "# CTFd/constants/__init__.py:55-66  JinjaEnum\ndef JinjaEnum(cls):\n    \"\"\"\n    This is a decorator used to inject the decorated Enum into Jinja globals\n    which allows you to access it from the front end. If you need to access\n    an Enum from JS, a better tool to use is the JSEnum decorator.\n    \"\"\"\n    if cls.__name__ not in current_app.jinja_env.globals:\n        current_app.jinja_env.globals[cls.__name__] = cls\n        JINJA_ENUMS[cls.__name__] = cls\n    else:\n        raise KeyError(\"{} was already defined as a JinjaEnum\".format(cls.__name__))\n    return cls",
+      "file": "CTFd/constants/__init__.py",
+      "start": 55,
+      "qualname": "JinjaEnum"
+     },
+     {
+      "id": "ctfd:CTFd/utils/config/pages.py:11",
+      "score": 0.693,
+      "text": "# CTFd/utils/config/pages.py:11-34  format_variables\ndef format_variables(content):\n    ctf_name = get_config(\"ctf_name\")\n    ctf_description = get_config(\"ctf_description\")\n    ctf_start = get_config(\"start\")\n    if ctf_start:\n        ctf_start = isoformat(unix_time_to_utc(int(ctf_start)))\n\n    ctf_end = get_config(\"end\")\n    if ctf_end:\n        ctf_end = isoformat(unix_time_to_utc(int(ctf_end)))\n\n    ctf_freeze = get_config(\"freeze\")\n    if ctf_freeze:\n        ctf_freeze = isoformat(unix_time_to_utc(int(ctf_freeze)))\n\n    content = safe_format(\n        content,\n        ctf_name=ctf_name,\n        ctf_description=ctf_description,\n        ctf_start=ctf_start,\n        ctf_end=ctf_end,\n        ctf_freeze=ctf_freeze,\n    )\n    return content",
+      "file": "CTFd/utils/config/pages.py",
+      "start": 11,
+      "qualname": "format_variables"
+     },
+     {
+      "id": "ctfd:CTFd/constants/static.py:module",
+      "score": 0.69,
+      "text": "# CTFd/constants/static.py (module level)\nfrom CTFd.constants import JinjaEnum, RawEnum\n@JinjaEnum\nclass CacheKeys(str, RawEnum):\n    PUBLIC_SCOREBOARD_TABLE = \"public_scoreboard_table\"\n# Placeholder object. Not used, just imported to force initialization of any Enums here\nclass _StaticsWrapper:\n    pass\nStatic = _StaticsWrapper()",
+      "file": "CTFd/constants/static.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/constants/config.py:module",
+      "score": 0.687,
+      "text": "# CTFd/constants/config.py (module level)\nimport json\nfrom flask import url_for\nfrom CTFd.constants import JinjaEnum, RawEnum\nfrom CTFd.utils import get_config\nclass ConfigTypes(str, RawEnum):\n    CHALLENGE_VISIBILITY = \"challenge_visibility\"\n    SCORE_VISIBILITY = \"score_visibility\"\n    ACCOUNT_VISIBILITY = \"account_visibility\"\n    REGISTRATION_VISIBILITY = \"registration_visibility\"\n@JinjaEnum\nclass UserModeTypes(str, RawEnum):\n    USERS = \"users\"\n    TEAMS = \"teams\"\n@JinjaEnum\nclass ChallengeVisibilityTypes(str, RawEnum):\n    PUBLIC = \"public\"\n    PRIVATE = \"private\"\n    ADMINS = \"admins\"\n@JinjaEnum\nclass ScoreVisibilityTypes(str, RawEnum):\n    PUBLIC = \"public\"\n    PRIVATE = \"private\"\n    HIDDEN = \"hidden\"\n    ADMINS = \"admins\"\n@JinjaEnum\nclass AccountVisibilityTypes(str, RawEnum):\n    PUBLIC = \"public\"\n    PRIVATE = \"private\"\n    ADMINS = \"admins\"\n@JinjaEnum\nclass RegistrationVisibilityTypes(str, RawEnum):\n    PUBLIC = \"public\"\n    PRIVATE = \"private\"\nclass _ConfigsWrapper:\n    @property\n    @property\n    @property\n    @property\n    @property\n    @property\n    @property\n    @property\nConfigs = _ConfigsWrapper()",
+      "file": "CTFd/constants/config.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/formatters/__init__.py:4",
+      "score": 0.686,
+      "text": "# CTFd/utils/formatters/__init__.py:4-11  safe_format\ndef safe_format(fmt, **kwargs):\n    \"\"\"\n    Function that safely formats strings with arbitrary potentially user-supplied format strings\n    Looks for interpolation placeholders like {target} or {{ target }}\n    \"\"\"\n    return re.sub(\n        r\"\\{?\\{([^{}]*)\\}\\}?\", lambda m: kwargs.get(m.group(1).strip(), m.group(0)), fmt\n    )",
+      "file": "CTFd/utils/formatters/__init__.py",
+      "start": 4,
+      "qualname": "safe_format"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "str.format",
+     "format"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "CTFd/__init__.py:7",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/__init__.py:11",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/__init__.py:12",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1689,
+   "tokens_out": 92,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"CTFd/__init__.py:7\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/__init__.py:11\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/__init__.py:12\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"str.format\", \"format\"]}",
+     "in": 1689,
+     "out": 92,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1649,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1649,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3338,
+  "tokens_out": 128,
+  "cost_usd_est": 0.0,
+  "seconds": 0.11
+ },
+ "created": "2026-11-10T00:06:16+00:00",
+ "code_version": "a3e1ef4"
+}

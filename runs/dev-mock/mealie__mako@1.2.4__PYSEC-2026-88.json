@@ -1,0 +1,333 @@
+{
+ "finding_id": "mealie/mako@1.2.4/PYSEC-2026-88",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-41205",
+   "GHSA-v92g-xgxw-vvmm",
+   "PYSEC-2026-88"
+  ],
+  "cves": [
+   "CVE-2026-41205"
+  ],
+  "cwes": [],
+  "direct_dependency": false,
+  "finding_id": "mealie/mako@1.2.4/PYSEC-2026-88",
+  "first_fixed_above_installed": "1.3.11",
+  "fixed_versions": [
+   "1.3.11"
+  ],
+  "max_cvss": "7.5",
+  "package": "mako",
+  "published": "2026-04-23T19:17:29.270Z",
+  "summary": "Mako is a template library written in Python. Prior to 1.3.11, TemplateLookup.get_template() is vulnerable to path traversal when a URI starts with // (e.g., //../../../secret.txt). The root cause is ",
+  "target": "mealie",
+  "version": "1.2.4",
+  "vuln_id": "PYSEC-2026-88"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "TemplateLookup.get_template",
+   "get_template",
+   "Template.__init__",
+   "re.sub",
+   "posixpath.join"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "TemplateLookup.get_template",
+  "get_template",
+  "Template.__init__",
+  "re.sub",
+  "posixpath.join",
+  "normpath",
+  "BaseHTTPRequestHandler",
+  "lstrip"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/mako@1.2.4/PYSEC-2026-88",
+    "package": "mako",
+    "version": "1.2.4",
+    "vuln_id": "PYSEC-2026-88",
+    "aliases": [
+     "CVE-2026-41205",
+     "GHSA-v92g-xgxw-vvmm",
+     "PYSEC-2026-88"
+    ],
+    "summary": "Mako is a template library written in Python. Prior to 1.3.11, TemplateLookup.get_template() is vulnerable to path traversal when a URI starts with // (e.g., //../../../secret.txt). The root cause is ",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "1.3.11"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 38.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-v92g-xgxw-vvmm#1",
+      "score": 0.823,
+      "text": "GHSA-v92g-xgxw-vvmm (mako) details:\n### Summary\n\n`TemplateLookup.get_template()` is vulnerable to path traversal when a URI starts with `//` (e.g., `//../../../secret.txt`). The root cause is an inconsistency between two slash-stripping implementations:\n\n- `Template.__init__` strips **one** leading `/` using `if`/slice\n- `TemplateLookup.get_template()` strips **all** leading `/` using `re.sub(r\"^\\/+\", \"\")`\n\nWhen a URI like `//../../../../etc/passwd` is passed:\n1. `get_template()` strips all `/` \u2192 `../../../../etc/passwd` \u2192 file found via `posixpath.join(dir_, u)`\n2. `Template.__init__` strips one `/` \u2192 `/../../../../etc/passwd` \u2192 `normpath` \u2192 `/etc/passwd`\n3. `/etc/passwd`.startswith(`..`) \u2192 `False` \u2192 **check bypassed**\n\n### Impact\n\nArbitrary file read: any file readable by the process can be returned as rendered template content when an application passes untrusted input directly to `TemplateLookup.get_template()`.",
+      "vuln_id": "GHSA-v92g-xgxw-vvmm"
+     },
+     {
+      "id": "GHSA-v92g-xgxw-vvmm#0",
+      "score": 0.793,
+      "text": "GHSA-v92g-xgxw-vvmm (CVE-2026-41205)\npackage: mako\nsummary: Mako: Path traversal via double-slash URI prefix in TemplateLookup\naffected: >=0, <1.3.11",
+      "vuln_id": "GHSA-v92g-xgxw-vvmm"
+     },
+     {
+      "id": "GHSA-v92g-xgxw-vvmm#2",
+      "score": 0.734,
+      "text": "GHSA-v92g-xgxw-vvmm (mako) details:\nNote: this is exploitable at the library API level. HTTP-based exploitation is mitigated by Python's `BaseHTTPRequestHandler` which normalizes double-slash prefixes since CPython gh-87389. Applications using other HTTP servers that do not normalize paths may be affected.\n\n### Fix\n\nChanged `Template.__init__` to use `lstrip(\"/\")` instead of stripping only a single leading slash, so both code paths handle leading slashes consistently.",
+      "vuln_id": "GHSA-v92g-xgxw-vvmm"
+     },
+     {
+      "id": "GHSA-2h4p-vjrc-8xpq#3",
+      "score": 0.841,
+      "text": "GHSA-2h4p-vjrc-8xpq (mako) details:\n- `mako/lookup.py`: `TemplateLookup.get_template()` uses `posixpath.normpath`/`posixpath.join` for path construction but `os.path.isfile()` for existence check\n- `mako/template.py`: `Template.__init__()` URI validation uses `os.path.normpath()` which on Windows resolves backslash traversal to a form that passes the `startswith(\"..\")` guard\n\n## Impact\n\nIf an application passes user-controlled template names or include paths to `TemplateLookup.get_template()`, an attacker on Windows may be able to load and disclose readable files outside the configured template directory. The primary impact is local file disclosure. If the targeted file contains Mako/Python template syntax, it may also be parsed and executed as a template.\n\n## Remediation",
+      "vuln_id": "GHSA-2h4p-vjrc-8xpq"
+     },
+     {
+      "id": "GHSA-2h4p-vjrc-8xpq#0",
+      "score": 0.834,
+      "text": "GHSA-2h4p-vjrc-8xpq (CVE-2026-44307)\npackage: mako\nsummary: Mako vulnerable to path traversal via backslash URI on Windows in TemplateLookup\naffected: >=0, <1.3.12",
+      "vuln_id": "GHSA-2h4p-vjrc-8xpq"
+     }
+    ],
+    "symbols": [
+     "TemplateLookup.get_template",
+     "get_template",
+     "Template.__init__",
+     "re.sub",
+     "posixpath.join",
+     "normpath",
+     "BaseHTTPRequestHandler",
+     "lstrip"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 69.4,
+   "output": {
+    "package": "mako",
+    "import_names": [
+     "mako"
+    ],
+    "symbols": [
+     "TemplateLookup.get_template",
+     "get_template",
+     "Template.__init__",
+     "re.sub",
+     "posixpath.join",
+     "normpath",
+     "BaseHTTPRequestHandler",
+     "lstrip"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "mako: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['TemplateLookup.get_template', 'get_template', 'Template.__init__', 're.sub', 'posixpath.join', 'normpath', 'BaseHTTPRequestHandler', 'lstrip']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 47.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:105",
+      "score": 0.678,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:105-115  RecipeExportController.get_recipe_as_format\n    def get_recipe_as_format(self, slug: str, template_name: str, temp_dir=Depends(temporary_dir)):\n        \"\"\"\n        ## Parameters\n        `template_name`: The name of the template to use to use in the exports listed. Template type will automatically\n        be set on the backend. Because of this, it's important that your templates have unique names. See available\n        names and formats in the /api/recipes/exports endpoint.\n\n        \"\"\"\n        recipe = self.mixins.get_one(slug)\n        file = self.service.render_template(recipe, temp_dir, template_name)\n        return FileResponse(file)",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 105,
+      "qualname": "RecipeExportController.get_recipe_as_format"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/template_service.py:99",
+      "score": 0.671,
+      "text": "# mealie/services/recipe/template_service.py:99-130  TemplateService._render_jinja2\n    def _render_jinja2(self, recipe: Recipe, j2_template: str | None = None) -> Path:\n        \"\"\"\n        Renders a Jinja2 Template in a temporary directory and returns\n        the path to the file.\n        \"\"\"\n        self.__check_temp(self._render_jinja2)\n\n        if j2_template is None:\n            raise ValueError(\"Template must be provided for method _render_jinja2\")\n\n        j2_path: Path = self.directories.TEMPLATE_DIR / j2_template\n\n        if not j2_path.is_file():\n            raise FileNotFoundError(f\"Template '{j2_path}' not found.\")\n\n        with open(j2_path) as f:\n            template_text = f.read()\n\n        template = Template(template_text)\n        rendered_text = template.render(recipe=recipe.dict(by_alias=True))\n\n        save_name = f\"{recipe.slug}{j2_path.suffix}\"\n\n        if self.temp is None:\n            raise ValueError(\"Temporary directory must be provided for method _render_jinja2\")\n\n        save_path = self.temp.joinpath(save_name)\n\n        with open(save_path, \"w\") as f:\n            f.write(rendered_text)\n\n        return save_path",
+      "file": "mealie/services/recipe/template_service.py",
+      "start": 99,
+      "qualname": "TemplateService._render_jinja2"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/template_service.py:83",
+      "score": 0.658,
+      "text": "# mealie/services/recipe/template_service.py:83-97  TemplateService._render_json\n    def _render_json(self, recipe: Recipe) -> Path:\n        \"\"\"\n        Renders a JSON file in a temporary directory and returns\n        the path to the file.\n        \"\"\"\n        self.__check_temp(self._render_json)\n\n        if self.temp is None:\n            raise ValueError(\"Temporary directory must be provided for method _render_json\")\n\n        save_path = self.temp.joinpath(f\"{recipe.slug}.json\")\n        with open(save_path, \"w\") as f:\n            f.write(recipe.json(indent=4, by_alias=True))\n\n        return save_path",
+      "file": "mealie/services/recipe/template_service.py",
+      "start": 83,
+      "qualname": "TemplateService._render_json"
+     },
+     {
+      "id": "mealie:mealie/schema/recipe/recipe.py:154",
+      "score": 0.652,
+      "text": "# mealie/schema/recipe/recipe.py:154-155  Recipe.timeline_image_dir_from_id\n    def timeline_image_dir_from_id(cls, recipe_id: UUID4 | str, timeline_event_id: UUID4 | str) -> Path:\n        return cls._get_dir(cls.image_dir_from_id(recipe_id).joinpath(\"timeline\").joinpath(str(timeline_event_id)))",
+      "file": "mealie/schema/recipe/recipe.py",
+      "start": 154,
+      "qualname": "Recipe.timeline_image_dir_from_id"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/template_service.py:30",
+      "score": 0.651,
+      "text": "# mealie/services/recipe/template_service.py:30-38  TemplateService.templates\n    def templates(self) -> dict[str, list[str]]:\n        \"\"\"\n        Returns a list of all templates available to render.\n        \"\"\"\n        return {\n            TemplateType.jinja2.value: [x.name for x in self.directories.TEMPLATE_DIR.iterdir() if x.is_file()],\n            TemplateType.json.value: [\"raw\"],\n            TemplateType.zip.value: [\"zip\"],\n        }",
+      "file": "mealie/services/recipe/template_service.py",
+      "start": 30,
+      "qualname": "TemplateService.templates"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "TemplateLookup.get_template",
+     "get_template",
+     "Template.__init__",
+     "re.sub",
+     "posixpath.join"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1937,
+   "tokens_out": 58,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"TemplateLookup.get_template\", \"get_template\", \"Template.__init__\", \"re.sub\", \"posixpath.join\"]}",
+     "in": 1937,
+     "out": 58,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1869,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1869,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3806,
+  "tokens_out": 94,
+  "cost_usd_est": 0.0,
+  "seconds": 0.16
+ },
+ "created": "2026-11-10T00:06:24+00:00",
+ "code_version": "a3e1ef4"
+}

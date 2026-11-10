@@ -1,0 +1,6 @@
+# Prompt development on the benchmark dev split only.
+provider: {provider: claude-code, model: sonnet}
+retrieval: true
+reflection: true
+store: chroma
+max_retries: 1

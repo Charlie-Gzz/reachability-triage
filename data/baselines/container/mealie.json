@@ -1,0 +1,16 @@
+{
+  "target": "mealie",
+  "commit": "f0bbe796ce40ef32a4a00eecdfb0efe4eef9da07",
+  "cmd": "TZ=UTC $PY -m pytest tests",
+  "image": "rt-target-mealie:latest",
+  "exit_code": 1,
+  "seconds": 212.0,
+  "timed_out": false,
+  "runner": "pytest",
+  "passed": 853,
+  "failed": 1,
+  "skipped": 26,
+  "failing_tests": [
+    "tests/unit_tests/services_tests/scheduler/tasks/test_post_webhook.py::test_get_scheduled_webhooks_filter_query"
+  ]
+}

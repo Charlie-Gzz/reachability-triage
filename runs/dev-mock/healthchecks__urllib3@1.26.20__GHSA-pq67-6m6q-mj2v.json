@@ -1,0 +1,341 @@
+{
+ "finding_id": "healthchecks/urllib3@1.26.20/GHSA-pq67-6m6q-mj2v",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-50181",
+   "GHSA-pq67-6m6q-mj2v",
+   "PYSEC-2026-1999"
+  ],
+  "cves": [
+   "CVE-2025-50181"
+  ],
+  "cwes": [
+   "CWE-601"
+  ],
+  "direct_dependency": false,
+  "finding_id": "healthchecks/urllib3@1.26.20/GHSA-pq67-6m6q-mj2v",
+  "first_fixed_above_installed": "2.5.0",
+  "fixed_versions": [
+   "2.5.0"
+  ],
+  "max_cvss": "5.3",
+  "package": "urllib3",
+  "published": "2025-06-18T17:50:00Z",
+  "summary": "urllib3 redirects are not disabled when retries are disabled on PoolManager instantiation",
+  "target": "healthchecks",
+  "version": "1.26.20",
+  "vuln_id": "GHSA-pq67-6m6q-mj2v"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "urllib3.request",
+   "urllib3.PoolManager",
+   "urllib3.Retry",
+   "retries",
+   "PoolManager"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "urllib3.request",
+  "urllib3.PoolManager",
+  "urllib3.Retry",
+  "retries",
+  "PoolManager",
+  "request",
+  "Retry",
+  "MaxRetryError"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/urllib3@1.26.20/GHSA-pq67-6m6q-mj2v",
+    "package": "urllib3",
+    "version": "1.26.20",
+    "vuln_id": "GHSA-pq67-6m6q-mj2v",
+    "aliases": [
+     "CVE-2025-50181",
+     "GHSA-pq67-6m6q-mj2v",
+     "PYSEC-2026-1999"
+    ],
+    "summary": "urllib3 redirects are not disabled when retries are disabled on PoolManager instantiation",
+    "max_cvss": "5.3",
+    "fixed_versions": [
+     "2.5.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-pq67-6m6q-mj2v#0",
+      "score": 0.925,
+      "text": "GHSA-pq67-6m6q-mj2v (CVE-2025-50181)\npackage: urllib3\nsummary: urllib3 redirects are not disabled when retries are disabled on PoolManager instantiation\naffected: >=0, <2.5.0",
+      "vuln_id": "GHSA-pq67-6m6q-mj2v"
+     },
+     {
+      "id": "GHSA-pq67-6m6q-mj2v#2",
+      "score": 0.867,
+      "text": "GHSA-pq67-6m6q-mj2v (urllib3) details:\nHowever, the `retries` parameter is currently ignored, which means all the above examples don't disable redirects.\n\n## Affected usages\n\nPassing `retries` on `PoolManager` instantiation to disable redirects or restrict their number.\n\nBy default, requests and botocore users are not affected.\n\n## Impact\n\nRedirects are often used to exploit SSRF vulnerabilities. An application attempting to mitigate SSRF or open redirect vulnerabilities by disabling redirects at the PoolManager level will remain vulnerable.\n\n## Remediation\n\nYou can remediate this vulnerability with the following steps:",
+      "vuln_id": "GHSA-pq67-6m6q-mj2v"
+     },
+     {
+      "id": "GHSA-pq67-6m6q-mj2v#1",
+      "score": 0.865,
+      "text": "GHSA-pq67-6m6q-mj2v (urllib3) details:\nurllib3 handles redirects and retries using the same mechanism, which is controlled by the `Retry` object. The most common way to disable redirects is at the request level, as follows:\n\n```python\nresp = urllib3.request(\"GET\", \"https://httpbin.org/redirect/1\", redirect=False)\nprint(resp.status)\n# 302\n```\n\nHowever, it is also possible to disable redirects, for all requests, by instantiating a `PoolManager` and specifying `retries` in a way that disable redirects:\n\n```python\nimport urllib3\n\nhttp = urllib3.PoolManager(retries=0)  # should raise MaxRetryError on redirect\nhttp = urllib3.PoolManager(retries=urllib3.Retry(redirect=0))  # equivalent to the above\nhttp = urllib3.PoolManager(retries=False)  # should return the first response\n\nresp = http.request(\"GET\", \"https://httpbin.org/redirect/1\")\n```",
+      "vuln_id": "GHSA-pq67-6m6q-mj2v"
+     },
+     {
+      "id": "GHSA-pq67-6m6q-mj2v#3",
+      "score": 0.79,
+      "text": "GHSA-pq67-6m6q-mj2v (urllib3) details:\n* Upgrade to a patched version of urllib3. If your organization would benefit from the continued support of urllib3 1.x, please contact [sethmichaellarson@gmail.com](mailto:sethmichaellarson@gmail.com) to discuss sponsorship or contribution opportunities.\n * Disable redirects at the `request()` level instead of the `PoolManager()` level.",
+      "vuln_id": "GHSA-pq67-6m6q-mj2v"
+     },
+     {
+      "id": "GHSA-48p4-8xcf-vxj5#2",
+      "score": 0.832,
+      "text": "GHSA-48p4-8xcf-vxj5 (urllib3) details:\nRedirects are often used to exploit SSRF vulnerabilities. An application attempting to mitigate SSRF or open redirect vulnerabilities by disabling redirects may remain vulnerable if a Pyodide runtime redirect mechanism is unsuitable.\n\n## Remediation\n\nIf you use urllib3 in Node.js, upgrade to a patched version of urllib3.\n\nUnfortunately, browsers provide no suitable way which urllib3 can use: `XMLHttpRequest` provides no control over redirects, the Fetch API returns `opaqueredirect` responses lacking data when redirects are controlled manually. Expect default browser behavior for redirects.",
+      "vuln_id": "GHSA-48p4-8xcf-vxj5"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#3",
+      "score": 0.828,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\nIf upgrading is not immediately possible, disable [redirects](https://urllib3.readthedocs.io/en/2.6.2/user-guide.html#retrying-requests) by setting `redirect=False` for requests to untrusted source.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     }
+    ],
+    "symbols": [
+     "urllib3.request",
+     "urllib3.PoolManager",
+     "urllib3.Retry",
+     "retries",
+     "PoolManager",
+     "request",
+     "Retry",
+     "MaxRetryError"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 179.3,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "urllib3.request",
+     "urllib3.PoolManager",
+     "urllib3.Retry",
+     "retries",
+     "PoolManager",
+     "request",
+     "Retry",
+     "MaxRetryError"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['urllib3.request', 'urllib3.PoolManager', 'urllib3.Retry', 'retries', 'PoolManager', 'request', 'Retry', 'MaxRetryError']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 40.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/api/transports.py:198",
+      "score": 0.769,
+      "text": "# hc/api/transports.py:198-212  HttpTransport._request_with_retries\n    def _request_with_retries(cls, method, url, use_retries=True, **kwargs) -> None:\n        start = time.time()\n\n        tries_left = 3 if use_retries else 1\n        while True:\n            try:\n                return cls._request(method, url, **kwargs)\n            except TransportError as e:\n                tries_left = 0 if e.permanent else tries_left - 1\n\n                # If we have no tries left *or* have already used more than\n                # 15 seconds of time then abort the retry loop by re-raising\n                # the exception:\n                if tries_left == 0 or time.time() - start > 15:\n                    raise e",
+      "file": "hc/api/transports.py",
+      "start": 198,
+      "qualname": "HttpTransport._request_with_retries"
+     },
+     {
+      "id": "healthchecks:hc/api/transports.py:215",
+      "score": 0.734,
+      "text": "# hc/api/transports.py:215-216  HttpTransport.get\n    def get(cls, url, **kwargs) -> None:\n        cls._request_with_retries(\"get\", url, **kwargs)",
+      "file": "hc/api/transports.py",
+      "start": 215,
+      "qualname": "HttpTransport.get"
+     },
+     {
+      "id": "healthchecks:hc/api/transports.py:219",
+      "score": 0.72,
+      "text": "# hc/api/transports.py:219-220  HttpTransport.post\n    def post(cls, url, **kwargs) -> None:\n        cls._request_with_retries(\"post\", url, **kwargs)",
+      "file": "hc/api/transports.py",
+      "start": 219,
+      "qualname": "HttpTransport.post"
+     },
+     {
+      "id": "healthchecks:hc/api/transports.py:223",
+      "score": 0.715,
+      "text": "# hc/api/transports.py:223-224  HttpTransport.put\n    def put(cls, url, **kwargs) -> None:\n        cls._request_with_retries(\"put\", url, **kwargs)",
+      "file": "hc/api/transports.py",
+      "start": 223,
+      "qualname": "HttpTransport.put"
+     },
+     {
+      "id": "healthchecks:hc/accounts/views.py:52",
+      "score": 0.709,
+      "text": "# hc/accounts/views.py:52-66  _allow_redirect\ndef _allow_redirect(redirect_url):\n    if not redirect_url:\n        return False\n\n    parsed = urlparse(redirect_url)\n    if parsed.netloc:\n        # Allow redirects only to relative URLs\n        return False\n\n    try:\n        match = resolve(parsed.path)\n    except Resolver404:\n        return False\n\n    return match.url_name in POST_LOGIN_ROUTES",
+      "file": "hc/accounts/views.py",
+      "start": 52,
+      "qualname": "_allow_redirect"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "urllib3.request",
+     "urllib3.PoolManager",
+     "urllib3.Retry",
+     "retries",
+     "PoolManager"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1593,
+   "tokens_out": 56,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"urllib3.request\", \"urllib3.PoolManager\", \"urllib3.Retry\", \"retries\", \"PoolManager\"]}",
+     "in": 1593,
+     "out": 56,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1525,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1525,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3118,
+  "tokens_out": 92,
+  "cost_usd_est": 0.0,
+  "seconds": 0.25
+ },
+ "created": "2026-11-10T00:06:14+00:00",
+ "code_version": "a3e1ef4"
+}

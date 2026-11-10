@@ -1,0 +1,334 @@
+{
+ "finding_id": "mealie/setuptools@67.1.0/GHSA-5rjg-fvgr-3xxf",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-47273",
+   "GHSA-5rjg-fvgr-3xxf"
+  ],
+  "cves": [
+   "CVE-2025-47273"
+  ],
+  "cwes": [
+   "CWE-22"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/setuptools@67.1.0/GHSA-5rjg-fvgr-3xxf",
+  "first_fixed_above_installed": "78.1.1",
+  "fixed_versions": [
+   "78.1.1"
+  ],
+  "max_cvss": "7.7",
+  "package": "setuptools",
+  "published": "2025-05-19T16:52:43Z",
+  "summary": "setuptools has a path traversal vulnerability in PackageIndex.download that leads to Arbitrary File Write",
+  "target": "mealie",
+  "version": "67.1.0",
+  "vuln_id": "GHSA-5rjg-fvgr-3xxf"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "PackageIndex",
+   "tmpdir",
+   "name",
+   "os.path.join",
+   "join"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "PackageIndex",
+  "tmpdir",
+  "name",
+  "os.path.join",
+  "join",
+  "PackageIndex.download",
+  "egg_info_for_url",
+  "easy_install"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/setuptools@67.1.0/GHSA-5rjg-fvgr-3xxf",
+    "package": "setuptools",
+    "version": "67.1.0",
+    "vuln_id": "GHSA-5rjg-fvgr-3xxf",
+    "aliases": [
+     "CVE-2025-47273",
+     "GHSA-5rjg-fvgr-3xxf"
+    ],
+    "summary": "setuptools has a path traversal vulnerability in PackageIndex.download that leads to Arbitrary File Write",
+    "max_cvss": "7.7",
+    "fixed_versions": [
+     "78.1.1"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 32.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-5rjg-fvgr-3xxf#0",
+      "score": 0.882,
+      "text": "GHSA-5rjg-fvgr-3xxf (CVE-2025-47273)\npackage: setuptools\nsummary: setuptools has a path traversal vulnerability in PackageIndex.download that leads to Arbitrary File Write\naffected: >=0, <78.1.1",
+      "vuln_id": "GHSA-5rjg-fvgr-3xxf"
+     },
+     {
+      "id": "GHSA-5rjg-fvgr-3xxf#1",
+      "score": 0.834,
+      "text": "GHSA-5rjg-fvgr-3xxf (setuptools) details:\n### Summary \nA path traversal vulnerability in `PackageIndex` was fixed in setuptools version 78.1.1\n\n### Details\n```\n    def _download_url(self, url, tmpdir):\n        # Determine download filename\n        #\n        name, _fragment = egg_info_for_url(url)\n        if name:\n            while '..' in name:\n                name = name.replace('..', '.').replace('\\\\', '_')\n        else:\n            name = \"__downloaded__\"  # default if URL has no path contents\n\nif name.endswith('.[egg.zip](http://egg.zip/)'):\n            name = name[:-4]  # strip the extra .zip before download\n\n-->       filename = os.path.join(tmpdir, name)\n```\n\nHere: https://github.com/pypa/setuptools/blob/6ead555c5fb29bc57fe6105b1bffc163f56fd558/setuptools/package_index.py#L810C1-L825C88",
+      "vuln_id": "GHSA-5rjg-fvgr-3xxf"
+     },
+     {
+      "id": "GHSA-5rjg-fvgr-3xxf#2",
+      "score": 0.693,
+      "text": "GHSA-5rjg-fvgr-3xxf (setuptools) details:\n`os.path.join()` discards the first argument `tmpdir` if the second begins with a slash or drive letter.\n`name` is derived from a URL without sufficient sanitization. While there is some attempt to sanitize by replacing instances of '..' with '.', it is insufficient.\n\n### Risk Assessment\nAs easy_install and package_index are deprecated, the exploitation surface is reduced.\nHowever, it seems this could be exploited in a similar fashion like https://github.com/advisories/GHSA-r9hx-vwmv-q579, and as described by POC 4 in https://github.com/advisories/GHSA-cx63-2mw6-8hw5 report: via malicious URLs present on the pages of a package index.\n\n### Impact\nAn attacker would be allowed to write files to arbitrary locations on the filesystem with the permissions of the process running the Python code, which could escalate to RCE depending on the context.",
+      "vuln_id": "GHSA-5rjg-fvgr-3xxf"
+     },
+     {
+      "id": "GHSA-cx63-2mw6-8hw5#1",
+      "score": 0.852,
+      "text": "GHSA-cx63-2mw6-8hw5 (setuptools) details:\nA vulnerability in the `package_index` module of pypa/setuptools versions up to 69.1.1 allows for remote code execution via its download functions. These functions, which are used to download packages from URLs provided by users or retrieved from package index servers, are susceptible to code injection. If these functions are exposed to user-controlled inputs, such as package URLs, they can execute arbitrary commands on the system. The issue is fixed in version 70.0.",
+      "vuln_id": "GHSA-cx63-2mw6-8hw5"
+     },
+     {
+      "id": "GHSA-cx63-2mw6-8hw5#0",
+      "score": 0.822,
+      "text": "GHSA-cx63-2mw6-8hw5 (CVE-2024-6345)\npackage: setuptools\nsummary: setuptools vulnerable to Command Injection via package URL\naffected: >=0, <70.0.0",
+      "vuln_id": "GHSA-cx63-2mw6-8hw5"
+     }
+    ],
+    "symbols": [
+     "PackageIndex",
+     "tmpdir",
+     "name",
+     "os.path.join",
+     "join",
+     "PackageIndex.download",
+     "egg_info_for_url",
+     "easy_install"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 75.6,
+   "output": {
+    "package": "setuptools",
+    "import_names": [
+     "pkg_resources",
+     "setuptools"
+    ],
+    "symbols": [
+     "PackageIndex",
+     "tmpdir",
+     "name",
+     "os.path.join",
+     "join",
+     "PackageIndex.download",
+     "egg_info_for_url",
+     "easy_install"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "setuptools: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['PackageIndex', 'tmpdir', 'name', 'os.path.join', 'join', 'PackageIndex.download', 'egg_info_for_url', 'easy_install']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 36.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:208",
+      "score": 0.712,
+      "text": "# mealie/core/dependencies/dependencies.py:208-215  temporary_zip_path\nasync def temporary_zip_path() -> AsyncGenerator[Path, None]:\n    app_dirs.TEMP_DIR.mkdir(exist_ok=True, parents=True)\n    temp_path = app_dirs.TEMP_DIR.joinpath(\"my_zip_archive.zip\")\n\n    try:\n        yield temp_path\n    finally:\n        temp_path.unlink(missing_ok=True)",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 208,
+      "qualname": "temporary_zip_path"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:218",
+      "score": 0.693,
+      "text": "# mealie/core/dependencies/dependencies.py:218-225  temporary_dir\nasync def temporary_dir() -> AsyncGenerator[Path, None]:\n    temp_path = app_dirs.TEMP_DIR.joinpath(uuid4().hex)\n    temp_path.mkdir(exist_ok=True, parents=True)\n\n    try:\n        yield temp_path\n    finally:\n        shutil.rmtree(temp_path)",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 218,
+      "qualname": "temporary_dir"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:228",
+      "score": 0.687,
+      "text": "# mealie/core/dependencies/dependencies.py:228-243  temporary_file\ndef temporary_file(ext: str = \"\") -> Callable[[], Generator[tempfile._TemporaryFileWrapper, None, None]]:\n    \"\"\"\n    Returns a temporary file with the specified extension\n    \"\"\"\n\n    def func():\n        temp_path = app_dirs.TEMP_DIR.joinpath(uuid4().hex + ext)\n        temp_path.touch()\n\n        with tempfile.NamedTemporaryFile(mode=\"w+b\", suffix=ext) as f:\n            try:\n                yield f\n            finally:\n                temp_path.unlink(missing_ok=True)\n\n    return func",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 228,
+      "qualname": "temporary_file"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/template_service.py:132",
+      "score": 0.682,
+      "text": "# mealie/services/recipe/template_service.py:132-148  TemplateService._render_zip\n    def _render_zip(self, recipe: Recipe) -> Path:\n        self.__check_temp(self._render_jinja2)\n\n        image_asset = recipe.image_dir.joinpath(RecipeImageTypes.original.value)\n\n        if self.temp is None:\n            raise ValueError(\"Temporary directory must be provided for method _render_zip\")\n\n        zip_temp = self.temp.joinpath(f\"{recipe.slug}.zip\")\n\n        with ZipFile(zip_temp, \"w\") as myzip:\n            myzip.writestr(f\"{recipe.slug}.json\", recipe.json())\n\n            if image_asset.is_file():\n                myzip.write(image_asset, arcname=image_asset.name)\n\n        return zip_temp",
+      "file": "mealie/services/recipe/template_service.py",
+      "start": 132,
+      "qualname": "TemplateService._render_zip"
+     },
+     {
+      "id": "mealie:mealie/core/settings/directories.py:8",
+      "score": 0.68,
+      "text": "# mealie/core/settings/directories.py:8-20  AppDirectories.__init__\n    def __init__(self, data_dir: Path) -> None:\n        self.DATA_DIR = data_dir\n        self.BACKUP_DIR = data_dir.joinpath(\"backups\")\n        self.USER_DIR = data_dir.joinpath(\"users\")\n        self.RECIPE_DATA_DIR = data_dir.joinpath(\"recipes\")\n        self.TEMPLATE_DIR = data_dir.joinpath(\"templates\")\n\n        self.GROUPS_DIR = self.DATA_DIR.joinpath(\"groups\")\n\n        # Deprecated\n        self._TEMP_DIR = data_dir.joinpath(\".temp\")\n        self._IMG_DIR = data_dir.joinpath(\"img\")\n        self.ensure_directories()",
+      "file": "mealie/core/settings/directories.py",
+      "start": 8,
+      "qualname": "AppDirectories.__init__"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "PackageIndex",
+     "tmpdir",
+     "name",
+     "os.path.join",
+     "join"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1742,
+   "tokens_out": 49,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"PackageIndex\", \"tmpdir\", \"name\", \"os.path.join\", \"join\"]}",
+     "in": 1742,
+     "out": 49,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1675,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1675,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3417,
+  "tokens_out": 85,
+  "cost_usd_est": 0.0,
+  "seconds": 0.15
+ },
+ "created": "2026-11-10T00:06:30+00:00",
+ "code_version": "a3e1ef4"
+}

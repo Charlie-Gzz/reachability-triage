@@ -1,0 +1,290 @@
+{
+ "finding_id": "mealie/gunicorn@21.2.0/GHSA-w3h3-4rj7-4ph4",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-1135",
+   "GHSA-w3h3-4rj7-4ph4",
+   "PYSEC-2026-1434"
+  ],
+  "cves": [
+   "CVE-2024-1135"
+  ],
+  "cwes": [
+   "CWE-444"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/gunicorn@21.2.0/GHSA-w3h3-4rj7-4ph4",
+  "first_fixed_above_installed": "22.0.0",
+  "fixed_versions": [
+   "22.0.0"
+  ],
+  "max_cvss": "8.2",
+  "package": "gunicorn",
+  "published": "2024-04-16T00:30:32Z",
+  "summary": "Request smuggling leading to endpoint restriction bypass in Gunicorn",
+  "target": "mealie",
+  "version": "21.2.0",
+  "vuln_id": "GHSA-w3h3-4rj7-4ph4"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/gunicorn@21.2.0/GHSA-w3h3-4rj7-4ph4",
+    "package": "gunicorn",
+    "version": "21.2.0",
+    "vuln_id": "GHSA-w3h3-4rj7-4ph4",
+    "aliases": [
+     "CVE-2024-1135",
+     "GHSA-w3h3-4rj7-4ph4",
+     "PYSEC-2026-1434"
+    ],
+    "summary": "Request smuggling leading to endpoint restriction bypass in Gunicorn",
+    "max_cvss": "8.2",
+    "fixed_versions": [
+     "22.0.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 24.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-w3h3-4rj7-4ph4#0",
+      "score": 0.871,
+      "text": "GHSA-w3h3-4rj7-4ph4 (CVE-2024-1135)\npackage: gunicorn\nsummary: Request smuggling leading to endpoint restriction bypass in Gunicorn\naffected: >=0, <22.0.0",
+      "vuln_id": "GHSA-w3h3-4rj7-4ph4"
+     },
+     {
+      "id": "GHSA-w3h3-4rj7-4ph4#1",
+      "score": 0.83,
+      "text": "GHSA-w3h3-4rj7-4ph4 (gunicorn) details:\nGunicorn fails to properly validate Transfer-Encoding headers, leading to HTTP Request Smuggling (HRS) vulnerabilities. By crafting requests with conflicting Transfer-Encoding headers, attackers can bypass security restrictions and access restricted endpoints. This issue is due to Gunicorn's handling of Transfer-Encoding headers, where it incorrectly processes requests with multiple, conflicting Transfer-Encoding headers, treating them as chunked regardless of the final encoding specified. This vulnerability has been shown to allow access to endpoints restricted by gunicorn. This issue has been addressed in version 22.0.0.\n\nTo be affected users must have a network path which does not filter out invalid requests. These users are advised to block access to restricted endpoints via a firewall or other mechanism if they are unable to update.",
+      "vuln_id": "GHSA-w3h3-4rj7-4ph4"
+     },
+     {
+      "id": "GHSA-hc5x-x2vx-497g#0",
+      "score": 0.827,
+      "text": "GHSA-hc5x-x2vx-497g (CVE-2024-6827)\npackage: gunicorn\nsummary: Gunicorn HTTP Request/Response Smuggling vulnerability\naffected: >=0, <22.0.0",
+      "vuln_id": "GHSA-hc5x-x2vx-497g"
+     },
+     {
+      "id": "GHSA-hc5x-x2vx-497g#1",
+      "score": 0.801,
+      "text": "GHSA-hc5x-x2vx-497g (gunicorn) details:\nGunicorn version 21.2.0 does not properly validate the value of the 'Transfer-Encoding' header as specified in the RFC standards, which leads to the default fallback method of 'Content-Length,' making it vulnerable to TE.CL request smuggling. This vulnerability can lead to cache poisoning, data exposure, session manipulation, SSRF, XSS, DoS, data integrity compromise, security bypass, information leakage, and business logic abuse.",
+      "vuln_id": "GHSA-hc5x-x2vx-497g"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 9.6,
+   "output": {
+    "package": "gunicorn",
+    "import_names": [
+     "gunicorn"
+    ],
+    "symbols": [],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "gunicorn: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/routes/_base/controller.py:103",
+      "score": 0.658,
+      "text": "# mealie/routes/_base/controller.py:103-148  _register_endpoints\ndef _register_endpoints(router: APIRouter, cls: type[Any], *urls: str) -> None:\n    cbv_router = APIRouter()\n    function_members = inspect.getmembers(cls, inspect.isfunction)\n    for url in urls:\n        _allocate_routes_by_method_name(router, url, function_members)\n    router_roles = []\n    for route in router.routes:\n        assert isinstance(route, APIRoute)\n        route_methods: Any = route.methods\n        cast(tuple[Any], route_methods)\n        router_roles.append((route.path, tuple(route_methods)))\n\n    if len(set(router_roles)) != len(router_roles):\n        raise Exception(\"An identical route role has been implemented more then once\")\n\n    numbered_routes_by_endpoint = {\n        route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)\n    }\n\n    prefix_length = len(router.prefix)\n    routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []\n    for _, func in function_members:\n        index_route = numbered_routes_by_endpoint.get(func)\n\n        if index_route is None:\n            continue\n\n        _, route = index_route\n        route.path = route.path[prefix_length:]\n        routes_to_append.append(index_route)\n        router.routes.remove(route)\n\n        _update_cbv_route_endpoint_signature(cls, route)\n    routes_to_append.sort(key=lambda x: x[0])\n\n    cbv_router.routes = [route for _, route in routes_to_append]\n\n    # In order to use a \"\" as a router and utilize the prefix in the original router\n    # we need to create an intermediate prefix variable to hold the prefix and pass it\n    # into the original router when using \"include_router\" after we reeset the original\n    # prefix. This limits the original routers usability to only the controller.\n    #\n    # This is sort of a hack and causes unexpected behavior. I'm unsure of a better solution.\n    cbv_prefix = router.prefix\n    router.prefix = \"\"\n    router.include_router(cbv_router, prefix=cbv_prefix)",
+      "file": "mealie/routes/_base/controller.py",
+      "start": 103,
+      "qualname": "_register_endpoints"
+     },
+     {
+      "id": "mealie:mealie/routes/_base/controller.py:39",
+      "score": 0.647,
+      "text": "# mealie/routes/_base/controller.py:39-46  _cbv\ndef _cbv(router: APIRouter, cls: type[T], *urls: str, instance: Any | None = None) -> type[T]:\n    \"\"\"\n    Replaces any methods of the provided class `cls` that are endpoints of routes in `router` with updated\n    function calls that will properly inject an instance of `cls`.\n    \"\"\"\n    _init_cbv(cls, instance)\n    _register_endpoints(router, cls, *urls)\n    return cls",
+      "file": "mealie/routes/_base/controller.py",
+      "start": 39,
+      "qualname": "_cbv"
+     },
+     {
+      "id": "mealie:mealie/routes/_base/controller.py:178",
+      "score": 0.644,
+      "text": "# mealie/routes/_base/controller.py:178-192  _update_cbv_route_endpoint_signature\ndef _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:\n    \"\"\"\n    Fixes the endpoint signature for a cbv route to ensure FastAPI performs dependency injection properly.\n    \"\"\"\n    old_endpoint = route.endpoint\n    old_signature = inspect.signature(old_endpoint)\n    old_parameters: list[inspect.Parameter] = list(old_signature.parameters.values())\n    old_first_parameter = old_parameters[0]\n    new_first_parameter = old_first_parameter.replace(default=Depends(cls))\n    new_parameters = [new_first_parameter] + [\n        parameter.replace(kind=inspect.Parameter.KEYWORD_ONLY) for parameter in old_parameters[1:]\n    ]\n\n    new_signature = old_signature.replace(parameters=new_parameters)\n    route.endpoint.__signature__ = new_signature",
+      "file": "mealie/routes/_base/controller.py",
+      "start": 178,
+      "qualname": "_update_cbv_route_endpoint_signature"
+     },
+     {
+      "id": "mealie:mealie/routes/_base/checks.py:module",
+      "score": 0.642,
+      "text": "# mealie/routes/_base/checks.py (module level)\nfrom fastapi import HTTPException, status\nfrom mealie.schema.user.user import PrivateUser\nclass OperationChecks:\n    \"\"\"\n    OperationChecks class is a mixin class that can be used on routers to provide common permission\n    checks and raise the appropriate http error as necessary\n    \"\"\"\n    user: PrivateUser\n    ForbiddenException = HTTPException(status.HTTP_403_FORBIDDEN)\n    UnauthorizedException = HTTPException(status.HTTP_401_UNAUTHORIZED)\n    # =========================================\n    # User Permission Checks",
+      "file": "mealie/routes/_base/checks.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/routes/handlers.py:11",
+      "score": 0.633,
+      "text": "# mealie/routes/handlers.py:11-15  log_wrapper\ndef log_wrapper(request: Request, e):\n    logger.error(\"Start 422 Error\".center(60, \"-\"))\n    logger.error(f\"{request.method} {request.url}\")\n    logger.error(f\"error is {e}\")\n    logger.error(\"End 422 Error\".center(60, \"-\"))",
+      "file": "mealie/routes/handlers.py",
+      "start": 11,
+      "qualname": "log_wrapper"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1770,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": []}",
+     "in": 1770,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1702,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1702,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3472,
+  "tokens_out": 71,
+  "cost_usd_est": 0.0,
+  "seconds": 0.07
+ },
+ "created": "2026-11-10T00:06:23+00:00",
+ "code_version": "a3e1ef4"
+}

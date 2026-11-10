@@ -1,0 +1,355 @@
+{
+ "finding_id": "bench/support-widgets/jinja2@2.10/GHSA-462w-v97r-4m45",
+ "config": "dev-claude",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/support-widgets",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2019-10906",
+   "GHSA-462w-v97r-4m45",
+   "PYSEC-2019-217"
+  ],
+  "cves": [
+   "CVE-2019-10906"
+  ],
+  "cwes": [
+   "CWE-693"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/support-widgets/jinja2@2.10/GHSA-462w-v97r-4m45",
+  "first_fixed_above_installed": "2.10.1",
+  "fixed_versions": [
+   "2.10.1"
+  ],
+  "max_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N",
+  "package": "jinja2",
+  "published": "2019-04-10T14:30:24Z",
+  "split": "dev",
+  "summary": "Jinja2 sandbox escape via string formatting",
+  "target": "bench/support-widgets",
+  "version": "2.10",
+  "vuln_id": "GHSA-462w-v97r-4m45"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.93,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.92,
+  "vulnerable_symbols": [
+   "str.format_map",
+   "SandboxedEnvironment"
+  ],
+  "reasoning": "The advisory describes a bypass in Jinja2's SandboxedEnvironment where an attacker who controls template source text can call str.format_map (a built-in Python method) to escape the sandbox, even though the app never calls format_map itself. widgets/templating.py explicitly instantiates SandboxedEnvironment because 'templates are untrusted input,' and render_reply/render_reply_safe call _env.from_string(source).render(...) directly on that attacker-supplied source string. app.py's /macros/preview endpoint takes body['template'] straight from an unauthenticated HTTP POST and passes it to render_reply with no additional filtering, giving an external party the exact control point the advisory requires. The 0 production call sites for format_map found by the scanner is expected and not reassuring, because the exploit payload (e.g. {{ ''.format_map(...) }}) lives inside the untrusted template text supplied by the attacker, not in application source code. Since jinja2==2.10 is below the 2.10.1 fix and the exact threat model (SandboxedEnvironment rendering attacker-controlled templates) is in use, this is reachable.",
+  "evidence": [
+   {
+    "location": "widgets/templating.py:1-3",
+    "explanation": "SandboxedEnvironment is instantiated specifically because templates are untrusted, matching the advisory's threat model."
+   },
+   {
+    "location": "widgets/templating.py:7-9",
+    "explanation": "render_reply renders the untrusted `source` string directly via _env.from_string(source).render(...)."
+   },
+   {
+    "location": "app.py:9-11",
+    "explanation": "preview_macro passes body['template'] from an unauthenticated POST body straight into render_reply, giving an external attacker control of template content."
+   },
+   {
+    "location": "advisory",
+    "explanation": "The vulnerability is exploitable purely via template syntax (str.format_map on a string literal), so no application call site to format_map is needed for exploitation."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest pushback would be that the scanner found 0 call sites of format_map/format in application code, suggesting no exploitable path. But this argument fails: the advisory's exploit payload is Jinja template syntax (e.g., {{ ''.format_map(cls.__init__.__globals__) }}) embedded in the untrusted template string itself, not a Python-level call site the AST scanner would see. The verdict correctly identifies that app.py's /macros/preview endpoint takes body['template'] from an unauthenticated POST and feeds it straight into SandboxedEnvironment.from_string(...).render(...) via render_reply \u2014 this is precisely the threat model the advisory addresses (SandboxedEnvironment rendering attacker-controlled template text). autoescape=True is irrelevant here since it only affects HTML output escaping, not the sandbox's method-call restrictions, so it offers no mitigation against the format_map bypass. No other precondition in the advisory is unmet: jinja2==2.10 < 2.10.1, SandboxedEnvironment is in use, and template source is fully attacker-controlled with no sanitization. This is a textbook reachable case.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.93
+ },
+ "symbols": [
+  "str.format_map",
+  "str.format",
+  "format_map",
+  "is_safe_attribute"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/support-widgets/jinja2@2.10/GHSA-462w-v97r-4m45",
+    "package": "jinja2",
+    "version": "2.10",
+    "vuln_id": "GHSA-462w-v97r-4m45",
+    "aliases": [
+     "CVE-2019-10906",
+     "GHSA-462w-v97r-4m45",
+     "PYSEC-2019-217"
+    ],
+    "summary": "Jinja2 sandbox escape via string formatting",
+    "max_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N",
+    "fixed_versions": [
+     "2.10.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-462w-v97r-4m45#0",
+      "score": 0.874,
+      "text": "GHSA-462w-v97r-4m45 (CVE-2019-10906)\npackage: jinja2\nsummary: Jinja2 sandbox escape via string formatting\naffected: >=0, <2.10.1",
+      "vuln_id": "GHSA-462w-v97r-4m45"
+     },
+     {
+      "id": "GHSA-462w-v97r-4m45#1",
+      "score": 0.837,
+      "text": "GHSA-462w-v97r-4m45 (jinja2) details:\nIn Pallets Jinja before 2.10.1, `str.format_map` allows a sandbox escape.\n\nThe sandbox is used to restrict what code can be evaluated when rendering untrusted, user-provided templates. Due to the way string formatting works in Python, the `str.format_map` method could be used to escape the sandbox.\n\nThis issue was previously addressed for the `str.format` method in Jinja 2.8.1, which discusses the issue in detail. However, the less-common `str.format_map` method was overlooked. This release applies the same sandboxing to both methods.\n\nIf you cannot upgrade Jinja, you can override the `is_safe_attribute` method on the sandbox and explicitly disallow the `format_map` method on string objects.",
+      "vuln_id": "GHSA-462w-v97r-4m45"
+     },
+     {
+      "id": "GHSA-q2x7-8rv6-6q7h#1",
+      "score": 0.86,
+      "text": "GHSA-q2x7-8rv6-6q7h (jinja2) details:\nAn oversight in how the Jinja sandboxed environment detects calls to `str.format` allows an attacker that controls the content of a template to execute arbitrary Python code.\n\nTo exploit the vulnerability, an attacker needs to control the content of a template. Whether that is the case depends on the type of application using Jinja. This vulnerability impacts users of applications which execute untrusted templates.\n\nJinja's sandbox does catch calls to `str.format` and ensures they don't escape the sandbox. However, it's possible to store a reference to a malicious string's `format` method, then pass that to a filter that calls it. No such filters are built-in to Jinja, but could be present through custom filters in an application. After the fix, such indirect calls are also handled by the sandbox.",
+      "vuln_id": "GHSA-q2x7-8rv6-6q7h"
+     },
+     {
+      "id": "GHSA-hj2j-77xm-mc5v#0",
+      "score": 0.829,
+      "text": "GHSA-hj2j-77xm-mc5v (CVE-2016-10745)\npackage: jinja2\nsummary: Jinja2 sandbox escape vulnerability\naffected: >=0, <2.8.1",
+      "vuln_id": "GHSA-hj2j-77xm-mc5v"
+     }
+    ],
+    "symbols": [
+     "str.format_map",
+     "str.format",
+     "format_map",
+     "is_safe_attribute"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.0,
+   "output": {
+    "package": "jinja2",
+    "import_names": [
+     "jinja2"
+    ],
+    "symbols": [
+     "str.format_map",
+     "str.format",
+     "format_map",
+     "is_safe_attribute"
+    ],
+    "imported": true,
+    "import_locations": [
+     "widgets/templating.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 1,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "widgets/templating.py:4",
+      "code": "_env = SandboxedEnvironment(autoescape=True)",
+      "function": "widgets.templating:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 1,
+    "paths": [],
+    "summary": "jinja2: imported in 1 non-test location(s); 1 package call/reference site(s); named vulnerable symbols ['str.format_map', 'str.format', 'format_map', 'is_safe_attribute']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 27.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "bench/support-widgets:widgets/templating.py:module",
+      "score": 0.71,
+      "text": "# widgets/templating.py (module level)\nfrom jinja2.sandbox import SandboxedEnvironment\n# Support agents write their own reply macros, so templates are untrusted input.\n_env = SandboxedEnvironment(autoescape=True)",
+      "file": "widgets/templating.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/support-widgets:widgets/templating.py:12",
+      "score": 0.708,
+      "text": "# widgets/templating.py:12-13  render_reply_safe\ndef render_reply_safe(source: str, ticket: dict) -> str:\n    return _env.from_string(source).render(ticket=ticket)",
+      "file": "widgets/templating.py",
+      "start": 12,
+      "qualname": "render_reply_safe"
+     },
+     {
+      "id": "bench/support-widgets:widgets/templating.py:7",
+      "score": 0.627,
+      "text": "# widgets/templating.py:7-9  render_reply\ndef render_reply(source: str, ticket: dict) -> str:\n    template = _env.from_string(source)\n    return template.render(ticket=ticket, agent={\"name\": \"Support\"})",
+      "file": "widgets/templating.py",
+      "start": 7,
+      "qualname": "render_reply"
+     },
+     {
+      "id": "bench/support-widgets:app.py:9",
+      "score": 0.615,
+      "text": "# app.py:9-11  preview_macro\ndef preview_macro():\n    body = request.get_json()\n    return jsonify({\"html\": render_reply(body[\"template\"], body.get(\"ticket\", {}))})",
+      "file": "app.py",
+      "start": 9,
+      "qualname": "preview_macro"
+     },
+     {
+      "id": "bench/support-widgets:app.py:module",
+      "score": 0.613,
+      "text": "# app.py (module level)\nfrom flask import Flask, jsonify, request\nfrom widgets.templating import render_reply\napp = Flask(__name__)\n@app.route(\"/macros/preview\", methods=[\"POST\"])",
+      "file": "app.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 15105.2,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.92,
+    "vulnerable_symbols": [
+     "str.format_map",
+     "SandboxedEnvironment"
+    ],
+    "reasoning": "The advisory describes a bypass in Jinja2's SandboxedEnvironment where an attacker who controls template source text can call str.format_map (a built-in Python method) to escape the sandbox, even though the app never calls format_map itself. widgets/templating.py explicitly instantiates SandboxedEnvironment because 'templates are untrusted input,' and render_reply/render_reply_safe call _env.from_string(source).render(...) directly on that attacker-supplied source string. app.py's /macros/preview endpoint takes body['template'] straight from an unauthenticated HTTP POST and passes it to render_reply with no additional filtering, giving an external party the exact control point the advisory requires. The 0 production call sites for format_map found by the scanner is expected and not reassuring, because the exploit payload (e.g. {{ ''.format_map(...) }}) lives inside the untrusted template text supplied by the attacker, not in application source code. Since jinja2==2.10 is below the 2.10.1 fix and the exact threat model (SandboxedEnvironment rendering attacker-controlled templates) is in use, this is reachable.",
+    "evidence": [
+     {
+      "location": "widgets/templating.py:1-3",
+      "explanation": "SandboxedEnvironment is instantiated specifically because templates are untrusted, matching the advisory's threat model."
+     },
+     {
+      "location": "widgets/templating.py:7-9",
+      "explanation": "render_reply renders the untrusted `source` string directly via _env.from_string(source).render(...)."
+     },
+     {
+      "location": "app.py:9-11",
+      "explanation": "preview_macro passes body['template'] from an unauthenticated POST body straight into render_reply, giving an external attacker control of template content."
+     },
+     {
+      "location": "advisory",
+      "explanation": "The vulnerability is exploitable purely via template syntax (str.format_map on a string literal), so no application call site to format_map is needed for exploitation."
+     }
+    ]
+   },
+   "tokens_in": 2859,
+   "tokens_out": 1119,
+   "llm_calls": 1,
+   "llm_seconds": 15.09,
+   "cost_usd_est": 0.025362,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"reachable\",\"confidence\":0.92,\"vulnerable_symbols\":[\"str.format_map\",\"SandboxedEnvironment\"],\"reasoning\":\"The advisory describes a bypass in Jinja2's SandboxedEnvironment where an attacker who controls template source text can call str.format_map (a built-in Python method) to escape the sandbox, even though the app never calls format_map itself. widgets/templating.py explicitly instantiates SandboxedEnvironment because 'templates are untrusted input,' and render_reply/render_reply_safe call _env.from_string(source).render(...) directly on that attacker-supplied source string. app.py's /macros/preview endpoint takes body['template'] straight from an unauthenticated HTTP POST and passes it to render_reply with no additional filtering, giving an external party the exact control point the advisory requires. The 0 production call sites for format_map found by the scanner is expected and not reassuring, because the exploit payload (e.g. {{ ''.format_map(...) }}) lives inside the untrusted template text supplied by the attacker, not in application source code. Since jinja2==2.10 is below the 2.10.1 fix and the exact threat model (SandboxedEnvironment rendering attacker-controlled templates) is in use, this is reachable.\",\"evidence\":[{\"location\":\"widgets/templating.py:1-3\",\"explanation\":\"SandboxedEnvironment is instantiated specifically because templates are untrusted, matching the advisory's threat model.\"},{\"location\":\"widgets/templating.py:7-9\",\"explanation\":\"render_reply renders the untrusted `source` string directly via _env.from_string(source).render(...).\"},{\"location\":\"app.py:9-11\",\"explanation\":\"preview_macro passes body['template'] from an unauthenticated POST body straight into render_reply, giving an external attacker control of template content.\"},{\"location\":\"advisory\",\"explanation\":\"The vulnerability is exploitable purely via template syntax (str.format_map on a string literal), so no application call site to format_map is needed for exploitation.\"}]}",
+     "in": 2859,
+     "out": 1119,
+     "s": 15.09,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 11920.6,
+   "output": {
+    "critique": "The strongest pushback would be that the scanner found 0 call sites of format_map/format in application code, suggesting no exploitable path. But this argument fails: the advisory's exploit payload is Jinja template syntax (e.g., {{ ''.format_map(cls.__init__.__globals__) }}) embedded in the untrusted template string itself, not a Python-level call site the AST scanner would see. The verdict correctly identifies that app.py's /macros/preview endpoint takes body['template'] from an unauthenticated POST and feeds it straight into SandboxedEnvironment.from_string(...).render(...) via render_reply \u2014 this is precisely the threat model the advisory addresses (SandboxedEnvironment rendering attacker-controlled template text). autoescape=True is irrelevant here since it only affects HTML output escaping, not the sandbox's method-call restrictions, so it offers no mitigation against the format_map bypass. No other precondition in the advisory is unmet: jinja2==2.10 < 2.10.1, SandboxedEnvironment is in use, and template source is fully attacker-controlled with no sanitization. This is a textbook reachable case.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.93
+   },
+   "tokens_in": 3002,
+   "tokens_out": 887,
+   "llm_calls": 1,
+   "llm_seconds": 11.91,
+   "cost_usd_est": 0.022311,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest pushback would be that the scanner found 0 call sites of format_map/format in application code, suggesting no exploitable path. But this argument fails: the advisory's exploit payload is Jinja template syntax (e.g., {{ ''.format_map(cls.__init__.__globals__) }}) embedded in the untrusted template string itself, not a Python-level call site the AST scanner would see. The verdict correctly identifies that app.py's /macros/preview endpoint takes body['template'] from an unauthenticated POST and feeds it straight into SandboxedEnvironment.from_string(...).render(...) via render_reply \u2014 this is precisely the threat model the advisory addresses (SandboxedEnvironment rendering attacker-controlled template text). autoescape=True is irrelevant here since it only affects HTML output escaping, not the sandbox's method-call restrictions, so it offers no mitigation against the format_map bypass. No other precondition in the advisory is unmet: jinja2==2.10 < 2.10.1, SandboxedEnvironment is in use, and template source is fully attacker-controlled with no sanitization. This is a textbook reachable case.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"reachable\",\"confidence\":0.93}",
+     "in": 3002,
+     "out": 887,
+     "s": 11.91,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.93,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 5861,
+  "tokens_out": 2006,
+  "cost_usd_est": 0.047673,
+  "seconds": 27.09
+ },
+ "created": "2026-11-10T00:09:12+00:00",
+ "code_version": "a3e1ef4"
+}

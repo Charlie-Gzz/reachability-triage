@@ -1,0 +1,629 @@
+{
+ "finding_id": "mealie/starlette@0.27.0/GHSA-x746-7m8f-x49c",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-48817",
+   "GHSA-x746-7m8f-x49c",
+   "PYSEC-2026-2280"
+  ],
+  "cves": [
+   "CVE-2026-48817"
+  ],
+  "cwes": [
+   "CWE-470"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/starlette@0.27.0/GHSA-x746-7m8f-x49c",
+  "first_fixed_above_installed": "1.1.0",
+  "fixed_versions": [
+   "1.1.0"
+  ],
+  "max_cvss": "5.3",
+  "package": "starlette",
+  "published": "2026-06-15T20:16:05Z",
+  "summary": "Starlette: Arbitrary HTTP method dispatched to `HTTPEndpoint` attributes via `getattr`",
+  "target": "mealie",
+  "version": "0.27.0",
+  "vuln_id": "GHSA-x746-7m8f-x49c"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "HTTPEndpoint",
+   "getattr",
+   "_DO_DELETE",
+   "_do_delete",
+   "Route"
+  ],
+  "reasoning": "mock: 3 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/routes/_base/controller.py:119",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/routes/_base/controller.py:123",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/routes/_base/controller.py:178",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "HTTPEndpoint",
+  "getattr",
+  "_DO_DELETE",
+  "_do_delete",
+  "Route",
+  "request"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/starlette@0.27.0/GHSA-x746-7m8f-x49c",
+    "package": "starlette",
+    "version": "0.27.0",
+    "vuln_id": "GHSA-x746-7m8f-x49c",
+    "aliases": [
+     "CVE-2026-48817",
+     "GHSA-x746-7m8f-x49c",
+     "PYSEC-2026-2280"
+    ],
+    "summary": "Starlette: Arbitrary HTTP method dispatched to `HTTPEndpoint` attributes via `getattr`",
+    "max_cvss": "5.3",
+    "fixed_versions": [
+     "1.1.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 50.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-x746-7m8f-x49c#0",
+      "score": 0.87,
+      "text": "GHSA-x746-7m8f-x49c (CVE-2026-48817)\npackage: starlette\nsummary: Starlette: Arbitrary HTTP method dispatched to `HTTPEndpoint` attributes via `getattr`\naffected: >=0, <1.1.0",
+      "vuln_id": "GHSA-x746-7m8f-x49c"
+     },
+     {
+      "id": "GHSA-x746-7m8f-x49c#2",
+      "score": 0.775,
+      "text": "GHSA-x746-7m8f-x49c (starlette) details:\n`HTTPEndpoint` uses the client-supplied method name to resolve an instance attribute, without validating it against the set of HTTP verbs the endpoint supports. A method such as `_DO_DELETE` therefore resolves an attribute like `_do_delete` and invokes it. Non-standard methods are valid [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110#name-method) token methods, so an endpoint must not treat the method name as a trusted attribute selector.\n\n### Impact\n\nAn application is affected when all of the following hold:\n\n* It defines an `HTTPEndpoint` subclass and registers it via `Route(...)` without an explicit `methods=` argument.\n* The subclass defines additional methods whose names match a non-standard HTTP-method token shape and that accept a single `request` argument and return a response.\n\nThis also affects frameworks built on Starlette, like FastAPI.\n\n### Mitigation",
+      "vuln_id": "GHSA-x746-7m8f-x49c"
+     },
+     {
+      "id": "GHSA-x746-7m8f-x49c#1",
+      "score": 0.707,
+      "text": "GHSA-x746-7m8f-x49c (starlette) details:\n### Summary\n\nWhen dispatching a request, `HTTPEndpoint` selects the handler by lowercasing the HTTP method and looking it up as an attribute with `getattr`, without restricting the lookup to a known set of HTTP verbs.\n\nWhen an `HTTPEndpoint` subclass is registered through `Route(...)` without an explicit `methods=` argument, the route does not constrain the method and every method reaches the endpoint. If a non-standard HTTP method whose lowercased name matches an attribute on the endpoint subclass reaches the endpoint, that attribute is invoked as if it were a request handler. An attacker can use this to reach methods that were never meant to be HTTP handlers, such as internal helpers, without the authorization checks applied by the intended public handler.\n\n### Details",
+      "vuln_id": "GHSA-x746-7m8f-x49c"
+     },
+     {
+      "id": "GHSA-x746-7m8f-x49c#3",
+      "score": 0.704,
+      "text": "GHSA-x746-7m8f-x49c (starlette) details:\nRegister `HTTPEndpoint` subclasses with an explicit `methods=` argument on the `Route`, listing only the HTTP verbs the endpoint supports. The route then rejects any other method with `405 Method Not Allowed` before it reaches the endpoint, so non-standard methods cannot resolve an attribute.",
+      "vuln_id": "GHSA-x746-7m8f-x49c"
+     },
+     {
+      "id": "GHSA-v5gw-mw7f-84px#0",
+      "score": 0.793,
+      "text": "GHSA-v5gw-mw7f-84px (CVE-2023-29159)\npackage: starlette\nsummary: Starlette has Path Traversal vulnerability in StaticFiles\naffected: >=0.13.5, <0.27.0",
+      "vuln_id": "GHSA-v5gw-mw7f-84px"
+     },
+     {
+      "id": "GHSA-7f5h-v6xp-fcq8#0",
+      "score": 0.791,
+      "text": "GHSA-7f5h-v6xp-fcq8 (CVE-2025-62727)\npackage: starlette\nsummary: Starlette vulnerable to O(n^2) DoS via Range header merging in ``starlette.responses.FileResponse``\naffected: >=0.39.0, <0.49.1",
+      "vuln_id": "GHSA-7f5h-v6xp-fcq8"
+     }
+    ],
+    "symbols": [
+     "HTTPEndpoint",
+     "getattr",
+     "_DO_DELETE",
+     "_do_delete",
+     "Route",
+     "request"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 62.2,
+   "output": {
+    "package": "starlette",
+    "import_names": [
+     "starlette"
+    ],
+    "symbols": [
+     "HTTPEndpoint",
+     "getattr",
+     "_DO_DELETE",
+     "_do_delete",
+     "Route",
+     "request"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/routes/_base/controller.py:13",
+     "mealie/routes/media/media_recipe.py:5",
+     "mealie/routes/media/media_user.py:3",
+     "mealie/routes/recipe/recipe_crud_routes.py:12",
+     "mealie/routes/spa/__init__.py:10",
+     "mealie/routes/utility_routes.py:4",
+     "mealie/services/scheduler/runner.py:12"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 25,
+    "vulnerable_call_sites": [
+     {
+      "file": "mealie/routes/_base/controller.py",
+      "line": 119,
+      "code": "route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)",
+      "resolved": "starlette.routing.Route",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.app.app_about:get_startup_info",
+       "mealie.db.models.users.users:User.__init__",
+       "mealie.db.models._model_utils.auto_init:auto_init",
+       "mealie.routes._base.controller:decorator",
+       "mealie.routes._base.controller:_cbv",
+       "mealie.routes._base.controller:_register_endpoints"
+      ],
+      "snippet": "  116          raise Exception(\"An identical route role has been implemented more then once\")\n  117  \n  118      numbered_routes_by_endpoint = {\n  119          route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)\n  120      }\n  121  \n  122      prefix_length = len(router.prefix)"
+     },
+     {
+      "file": "mealie/routes/_base/controller.py",
+      "line": 123,
+      "code": "routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []",
+      "resolved": "starlette.routing.Route",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.app.app_about:get_startup_info",
+       "mealie.db.models.users.users:User.__init__",
+       "mealie.db.models._model_utils.auto_init:auto_init",
+       "mealie.routes._base.controller:decorator",
+       "mealie.routes._base.controller:_cbv",
+       "mealie.routes._base.controller:_register_endpoints"
+      ],
+      "snippet": "  120      }\n  121  \n  122      prefix_length = len(router.prefix)\n  123      routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []\n  124      for _, func in function_members:\n  125          index_route = numbered_routes_by_endpoint.get(func)\n  126  "
+     },
+     {
+      "file": "mealie/routes/_base/controller.py",
+      "line": 178,
+      "code": "def _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:",
+      "resolved": "starlette.routing.Route",
+      "function": "mealie.routes._base.controller:_update_cbv_route_endpoint_signature",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.app.app_about:get_startup_info",
+       "mealie.db.models.users.users:User.__init__",
+       "mealie.db.models._model_utils.auto_init:auto_init",
+       "mealie.routes._base.controller:decorator",
+       "mealie.routes._base.controller:_cbv",
+       "mealie.routes._base.controller:_register_endpoints",
+       "mealie.routes._base.controller:_update_cbv_route_endpoint_signature"
+      ],
+      "snippet": "  175                  api_resource(func)\n  176  \n  177  \n  178  def _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:\n  179      \"\"\"\n  180      Fixes the endpoint signature for a cbv route to ensure FastAPI performs dependency injection properly.\n  181      \"\"\""
+     },
+     {
+      "file": "mealie/routes/_base/controller.py",
+      "line": 56,
+      "code": "if getattr(cls, CBV_CLASS_KEY, False):  # pragma: no cover",
+      "resolved": "getattr",
+      "function": "mealie.routes._base.controller:_init_cbv",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.app.app_about:get_startup_info",
+       "mealie.db.models.users.users:User.__init__",
+       "mealie.db.models._model_utils.auto_init:auto_init",
+       "mealie.routes._base.controller:decorator",
+       "mealie.routes._base.controller:_cbv",
+       "mealie.routes._base.controller:_init_cbv"
+      ],
+      "snippet": "   53      * The `__signature__` attribute is updated to indicate to FastAPI what arguments should be passed to the initializer\n   54      * Variables starting with `_` are NOT included in the `__signature__` and will be set to None.\n   55      \"\"\"\n   56      if getattr(cls, CBV_CLASS_KEY, False):  # pragma: no cover\n   57          return  # Already initialized\n   58      old_init: Callable[..., Any] = cls.__init__\n   59      old_signature = inspect.signature(old_init)"
+     },
+     {
+      "file": "mealie/routes/_base/controller.py",
+      "line": 76,
+      "code": "parameter_kwargs = {\"default\": getattr(cls, name, Ellipsis)}",
+      "resolved": "getattr",
+      "function": "mealie.routes._base.controller:_init_cbv",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.app.app_about:get_startup_info",
+       "mealie.db.models.users.users:User.__init__",
+       "mealie.db.models._model_utils.auto_init:auto_init",
+       "mealie.routes._base.controller:decorator",
+       "mealie.routes._base.controller:_cbv",
+       "mealie.routes._base.controller:_init_cbv"
+      ],
+      "snippet": "   73              private_attributes.append(name)\n   74              continue\n   75  \n   76          parameter_kwargs = {\"default\": getattr(cls, name, Ellipsis)}\n   77          dependency_names.append(name)\n   78          new_parameters.append(\n   79              inspect.Parameter(name=name, kind=inspect.Parameter.KEYWORD_ONLY, annotation=hint, **parameter_kwargs)"
+     },
+     {
+      "file": "mealie/routes/_base/controller.py",
+      "line": 164,
+      "code": "if return_types_func := getattr(func, RETURN_TYPES_FUNC_KEY, None):",
+      "resolved": "getattr",
+      "function": "mealie.routes._base.controller:_allocate_routes_by_method_name",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.app.app_about:get_startup_info",
+       "mealie.db.models.users.users:User.__init__",
+       "mealie.db.models._model_utils.auto_init:auto_init",
+       "mealie.routes._base.controller:decorator",
+       "mealie.routes._base.controller:_cbv",
+       "mealie.routes._base.controller:_register_endpoints",
+       "mealie.routes._base.controller:_allocate_routes_by_method_name"
+      ],
+      "snippet": "  161                  kwargs = {}\n  162                  status_code = 200\n  163  \n  164                  if return_types_func := getattr(func, RETURN_TYPES_FUNC_KEY, None):\n  165                      response_model, status_code, responses, kwargs = return_types_func()\n  166  \n  167                  api_resource = router.api_route("
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/routes/_base/controller.py:119",
+      "code": "route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:123",
+      "code": "routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:178",
+      "code": "def _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:",
+      "function": "mealie.routes._base.controller:_update_cbv_route_endpoint_signature",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:33",
+      "code": "return FileResponse(recipe_image)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_img",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:51",
+      "code": "return FileResponse(timeline_event_image)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_timeline_event_img",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:62",
+      "code": "return FileResponse(file)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_asset",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:22",
+      "code": "return FileResponse(recipe_image, media_type=\"image/webp\")",
+      "function": "mealie.routes.media.media_user:get_user_image",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:15",
+      "code": "@router.get(\"/{user_id}/{file_name}\", response_class=FileResponse)",
+      "function": "mealie.routes.media.media_user:get_user_image",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:115",
+      "code": "return FileResponse(file)",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:104",
+      "code": "@router_exports.get(\"/{slug}/exports\", response_class=FileResponse)",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:133",
+      "code": "return FileResponse(temp_path, filename=f\"{slug}.zip\")",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_zip",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/spa/__init__.py:32",
+      "code": "except HTTPException as ex:",
+      "function": "mealie.routes.spa:SPAStaticFiles.get_response",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/utility_routes.py:27",
+      "code": "return FileResponse(file_path, media_type=\"application/octet-stream\", filename=file_path.name)",
+      "function": "mealie.routes.utility_routes:download_file",
+      "in_test": false
+     },
+     {
+      "location": "mealie/services/scheduler/runner.py:69",
+      "code": "await run_in_threadpool(func)",
+      "function": "mealie.services.scheduler.runner:loop",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [
+     [
+      "mealie.routes.app.app_about:get_startup_info",
+      "mealie.db.models.users.users:User.__init__",
+      "mealie.db.models._model_utils.auto_init:auto_init",
+      "mealie.routes._base.controller:decorator",
+      "mealie.routes._base.controller:_cbv",
+      "mealie.routes._base.controller:_register_endpoints"
+     ],
+     [
+      "mealie.routes.app.app_about:get_startup_info",
+      "mealie.db.models.users.users:User.__init__",
+      "mealie.db.models._model_utils.auto_init:auto_init",
+      "mealie.routes._base.controller:decorator",
+      "mealie.routes._base.controller:_cbv",
+      "mealie.routes._base.controller:_register_endpoints"
+     ],
+     [
+      "mealie.routes.app.app_about:get_startup_info",
+      "mealie.db.models.users.users:User.__init__",
+      "mealie.db.models._model_utils.auto_init:auto_init",
+      "mealie.routes._base.controller:decorator",
+      "mealie.routes._base.controller:_cbv",
+      "mealie.routes._base.controller:_register_endpoints",
+      "mealie.routes._base.controller:_update_cbv_route_endpoint_signature"
+     ],
+     [
+      "mealie.routes.app.app_about:get_startup_info",
+      "mealie.db.models.users.users:User.__init__",
+      "mealie.db.models._model_utils.auto_init:auto_init",
+      "mealie.routes._base.controller:decorator",
+      "mealie.routes._base.controller:_cbv",
+      "mealie.routes._base.controller:_init_cbv"
+     ],
+     [
+      "mealie.routes.app.app_about:get_startup_info",
+      "mealie.db.models.users.users:User.__init__",
+      "mealie.db.models._model_utils.auto_init:auto_init",
+      "mealie.routes._base.controller:decorator",
+      "mealie.routes._base.controller:_cbv",
+      "mealie.routes._base.controller:_init_cbv"
+     ]
+    ],
+    "summary": "starlette: imported in 7 non-test location(s); 25 package call/reference site(s); named vulnerable symbols ['HTTPEndpoint', 'getattr', '_DO_DELETE', '_do_delete', 'Route', 'request']; 3 production call site(s) of those symbols (+3 weak name-only), 6 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 38.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:mealie/routes/_base/controller.py:56",
+      "score": 1.0,
+      "file": "mealie/routes/_base/controller.py",
+      "start": 56,
+      "qualname": "mealie.routes._base.controller:_init_cbv",
+      "text": "# mealie/routes/_base/controller.py around line 56\n   53      * The `__signature__` attribute is updated to indicate to FastAPI what arguments should be passed to the initializer\n   54      * Variables starting with `_` are NOT included in the `__signature__` and will be set to None.\n   55      \"\"\"\n   56      if getattr(cls, CBV_CLASS_KEY, False):  # pragma: no cover\n   57          return  # Already initialized\n   58      old_init: Callable[..., Any] = cls.__init__\n   59      old_signature = inspect.signature(old_init)"
+     },
+     {
+      "id": "site:mealie/routes/_base/controller.py:178",
+      "score": 1.0,
+      "file": "mealie/routes/_base/controller.py",
+      "start": 178,
+      "qualname": "mealie.routes._base.controller:_update_cbv_route_endpoint_signature",
+      "text": "# mealie/routes/_base/controller.py around line 178\n  175                  api_resource(func)\n  176  \n  177  \n  178  def _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:\n  179      \"\"\"\n  180      Fixes the endpoint signature for a cbv route to ensure FastAPI performs dependency injection properly.\n  181      \"\"\""
+     },
+     {
+      "id": "site:mealie/routes/_base/controller.py:123",
+      "score": 1.0,
+      "file": "mealie/routes/_base/controller.py",
+      "start": 123,
+      "qualname": "mealie.routes._base.controller:_register_endpoints",
+      "text": "# mealie/routes/_base/controller.py around line 123\n  120      }\n  121  \n  122      prefix_length = len(router.prefix)\n  123      routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []\n  124      for _, func in function_members:\n  125          index_route = numbered_routes_by_endpoint.get(func)\n  126  "
+     },
+     {
+      "id": "site:mealie/routes/_base/controller.py:119",
+      "score": 1.0,
+      "file": "mealie/routes/_base/controller.py",
+      "start": 119,
+      "qualname": "mealie.routes._base.controller:_register_endpoints",
+      "text": "# mealie/routes/_base/controller.py around line 119\n  116          raise Exception(\"An identical route role has been implemented more then once\")\n  117  \n  118      numbered_routes_by_endpoint = {\n  119          route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)\n  120      }\n  121  \n  122      prefix_length = len(router.prefix)"
+     },
+     {
+      "id": "mealie:mealie/routes/utility_routes.py:module",
+      "score": 0.692,
+      "text": "# mealie/routes/utility_routes.py (module level)\nfrom pathlib import Path\nfrom fastapi import APIRouter, Depends, HTTPException, status\nfrom starlette.responses import FileResponse\nfrom mealie.core.config import get_app_dirs\nfrom mealie.core.dependencies import validate_file_token\nrouter = APIRouter(prefix=\"/api/utils\", tags=[\"Utils\"], include_in_schema=True)\n@router.get(\"/download\")",
+      "file": "mealie/routes/utility_routes.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/routes/_base/controller.py:151",
+      "score": 0.676,
+      "text": "# mealie/routes/_base/controller.py:151-175  _allocate_routes_by_method_name\ndef _allocate_routes_by_method_name(router: APIRouter, url: str, function_members: list[tuple[str, Any]]) -> None:\n    # sourcery skip: merge-nested-ifs\n    existing_routes_endpoints: list[tuple[Any, str]] = [\n        (route.endpoint, route.path) for route in router.routes if isinstance(route, APIRoute)\n    ]\n    for name, func in function_members:\n        if hasattr(router, name) and not name.startswith(\"__\") and not name.endswith(\"__\"):\n            if (func, url) not in existing_routes_endpoints:\n                response_model = None\n                responses = None\n                kwargs = {}\n                status_code = 200\n\n                if return_types_func := getattr(func, RETURN_TYPES_FUNC_KEY, None):\n                    response_model, status_code, responses, kwargs = return_types_func()\n\n                api_resource = router.api_route(\n                    url,\n                    methods=[name.capitalize()],\n                    response_model=response_model,\n                    status_code=status_code,\n                    responses=responses,\n                    **kwargs,\n                )\n                api_resource(func)",
+      "file": "mealie/routes/_base/controller.py",
+      "start": 151,
+      "qualname": "_allocate_routes_by_method_name"
+     },
+     {
+      "id": "mealie:mealie/routes/_base/controller.py:103",
+      "score": 0.674,
+      "text": "# mealie/routes/_base/controller.py:103-148  _register_endpoints\ndef _register_endpoints(router: APIRouter, cls: type[Any], *urls: str) -> None:\n    cbv_router = APIRouter()\n    function_members = inspect.getmembers(cls, inspect.isfunction)\n    for url in urls:\n        _allocate_routes_by_method_name(router, url, function_members)\n    router_roles = []\n    for route in router.routes:\n        assert isinstance(route, APIRoute)\n        route_methods: Any = route.methods\n        cast(tuple[Any], route_methods)\n        router_roles.append((route.path, tuple(route_methods)))\n\n    if len(set(router_roles)) != len(router_roles):\n        raise Exception(\"An identical route role has been implemented more then once\")\n\n    numbered_routes_by_endpoint = {\n        route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)\n    }\n\n    prefix_length = len(router.prefix)\n    routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []\n    for _, func in function_members:\n        index_route = numbered_routes_by_endpoint.get(func)\n\n        if index_route is None:\n            continue\n\n        _, route = index_route\n        route.path = route.path[prefix_length:]\n        routes_to_append.append(index_route)\n        router.routes.remove(route)\n\n        _update_cbv_route_endpoint_signature(cls, route)\n    routes_to_append.sort(key=lambda x: x[0])\n\n    cbv_router.routes = [route for _, route in routes_to_append]\n\n    # In order to use a \"\" as a router and utilize the prefix in the original router\n    # we need to create an intermediate prefix variable to hold the prefix and pass it\n    # into the original router when using \"include_router\" after we reeset the original\n    # prefix. This limits the original routers usability to only the controller.\n    #\n    # This is sort of a hack and causes unexpected behavior. I'm unsure of a better solution.\n    cbv_prefix = router.prefix\n    router.prefix = \"\"\n    router.include_router(cbv_router, prefix=cbv_prefix)",
+      "file": "mealie/routes/_base/controller.py",
+      "start": 103,
+      "qualname": "_register_endpoints"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "HTTPEndpoint",
+     "getattr",
+     "_DO_DELETE",
+     "_do_delete",
+     "Route"
+    ],
+    "reasoning": "mock: 3 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/routes/_base/controller.py:119",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:123",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:178",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 3157,
+   "tokens_out": 115,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 3 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/routes/_base/controller.py:119\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/routes/_base/controller.py:123\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/routes/_base/controller.py:178\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"HTTPEndpoint\", \"getattr\", \"_DO_DELETE\", \"_do_delete\", \"Route\"]}",
+     "in": 3157,
+     "out": 115,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 3130,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 3130,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 6287,
+  "tokens_out": 150,
+  "cost_usd_est": 0.0,
+  "seconds": 0.16
+ },
+ "created": "2026-11-10T00:06:32+00:00",
+ "code_version": "a3e1ef4"
+}

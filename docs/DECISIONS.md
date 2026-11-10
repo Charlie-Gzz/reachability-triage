@@ -50,3 +50,24 @@ Each entry: what was decided, why, and what it affects. Newest at the bottom of 
 - **Local endpoint discovered at `http://localhost:1235`** (LM Studio, found via `lms status`; none of
   1234/11434/8080/1337 answered). The model is loaded only for the local run, to keep RAM free for
   Docker on a 16 GB machine.
+- **Benchmark (M4) built and split before any prompt existed** (commit `a3e1ef4`): 30 cases, 10 `dev` / 20 `test`,
+  stratified by category and label by hand. Each case pins a real vulnerable version; `rt bench` checks with
+  osv-scanner that the pinned version is really flagged for that advisory. GitPython cases use GHSA-hcpj-qp55-gfph
+  (CVE-2022-24439) because osv-scanner doesn't report GHSA-pr76 for 3.1.29 even though the record's range covers it.
+- **Label drafter is independent of the agent:** regex text search with its own simpler symbol rule, not the
+  agent's AST analyser or symbol extractor, so agent bugs can't grade themselves.
+- **Real eval sample (M5):** 50 of 156, proportional by target with a floor of 10, then proportional by CVSS bucket
+  within target, uniform random within strata, seed 20261109 (`data/eval_set.json` has the allocation).
+- **Ground-truth `uncertain` labels are excluded from precision/recall** (they can't be graded as right or wrong)
+  and reported as a count.
+- **Retrieval store benchmark:** both stores get the same embeddings; FAISS is exact (`IndexFlatIP`) and filters by
+  post-filtering, Chroma uses HNSW with native metadata filters.
+- **Prompt development (dev split + 3 non-eval real findings only):** two changes. (1) After `billing-sync` (dev):
+  show the caller count of the enclosing function, and state that uncalled code in an application is dead code.
+  (2) After two non-eval real findings: the evidence now says what was searched (N Python files, settings strings,
+  M template files), so "zero matches" is informative. No change was made after looking at test-split or
+  eval-set results.
+- **Eval config frozen** (2026-11-09, this commit): `full` / `no-retrieval` / `no-reflection` on `claude-code`
+  (`sonnet`), `local` on Qwen2.5-Coder-14B (LM Studio, :1235). Retrieval: own-advisory chunks k=4 + 2 related
+  advisories for the same package; code k=5 similarity hits, with production call-site snippets put first
+  (max 7 chunks). One reflection-triggered retry at most. Datasets: bench `test` split (20) and the real eval set (50).

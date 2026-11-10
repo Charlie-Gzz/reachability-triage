@@ -1,0 +1,236 @@
+{
+ "finding_id": "bench/support-widgets/jinja2@2.10/GHSA-462w-v97r-4m45",
+ "config": "dev-mock-noret",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/support-widgets",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2019-10906",
+   "GHSA-462w-v97r-4m45",
+   "PYSEC-2019-217"
+  ],
+  "cves": [
+   "CVE-2019-10906"
+  ],
+  "cwes": [
+   "CWE-693"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/support-widgets/jinja2@2.10/GHSA-462w-v97r-4m45",
+  "first_fixed_above_installed": "2.10.1",
+  "fixed_versions": [
+   "2.10.1"
+  ],
+  "max_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N",
+  "package": "jinja2",
+  "published": "2019-04-10T14:30:24Z",
+  "split": "dev",
+  "summary": "Jinja2 sandbox escape via string formatting",
+  "target": "bench/support-widgets",
+  "version": "2.10",
+  "vuln_id": "GHSA-462w-v97r-4m45"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "widgets/templating.py:1",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/support-widgets/jinja2@2.10/GHSA-462w-v97r-4m45",
+    "package": "jinja2",
+    "version": "2.10",
+    "vuln_id": "GHSA-462w-v97r-4m45",
+    "aliases": [
+     "CVE-2019-10906",
+     "GHSA-462w-v97r-4m45",
+     "PYSEC-2019-217"
+    ],
+    "summary": "Jinja2 sandbox escape via string formatting",
+    "max_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N",
+    "fixed_versions": [
+     "2.10.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.7,
+   "output": {
+    "package": "jinja2",
+    "import_names": [
+     "jinja2"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "widgets/templating.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 1,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "entry_points": 1,
+    "paths": [],
+    "summary": "jinja2: imported in 1 non-test location(s); 1 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.2,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "widgets/templating.py:1",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 405,
+   "tokens_out": 52,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"widgets/templating.py:1\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 405,
+     "out": 52,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 347,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 347,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 752,
+  "tokens_out": 87,
+  "cost_usd_est": 0.0,
+  "seconds": 0.01
+ },
+ "created": "2026-11-10T00:00:22+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,382 @@
+{
+ "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2023-221",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-46136",
+   "GHSA-hrfv-mqp8-q5rw",
+   "PYSEC-2023-221"
+  ],
+  "cves": [
+   "CVE-2023-46136"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2023-221",
+  "first_fixed_above_installed": "2.3.8",
+  "fixed_versions": [
+   "2.3.8",
+   "3.0.1",
+   "f2300208d5e2a5076cbbb4c2aad71096fd040ef9",
+   "f3c803b3ade485a45f12b6d6617595350c0f03e2"
+  ],
+  "max_cvss": "7.5",
+  "package": "werkzeug",
+  "published": "2023-10-25T18:17:00Z",
+  "summary": "Werkzeug is a comprehensive WSGI web application library. If an upload of a file that starts with CR or LF and then is followed by megabytes of data without these characters: all of these bytes are ap",
+  "target": "ctfd",
+  "version": "1.0.1",
+  "vuln_id": "PYSEC-2023-221"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "CTFd/__init__.py:13",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/__init__.py:14",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/errors.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2023-221",
+    "package": "werkzeug",
+    "version": "1.0.1",
+    "vuln_id": "PYSEC-2023-221",
+    "aliases": [
+     "CVE-2023-46136",
+     "GHSA-hrfv-mqp8-q5rw",
+     "PYSEC-2023-221"
+    ],
+    "summary": "Werkzeug is a comprehensive WSGI web application library. If an upload of a file that starts with CR or LF and then is followed by megabytes of data without these characters: all of these bytes are ap",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "2.3.8",
+     "3.0.1",
+     "f2300208d5e2a5076cbbb4c2aad71096fd040ef9",
+     "f3c803b3ade485a45f12b6d6617595350c0f03e2"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 42.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-hrfv-mqp8-q5rw#0",
+      "score": 0.786,
+      "text": "GHSA-hrfv-mqp8-q5rw (CVE-2023-46136)\npackage: werkzeug\nsummary: Werkzeug DoS: High resource usage when parsing multipart/form-data containing a large part with CR/LF character at the beginning\naffected: >=2.0.0rc1, <2.3.8; >=3.0.0, <3.0.1",
+      "vuln_id": "GHSA-hrfv-mqp8-q5rw"
+     },
+     {
+      "id": "GHSA-hrfv-mqp8-q5rw#1",
+      "score": 0.76,
+      "text": "GHSA-hrfv-mqp8-q5rw (werkzeug) details:\nWerkzeug multipart data parser needs to find a boundary that may be between consecutive chunks. That's why parsing is based on looking for newline characters. Unfortunately, code looking for partial boundary in the buffer is written inefficiently, so if we upload a file that starts with CR or LF and then is followed by megabytes of data without these characters: all of these bytes are appended chunk by chunk into internal bytearray and lookup for boundary is performed on growing buffer.\n\nThis allows an attacker to cause a denial of service by sending crafted multipart data to an endpoint that will parse it. The amount of CPU time required can block worker processes from handling legitimate requests. The amount of RAM required can trigger an out of memory kill of the process. If many concurrent requests are sent continuously, this can exhaust or kill all available workers.",
+      "vuln_id": "GHSA-hrfv-mqp8-q5rw"
+     },
+     {
+      "id": "GHSA-h2fp-xgx6-xh6f#1",
+      "score": 0.814,
+      "text": "GHSA-h2fp-xgx6-xh6f (werkzeug) details:\nCross-site scripting (XSS) vulnerability in the render_full function in debug/tbtools.py in the debugger in Pallets Werkzeug before 0.11.11 (as used in Pallets Flask and other products) allows remote attackers to inject arbitrary web script or HTML via a field that contains an exception message.",
+      "vuln_id": "GHSA-h2fp-xgx6-xh6f"
+     },
+     {
+      "id": "GHSA-f9vj-2wh5-fj8j#1",
+      "score": 0.77,
+      "text": "GHSA-f9vj-2wh5-fj8j (werkzeug) details:\nOn Python < 3.11 on Windows, `os.path.isabs()` does not catch UNC paths like `//server/share`. Werkzeug's `safe_join()` relies on this check, and so can produce a path that is not safe, potentially allowing unintended access to data. Applications using Python >= 3.11, or not using Windows, are not vulnerable.",
+      "vuln_id": "GHSA-f9vj-2wh5-fj8j"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 36.3,
+   "output": {
+    "package": "werkzeug",
+    "import_names": [
+     "werkzeug"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "CTFd/__init__.py:13",
+     "CTFd/__init__.py:14",
+     "CTFd/errors.py:3",
+     "CTFd/utils/initialization/__init__.py:8",
+     "CTFd/utils/sessions/__init__.py:6",
+     "CTFd/utils/uploads/uploaders.py:10"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 17,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/__init__.py:37",
+      "code": "@cached_property",
+      "function": "CTFd:CTFdRequest.path",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:250",
+      "code": "app.wsgi_app = ProxyFix(app.wsgi_app, *proxyfix_args)",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:252",
+      "code": "app.wsgi_app = ProxyFix(",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:8",
+      "code": "isinstance(error, InternalServerError)",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:9",
+      "code": "and error.description == InternalServerError.description",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/initialization/__init__.py:307",
+      "code": "app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {application_root: app})",
+      "function": "CTFd.utils.initialization:init_request_processors",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/sessions/__init__.py:28",
+      "code": "CallbackDict.__init__(self, initial, on_update)",
+      "function": "CTFd.utils.sessions:CachedSession.__init__",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:57",
+      "code": "filename = secure_filename(filename)",
+      "function": "CTFd.utils.uploads.uploaders:FilesystemUploader.upload",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:105",
+      "code": "self._clean_filename, secure_filename(filename).replace(\" \", \"_\")",
+      "function": "CTFd.utils.uploads.uploaders:S3Uploader.upload",
+      "in_test": false
+     }
+    ],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "werkzeug: imported in 6 non-test location(s); 17 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 34.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/uploads/uploaders.py:module",
+      "score": 0.655,
+      "text": "# CTFd/utils/uploads/uploaders.py (module level)\nimport os\nimport posixpath\nimport string\nfrom pathlib import PurePath\nfrom shutil import copyfileobj, rmtree\nimport boto3\nfrom flask import current_app, redirect, send_file\nfrom flask.helpers import safe_join\nfrom werkzeug.utils import secure_filename\nfrom CTFd.utils import get_app_config\nfrom CTFd.utils.encoding import hexencode\nclass BaseUploader(object):\nclass FilesystemUploader(BaseUploader):\nclass S3Uploader(BaseUploader):",
+      "file": "CTFd/utils/uploads/uploaders.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/uploads/uploaders.py:103",
+      "score": 0.65,
+      "text": "# CTFd/utils/uploads/uploaders.py:103-115  S3Uploader.upload\n    def upload(self, file_obj, filename):\n        filename = filter(\n            self._clean_filename, secure_filename(filename).replace(\" \", \"_\")\n        )\n        filename = \"\".join(filename)\n        if len(filename) <= 0:\n            return False\n\n        md5hash = hexencode(os.urandom(16))\n\n        dst = md5hash + \"/\" + filename\n        self.s3.upload_fileobj(file_obj, self.bucket, dst)\n        return dst",
+      "file": "CTFd/utils/uploads/uploaders.py",
+      "start": 103,
+      "qualname": "S3Uploader.upload"
+     },
+     {
+      "id": "ctfd:CTFd/utils/encoding/__init__.py:39",
+      "score": 0.636,
+      "text": "# CTFd/utils/encoding/__init__.py:39-48  base64decode\ndef base64decode(s):\n    if isinstance(s, string_types):\n        s = s.encode(\"utf-8\")\n\n    decoded = base64.urlsafe_b64decode(s.ljust(len(s) + len(s) % 4, b\"=\"))\n    try:\n        decoded = decoded.decode(\"utf-8\")\n    except UnicodeDecodeError:\n        pass\n    return decoded",
+      "file": "CTFd/utils/encoding/__init__.py",
+      "start": 39,
+      "qualname": "base64decode"
+     },
+     {
+      "id": "ctfd:CTFd/utils/uploads/uploaders.py:117",
+      "score": 0.634,
+      "text": "# CTFd/utils/uploads/uploaders.py:117-130  S3Uploader.download\n    def download(self, filename):\n        key = filename\n        filename = filename.split(\"/\").pop()\n        url = self.s3.generate_presigned_url(\n            \"get_object\",\n            Params={\n                \"Bucket\": self.bucket,\n                \"Key\": key,\n                \"ResponseContentDisposition\": \"attachment; filename={}\".format(\n                    filename\n                ),\n            },\n        )\n        return redirect(url)",
+      "file": "CTFd/utils/uploads/uploaders.py",
+      "start": 117,
+      "qualname": "S3Uploader.download"
+     },
+     {
+      "id": "ctfd:CTFd/utils/uploads/uploaders.py:41",
+      "score": 0.634,
+      "text": "# CTFd/utils/uploads/uploaders.py:41-51  FilesystemUploader.store\n    def store(self, fileobj, filename):\n        location = os.path.join(self.base_path, filename)\n        directory = os.path.dirname(location)\n\n        if not os.path.exists(directory):\n            os.makedirs(directory)\n\n        with open(location, \"wb\") as dst:\n            copyfileobj(fileobj, dst, 16384)\n\n        return filename",
+      "file": "CTFd/utils/uploads/uploaders.py",
+      "start": 41,
+      "qualname": "FilesystemUploader.store"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "CTFd/__init__.py:13",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/__init__.py:14",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/errors.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1558,
+   "tokens_out": 85,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"CTFd/__init__.py:13\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/__init__.py:14\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/errors.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 1558,
+     "out": 85,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 1517,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1517,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3075,
+  "tokens_out": 120,
+  "cost_usd_est": 0.0,
+  "seconds": 0.12
+ },
+ "created": "2026-11-10T00:06:20+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,427 @@
+{
+ "finding_id": "healthchecks/requests@2.27.1/GHSA-gc5v-m9x4-r6x2",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-25645",
+   "GHSA-gc5v-m9x4-r6x2",
+   "PYSEC-2026-2275"
+  ],
+  "cves": [
+   "CVE-2026-25645"
+  ],
+  "cwes": [
+   "CWE-377"
+  ],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/requests@2.27.1/GHSA-gc5v-m9x4-r6x2",
+  "first_fixed_above_installed": "2.33.0",
+  "fixed_versions": [
+   "2.33.0"
+  ],
+  "max_cvss": "5.5",
+  "package": "requests",
+  "published": "2026-03-25T16:56:28Z",
+  "summary": "Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function",
+  "target": "healthchecks",
+  "version": "2.27.1",
+  "vuln_id": "GHSA-gc5v-m9x4-r6x2"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "requests.utils.extract_zipped_paths",
+   "extract_zipped_paths"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/api/management/commands/settelegramwebhook.py:5",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/api/transports.py:9",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/front/forms.py:15",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "requests.utils.extract_zipped_paths",
+  "extract_zipped_paths"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/requests@2.27.1/GHSA-gc5v-m9x4-r6x2",
+    "package": "requests",
+    "version": "2.27.1",
+    "vuln_id": "GHSA-gc5v-m9x4-r6x2",
+    "aliases": [
+     "CVE-2026-25645",
+     "GHSA-gc5v-m9x4-r6x2",
+     "PYSEC-2026-2275"
+    ],
+    "summary": "Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function",
+    "max_cvss": "5.5",
+    "fixed_versions": [
+     "2.33.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-gc5v-m9x4-r6x2#0",
+      "score": 0.898,
+      "text": "GHSA-gc5v-m9x4-r6x2 (CVE-2026-25645)\npackage: requests\nsummary: Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function\naffected: >=0, <2.33.0",
+      "vuln_id": "GHSA-gc5v-m9x4-r6x2"
+     },
+     {
+      "id": "GHSA-gc5v-m9x4-r6x2#1",
+      "score": 0.881,
+      "text": "GHSA-gc5v-m9x4-r6x2 (requests) details:\n### Impact\nThe `requests.utils.extract_zipped_paths()` utility function uses a predictable filename when extracting files from zip archives into the system temporary directory. If the target file already exists, it is reused without validation. A local attacker with write access to the temp directory could pre-create a malicious file that would be loaded in place of the legitimate one.\n\n### Affected usages\n**Standard usage of the Requests library is not affected by this vulnerability.** Only applications that call `extract_zipped_paths()` directly are impacted.\n\n### Remediation\nUpgrade to at least Requests 2.33.0, where the library now extracts files to a non-deterministic location.\n\nIf developers are unable to upgrade, they can set `TMPDIR` in their environment to a directory with restricted write access.",
+      "vuln_id": "GHSA-gc5v-m9x4-r6x2"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#1",
+      "score": 0.742,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\n### Impact\n\nSince Requests v2.3.0, Requests has been vulnerable to potentially leaking `Proxy-Authorization` headers to destination servers, specifically during redirects to an HTTPS origin. This is a product of how `rebuild_proxies` is used to recompute and [reattach the `Proxy-Authorization` header](https://github.com/psf/requests/blob/f2629e9e3c7ce3c3c8c025bcd8db551101cbc773/requests/sessions.py#L319-L328) to requests when redirected. Note this behavior has _only_ been observed to affect proxied requests when credentials are supplied in the URL user information component (e.g. `https://username:password@proxy:8080`).\n\n**Current vulnerable behavior(s):**\n\n1. HTTP \u2192 HTTPS: **leak**\n2. HTTPS \u2192 HTTP: **no leak**\n3. HTTPS \u2192 HTTPS: **leak**\n4. HTTP \u2192 HTTP: **no leak**",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-9hjg-9r4m-mvj7#1",
+      "score": 0.73,
+      "text": "GHSA-9hjg-9r4m-mvj7 (requests) details:\n### Impact\n\nDue to a URL parsing issue, Requests releases prior to 2.32.4 may leak .netrc credentials to third parties for specific maliciously-crafted URLs.\n\n### Workarounds\nFor older versions of Requests, use of the .netrc file can be disabled with `trust_env=False` on your Requests Session ([docs](https://requests.readthedocs.io/en/latest/api/#requests.Session.trust_env)).",
+      "vuln_id": "GHSA-9hjg-9r4m-mvj7"
+     }
+    ],
+    "symbols": [
+     "requests.utils.extract_zipped_paths",
+     "extract_zipped_paths"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 87.7,
+   "output": {
+    "package": "requests",
+    "import_names": [
+     "requests"
+    ],
+    "symbols": [
+     "requests.utils.extract_zipped_paths",
+     "extract_zipped_paths"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/api/management/commands/settelegramwebhook.py:5",
+     "hc/api/transports.py:9",
+     "hc/front/forms.py:15",
+     "hc/front/views.py:53"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 39,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/api/management/commands/settelegramwebhook.py:23",
+      "code": "r = requests.post(url, json=form)",
+      "function": "hc.api.management.commands.settelegramwebhook:Command.handle",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:187",
+      "code": "r = requests.request(method, url, **options)",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:191",
+      "code": "except requests.exceptions.Timeout:",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:194",
+      "code": "except requests.exceptions.ConnectionError:",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/forms.py:269",
+      "code": "r = requests.post(url, {})",
+      "function": "hc.front.forms:AddMatrixForm.clean_alias",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1238",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_slack_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1323",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_pushbullet_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1383",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_discord_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1875",
+      "code": "boards = requests.get(url).json()",
+      "function": "hc.front.views:trello_settings",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:2025",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_linenotify_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:2043",
+      "code": "result = requests.get(",
+      "function": "hc.front.views:add_linenotify_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/tests/test_notify_slack.py:71",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_slack:NotifySlackTestCase.test_it_handles_timeout",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:48",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_handle_timeouts",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:69",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=ConnectionError)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_handle_connection_errors",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:106",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_dont_retry_when_sending_test_notifications",
+      "in_test": true
+     }
+    ],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "requests: imported in 4 non-test location(s) and 2 test location(s); 39 package call/reference site(s); named vulnerable symbols ['requests.utils.extract_zipped_paths', 'extract_zipped_paths']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 37.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/api/transports.py:198",
+      "score": 0.713,
+      "text": "# hc/api/transports.py:198-212  HttpTransport._request_with_retries\n    def _request_with_retries(cls, method, url, use_retries=True, **kwargs) -> None:\n        start = time.time()\n\n        tries_left = 3 if use_retries else 1\n        while True:\n            try:\n                return cls._request(method, url, **kwargs)\n            except TransportError as e:\n                tries_left = 0 if e.permanent else tries_left - 1\n\n                # If we have no tries left *or* have already used more than\n                # 15 seconds of time then abort the retry loop by re-raising\n                # the exception:\n                if tries_left == 0 or time.time() - start > 15:\n                    raise e",
+      "file": "hc/api/transports.py",
+      "start": 198,
+      "qualname": "HttpTransport._request_with_retries"
+     },
+     {
+      "id": "healthchecks:hc/api/transports.py:215",
+      "score": 0.694,
+      "text": "# hc/api/transports.py:215-216  HttpTransport.get\n    def get(cls, url, **kwargs) -> None:\n        cls._request_with_retries(\"get\", url, **kwargs)",
+      "file": "hc/api/transports.py",
+      "start": 215,
+      "qualname": "HttpTransport.get"
+     },
+     {
+      "id": "healthchecks:hc/api/transports.py:223",
+      "score": 0.691,
+      "text": "# hc/api/transports.py:223-224  HttpTransport.put\n    def put(cls, url, **kwargs) -> None:\n        cls._request_with_retries(\"put\", url, **kwargs)",
+      "file": "hc/api/transports.py",
+      "start": 223,
+      "qualname": "HttpTransport.put"
+     },
+     {
+      "id": "healthchecks:hc/api/transports.py:33",
+      "score": 0.682,
+      "text": "# hc/api/transports.py:33-37  tmpl\ndef tmpl(template_name, **ctx) -> str:\n    template_path = \"integrations/%s\" % template_name\n    # \\xa0 is non-breaking space. It causes SMS messages to use UCS2 encoding\n    # and cost twice the money.\n    return render_to_string(template_path, ctx).strip().replace(\"\\xa0\", \" \")",
+      "file": "hc/api/transports.py",
+      "start": 33,
+      "qualname": "tmpl"
+     },
+     {
+      "id": "healthchecks:hc/settings.py:176",
+      "score": 0.679,
+      "text": "# hc/settings.py:176-177  immutable_file_test\ndef immutable_file_test(path, url):\n    return url.startswith(\"/static/CACHE/\") or url.startswith(\"/static/fonts/\")",
+      "file": "hc/settings.py",
+      "start": 176,
+      "qualname": "immutable_file_test"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "requests.utils.extract_zipped_paths",
+     "extract_zipped_paths"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/api/management/commands/settelegramwebhook.py:5",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/api/transports.py:9",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/front/forms.py:15",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1438,
+   "tokens_out": 111,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/api/management/commands/settelegramwebhook.py:5\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/api/transports.py:9\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/front/forms.py:15\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"requests.utils.extract_zipped_paths\", \"extract_zipped_paths\"]}",
+     "in": 1438,
+     "out": 111,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1408,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1408,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2846,
+  "tokens_out": 147,
+  "cost_usd_est": 0.0,
+  "seconds": 0.16
+ },
+ "created": "2026-11-10T00:06:13+00:00",
+ "code_version": "a3e1ef4"
+}

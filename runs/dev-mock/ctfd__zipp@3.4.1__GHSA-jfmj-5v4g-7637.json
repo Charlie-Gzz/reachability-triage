@@ -1,0 +1,299 @@
+{
+ "finding_id": "ctfd/zipp@3.4.1/GHSA-jfmj-5v4g-7637",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-5569",
+   "GHSA-jfmj-5v4g-7637",
+   "PYSEC-2026-2074"
+  ],
+  "cves": [
+   "CVE-2024-5569"
+  ],
+  "cwes": [
+   "CWE-400",
+   "CWE-835"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/zipp@3.4.1/GHSA-jfmj-5v4g-7637",
+  "first_fixed_above_installed": "3.19.1",
+  "fixed_versions": [
+   "3.19.1"
+  ],
+  "max_cvss": "6.9",
+  "package": "zipp",
+  "published": "2024-07-09T00:31:40Z",
+  "summary": "zipp Denial of Service vulnerability",
+  "target": "ctfd",
+  "version": "3.4.1",
+  "vuln_id": "GHSA-jfmj-5v4g-7637"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "Path",
+   "joinpath",
+   "iterdir"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "Path",
+  "joinpath",
+  "iterdir"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/zipp@3.4.1/GHSA-jfmj-5v4g-7637",
+    "package": "zipp",
+    "version": "3.4.1",
+    "vuln_id": "GHSA-jfmj-5v4g-7637",
+    "aliases": [
+     "CVE-2024-5569",
+     "GHSA-jfmj-5v4g-7637",
+     "PYSEC-2026-2074"
+    ],
+    "summary": "zipp Denial of Service vulnerability",
+    "max_cvss": "6.9",
+    "fixed_versions": [
+     "3.19.1"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-jfmj-5v4g-7637#0",
+      "score": 0.829,
+      "text": "GHSA-jfmj-5v4g-7637 (CVE-2024-5569)\npackage: zipp\nsummary: zipp Denial of Service vulnerability\naffected: >=0, <3.19.1",
+      "vuln_id": "GHSA-jfmj-5v4g-7637"
+     },
+     {
+      "id": "GHSA-jfmj-5v4g-7637#1",
+      "score": 0.826,
+      "text": "GHSA-jfmj-5v4g-7637 (zipp) details:\nA Denial of Service (DoS) vulnerability exists in the jaraco/zipp library, affecting all versions prior to 3.19.1. The vulnerability is triggered when processing a specially crafted zip file that leads to an infinite loop. This issue also impacts the zipfile module of CPython, as features from the third-party zipp library are later merged into CPython, and the affected code is identical in both projects. The infinite loop can be initiated through the use of functions affecting the `Path` module in both zipp and zipfile, such as `joinpath`, the overloaded division operator, and `iterdir`. Although the infinite loop is not resource exhaustive, it prevents the application from responding. The vulnerability was addressed in version 3.19.1 of jaraco/zipp.",
+      "vuln_id": "GHSA-jfmj-5v4g-7637"
+     }
+    ],
+    "symbols": [
+     "Path",
+     "joinpath",
+     "iterdir"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 57.7,
+   "output": {
+    "package": "zipp",
+    "import_names": [
+     "zipp"
+    ],
+    "symbols": [
+     "Path",
+     "joinpath",
+     "iterdir"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "zipp: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['Path', 'joinpath', 'iterdir']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 26.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/exports/__init__.py:84",
+      "score": 0.675,
+      "text": "# CTFd/utils/exports/__init__.py:84-358  import_ctf\ndef import_ctf(backup, erase=True):\n    if not zipfile.is_zipfile(backup):\n        raise zipfile.BadZipfile\n\n    backup = zipfile.ZipFile(backup)\n\n    members = backup.namelist()\n    max_content_length = get_app_config(\"MAX_CONTENT_LENGTH\")\n    for f in members:\n        if f.startswith(\"/\") or \"..\" in f:\n            # Abort on malicious zip files\n            raise zipfile.BadZipfile\n        info = backup.getinfo(f)\n        if max_content_length:\n            if info.file_size > max_content_length:\n                raise zipfile.LargeZipFile\n\n    # Get list of directories in zipfile\n    member_dirs = [os.path.split(m)[0] for m in members if \"/\" in m]\n    if \"db\" not in member_dirs:\n        raise Exception(\n            'CTFd couldn\\'t find the \"db\" folder in this backup. '\n            \"The backup may be malformed or corrupted and the import process cannot continue.\"\n        )\n\n    try:\n        alembic_version = json.loads(backup.open(\"db/alembic_version.json\").read())\n        alembic_version = alembic_version[\"results\"][0][\"version_num\"]\n    except Exception:\n        raise Exception(\n            \"Could not determine appropriate database version. This backup cannot be automatically imported.\"\n        )\n\n    # Check if the alembic version is from CTFd 1.x\n    if alembic_version in (\n        \"1ec4a28fe0ff\",\n        \"2539d8b5082e\",\n        \"7e9efd084c5a\",\n        \"87733981ca0e\",\n        \"a4e30c94c360\",\n        \"c12d2a1b0926\",\n        \"c7225db614c1\",\n        \"cb3cfcc47e2f\",\n        \"cbf5620f8e15\",\n        \"d5a224bf5862\",\n        \"d6514ec92738\",\n        \"dab615389702\",\n        \"e62fd69bd417\",\n    ):\n        raise Exception(\n            \"The version of CTFd that this backup is from is too old to be automatically imported.\"\n        )\n\n    sqlite = get_app_config(\"SQLALCHEMY_DATABASE_URI\").startswith(\"sqlite\")\n    postgres = get_app_config(\"SQLALCHEMY_DATABASE_URI\").startswith(\"postgres\")\n    mysql = get_app_config(\"SQLALCHEMY_DATABASE_URI\").startswith(\"mysql\")\n\n    if erase:\n        # Clear out existing connections to release any locks\n        db.session.close()",
+      "file": "CTFd/utils/exports/__init__.py",
+      "start": 84,
+      "qualname": "import_ctf"
+     },
+     {
+      "id": "ctfd:CTFd/utils/uploads/__init__.py:52",
+      "score": 0.644,
+      "text": "# CTFd/utils/uploads/__init__.py:52-53  rmdir\ndef rmdir(directory):\n    shutil.rmtree(directory, ignore_errors=True)",
+      "file": "CTFd/utils/uploads/__init__.py",
+      "start": 52,
+      "qualname": "rmdir"
+     },
+     {
+      "id": "ctfd:CTFd/views.py:388",
+      "score": 0.622,
+      "text": "# CTFd/views.py:388-450  files\ndef files(path):\n    \"\"\"\n    Route in charge of dealing with making sure that CTF challenges are only accessible during the competition.\n    :param path:\n    :return:\n    \"\"\"\n    f = Files.query.filter_by(location=path).first_or_404()\n    if f.type == \"challenge\":\n        if challenges_visible():\n            if current_user.is_admin() is False:\n                if not ctftime():\n                    if ctf_ended() and view_after_ctf():\n                        pass\n                    else:\n                        abort(403)\n        else:\n            if not ctftime():\n                abort(403)\n\n            # Allow downloads if a valid token is provided\n            token = request.args.get(\"token\", \"\")\n            try:\n                data = unserialize(token, max_age=3600)\n                user_id = data.get(\"user_id\")\n                team_id = data.get(\"team_id\")\n                file_id = data.get(\"file_id\")\n                user = Users.query.filter_by(id=user_id).first()\n                team = Teams.query.filter_by(id=team_id).first()\n\n                # Check user is admin if challenge_visibility is admins only\n                if (\n                    get_config(ConfigTypes.CHALLENGE_VISIBILITY) == \"admins\"\n                    and user.type != \"admin\"\n                ):\n                    abort(403)\n\n                # Check that the user exists and isn't banned\n                if user:\n                    if user.banned:\n                        abort(403)\n                else:\n                    abort(403)\n\n                # Check that the team isn't banned\n                if team:\n                    if team.banned:\n                        abort(403)\n                else:\n                    pass\n\n                # Check that the token properly refers to the file\n                if file_id != f.id:\n                    abort(403)\n\n            # The token isn't expired or broken\n            except (BadTimeSignature, SignatureExpired, BadSignature):\n                abort(403)\n\n    uploader = get_uploader()\n    try:",
+      "file": "CTFd/views.py",
+      "start": 388,
+      "qualname": "files"
+     },
+     {
+      "id": "ctfd:CTFd/__init__.py:38",
+      "score": 0.617,
+      "text": "# CTFd/__init__.py:38-46  CTFdRequest.path\n    def path(self):\n        \"\"\"\n        Hijack the original Flask request path because it does not account for subdirectory deployments in an intuitive\n        manner. We append script_root so that the path always points to the full path as seen in the browser.\n        e.g. /subdirectory/path/route vs /path/route\n\n        :return: string\n        \"\"\"\n        return self.script_root + super(CTFdRequest, self).path",
+      "file": "CTFd/__init__.py",
+      "start": 38,
+      "qualname": "CTFdRequest.path"
+     },
+     {
+      "id": "ctfd:CTFd/utils/security/csrf.py:module",
+      "score": 0.615,
+      "text": "# CTFd/utils/security/csrf.py (module level)\nimport os\nfrom CTFd.utils.encoding import hexencode",
+      "file": "CTFd/utils/security/csrf.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "Path",
+     "joinpath",
+     "iterdir"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1592,
+   "tokens_out": 42,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"Path\", \"joinpath\", \"iterdir\"]}",
+     "in": 1592,
+     "out": 42,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.7,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1524,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1524,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3116,
+  "tokens_out": 78,
+  "cost_usd_est": 0.0,
+  "seconds": 0.12
+ },
+ "created": "2026-11-10T00:06:21+00:00",
+ "code_version": "a3e1ef4"
+}

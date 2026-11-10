@@ -1,0 +1,6 @@
+# Local model comparison (LM Studio, OpenAI-compatible).
+provider: {provider: local, base_url: "http://localhost:1235", model: qwen2.5-coder-14b-instruct, timeout: 300}
+retrieval: true
+reflection: true
+store: chroma
+max_retries: 1

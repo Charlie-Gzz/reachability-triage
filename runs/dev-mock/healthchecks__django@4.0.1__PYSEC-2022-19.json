@@ -1,0 +1,430 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-19",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-22818",
+   "GHSA-95rw-fx8r-36v6",
+   "PYSEC-2022-19"
+  ],
+  "cves": [
+   "CVE-2022-22818"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-19",
+  "first_fixed_above_installed": "4.0.2",
+  "fixed_versions": [
+   "2.2.27",
+   "3.2.12",
+   "4.0.2"
+  ],
+  "max_cvss": null,
+  "package": "django",
+  "published": "2022-02-03T02:15:00Z",
+  "summary": "The {% debug %} template tag in Django 2.2 before 2.2.27, 3.2 before 3.2.12, and 4.0 before 4.0.2 does not properly encode the current context. This may lead to XSS.",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "PYSEC-2022-19"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/accounts/admin.py:1",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:2",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-19",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "PYSEC-2022-19",
+    "aliases": [
+     "CVE-2022-22818",
+     "GHSA-95rw-fx8r-36v6",
+     "PYSEC-2022-19"
+    ],
+    "summary": "The {% debug %} template tag in Django 2.2 before 2.2.27, 3.2 before 3.2.12, and 4.0 before 4.0.2 does not properly encode the current context. This may lead to XSS.",
+    "max_cvss": null,
+    "fixed_versions": [
+     "2.2.27",
+     "3.2.12",
+     "4.0.2"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 40.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-95rw-fx8r-36v6#1",
+      "score": 0.885,
+      "text": "GHSA-95rw-fx8r-36v6 (django) details:\nThe `{% debug %}` template tag in Django 2.2 before 2.2.27, 3.2 before 3.2.12, and 4.0 before 4.0.2 does not properly encode the current context. This may lead to XSS.",
+      "vuln_id": "GHSA-95rw-fx8r-36v6"
+     },
+     {
+      "id": "GHSA-95rw-fx8r-36v6#0",
+      "score": 0.748,
+      "text": "GHSA-95rw-fx8r-36v6 (CVE-2022-22818)\npackage: django\nsummary: Cross-site Scripting in Django\naffected: >=2.2, <2.2.27; >=3.2, <3.2.12; >=4.0, <4.0.2",
+      "vuln_id": "GHSA-95rw-fx8r-36v6"
+     },
+     {
+      "id": "GHSA-9r8w-6x8c-6jr9#1",
+      "score": 0.817,
+      "text": "GHSA-9r8w-6x8c-6jr9 (django) details:\nIn Django 1.10.x before 1.10.8 and 1.11.x before 1.11.5, HTML autoescaping was disabled in a portion of the template for the technical 500 debug page. Given the right circumstances, this allowed a cross-site scripting attack. This vulnerability shouldn't affect most production sites since you shouldn't run with `DEBUG = True` (which makes this page accessible) in your production settings.",
+      "vuln_id": "GHSA-9r8w-6x8c-6jr9"
+     },
+     {
+      "id": "GHSA-6565-fg86-6jcx#1",
+      "score": 0.815,
+      "text": "GHSA-6565-fg86-6jcx (django) details:\nCross-site scripting (XSS) vulnerability in the contents function in `admin/helpers.py` in Django before 1.7.6 and 1.8 before 1.8b2 allows remote attackers to inject arbitrary web script or HTML via a model attribute in `ModelAdmin.readonly_fields`, as demonstrated by an `@property`.",
+      "vuln_id": "GHSA-6565-fg86-6jcx"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 46.4,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 39.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/front/tests/test_linemode_tag.py:module",
+      "score": 0.768,
+      "text": "# hc/front/tests/test_linemode_tag.py (module level)\nfrom hc.test import BaseTestCase\nfrom django.template import Context, Template, TemplateSyntaxError\nclass LinemodeTestCase(BaseTestCase):",
+      "file": "hc/front/tests/test_linemode_tag.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/front/templatetags/linemode.py:module",
+      "score": 0.757,
+      "text": "# hc/front/templatetags/linemode.py (module level)\nfrom django import template\nfrom django.template import Node, TemplateSyntaxError\nregister = template.Library()\nclass LineModeNode(Node):\n@register.tag\nclass LineNode(Node):\n@register.tag",
+      "file": "hc/front/templatetags/linemode.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/lib/badges.py:module",
+      "score": 0.753,
+      "text": "# hc/lib/badges.py (module level)\nfrom django.conf import settings\nfrom django.core.signing import base64_hmac\nfrom django.template.loader import render_to_string\nfrom django.urls import reverse\nWIDTHS = {\n    \"a\": 7,\n    \"b\": 7,\n    \"c\": 6,\n    \"d\": 7,\n    \"e\": 6,\n    \"f\": 4,\n    \"g\": 7,\n    \"h\": 7,\n    \"i\": 3,\n    \"j\": 3,\n    \"k\": 7,\n    \"l\": 3,\n    \"m\": 10,\n    \"n\": 7,\n    \"o\": 7,\n    \"p\": 7,\n    \"q\": 7,\n    \"r\": 4,\n    \"s\": 6,\n    \"t\": 5,\n    \"u\": 7,\n    \"v\": 7,\n    \"w\": 9,\n    \"x\": 6,\n    \"y\": 7,\n    \"z\": 7,\n    \"0\": 7,\n    \"1\": 6,\n    \"2\": 7,\n    \"3\": 7,\n    \"4\": 7,\n    \"5\": 7,\n    \"6\": 7,\n    \"7\": 7,\n    \"8\": 7,\n    \"9\": 7,\n    \"A\": 8,\n    \"B\": 7,\n    \"C\": 8,\n    \"D\": 8,\n    \"E\": 7,\n    \"F\": 6,\n    \"G\": 9,\n    \"H\": 8,\n    \"I\": 3,\n    \"J\": 4,\n    \"K\": 7,\n    \"L\": 6,\n    \"M\": 10,\n    \"N\": 8,\n    \"O\": 9,\n    \"P\": 6,\n    \"Q\": 9,\n    \"R\": 7,\n    \"S\": 7,",
+      "file": "hc/lib/badges.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/front/templatetags/hc_extras.py:module",
+      "score": 0.738,
+      "text": "# hc/front/templatetags/hc_extras.py (module level)\nimport re\nfrom django import template\nfrom django.conf import settings\nfrom django.templatetags.static import static\nfrom django.utils.html import escape\nfrom django.utils.safestring import mark_safe\nfrom django.utils.timezone import now\nfrom hc.lib.date import format_duration, format_approx_duration, format_hms\nregister = template.Library()\n@register.filter\n@register.filter\n@register.filter\n@register.simple_tag\n@register.simple_tag\n@register.filter\n@register.simple_tag\n@register.simple_tag\n@register.simple_tag\n@register.simple_tag\n@register.filter\n@register.filter\n@register.filter\n@register.filter\n@register.filter\n@register.filter\n@register.simple_tag\n@register.filter\nFORMATTED_PING_ENDPOINT = (\n    f\"\"\"<span class=\"base hidden-md\">{settings.PING_ENDPOINT}</span>\"\"\"\n)\n@register.filter\n@register.filter",
+      "file": "hc/front/templatetags/hc_extras.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/front/management/commands/render_docs.py:module",
+      "score": 0.729,
+      "text": "# hc/front/management/commands/render_docs.py (module level)\nimport os\nfrom django.conf import settings\nfrom django.core.management.base import BaseCommand\nclass Command(BaseCommand):\n    help = \"Renders Markdown to HTML\"",
+      "file": "hc/front/management/commands/render_docs.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/accounts/admin.py:1",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:2",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1415,
+   "tokens_out": 88,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/accounts/admin.py:1\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:2\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 1415,
+     "out": 88,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 1377,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1377,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2792,
+  "tokens_out": 123,
+  "cost_usd_est": 0.0,
+  "seconds": 0.13
+ },
+ "created": "2026-11-10T00:06:10+00:00",
+ "code_version": "a3e1ef4"
+}

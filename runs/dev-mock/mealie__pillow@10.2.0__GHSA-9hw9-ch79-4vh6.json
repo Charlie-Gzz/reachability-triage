@@ -1,0 +1,378 @@
+{
+ "finding_id": "mealie/pillow@10.2.0/GHSA-9hw9-ch79-4vh6",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-59205",
+   "GHSA-9hw9-ch79-4vh6",
+   "PYSEC-2026-3453"
+  ],
+  "cves": [
+   "CVE-2026-59205"
+  ],
+  "cwes": [
+   "CWE-787"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/pillow@10.2.0/GHSA-9hw9-ch79-4vh6",
+  "first_fixed_above_installed": "12.3.0",
+  "fixed_versions": [
+   "12.3.0"
+  ],
+  "max_cvss": "7.5",
+  "package": "pillow",
+  "published": "2026-07-20T23:19:00Z",
+  "summary": "Pillow: Controlled heap out-of-bounds write in Pillow `ImageCmsTransform.apply()` via output mode mismatch",
+  "target": "mealie",
+  "version": "10.2.0",
+  "vuln_id": "GHSA-9hw9-ch79-4vh6"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "ImageCmsTransform.apply",
+   "apply",
+   "ImageCms.ImageCmsTransform.apply",
+   "imOut",
+   "cmsDoTransform"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/pkgs/img/minify.py:6",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "ImageCmsTransform.apply",
+  "apply",
+  "ImageCms.ImageCmsTransform.apply",
+  "imOut",
+  "cmsDoTransform",
+  "after",
+  "getim",
+  "tobytes"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pillow@10.2.0/GHSA-9hw9-ch79-4vh6",
+    "package": "pillow",
+    "version": "10.2.0",
+    "vuln_id": "GHSA-9hw9-ch79-4vh6",
+    "aliases": [
+     "CVE-2026-59205",
+     "GHSA-9hw9-ch79-4vh6",
+     "PYSEC-2026-3453"
+    ],
+    "summary": "Pillow: Controlled heap out-of-bounds write in Pillow `ImageCmsTransform.apply()` via output mode mismatch",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "12.3.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 35.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-9hw9-ch79-4vh6#0",
+      "score": 0.913,
+      "text": "GHSA-9hw9-ch79-4vh6 (CVE-2026-59205)\npackage: pillow\nsummary: Pillow: Controlled heap out-of-bounds write in Pillow `ImageCmsTransform.apply()` via output mode mismatch\naffected: >=0, <12.3.0",
+      "vuln_id": "GHSA-9hw9-ch79-4vh6"
+     },
+     {
+      "id": "GHSA-9hw9-ch79-4vh6#1",
+      "score": 0.838,
+      "text": "GHSA-9hw9-ch79-4vh6 (pillow) details:\n### Summary\n\nPillow's public `ImageCms.ImageCmsTransform.apply(im, imOut)` API can trigger\ncontrolled native heap corruption when the caller supplies an output image whose\nmode does not match the transform's declared output mode.\n\nFor example, a transform built as `RGBA -> RGBA` can be applied to an `L` output\nimage. Pillow checks dimensions only, then calls LittleCMS with the output row\npointer. LittleCMS writes RGBA-sized rows into a 1-byte-per-pixel `L` image row.\n\n### Details\n\n`src/PIL/ImageCms.py:ImageCmsTransform.apply()` accepts an optional caller\nsupplied `imOut`:\n\n```python\ndef apply(self, im, imOut=None):\n    if imOut is None:\n        imOut = Image.new(self.output_mode, im.size, None)\n    self.transform.apply(im.getim(), imOut.getim())\n    imOut.info[\"icc_profile\"] = self.output_profile.tobytes()\n    return imOut\n```\n\nIf `imOut` is provided, Pillow does not check:",
+      "vuln_id": "GHSA-9hw9-ch79-4vh6"
+     },
+     {
+      "id": "GHSA-9hw9-ch79-4vh6#6",
+      "score": 0.805,
+      "text": "GHSA-9hw9-ch79-4vh6 (pillow) details:\nApplications are impacted if untrusted users can control ImageCms transform\nparameters and/or provide the output image object passed to\n`ImageCmsTransform.apply()`. The source image pixels influence the bytes written\nout of bounds.\n\n## Suggested fix\n\nValidate modes before calling into the native transform:\n\n```python\ndef apply(self, im, imOut=None):\n    if im.mode != self.input_mode:\n        raise ValueError(\"input mode mismatch\")\n    if imOut is None:\n        imOut = Image.new(self.output_mode, im.size, None)\n    elif imOut.mode != self.output_mode:\n        raise ValueError(\"output mode mismatch\")\n    self.transform.apply(im.getim(), imOut.getim())\n    imOut.info[\"icc_profile\"] = self.output_profile.tobytes()\n    return imOut\n```\n\nThe C extension should also defensively reject mismatched image modes before\ncalling `cmsDoTransform()`.",
+      "vuln_id": "GHSA-9hw9-ch79-4vh6"
+     },
+     {
+      "id": "GHSA-9hw9-ch79-4vh6#3",
+      "score": 0.797,
+      "text": "GHSA-9hw9-ch79-4vh6 (pillow) details:\nSo with a transform declared as `RGBA -> RGBA`, LittleCMS writes `4 * width`\nbytes to each output row. If the supplied output image is mode `L`, Pillow only\nallocated `1 * width` bytes for that row.\n\nFor width 4096:\n\n```text\ndestination row allocation: 4096 bytes\nLittleCMS write size:       16384 bytes\noverflow:                  ~12288 bytes past the row\n```\n\nThe bug does not require a large image. Width 8 was enough to corrupt heap\nmetadata. At width 8, `apply()` returned to Python and printed `after`; glibc\ndetected the corrupted heap later during cleanup.\n\n### PoC\n\nTiny heap corruption trigger:\n\n```python\nfrom PIL import Image, ImageCms\n\nsrgb = ImageCms.createProfile(\"sRGB\")\ntransform = ImageCms.buildTransform(srgb, srgb, \"RGBA\", \"RGBA\")\n\nim = Image.new(\"RGBA\", (8, 1), (0x41, 0x42, 0x43, 0x44))\nout = Image.new(\"L\", (8, 1), 0)",
+      "vuln_id": "GHSA-9hw9-ch79-4vh6"
+     },
+     {
+      "id": "GHSA-5gm3-px64-rw72#1",
+      "score": 0.829,
+      "text": "GHSA-5gm3-px64-rw72 (pillow) details:\nThere is a DoS vulnerability in Pillow before 6.2.2 caused by FpxImagePlugin.py calling the range function on an unvalidated 32-bit integer if the number of bands is large. On Windows running 32-bit Python, this results in an OverflowError or MemoryError due to the 2 GB limit. However, on Linux running 64-bit Python this results in the process being terminated by the OOM killer.",
+      "vuln_id": "GHSA-5gm3-px64-rw72"
+     },
+     {
+      "id": "GHSA-cfh3-3jmp-rvhc#1",
+      "score": 0.826,
+      "text": "GHSA-cfh3-3jmp-rvhc (pillow) details:\n### Impact\nAn out-of-bounds write may be triggered when loading a specially crafted PSD image. Pillow >= 10.3.0 users are affected.\n\n### Patches\nPillow 12.1.1 will be released shortly with a fix for this.\n\n### Workarounds\n`Image.open()` has a `formats` parameter that can be used to prevent PSD images from being opened.",
+      "vuln_id": "GHSA-cfh3-3jmp-rvhc"
+     }
+    ],
+    "symbols": [
+     "ImageCmsTransform.apply",
+     "apply",
+     "ImageCms.ImageCmsTransform.apply",
+     "imOut",
+     "cmsDoTransform",
+     "after",
+     "getim",
+     "tobytes"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 70.1,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [
+     "ImageCmsTransform.apply",
+     "apply",
+     "ImageCms.ImageCmsTransform.apply",
+     "imOut",
+     "cmsDoTransform",
+     "after",
+     "getim",
+     "tobytes"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/pkgs/img/minify.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 10,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "code": "img = Image.open(image)",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pillow: imported in 1 non-test location(s); 10 package call/reference site(s); named vulnerable symbols ['ImageCmsTransform.apply', 'apply', 'ImageCms.ImageCmsTransform.apply', 'imOut', 'cmsDoTransform', 'after', 'getim', 'tobytes']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 40.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:87",
+      "score": 0.765,
+      "text": "# mealie/pkgs/img/minify.py:87-127  PillowMinifier.minify\n    def minify(self, image_file: Path, force=True):\n        if not image_file.exists():\n            raise FileNotFoundError(f\"{image_file.name} does not exist\")\n\n        org_dest = image_file.parent.joinpath(\"original.webp\")\n        min_dest = image_file.parent.joinpath(\"min-original.webp\")\n        tiny_dest = image_file.parent.joinpath(\"tiny-original.webp\")\n\n        if not force and min_dest.exists() and tiny_dest.exists() and org_dest.exists():\n            self._logger.info(f\"{image_file.name} already minified\")\n            return\n\n        success = False\n\n        if self._opts.original:\n            if not force and org_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, org_dest, quality=70)\n                success = True\n\n        if self._opts.miniature:\n            if not force and min_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, min_dest, quality=70)\n                self._logger.info(f\"{image_file.name} minified\")\n                success = True\n\n        if self._opts.tiny:\n            if not force and tiny_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                img = Image.open(image_file)\n                tiny_image = PillowMinifier.crop_center(img)\n                tiny_image.save(tiny_dest, FORMAT, quality=70)\n                self._logger.info(\"Tiny image saved\")\n                success = True\n\n        if self._purge and success:\n            self.purge(image_file)",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 87,
+      "qualname": "PillowMinifier.minify"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:module",
+      "score": 0.734,
+      "text": "# mealie/pkgs/img/minify.py (module level)\nfrom abc import ABC, abstractmethod\nfrom dataclasses import dataclass\nfrom logging import Logger\nfrom pathlib import Path\nfrom PIL import Image\nWEBP = \".webp\"\nFORMAT = \"WEBP\"\nIMAGE_EXTENSIONS = {\".jpg\", \".jpeg\", \".png\", \".webp\"}\n@dataclass\nclass MinifierOptions:\n    original: bool = True\n    miniature: bool = True\n    tiny: bool = True\nclass ABCMinifier(ABC):\n    @abstractmethod\nclass PillowMinifier(ABCMinifier):\n    @staticmethod\n    @staticmethod",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:63",
+      "score": 0.718,
+      "text": "# mealie/pkgs/img/minify.py:63-73  PillowMinifier.to_webp\n    def to_webp(image_file: Path, dest: Path | None = None, quality: int = 100) -> Path:\n        \"\"\"\n        Converts an image to the webp format in-place. The original image is not\n        removed By default, the quality is set to 100.\n        \"\"\"\n        img = Image.open(image_file)\n\n        dest = dest or image_file.with_suffix(WEBP)\n        img.save(dest, FORMAT, quality=quality)\n\n        return dest",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 63,
+      "qualname": "PillowMinifier.to_webp"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:49",
+      "score": 0.691,
+      "text": "# mealie/pkgs/img/minify.py:49-50  ABCMinifier.minify\n    def minify(self, image: Path, force=True):\n        ...",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 49,
+      "qualname": "ABCMinifier.minify"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:19",
+      "score": 0.689,
+      "text": "# mealie/pkgs/img/minify.py:19-27  sizeof_fmt\ndef sizeof_fmt(file_path: Path, decimal_places=2):\n    if not file_path.exists():\n        return \"(File Not Found)\"\n    size: int | float = file_path.stat().st_size\n    for unit in [\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\"]:\n        if size < 1024 or unit == \"PiB\":\n            break\n        size /= 1024\n    return f\"{size:.{decimal_places}f} {unit}\"",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 19,
+      "qualname": "sizeof_fmt"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "ImageCmsTransform.apply",
+     "apply",
+     "ImageCms.ImageCmsTransform.apply",
+     "imOut",
+     "cmsDoTransform"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:6",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2152,
+   "tokens_out": 78,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/pkgs/img/minify.py:6\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"ImageCmsTransform.apply\", \"apply\", \"ImageCms.ImageCmsTransform.apply\", \"imOut\", \"cmsDoTransform\"]}",
+     "in": 2152,
+     "out": 78,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 2095,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2095,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4247,
+  "tokens_out": 114,
+  "cost_usd_est": 0.0,
+  "seconds": 0.15
+ },
+ "created": "2026-11-10T00:06:25+00:00",
+ "code_version": "a3e1ef4"
+}

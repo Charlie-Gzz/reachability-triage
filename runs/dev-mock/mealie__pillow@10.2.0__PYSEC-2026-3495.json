@@ -1,0 +1,376 @@
+{
+ "finding_id": "mealie/pillow@10.2.0/PYSEC-2026-3495",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-59200",
+   "GHSA-jjj6-mw9f-p565",
+   "PYSEC-2026-3495"
+  ],
+  "cves": [
+   "CVE-2026-59200"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "mealie/pillow@10.2.0/PYSEC-2026-3495",
+  "first_fixed_above_installed": "12.3.0",
+  "fixed_versions": [
+   "12.3.0"
+  ],
+  "max_cvss": "7.5",
+  "package": "pillow",
+  "published": "2026-07-23T11:41:48.075769Z",
+  "summary": "Pillow: Decompression Bomb DoS via PdfParser.PdfStream.decode()",
+  "target": "mealie",
+  "version": "10.2.0",
+  "vuln_id": "PYSEC-2026-3495"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "PIL.PdfParser.PdfParser",
+   "PdfParser.PdfStream.decode",
+   "PdfParser",
+   "PdfStream.decode",
+   "zlib.decompress"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/pkgs/img/minify.py:6",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "PIL.PdfParser.PdfParser",
+  "PdfParser.PdfStream.decode",
+  "PdfParser",
+  "PdfStream.decode",
+  "zlib.decompress",
+  "bufsize",
+  "Length",
+  "decode"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pillow@10.2.0/PYSEC-2026-3495",
+    "package": "pillow",
+    "version": "10.2.0",
+    "vuln_id": "PYSEC-2026-3495",
+    "aliases": [
+     "CVE-2026-59200",
+     "GHSA-jjj6-mw9f-p565",
+     "PYSEC-2026-3495"
+    ],
+    "summary": "Pillow: Decompression Bomb DoS via PdfParser.PdfStream.decode()",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "12.3.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 32.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-jjj6-mw9f-p565#0",
+      "score": 0.853,
+      "text": "GHSA-jjj6-mw9f-p565 (CVE-2026-59200)\npackage: pillow\nsummary: Pillow: Decompression Bomb DoS via PdfParser.PdfStream.decode()\naffected: >=5.1.0, <12.3.0",
+      "vuln_id": "GHSA-jjj6-mw9f-p565"
+     },
+     {
+      "id": "GHSA-jjj6-mw9f-p565#6",
+      "score": 0.808,
+      "text": "GHSA-jjj6-mw9f-p565 (pillow) details:\n### Impact\nThis is a denial-of-service vulnerability. Any application that uses `PIL.PdfParser.PdfParser` to read untrusted PDF files is affected. An unauthenticated attacker who can submit a PDF for processing can exhaust all available server memory with a ~950 KB file, causing OOM termination or service degradation affecting all concurrent users. No authentication or user interaction beyond submitting the file is required.\n\n**Note:** This vulnerability is independent of CVE-2025-64512 / CVE-2025-70559 (pdfminer.six) and the companion `PIL/PdfImagePlugin.py` decompression issue. It exists specifically in Pillow's own `PdfParser.py` module, which is distinct from pdfminer.six.\n\n**Suggested fix:**\n\n```python\nMAX_DECOMPRESS_BYTES = 200 * 1024 * 1024  # 200 MB cap",
+      "vuln_id": "GHSA-jjj6-mw9f-p565"
+     },
+     {
+      "id": "GHSA-jjj6-mw9f-p565#1",
+      "score": 0.739,
+      "text": "GHSA-jjj6-mw9f-p565 (pillow) details:\n### Summary\n`PdfParser.PdfStream.decode()` in Pillow's `PdfParser.py` calls `zlib.decompress()` with the `bufsize` parameter set to the value of the PDF stream's `Length` field, without any upper bound on the actual decompressed output size. Python's `zlib.decompress()` `bufsize` argument is an *initial output buffer hint*, not a maximum size limit \u2014 the function will expand memory until the full decompressed result is produced. A crafted PDF containing a FlateDecode-compressed stream decompresses to 1 GB of memory from a ~950 KB file, causing server OOM termination or severe degradation in any application that uses `PdfParser` to read untrusted PDF files.\n\n### Details\n`PdfStream.decode()` in `pdfminer/PdfParser.py` reads the stream's declared `Length` (or `DL`) field from the PDF dictionary and passes it as `bufsize` to `zlib.decompress()`:",
+      "vuln_id": "GHSA-jjj6-mw9f-p565"
+     },
+     {
+      "id": "GHSA-jjj6-mw9f-p565#5",
+      "score": 0.723,
+      "text": "GHSA-jjj6-mw9f-p565 (pillow) details:\nwith tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as f:\n    f.write(buf); tmpname = f.name\n\nwith PdfParser.PdfParser(tmpname) as pdf:\n    obj, _ = pdf.get_value(pdf.buf, o3)\n    t = time.time()\n    decoded = obj.decode()\n    print(f\"Decoded: {len(decoded):,} bytes in {time.time()-t:.3f}s\")\n\nos.unlink(tmpname)\n```\n\n**Actual output (Pillow 12.1.1, Python 3.12):**\n```\nPDF size: 97,538 bytes (95.3 KB)\nDecoded: 100,000,000 bytes in 0.265s\n```\n\n**Measured expansion:**\n\n| PDF file size | Memory allocated | Ratio | Wall time |\n|---|---|---|---|\n| 10 KB | 10 MB | 1,026\u00d7 | 0.024 s |\n| 95 KB | 100 MB | 1,028\u00d7 | 0.265 s |\n| 475 KB | 500 MB | 1,028\u00d7 | 1.279 s |\n| 950 KB | 1,000 MB (1 GB) | 1,028\u00d7 | 2.668 s |",
+      "vuln_id": "GHSA-jjj6-mw9f-p565"
+     },
+     {
+      "id": "GHSA-5gm3-px64-rw72#1",
+      "score": 0.803,
+      "text": "GHSA-5gm3-px64-rw72 (pillow) details:\nThere is a DoS vulnerability in Pillow before 6.2.2 caused by FpxImagePlugin.py calling the range function on an unvalidated 32-bit integer if the number of bands is large. On Windows running 32-bit Python, this results in an OverflowError or MemoryError due to the 2 GB limit. However, on Linux running 64-bit Python this results in the process being terminated by the OOM killer.",
+      "vuln_id": "GHSA-5gm3-px64-rw72"
+     },
+     {
+      "id": "GHSA-j6f7-g425-4gmx#0",
+      "score": 0.799,
+      "text": "GHSA-j6f7-g425-4gmx (CVE-2014-3598)\npackage: pillow\nsummary: Pillow is vulnerable to Denial of Service (DOS) in the Jpeg2KImagePlugin\naffected: >=0, <2.5.3",
+      "vuln_id": "GHSA-j6f7-g425-4gmx"
+     }
+    ],
+    "symbols": [
+     "PIL.PdfParser.PdfParser",
+     "PdfParser.PdfStream.decode",
+     "PdfParser",
+     "PdfStream.decode",
+     "zlib.decompress",
+     "bufsize",
+     "Length",
+     "decode"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 72.9,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [
+     "PIL.PdfParser.PdfParser",
+     "PdfParser.PdfStream.decode",
+     "PdfParser",
+     "PdfStream.decode",
+     "zlib.decompress",
+     "bufsize",
+     "Length",
+     "decode"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/pkgs/img/minify.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 10,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "code": "img = Image.open(image)",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pillow: imported in 1 non-test location(s); 10 package call/reference site(s); named vulnerable symbols ['PIL.PdfParser.PdfParser', 'PdfParser.PdfStream.decode', 'PdfParser', 'PdfStream.decode', 'zlib.decompress', 'bufsize', 'Length', 'decode']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 35.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:19",
+      "score": 0.651,
+      "text": "# mealie/pkgs/img/minify.py:19-27  sizeof_fmt\ndef sizeof_fmt(file_path: Path, decimal_places=2):\n    if not file_path.exists():\n        return \"(File Not Found)\"\n    size: int | float = file_path.stat().st_size\n    for unit in [\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\"]:\n        if size < 1024 or unit == \"PiB\":\n            break\n        size /= 1024\n    return f\"{size:.{decimal_places}f} {unit}\"",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 19,
+      "qualname": "sizeof_fmt"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:87",
+      "score": 0.648,
+      "text": "# mealie/pkgs/img/minify.py:87-127  PillowMinifier.minify\n    def minify(self, image_file: Path, force=True):\n        if not image_file.exists():\n            raise FileNotFoundError(f\"{image_file.name} does not exist\")\n\n        org_dest = image_file.parent.joinpath(\"original.webp\")\n        min_dest = image_file.parent.joinpath(\"min-original.webp\")\n        tiny_dest = image_file.parent.joinpath(\"tiny-original.webp\")\n\n        if not force and min_dest.exists() and tiny_dest.exists() and org_dest.exists():\n            self._logger.info(f\"{image_file.name} already minified\")\n            return\n\n        success = False\n\n        if self._opts.original:\n            if not force and org_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, org_dest, quality=70)\n                success = True\n\n        if self._opts.miniature:\n            if not force and min_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, min_dest, quality=70)\n                self._logger.info(f\"{image_file.name} minified\")\n                success = True\n\n        if self._opts.tiny:\n            if not force and tiny_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                img = Image.open(image_file)\n                tiny_image = PillowMinifier.crop_center(img)\n                tiny_image.save(tiny_dest, FORMAT, quality=70)\n                self._logger.info(\"Tiny image saved\")\n                success = True\n\n        if self._purge and success:\n            self.purge(image_file)",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 87,
+      "qualname": "PillowMinifier.minify"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:118",
+      "score": 0.641,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:118-133  RecipeExportController.get_recipe_as_zip\n    def get_recipe_as_zip(self, slug: str, token: str, temp_path=Depends(temporary_zip_path)):\n        \"\"\"Get a Recipe and It's Original Image as a Zip File\"\"\"\n        slug = validate_recipe_token(token)\n\n        if slug != slug:\n            raise HTTPException(status_code=400, detail=\"Invalid Slug\")\n\n        recipe: Recipe = self.mixins.get_one(slug)\n        image_asset = recipe.image_dir.joinpath(RecipeImageTypes.original.value)\n        with ZipFile(temp_path, \"w\") as myzip:\n            myzip.writestr(f\"{slug}.json\", recipe.json())\n\n            if image_asset.is_file():\n                myzip.write(image_asset, arcname=image_asset.name)\n\n        return FileResponse(temp_path, filename=f\"{slug}.zip\")",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 118,
+      "qualname": "RecipeExportController.get_recipe_as_zip"
+     },
+     {
+      "id": "mealie:mealie/services/backups_v2/backup_file.py:56",
+      "score": 0.637,
+      "text": "# mealie/services/backups_v2/backup_file.py:56-60  BackupFile.__exit__\n    def __exit__(self, exc_type, exc_val, exc_tb):\n        if self.temp_dir and self.temp_dir.is_dir():\n            shutil.rmtree(self.temp_dir)\n\n            self.temp_dir = None",
+      "file": "mealie/services/backups_v2/backup_file.py",
+      "start": 56,
+      "qualname": "BackupFile.__exit__"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:module",
+      "score": 0.633,
+      "text": "# mealie/pkgs/img/minify.py (module level)\nfrom abc import ABC, abstractmethod\nfrom dataclasses import dataclass\nfrom logging import Logger\nfrom pathlib import Path\nfrom PIL import Image\nWEBP = \".webp\"\nFORMAT = \"WEBP\"\nIMAGE_EXTENSIONS = {\".jpg\", \".jpeg\", \".png\", \".webp\"}\n@dataclass\nclass MinifierOptions:\n    original: bool = True\n    miniature: bool = True\n    tiny: bool = True\nclass ABCMinifier(ABC):\n    @abstractmethod\nclass PillowMinifier(ABCMinifier):\n    @staticmethod\n    @staticmethod",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "PIL.PdfParser.PdfParser",
+     "PdfParser.PdfStream.decode",
+     "PdfParser",
+     "PdfStream.decode",
+     "zlib.decompress"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:6",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2143,
+   "tokens_out": 80,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/pkgs/img/minify.py:6\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"PIL.PdfParser.PdfParser\", \"PdfParser.PdfStream.decode\", \"PdfParser\", \"PdfStream.decode\", \"zlib.decompress\"]}",
+     "in": 2143,
+     "out": 80,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 2087,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2087,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4230,
+  "tokens_out": 116,
+  "cost_usd_est": 0.0,
+  "seconds": 0.15
+ },
+ "created": "2026-11-10T00:06:27+00:00",
+ "code_version": "a3e1ef4"
+}

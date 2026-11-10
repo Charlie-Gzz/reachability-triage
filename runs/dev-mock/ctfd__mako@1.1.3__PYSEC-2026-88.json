@@ -1,0 +1,333 @@
+{
+ "finding_id": "ctfd/mako@1.1.3/PYSEC-2026-88",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-41205",
+   "GHSA-v92g-xgxw-vvmm",
+   "PYSEC-2026-88"
+  ],
+  "cves": [
+   "CVE-2026-41205"
+  ],
+  "cwes": [],
+  "direct_dependency": false,
+  "finding_id": "ctfd/mako@1.1.3/PYSEC-2026-88",
+  "first_fixed_above_installed": "1.3.11",
+  "fixed_versions": [
+   "1.3.11"
+  ],
+  "max_cvss": "7.5",
+  "package": "mako",
+  "published": "2026-04-23T19:17:29.270Z",
+  "summary": "Mako is a template library written in Python. Prior to 1.3.11, TemplateLookup.get_template() is vulnerable to path traversal when a URI starts with // (e.g., //../../../secret.txt). The root cause is ",
+  "target": "ctfd",
+  "version": "1.1.3",
+  "vuln_id": "PYSEC-2026-88"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "TemplateLookup.get_template",
+   "get_template",
+   "Template.__init__",
+   "re.sub",
+   "posixpath.join"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "TemplateLookup.get_template",
+  "get_template",
+  "Template.__init__",
+  "re.sub",
+  "posixpath.join",
+  "normpath",
+  "BaseHTTPRequestHandler",
+  "lstrip"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/mako@1.1.3/PYSEC-2026-88",
+    "package": "mako",
+    "version": "1.1.3",
+    "vuln_id": "PYSEC-2026-88",
+    "aliases": [
+     "CVE-2026-41205",
+     "GHSA-v92g-xgxw-vvmm",
+     "PYSEC-2026-88"
+    ],
+    "summary": "Mako is a template library written in Python. Prior to 1.3.11, TemplateLookup.get_template() is vulnerable to path traversal when a URI starts with // (e.g., //../../../secret.txt). The root cause is ",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "1.3.11"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 38.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-v92g-xgxw-vvmm#1",
+      "score": 0.823,
+      "text": "GHSA-v92g-xgxw-vvmm (mako) details:\n### Summary\n\n`TemplateLookup.get_template()` is vulnerable to path traversal when a URI starts with `//` (e.g., `//../../../secret.txt`). The root cause is an inconsistency between two slash-stripping implementations:\n\n- `Template.__init__` strips **one** leading `/` using `if`/slice\n- `TemplateLookup.get_template()` strips **all** leading `/` using `re.sub(r\"^\\/+\", \"\")`\n\nWhen a URI like `//../../../../etc/passwd` is passed:\n1. `get_template()` strips all `/` \u2192 `../../../../etc/passwd` \u2192 file found via `posixpath.join(dir_, u)`\n2. `Template.__init__` strips one `/` \u2192 `/../../../../etc/passwd` \u2192 `normpath` \u2192 `/etc/passwd`\n3. `/etc/passwd`.startswith(`..`) \u2192 `False` \u2192 **check bypassed**\n\n### Impact\n\nArbitrary file read: any file readable by the process can be returned as rendered template content when an application passes untrusted input directly to `TemplateLookup.get_template()`.",
+      "vuln_id": "GHSA-v92g-xgxw-vvmm"
+     },
+     {
+      "id": "GHSA-v92g-xgxw-vvmm#0",
+      "score": 0.793,
+      "text": "GHSA-v92g-xgxw-vvmm (CVE-2026-41205)\npackage: mako\nsummary: Mako: Path traversal via double-slash URI prefix in TemplateLookup\naffected: >=0, <1.3.11",
+      "vuln_id": "GHSA-v92g-xgxw-vvmm"
+     },
+     {
+      "id": "GHSA-v92g-xgxw-vvmm#2",
+      "score": 0.734,
+      "text": "GHSA-v92g-xgxw-vvmm (mako) details:\nNote: this is exploitable at the library API level. HTTP-based exploitation is mitigated by Python's `BaseHTTPRequestHandler` which normalizes double-slash prefixes since CPython gh-87389. Applications using other HTTP servers that do not normalize paths may be affected.\n\n### Fix\n\nChanged `Template.__init__` to use `lstrip(\"/\")` instead of stripping only a single leading slash, so both code paths handle leading slashes consistently.",
+      "vuln_id": "GHSA-v92g-xgxw-vvmm"
+     },
+     {
+      "id": "GHSA-2h4p-vjrc-8xpq#3",
+      "score": 0.841,
+      "text": "GHSA-2h4p-vjrc-8xpq (mako) details:\n- `mako/lookup.py`: `TemplateLookup.get_template()` uses `posixpath.normpath`/`posixpath.join` for path construction but `os.path.isfile()` for existence check\n- `mako/template.py`: `Template.__init__()` URI validation uses `os.path.normpath()` which on Windows resolves backslash traversal to a form that passes the `startswith(\"..\")` guard\n\n## Impact\n\nIf an application passes user-controlled template names or include paths to `TemplateLookup.get_template()`, an attacker on Windows may be able to load and disclose readable files outside the configured template directory. The primary impact is local file disclosure. If the targeted file contains Mako/Python template syntax, it may also be parsed and executed as a template.\n\n## Remediation",
+      "vuln_id": "GHSA-2h4p-vjrc-8xpq"
+     },
+     {
+      "id": "GHSA-2h4p-vjrc-8xpq#0",
+      "score": 0.834,
+      "text": "GHSA-2h4p-vjrc-8xpq (CVE-2026-44307)\npackage: mako\nsummary: Mako vulnerable to path traversal via backslash URI on Windows in TemplateLookup\naffected: >=0, <1.3.12",
+      "vuln_id": "GHSA-2h4p-vjrc-8xpq"
+     }
+    ],
+    "symbols": [
+     "TemplateLookup.get_template",
+     "get_template",
+     "Template.__init__",
+     "re.sub",
+     "posixpath.join",
+     "normpath",
+     "BaseHTTPRequestHandler",
+     "lstrip"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 104.3,
+   "output": {
+    "package": "mako",
+    "import_names": [
+     "mako"
+    ],
+    "symbols": [
+     "TemplateLookup.get_template",
+     "get_template",
+     "Template.__init__",
+     "re.sub",
+     "posixpath.join",
+     "normpath",
+     "BaseHTTPRequestHandler",
+     "lstrip"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "mako: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['TemplateLookup.get_template', 'get_template', 'Template.__init__', 're.sub', 'posixpath.join', 'normpath', 'BaseHTTPRequestHandler', 'lstrip']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 44.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/challenges.py:23",
+      "score": 0.657,
+      "text": "# CTFd/challenges.py:23-45  listing\ndef listing():\n    if (\n        Configs.challenge_visibility == ChallengeVisibilityTypes.PUBLIC\n        and authed() is False\n    ):\n        pass\n    else:\n        if is_teams_mode() and get_current_team() is None:\n            return redirect(url_for(\"teams.private\", next=request.full_path))\n\n    infos = get_infos()\n    errors = get_errors()\n\n    if ctf_started() is False:\n        errors.append(f\"{Configs.ctf_name} has not started yet\")\n\n    if ctf_paused() is True:\n        infos.append(f\"{Configs.ctf_name} is paused\")\n\n    if ctf_ended() is True:\n        infos.append(f\"{Configs.ctf_name} has ended\")\n\n    return render_template(\"challenges.html\", infos=infos, errors=errors)",
+      "file": "CTFd/challenges.py",
+      "start": 23,
+      "qualname": "listing"
+     },
+     {
+      "id": "ctfd:CTFd/constants/plugins.py:10",
+      "score": 0.643,
+      "text": "# CTFd/constants/plugins.py:10-23  _PluginWrapper.scripts\n    def scripts(self):\n        application_root = current_app.config.get(\"APPLICATION_ROOT\")\n        subdir = application_root != \"/\"\n        scripts = []\n        for script in get_registered_scripts():\n            if script.startswith(\"http\"):\n                scripts.append(f'<script defer src=\"{script}\"></script>')\n            elif subdir:\n                scripts.append(\n                    f'<script defer src=\"{application_root}/{script}\"></script>'\n                )\n            else:\n                scripts.append(f'<script defer src=\"{script}\"></script>')\n        return markup(\"\\n\".join(scripts))",
+      "file": "CTFd/constants/plugins.py",
+      "start": 10,
+      "qualname": "_PluginWrapper.scripts"
+     },
+     {
+      "id": "ctfd:CTFd/utils/config/integrations.py:12",
+      "score": 0.638,
+      "text": "# CTFd/utils/config/integrations.py:12-14  mlc_registration\ndef mlc_registration():\n    v = get_config(\"registration_visibility\")\n    return v == \"mlc\"",
+      "file": "CTFd/utils/config/integrations.py",
+      "start": 12,
+      "qualname": "mlc_registration"
+     },
+     {
+      "id": "ctfd:CTFd/schemas/unlocks.py:module",
+      "score": 0.634,
+      "text": "# CTFd/schemas/unlocks.py (module level)\nfrom CTFd.models import Unlocks, ma\nfrom CTFd.utils import string_types\nclass UnlockSchema(ma.ModelSchema):\n    class Meta:\n        model = Unlocks\n        include_fk = True\n        dump_only = (\"id\", \"date\")\n    views = {\n        \"admin\": [\"user_id\", \"target\", \"team_id\", \"date\", \"type\", \"id\"],\n        \"user\": [\"target\", \"date\", \"type\", \"id\"],\n    }",
+      "file": "CTFd/schemas/unlocks.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/plugins/challenges/__init__.py:module",
+      "score": 0.634,
+      "text": "# CTFd/plugins/challenges/__init__.py (module level)\nfrom flask import Blueprint\nfrom CTFd.models import (\n    ChallengeFiles,\n    Challenges,\n    Fails,\n    Flags,\n    Hints,\n    Solves,\n    Tags,\n    db,\n)\nfrom CTFd.plugins import register_plugin_assets_directory\nfrom CTFd.plugins.flags import FlagException, get_flag_class\nfrom CTFd.utils.uploads import delete_file\nfrom CTFd.utils.user import get_ip\nclass BaseChallenge(object):\n    id = None\n    name = None\n    templates = {}\n    scripts = {}\n    challenge_model = Challenges\n    @classmethod\n    @classmethod\n    @classmethod\n    @classmethod\n    @classmethod\n    @classmethod\n    @classmethod\nclass CTFdStandardChallenge(BaseChallenge):\n    id = \"standard\"  # Unique identifier used to register challenges\n    name = \"standard\"  # Name of a challenge type\n    templates = {  # Templates used for each aspect of challenge editing & viewing\n        \"create\": \"/plugins/challenges/assets/create.html\",\n        \"update\": \"/plugins/challenges/assets/update.html\",\n        \"view\": \"/plugins/challenges/assets/view.html\",\n    }\n    scripts = {  # Scripts that are loaded when a template is loaded\n        \"create\": \"/plugins/challenges/assets/create.js\",\n        \"update\": \"/plugins/challenges/assets/update.js\",\n        \"view\": \"/plugins/challenges/assets/view.js\",\n    }\n    # Route at which files are accessible. This must be registered using register_plugin_assets_directory()\n    route = \"/plugins/challenges/assets/\"\n    # Blueprint used to access the static_folder directory.\n    blueprint = Blueprint(\n        \"standard\", __name__, template_folder=\"templates\", static_folder=\"assets\"\n    )\n    challenge_model = Challenges\n\"\"\"\nGlobal dictionary used to hold all the Challenge Type classes used by CTFd. Insert into this dictionary to register\nyour Challenge Type.\n\"\"\"\nCHALLENGE_CLASSES = {\"standard\": CTFdStandardChallenge}",
+      "file": "CTFd/plugins/challenges/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "TemplateLookup.get_template",
+     "get_template",
+     "Template.__init__",
+     "re.sub",
+     "posixpath.join"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1994,
+   "tokens_out": 58,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"TemplateLookup.get_template\", \"get_template\", \"Template.__init__\", \"re.sub\", \"posixpath.join\"]}",
+     "in": 1994,
+     "out": 58,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1926,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1926,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3920,
+  "tokens_out": 94,
+  "cost_usd_est": 0.0,
+  "seconds": 0.19
+ },
+ "created": "2026-11-10T00:06:17+00:00",
+ "code_version": "a3e1ef4"
+}

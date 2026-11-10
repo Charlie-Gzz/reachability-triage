@@ -1,0 +1,376 @@
+{
+ "finding_id": "mealie/pillow@10.2.0/PYSEC-2026-3451",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-59199",
+   "GHSA-6r8x-57c9-28j4",
+   "PYSEC-2026-3451"
+  ],
+  "cves": [
+   "CVE-2026-59199"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "mealie/pillow@10.2.0/PYSEC-2026-3451",
+  "first_fixed_above_installed": "12.3.0",
+  "fixed_versions": [
+   "12.3.0"
+  ],
+  "max_cvss": "7.5",
+  "package": "pillow",
+  "published": "2026-07-14T16:17:01.937Z",
+  "summary": "Pillow is a Python imaging library. Prior to 12.3.0, Pillow public image coordinate APIs can trigger a native heap out-of-bounds write when given coordinates near the signed 32-bit integer limits in I",
+  "target": "mealie",
+  "version": "10.2.0",
+  "vuln_id": "PYSEC-2026-3451"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "int",
+   "Image.crop",
+   "Image.alpha_composite",
+   "Image.paste",
+   "ImagingCore.paste"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/pkgs/img/minify.py:6",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "int",
+  "Image.crop",
+  "Image.alpha_composite",
+  "Image.paste",
+  "ImagingCore.paste",
+  "ImagingPaste",
+  "paste",
+  "crop"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pillow@10.2.0/PYSEC-2026-3451",
+    "package": "pillow",
+    "version": "10.2.0",
+    "vuln_id": "PYSEC-2026-3451",
+    "aliases": [
+     "CVE-2026-59199",
+     "GHSA-6r8x-57c9-28j4",
+     "PYSEC-2026-3451"
+    ],
+    "summary": "Pillow is a Python imaging library. Prior to 12.3.0, Pillow public image coordinate APIs can trigger a native heap out-of-bounds write when given coordinates near the signed 32-bit integer limits in I",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "12.3.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 39.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-6r8x-57c9-28j4#1",
+      "score": 0.82,
+      "text": "GHSA-6r8x-57c9-28j4 (pillow) details:\n### Summary\n\nPillow's public image coordinate APIs can trigger a native heap out-of-bounds\nwrite when given coordinates near the signed 32-bit integer limits. In 4-byte\npixel modes such as `RGBA`, this becomes a controlled backward heap underwrite:\nfor a source image of width `W`, Pillow writes `4 * W` attacker-controlled bytes\nstarting `4 * W` bytes before the destination row pointer. With successful large\nimage allocation, the theoretical upper bound is ~2 GiB backwards from\nthe destination row.\n\nMinimal public API trigger:\n\n```python\nfrom PIL import Image\n\nINT_MIN = -(1 << 31)\n\nsrc = Image.new(\"RGBA\", (2, 1), (0x41, 0x42, 0x43, 0x44))\ndst = Image.new(\"RGBA\", (8, 1))\ndst.paste(src, ((1 << 31) - 2, 0, INT_MIN, 1))\n```\n\nThe same root cause is also reachable through `Image.crop()` and\n`Image.alpha_composite()`. No private API, ctypes, custom Python object, or\nmalformed image file is needed.",
+      "vuln_id": "GHSA-6r8x-57c9-28j4"
+     },
+     {
+      "id": "GHSA-6r8x-57c9-28j4#10",
+      "score": 0.792,
+      "text": "GHSA-6r8x-57c9-28j4 (pillow) details:\nApplications are impacted if an untrusted user can control image operation\ncoordinates passed to Pillow, for example crop boxes, paste boxes, or overlay\npositions. The bytes written in the direct `Image.paste()` variant are copied\nfrom the source image, so attacker-controlled source pixels can influence the\nout-of-bounds write. For `RGBA`, the write is a backward heap underwrite whose\noffset and length are both `4 * source_width`, bounded in practice by successful\nimage allocation and heap layout.",
+      "vuln_id": "GHSA-6r8x-57c9-28j4"
+     },
+     {
+      "id": "GHSA-6r8x-57c9-28j4#0",
+      "score": 0.79,
+      "text": "GHSA-6r8x-57c9-28j4 (CVE-2026-59199)\npackage: pillow\nsummary: Pillow: Heap out-of-bounds write `Image.paste()` / `Image.crop()` via signed coordinate overflow\naffected: >=0, <12.3.0",
+      "vuln_id": "GHSA-6r8x-57c9-28j4"
+     },
+     {
+      "id": "GHSA-6r8x-57c9-28j4#2",
+      "score": 0.77,
+      "text": "GHSA-6r8x-57c9-28j4 (pillow) details:\nThis has been confirmed as an ASAN heap-buffer-overflow write. On normal\nnon-ASAN Pillow builds, the minimal trigger corrupts the heap and aborts with\n`double free or corruption (out)`\n\n### Details\n\n`src/PIL/Image.py:paste()` accepts a 4-tuple box and passes it to the native\n`ImagingCore.paste()` method:\n\n```python\nself.im.paste(source, box)\n```\n\n`src/_imaging.c:_paste()` parses the four Python coordinates into signed `int`\nvalues and calls `ImagingPaste()`:\n\n```c\nint x0, y0, x1, y1;\nPyArg_ParseTuple(args, \"O(iiii)|O!\", &source, &x0, &y0, &x1, &y1, ...);\nstatus = ImagingPaste(self->image, PyImaging_AsImaging(source), ..., x0, y0, x1, y1);\n```\n\n`src/libImaging/Paste.c:ImagingPaste()` computes and clips the region using\nsigned `int` arithmetic:\n\n```c\nxsize = dx1 - dx0;\nysize = dy1 - dy0;\n\nif (dx0 + xsize > imOut->xsize) {\n    xsize = imOut->xsize - dx0;\n}\n```",
+      "vuln_id": "GHSA-6r8x-57c9-28j4"
+     },
+     {
+      "id": "GHSA-5gm3-px64-rw72#1",
+      "score": 0.851,
+      "text": "GHSA-5gm3-px64-rw72 (pillow) details:\nThere is a DoS vulnerability in Pillow before 6.2.2 caused by FpxImagePlugin.py calling the range function on an unvalidated 32-bit integer if the number of bands is large. On Windows running 32-bit Python, this results in an OverflowError or MemoryError due to the 2 GB limit. However, on Linux running 64-bit Python this results in the process being terminated by the OOM killer.",
+      "vuln_id": "GHSA-5gm3-px64-rw72"
+     },
+     {
+      "id": "GHSA-rwr3-c2q8-gm56#1",
+      "score": 0.825,
+      "text": "GHSA-rwr3-c2q8-gm56 (pillow) details:\nPillow before 3.3.2 allows context-dependent attackers to obtain sensitive information by using the \"crafted image file\" approach, related to an \"Integer Overflow\" issue affecting the `Image.core.map_buffer` in `map.c` component.",
+      "vuln_id": "GHSA-rwr3-c2q8-gm56"
+     }
+    ],
+    "symbols": [
+     "int",
+     "Image.crop",
+     "Image.alpha_composite",
+     "Image.paste",
+     "ImagingCore.paste",
+     "ImagingPaste",
+     "paste",
+     "crop"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 72.6,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [
+     "int",
+     "Image.crop",
+     "Image.alpha_composite",
+     "Image.paste",
+     "ImagingCore.paste",
+     "ImagingPaste",
+     "paste",
+     "crop"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/pkgs/img/minify.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 10,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "code": "img = Image.open(image)",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pillow: imported in 1 non-test location(s); 10 package call/reference site(s); named vulnerable symbols ['int', 'Image.crop', 'Image.alpha_composite', 'Image.paste', 'ImagingCore.paste', 'ImagingPaste', 'paste', 'crop']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 39.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:87",
+      "score": 0.745,
+      "text": "# mealie/pkgs/img/minify.py:87-127  PillowMinifier.minify\n    def minify(self, image_file: Path, force=True):\n        if not image_file.exists():\n            raise FileNotFoundError(f\"{image_file.name} does not exist\")\n\n        org_dest = image_file.parent.joinpath(\"original.webp\")\n        min_dest = image_file.parent.joinpath(\"min-original.webp\")\n        tiny_dest = image_file.parent.joinpath(\"tiny-original.webp\")\n\n        if not force and min_dest.exists() and tiny_dest.exists() and org_dest.exists():\n            self._logger.info(f\"{image_file.name} already minified\")\n            return\n\n        success = False\n\n        if self._opts.original:\n            if not force and org_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, org_dest, quality=70)\n                success = True\n\n        if self._opts.miniature:\n            if not force and min_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, min_dest, quality=70)\n                self._logger.info(f\"{image_file.name} minified\")\n                success = True\n\n        if self._opts.tiny:\n            if not force and tiny_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                img = Image.open(image_file)\n                tiny_image = PillowMinifier.crop_center(img)\n                tiny_image.save(tiny_dest, FORMAT, quality=70)\n                self._logger.info(\"Tiny image saved\")\n                success = True\n\n        if self._purge and success:\n            self.purge(image_file)",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 87,
+      "qualname": "PillowMinifier.minify"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:module",
+      "score": 0.734,
+      "text": "# mealie/pkgs/img/minify.py (module level)\nfrom abc import ABC, abstractmethod\nfrom dataclasses import dataclass\nfrom logging import Logger\nfrom pathlib import Path\nfrom PIL import Image\nWEBP = \".webp\"\nFORMAT = \"WEBP\"\nIMAGE_EXTENSIONS = {\".jpg\", \".jpeg\", \".png\", \".webp\"}\n@dataclass\nclass MinifierOptions:\n    original: bool = True\n    miniature: bool = True\n    tiny: bool = True\nclass ABCMinifier(ABC):\n    @abstractmethod\nclass PillowMinifier(ABCMinifier):\n    @staticmethod\n    @staticmethod",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:63",
+      "score": 0.724,
+      "text": "# mealie/pkgs/img/minify.py:63-73  PillowMinifier.to_webp\n    def to_webp(image_file: Path, dest: Path | None = None, quality: int = 100) -> Path:\n        \"\"\"\n        Converts an image to the webp format in-place. The original image is not\n        removed By default, the quality is set to 100.\n        \"\"\"\n        img = Image.open(image_file)\n\n        dest = dest or image_file.with_suffix(WEBP)\n        img.save(dest, FORMAT, quality=quality)\n\n        return dest",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 63,
+      "qualname": "PillowMinifier.to_webp"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:118",
+      "score": 0.715,
+      "text": "# mealie/services/recipe/recipe_data_service.py:118-167  RecipeDataService.scrape_image\n    async def scrape_image(self, image_url) -> None:\n        self.logger.info(f\"Image URL: {image_url}\")\n\n        if not self._validate_image_url(image_url):\n            self.logger.error(f\"Invalid image URL: {image_url}\")\n            raise InvalidDomainError(f\"Invalid domain: {image_url}\")\n\n        if isinstance(image_url, str):  # Handles String Types\n            pass\n\n        elif isinstance(image_url, list):  # Handles List Types\n            # Multiple images have been defined in the schema - usually different resolutions\n            # Typically would be in smallest->biggest order, but can't be certain so test each.\n            # 'Google will pick the best image to display in Search results based on the aspect ratio and resolution.'\n            image_url, _ = await largest_content_len(image_url)\n\n        elif isinstance(image_url, dict):  # Handles Dictionary Types\n            for key in image_url:\n                if key == \"url\":\n                    image_url = image_url.get(\"url\")\n\n        ext = image_url.split(\".\")[-1]\n\n        if ext not in img.IMAGE_EXTENSIONS:\n            ext = \"jpg\"  # Guess the extension\n\n        file_name = f\"{str(self.recipe_id)}.{ext}\"\n        file_path = Recipe.directory_from_id(self.recipe_id).joinpath(\"images\", file_name)\n\n        async with AsyncClient() as client:\n            try:\n                r = await client.get(image_url, headers={\"User-Agent\": _FIREFOX_UA})\n            except Exception:\n                self.logger.exception(\"Fatal Image Request Exception\")\n                return None\n\n            if r.status_code != 200:\n                # TODO: Probably should throw an exception in this case as well, but before these changes\n                # we were returning None if it failed anyways.\n                return None\n\n            content_type = r.headers.get(\"content-type\", \"\")\n\n            if \"image\" not in content_type:\n                self.logger.error(f\"Content-Type: {content_type} is not an image\")\n                raise NotAnImageError(f\"Content-Type {content_type} is not an image\")\n\n            self.logger.debug(f\"File Name Suffix {file_path.suffix}\")\n            self.write_image(r.read(), file_path.suffix)\n            file_path.unlink(missing_ok=True)",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 118,
+      "qualname": "RecipeDataService.scrape_image"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:76",
+      "score": 0.715,
+      "text": "# mealie/pkgs/img/minify.py:76-85  PillowMinifier.crop_center\n    def crop_center(pil_img: Image, crop_width=300, crop_height=300):\n        img_width, img_height = pil_img.size\n        return pil_img.crop(\n            (\n                (img_width - crop_width) // 2,\n                (img_height - crop_height) // 2,\n                (img_width + crop_width) // 2,\n                (img_height + crop_height) // 2,\n            )\n        )",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 76,
+      "qualname": "PillowMinifier.crop_center"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "int",
+     "Image.crop",
+     "Image.alpha_composite",
+     "Image.paste",
+     "ImagingCore.paste"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:6",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2429,
+   "tokens_out": 74,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/pkgs/img/minify.py:6\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"int\", \"Image.crop\", \"Image.alpha_composite\", \"Image.paste\", \"ImagingCore.paste\"]}",
+     "in": 2429,
+     "out": 74,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 2372,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2372,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4801,
+  "tokens_out": 110,
+  "cost_usd_est": 0.0,
+  "seconds": 0.16
+ },
+ "created": "2026-11-10T00:06:26+00:00",
+ "code_version": "a3e1ef4"
+}

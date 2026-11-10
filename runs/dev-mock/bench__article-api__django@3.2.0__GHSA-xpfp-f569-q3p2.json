@@ -1,0 +1,414 @@
+{
+ "finding_id": "bench/article-api/django@3.2.0/GHSA-xpfp-f569-q3p2",
+ "config": "dev-mock",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/article-api",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-35042",
+   "GHSA-xpfp-f569-q3p2",
+   "PYSEC-2021-109"
+  ],
+  "cves": [
+   "CVE-2021-35042"
+  ],
+  "cwes": [
+   "CWE-89"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/article-api/django@3.2.0/GHSA-xpfp-f569-q3p2",
+  "first_fixed_above_installed": "3.2.5",
+  "fixed_versions": [
+   "3.1.13",
+   "3.2.5"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "django",
+  "published": "2021-09-22T17:34:49Z",
+  "split": "test",
+  "summary": "SQL Injection in Django",
+  "target": "bench/article-api",
+  "version": "3.2.0",
+  "vuln_id": "GHSA-xpfp-f569-q3p2"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "QuerySet.order_by",
+   "QuerySet",
+   "order_by"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "articles/models.py:1",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "articles/urls.py:1",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "articles/views.py:1",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "QuerySet.order_by",
+  "QuerySet",
+  "order_by"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/article-api/django@3.2.0/GHSA-xpfp-f569-q3p2",
+    "package": "django",
+    "version": "3.2.0",
+    "vuln_id": "GHSA-xpfp-f569-q3p2",
+    "aliases": [
+     "CVE-2021-35042",
+     "GHSA-xpfp-f569-q3p2",
+     "PYSEC-2021-109"
+    ],
+    "summary": "SQL Injection in Django",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "3.1.13",
+     "3.2.5"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 25.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-xpfp-f569-q3p2#0",
+      "score": 0.822,
+      "text": "GHSA-xpfp-f569-q3p2 (CVE-2021-35042)\npackage: django\nsummary: SQL Injection in Django\naffected: >=3.0a1, <3.1.13; >=3.2a1, <3.2.5",
+      "vuln_id": "GHSA-xpfp-f569-q3p2"
+     },
+     {
+      "id": "GHSA-xpfp-f569-q3p2#1",
+      "score": 0.729,
+      "text": "GHSA-xpfp-f569-q3p2 (django) details:\nDjango 3.1.x before 3.1.13 and 3.2.x before 3.2.5 allows QuerySet.order_by SQL injection if order_by is untrusted input from a client of a web application.",
+      "vuln_id": "GHSA-xpfp-f569-q3p2"
+     },
+     {
+      "id": "GHSA-p64x-8rxx-wf6q#0",
+      "score": 0.833,
+      "text": "GHSA-p64x-8rxx-wf6q (CVE-2022-34265)\npackage: django\nsummary: Django `Trunc()` and `Extract()` database functions vulnerable to SQL Injection\naffected: >=3.2a1, <3.2.14; >=4.0a1, <4.0.6",
+      "vuln_id": "GHSA-p64x-8rxx-wf6q"
+     },
+     {
+      "id": "GHSA-pv4p-cwwg-4rph#0",
+      "score": 0.824,
+      "text": "GHSA-pv4p-cwwg-4rph (CVE-2024-42005)\npackage: django\nsummary: Django SQL injection vulnerability\naffected: >=4.2, <4.2.15; >=5.0, <5.0.8",
+      "vuln_id": "GHSA-pv4p-cwwg-4rph"
+     }
+    ],
+    "symbols": [
+     "QuerySet.order_by",
+     "QuerySet",
+     "order_by"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 4.4,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "QuerySet.order_by",
+     "QuerySet",
+     "order_by"
+    ],
+    "imported": true,
+    "import_locations": [
+     "articles/models.py:1",
+     "articles/urls.py:1",
+     "articles/views.py:1",
+     "manage.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 12,
+    "vulnerable_call_sites": [
+     {
+      "file": "articles/views.py",
+      "line": 8,
+      "code": "rows = Article.objects.order_by(sort).values(\"id\", \"title\", \"published\")[:50]",
+      "resolved": "articles.models.Article.objects.order_by",
+      "function": "articles.views:article_list",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "articles.views:article_list"
+      ],
+      "snippet": "    5  \n    6  def article_list(request):\n    7      sort = request.GET.get(\"sort\", \"-published\")\n    8      rows = Article.objects.order_by(sort).values(\"id\", \"title\", \"published\")[:50]\n    9      return JsonResponse({\"results\": list(rows)})"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "articles/models.py:4",
+      "code": "class Article(models.Model):",
+      "function": "articles.models:<module>",
+      "in_test": false
+     },
+     {
+      "location": "articles/models.py:5",
+      "code": "title = models.CharField(max_length=200)",
+      "function": "articles.models:<module>",
+      "in_test": false
+     },
+     {
+      "location": "articles/models.py:6",
+      "code": "published = models.DateTimeField()",
+      "function": "articles.models:<module>",
+      "in_test": false
+     },
+     {
+      "location": "articles/models.py:7",
+      "code": "views = models.IntegerField(default=0)",
+      "function": "articles.models:<module>",
+      "in_test": false
+     },
+     {
+      "location": "articles/urls.py:5",
+      "code": "urlpatterns = [path(\"articles/\", views.article_list)]",
+      "function": "articles.urls:<module>",
+      "in_test": false
+     },
+     {
+      "location": "articles/views.py:9",
+      "code": "return JsonResponse({\"results\": list(rows)})",
+      "function": "articles.views:article_list",
+      "in_test": false
+     },
+     {
+      "location": "manage.py:7",
+      "code": "execute_from_command_line(sys.argv)",
+      "function": "manage:<main>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 3,
+    "paths": [
+     [
+      "articles.views:article_list"
+     ]
+    ],
+    "summary": "django: imported in 4 non-test location(s); 12 package call/reference site(s); named vulnerable symbols ['QuerySet.order_by', 'QuerySet', 'order_by']; 0 production call site(s) of those symbols (+1 weak name-only), 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 22.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:articles/views.py:8",
+      "score": 1.0,
+      "file": "articles/views.py",
+      "start": 8,
+      "qualname": "articles.views:article_list",
+      "text": "# articles/views.py around line 8\n    5  \n    6  def article_list(request):\n    7      sort = request.GET.get(\"sort\", \"-published\")\n    8      rows = Article.objects.order_by(sort).values(\"id\", \"title\", \"published\")[:50]\n    9      return JsonResponse({\"results\": list(rows)})"
+     },
+     {
+      "id": "bench/article-api:articles/models.py:module",
+      "score": 0.654,
+      "text": "# articles/models.py (module level)\nfrom django.db import models\nclass Article(models.Model):\n    title = models.CharField(max_length=200)\n    published = models.DateTimeField()\n    views = models.IntegerField(default=0)",
+      "file": "articles/models.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/article-api:articles/views.py:6",
+      "score": 0.653,
+      "text": "# articles/views.py:6-9  article_list\ndef article_list(request):\n    sort = request.GET.get(\"sort\", \"-published\")\n    rows = Article.objects.order_by(sort).values(\"id\", \"title\", \"published\")[:50]\n    return JsonResponse({\"results\": list(rows)})",
+      "file": "articles/views.py",
+      "start": 6,
+      "qualname": "article_list"
+     },
+     {
+      "id": "bench/article-api:articles/urls.py:module",
+      "score": 0.648,
+      "text": "# articles/urls.py (module level)\nfrom django.urls import path\nfrom articles import views\nurlpatterns = [path(\"articles/\", views.article_list)]",
+      "file": "articles/urls.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/article-api:manage.py:module",
+      "score": 0.643,
+      "text": "# manage.py (module level)\nimport os\nimport sys\nif __name__ == \"__main__\":\n    os.environ.setdefault(\"DJANGO_SETTINGS_MODULE\", \"articles.settings\")\n    from django.core.management import execute_from_command_line\n    execute_from_command_line(sys.argv)",
+      "file": "manage.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/article-api:articles/settings.py:module",
+      "score": 0.64,
+      "text": "# articles/settings.py (module level)\nSECRET_KEY = \"dev\"\nDEBUG = False\nALLOWED_HOSTS = [\"*\"]\nINSTALLED_APPS = [\"django.contrib.contenttypes\", \"django.contrib.auth\", \"articles\"]\nROOT_URLCONF = \"articles.urls\"\nDATABASES = {\"default\": {\"ENGINE\": \"django.db.backends.sqlite3\", \"NAME\": \"db.sqlite3\"}}",
+      "file": "articles/settings.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "QuerySet.order_by",
+     "QuerySet",
+     "order_by"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "articles/models.py:1",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "articles/urls.py:1",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "articles/views.py:1",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1047,
+   "tokens_out": 98,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"articles/models.py:1\", \"explanation\": \"static evidence\"}, {\"location\": \"articles/urls.py:1\", \"explanation\": \"static evidence\"}, {\"location\": \"articles/views.py:1\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"QuerySet.order_by\", \"QuerySet\", \"order_by\"]}",
+     "in": 1047,
+     "out": 98,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.7,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1008,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1008,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2055,
+  "tokens_out": 134,
+  "cost_usd_est": 0.0,
+  "seconds": 0.06
+ },
+ "created": "2026-11-10T00:06:35+00:00",
+ "code_version": "a3e1ef4"
+}

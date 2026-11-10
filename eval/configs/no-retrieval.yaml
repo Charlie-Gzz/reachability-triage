@@ -1,0 +1,6 @@
+# Ablation: advisory details and code snippets not retrieved; only the scanner summary + static evidence.
+provider: {provider: claude-code, model: sonnet}
+retrieval: false
+reflection: true
+store: chroma
+max_retries: 1

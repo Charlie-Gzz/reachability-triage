@@ -1,0 +1,443 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/GHSA-crhf-3pfg-w68w",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-53877",
+   "GHSA-crhf-3pfg-w68w"
+  ],
+  "cves": [
+   "CVE-2026-53877"
+  ],
+  "cwes": [
+   "CWE-805"
+  ],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/GHSA-crhf-3pfg-w68w",
+  "first_fixed_above_installed": "5.2.16",
+  "fixed_versions": [
+   "5.2.16",
+   "6.0.7"
+  ],
+  "max_cvss": "6.3",
+  "package": "django",
+  "published": "2026-07-07T15:32:57Z",
+  "summary": " Django: GDALRaster may over-read heap memory when constructed from bytes",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "GHSA-crhf-3pfg-w68w"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "django.contrib.gis.gdal.GDALRaster",
+   "vsi_buffer"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/accounts/admin.py:1",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:2",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "django.contrib.gis.gdal.GDALRaster",
+  "vsi_buffer"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/GHSA-crhf-3pfg-w68w",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "GHSA-crhf-3pfg-w68w",
+    "aliases": [
+     "CVE-2026-53877",
+     "GHSA-crhf-3pfg-w68w"
+    ],
+    "summary": " Django: GDALRaster may over-read heap memory when constructed from bytes",
+    "max_cvss": "6.3",
+    "fixed_versions": [
+     "5.2.16",
+     "6.0.7"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 51.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-crhf-3pfg-w68w#0",
+      "score": 0.878,
+      "text": "GHSA-crhf-3pfg-w68w (CVE-2026-53877)\npackage: django\nsummary:  Django: GDALRaster may over-read heap memory when constructed from bytes\naffected: >=0, <5.2.16; >=6.0.0, <6.0.7",
+      "vuln_id": "GHSA-crhf-3pfg-w68w"
+     },
+     {
+      "id": "GHSA-crhf-3pfg-w68w#1",
+      "score": 0.859,
+      "text": "GHSA-crhf-3pfg-w68w (django) details:\nAn issue was discovered in Django 6.0 before 6.0.7 and 5.2 before 5.2.16.\n`django.contrib.gis.gdal.GDALRaster` over-reads its in-memory buffer when constructed from a bytes object, which can disclose adjacent memory or cause service degradation via a potential segmentation fault when the `vsi_buffer` property is accessed.\nEarlier, unsupported Django series (such as 5.0.x, 4.1.x, and 3.2.x) were not evaluated and may also be affected.\nDjango would like to thank Bence Nagy for reporting this issue.",
+      "vuln_id": "GHSA-crhf-3pfg-w68w"
+     },
+     {
+      "id": "GHSA-jh75-99hh-qvx9#0",
+      "score": 0.813,
+      "text": "GHSA-jh75-99hh-qvx9 (CVE-2024-41989)\npackage: django\nsummary: Django memory consumption vulnerability\naffected: >=4.2, <4.2.15; >=5.0, <5.0.8",
+      "vuln_id": "GHSA-jh75-99hh-qvx9"
+     },
+     {
+      "id": "GHSA-vrcr-9hj9-jcg6#0",
+      "score": 0.8,
+      "text": "GHSA-vrcr-9hj9-jcg6 (CVE-2025-64460)\npackage: django\nsummary: Django is vulnerable to DoS via XML serializer text extraction\naffected: >=4.2a1, <4.2.27; >=5.1a1, <5.1.15; >=5.2a1, <5.2.9",
+      "vuln_id": "GHSA-vrcr-9hj9-jcg6"
+     }
+    ],
+    "symbols": [
+     "django.contrib.gis.gdal.GDALRaster",
+     "vsi_buffer"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 96.7,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "django.contrib.gis.gdal.GDALRaster",
+     "vsi_buffer"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols ['django.contrib.gis.gdal.GDALRaster', 'vsi_buffer']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 36.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/lib/badges.py:module",
+      "score": 0.686,
+      "text": "# hc/lib/badges.py (module level)\nfrom django.conf import settings\nfrom django.core.signing import base64_hmac\nfrom django.template.loader import render_to_string\nfrom django.urls import reverse\nWIDTHS = {\n    \"a\": 7,\n    \"b\": 7,\n    \"c\": 6,\n    \"d\": 7,\n    \"e\": 6,\n    \"f\": 4,\n    \"g\": 7,\n    \"h\": 7,\n    \"i\": 3,\n    \"j\": 3,\n    \"k\": 7,\n    \"l\": 3,\n    \"m\": 10,\n    \"n\": 7,\n    \"o\": 7,\n    \"p\": 7,\n    \"q\": 7,\n    \"r\": 4,\n    \"s\": 6,\n    \"t\": 5,\n    \"u\": 7,\n    \"v\": 7,\n    \"w\": 9,\n    \"x\": 6,\n    \"y\": 7,\n    \"z\": 7,\n    \"0\": 7,\n    \"1\": 6,\n    \"2\": 7,\n    \"3\": 7,\n    \"4\": 7,\n    \"5\": 7,\n    \"6\": 7,\n    \"7\": 7,\n    \"8\": 7,\n    \"9\": 7,\n    \"A\": 8,\n    \"B\": 7,\n    \"C\": 8,\n    \"D\": 8,\n    \"E\": 7,\n    \"F\": 6,\n    \"G\": 9,\n    \"H\": 8,\n    \"I\": 3,\n    \"J\": 4,\n    \"K\": 7,\n    \"L\": 6,\n    \"M\": 10,\n    \"N\": 8,\n    \"O\": 9,\n    \"P\": 6,\n    \"Q\": 9,\n    \"R\": 7,\n    \"S\": 7,",
+      "file": "hc/lib/badges.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/api/urls.py:module",
+      "score": 0.682,
+      "text": "# hc/api/urls.py (module level)\nfrom urllib.parse import quote, unquote\nfrom django.urls import include, path, register_converter\nfrom hc.api import views\nclass QuoteConverter:\n    regex = r\"[\\w%~_.-]+\"\nclass SHA1Converter:\n    regex = \"[A-z0-9]{40}\"\nregister_converter(QuoteConverter, \"quoted\")\nregister_converter(SHA1Converter, \"sha1\")\nuuid_urls = [\n    path(\"\", views.ping),\n    path(\"fail\", views.ping, {\"action\": \"fail\"}),\n    path(\"start\", views.ping, {\"action\": \"start\"}),\n    path(\"<int:exitstatus>\", views.ping),\n]\nslug_urls = [\n    path(\"fail\", views.ping_by_slug, {\"action\": \"fail\"}),\n    path(\"start\", views.ping_by_slug, {\"action\": \"start\"}),\n    path(\"<int:exitstatus>\", views.ping_by_slug),\n]\nurlpatterns = [\n    path(\"ping/<uuid:code>\", views.ping),\n    path(\"ping/<uuid:code>/\", include(uuid_urls)),\n    path(\"ping/<slug:ping_key>/<slug:slug>\", views.ping_by_slug),\n    path(\"ping/<slug:ping_key>/<slug:slug>/\", include(slug_urls)),\n    path(\"api/v1/checks/\", views.checks),\n    path(\"api/v1/checks/<uuid:code>\", views.single, name=\"hc-api-single\"),\n    path(\"api/v1/checks/<sha1:unique_key>\", views.get_check_by_unique_key),\n    path(\"api/v1/checks/<uuid:code>/pause\", views.pause, name=\"hc-api-pause\"),\n    path(\n        \"api/v1/notifications/<uuid:code>/status\",\n        views.notification_status,\n        name=\"hc-api-notification-status\",\n    ),\n    path(\"api/v1/checks/<uuid:code>/pings/\", views.pings, name=\"hc-api-pings\"),\n    path(\"api/v1/checks/<uuid:code>/flips/\", views.flips_by_uuid, name=\"hc-api-flips\"),\n    path(\"api/v1/checks/<sha1:unique_key>/flips/\", views.flips_by_unique_key),\n    path(\"api/v1/channels/\", views.channels),\n    path(\"api/v1/badges/\", views.badges),\n    path(\n        \"badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.<slug:fmt>\",\n        views.badge,\n        name=\"hc-badge\",\n    ),\n    path(\n        \"badge/<slug:badge_key>/<slug:signature>.<slug:fmt>\",\n        views.badge,\n        {\"tag\": \"*\"},\n        name=\"hc-badge-all\",\n    ),\n    path(\"api/v1/metrics/\", views.metrics),\n    path(\"api/v1/status/\", views.status),\n]",
+      "file": "hc/api/urls.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/api/tests/test_notify_pagertree.py:module",
+      "score": 0.663,
+      "text": "# hc/api/tests/test_notify_pagertree.py (module level)\n# coding: utf-8\nfrom datetime import timedelta as td\nfrom unittest.mock import patch\nfrom django.utils.timezone import now\nfrom hc.api.models import Channel, Check, Notification\nfrom hc.test import BaseTestCase\nfrom django.test.utils import override_settings\nclass NotifyPagertreeTestCase(BaseTestCase):\n    @patch(\"hc.api.transports.requests.request\")\n    @override_settings(PAGERTREE_ENABLED=False)",
+      "file": "hc/api/tests/test_notify_pagertree.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/lib/emails.py:module",
+      "score": 0.66,
+      "text": "# hc/lib/emails.py (module level)\nfrom smtplib import SMTPServerDisconnected, SMTPDataError\nfrom threading import Thread\nimport time\nfrom django.conf import settings\nfrom django.core.mail import EmailMultiAlternatives\nfrom django.template.loader import render_to_string as render\nclass EmailThread(Thread):\n    MAX_TRIES = 3",
+      "file": "hc/lib/emails.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/api/transports.py:33",
+      "score": 0.652,
+      "text": "# hc/api/transports.py:33-37  tmpl\ndef tmpl(template_name, **ctx) -> str:\n    template_path = \"integrations/%s\" % template_name\n    # \\xa0 is non-breaking space. It causes SMS messages to use UCS2 encoding\n    # and cost twice the money.\n    return render_to_string(template_path, ctx).strip().replace(\"\\xa0\", \" \")",
+      "file": "hc/api/transports.py",
+      "start": 33,
+      "qualname": "tmpl"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "django.contrib.gis.gdal.GDALRaster",
+     "vsi_buffer"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/accounts/admin.py:1",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:2",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1652,
+   "tokens_out": 102,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/accounts/admin.py:1\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:2\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"django.contrib.gis.gdal.GDALRaster\", \"vsi_buffer\"]}",
+     "in": 1652,
+     "out": 102,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1615,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1615,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3267,
+  "tokens_out": 138,
+  "cost_usd_est": 0.0,
+  "seconds": 0.19
+ },
+ "created": "2026-11-10T00:06:09+00:00",
+ "code_version": "a3e1ef4"
+}

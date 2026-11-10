@@ -1,0 +1,306 @@
+{
+ "finding_id": "mealie/urllib3@1.26.14/GHSA-gm62-xv2j-4w53",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-66418",
+   "GHSA-gm62-xv2j-4w53",
+   "PYSEC-2026-1998"
+  ],
+  "cves": [
+   "CVE-2025-66418"
+  ],
+  "cwes": [
+   "CWE-770"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/urllib3@1.26.14/GHSA-gm62-xv2j-4w53",
+  "first_fixed_above_installed": "2.6.0",
+  "fixed_versions": [
+   "2.6.0"
+  ],
+  "max_cvss": "8.9",
+  "package": "urllib3",
+  "published": "2025-12-05T18:15:19Z",
+  "summary": "urllib3 allows an unbounded number of links in the decompression chain",
+  "target": "mealie",
+  "version": "1.26.14",
+  "vuln_id": "GHSA-gm62-xv2j-4w53"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "preload_content"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "preload_content"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/urllib3@1.26.14/GHSA-gm62-xv2j-4w53",
+    "package": "urllib3",
+    "version": "1.26.14",
+    "vuln_id": "GHSA-gm62-xv2j-4w53",
+    "aliases": [
+     "CVE-2025-66418",
+     "GHSA-gm62-xv2j-4w53",
+     "PYSEC-2026-1998"
+    ],
+    "summary": "urllib3 allows an unbounded number of links in the decompression chain",
+    "max_cvss": "8.9",
+    "fixed_versions": [
+     "2.6.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 28.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-gm62-xv2j-4w53#0",
+      "score": 0.899,
+      "text": "GHSA-gm62-xv2j-4w53 (CVE-2025-66418)\npackage: urllib3\nsummary: urllib3 allows an unbounded number of links in the decompression chain\naffected: >=1.24, <2.6.0",
+      "vuln_id": "GHSA-gm62-xv2j-4w53"
+     },
+     {
+      "id": "GHSA-gm62-xv2j-4w53#1",
+      "score": 0.861,
+      "text": "GHSA-gm62-xv2j-4w53 (urllib3) details:\n## Impact\n\nurllib3 supports chained HTTP encoding algorithms for response content according to RFC 9110 (e.g., `Content-Encoding: gzip, zstd`).\n\nHowever, the number of links in the decompression chain was unbounded allowing a malicious server to insert a virtually unlimited number of compression steps leading to high CPU usage and massive memory allocation for the decompressed data.\n\n## Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier for HTTP requests to untrusted sources unless they disable content decoding explicitly.\n\n## Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library limits the number of links to 5.",
+      "vuln_id": "GHSA-gm62-xv2j-4w53"
+     },
+     {
+      "id": "GHSA-gm62-xv2j-4w53#2",
+      "score": 0.682,
+      "text": "GHSA-gm62-xv2j-4w53 (urllib3) details:\nIf upgrading is not immediately possible, use [`preload_content=False`](https://urllib3.readthedocs.io/en/2.5.0/advanced-usage.html#streaming-and-i-o) and ensure that `resp.headers[\"content-encoding\"]` contains a safe number of encodings before reading the response content.",
+      "vuln_id": "GHSA-gm62-xv2j-4w53"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#2",
+      "score": 0.816,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\nThe decompression logic could cause urllib3 to fully decode a small amount of highly compressed data in a single operation. This can result in excessive resource consumption (high CPU usage and massive memory allocation for the decompressed data; CWE-409) on the client side, even if the application only requested a small chunk of data.\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier to stream large compressed responses or content from untrusted sources.\n\n`stream()`, `read(amt=256)`, `read1(amt=256)`, `read_chunked(amt=256)`, `readinto(b)` are examples of `urllib3.HTTPResponse` method calls using the affected logic unless decoding is disabled explicitly.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library avoids decompressing data that exceeds the requested amount.",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#2",
+      "score": 0.812,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\nHowever, for HTTP redirect responses, the library would read the entire response body to drain the connection and decompress the content unnecessarily. This decompression occurred even before any read methods were called, and configured read limits did not restrict the amount of decompressed data. As a result, there was no safeguard against decompression bombs. A malicious server could exploit this to trigger excessive resource consumption on the client (high CPU usage and large memory allocations for decompressed data; CWE-409).\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.6.2 and earlier to stream content from untrusted sources by setting `preload_content=False` when they do not disable redirects.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.3 in which the library does not decode content of redirect responses when `preload_content=False`.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     }
+    ],
+    "symbols": [
+     "preload_content"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 17.7,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "preload_content"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['preload_content']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/assets/users/__init__.py:module",
+      "score": 0.674,
+      "text": "# mealie/assets/users/__init__.py (module level)\nfrom pathlib import Path\nCWD = Path(__file__).parent\nimg_random_1 = CWD / \"random_1.webp\"\nimg_random_2 = CWD / \"random_2.webp\"\nimg_random_3 = CWD / \"random_3.webp\"",
+      "file": "mealie/assets/users/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:28",
+      "score": 0.662,
+      "text": "# mealie/services/recipe/recipe_data_service.py:28-44  largest_content_len\nasync def largest_content_len(urls: list[str]) -> tuple[str, int]:\n    largest_url = \"\"\n    largest_len = 0\n\n    async def do(client: AsyncClient, url: str) -> Response:\n        return await client.head(url, headers={\"User-Agent\": _FIREFOX_UA})\n\n    async with AsyncClient() as client:\n        tasks = [do(client, url) for url in urls]\n        responses: list[Response] = await gather_with_concurrency(10, *tasks, ignore_exceptions=True)\n        for response in responses:\n            len_int = int(response.headers.get(\"Content-Length\", 0))\n            if len_int > largest_len:\n                largest_url = str(response.url)\n                largest_len = len_int\n\n    return largest_url, largest_len",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 28,
+      "qualname": "largest_content_len"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:59",
+      "score": 0.66,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:59-60  JSONBytes.render\n    def render(self, content: bytes) -> bytes:\n        return content",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 59,
+      "qualname": "JSONBytes.render"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:208",
+      "score": 0.657,
+      "text": "# mealie/core/dependencies/dependencies.py:208-215  temporary_zip_path\nasync def temporary_zip_path() -> AsyncGenerator[Path, None]:\n    app_dirs.TEMP_DIR.mkdir(exist_ok=True, parents=True)\n    temp_path = app_dirs.TEMP_DIR.joinpath(\"my_zip_archive.zip\")\n\n    try:\n        yield temp_path\n    finally:\n        temp_path.unlink(missing_ok=True)",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 208,
+      "qualname": "temporary_zip_path"
+     },
+     {
+      "id": "mealie:mealie/routes/media/__init__.py:module",
+      "score": 0.652,
+      "text": "# mealie/routes/media/__init__.py (module level)\nfrom fastapi import APIRouter, HTTPException\nfrom fastapi.responses import FileResponse\nfrom mealie.core.config import get_app_dirs\nfrom . import media_recipe, media_user\nmedia_router = APIRouter(prefix=\"/api/media\", tags=[\"Recipe: Images and Assets\"])\nmedia_router.include_router(media_recipe.router)\nmedia_router.include_router(media_user.router)\n@media_router.get(\"/docker/validate.txt\", response_class=FileResponse)",
+      "file": "mealie/routes/media/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "preload_content"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1682,
+   "tokens_out": 39,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"preload_content\"]}",
+     "in": 1682,
+     "out": 39,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1614,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1614,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3296,
+  "tokens_out": 75,
+  "cost_usd_est": 0.0,
+  "seconds": 0.08
+ },
+ "created": "2026-11-10T00:06:33+00:00",
+ "code_version": "a3e1ef4"
+}

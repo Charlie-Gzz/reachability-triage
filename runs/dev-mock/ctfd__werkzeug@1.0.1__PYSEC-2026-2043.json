@@ -1,0 +1,376 @@
+{
+ "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2026-2043",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-34069",
+   "GHSA-2g68-c3qc-8985",
+   "PYSEC-2026-2043"
+  ],
+  "cves": [
+   "CVE-2024-34069"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2026-2043",
+  "first_fixed_above_installed": "3.0.3",
+  "fixed_versions": [
+   "3.0.3"
+  ],
+  "max_cvss": "7.5",
+  "package": "werkzeug",
+  "published": "2026-07-07T11:45:41.944642Z",
+  "summary": "Werkzeug debugger vulnerable to remote execution when interacting with attacker controlled domain",
+  "target": "ctfd",
+  "version": "1.0.1",
+  "vuln_id": "PYSEC-2026-2043"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "CTFd/__init__.py:13",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/__init__.py:14",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/errors.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2026-2043",
+    "package": "werkzeug",
+    "version": "1.0.1",
+    "vuln_id": "PYSEC-2026-2043",
+    "aliases": [
+     "CVE-2024-34069",
+     "GHSA-2g68-c3qc-8985",
+     "PYSEC-2026-2043"
+    ],
+    "summary": "Werkzeug debugger vulnerable to remote execution when interacting with attacker controlled domain",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "3.0.3"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 31.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-2g68-c3qc-8985#0",
+      "score": 0.901,
+      "text": "GHSA-2g68-c3qc-8985 (CVE-2024-34069)\npackage: werkzeug\nsummary: Werkzeug debugger vulnerable to remote execution when interacting with attacker controlled domain\naffected: >=0, <3.0.3",
+      "vuln_id": "GHSA-2g68-c3qc-8985"
+     },
+     {
+      "id": "GHSA-2g68-c3qc-8985#1",
+      "score": 0.886,
+      "text": "GHSA-2g68-c3qc-8985 (werkzeug) details:\nThe debugger in affected versions of Werkzeug can allow an attacker to execute code on a developer's machine under some circumstances. This requires the attacker to get the developer to interact with a domain and subdomain they control, and enter the debugger PIN, but if they are successful it allows access to the debugger even if it is only running on localhost. This also requires the attacker to guess a URL in the developer's application that will trigger the debugger.",
+      "vuln_id": "GHSA-2g68-c3qc-8985"
+     },
+     {
+      "id": "GHSA-h2fp-xgx6-xh6f#1",
+      "score": 0.812,
+      "text": "GHSA-h2fp-xgx6-xh6f (werkzeug) details:\nCross-site scripting (XSS) vulnerability in the render_full function in debug/tbtools.py in the debugger in Pallets Werkzeug before 0.11.11 (as used in Pallets Flask and other products) allows remote attackers to inject arbitrary web script or HTML via a field that contains an exception message.",
+      "vuln_id": "GHSA-h2fp-xgx6-xh6f"
+     },
+     {
+      "id": "GHSA-h2fp-xgx6-xh6f#0",
+      "score": 0.765,
+      "text": "GHSA-h2fp-xgx6-xh6f (CVE-2016-10516)\npackage: werkzeug\nsummary: Pallets Werkzeug cross-site scripting vulnerability\naffected: >=0, <0.11.11",
+      "vuln_id": "GHSA-h2fp-xgx6-xh6f"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 37.6,
+   "output": {
+    "package": "werkzeug",
+    "import_names": [
+     "werkzeug"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "CTFd/__init__.py:13",
+     "CTFd/__init__.py:14",
+     "CTFd/errors.py:3",
+     "CTFd/utils/initialization/__init__.py:8",
+     "CTFd/utils/sessions/__init__.py:6",
+     "CTFd/utils/uploads/uploaders.py:10"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 17,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/__init__.py:37",
+      "code": "@cached_property",
+      "function": "CTFd:CTFdRequest.path",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:250",
+      "code": "app.wsgi_app = ProxyFix(app.wsgi_app, *proxyfix_args)",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:252",
+      "code": "app.wsgi_app = ProxyFix(",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:8",
+      "code": "isinstance(error, InternalServerError)",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:9",
+      "code": "and error.description == InternalServerError.description",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/initialization/__init__.py:307",
+      "code": "app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {application_root: app})",
+      "function": "CTFd.utils.initialization:init_request_processors",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/sessions/__init__.py:28",
+      "code": "CallbackDict.__init__(self, initial, on_update)",
+      "function": "CTFd.utils.sessions:CachedSession.__init__",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:57",
+      "code": "filename = secure_filename(filename)",
+      "function": "CTFd.utils.uploads.uploaders:FilesystemUploader.upload",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:105",
+      "code": "self._clean_filename, secure_filename(filename).replace(\" \", \"_\")",
+      "function": "CTFd.utils.uploads.uploaders:S3Uploader.upload",
+      "in_test": false
+     }
+    ],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "werkzeug: imported in 6 non-test location(s); 17 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 28.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/errors.py:module",
+      "score": 0.63,
+      "text": "# CTFd/errors.py (module level)\nimport jinja2.exceptions\nfrom flask import render_template\nfrom werkzeug.exceptions import InternalServerError",
+      "file": "CTFd/errors.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/events/__init__.py:53",
+      "score": 0.627,
+      "text": "# CTFd/utils/events/__init__.py:53-69  EventManager.subscribe\n    def subscribe(self, channel=\"ctf\"):\n        q = defaultdict(Queue)\n        self.clients[id(q)] = q\n        try:\n            # Immediately yield a ping event to force Response headers to be set\n            # or else some reverse proxies will incorrectly buffer SSE\n            yield ServerSentEvent(data=\"\", type=\"ping\")\n            while True:\n                try:\n                    with Timeout(5):\n                        message = q[channel].get()\n                        yield ServerSentEvent(**message)\n                except Timeout:\n                    yield ServerSentEvent(data=\"\", type=\"ping\")\n        finally:\n            del self.clients[id(q)]\n            del q",
+      "file": "CTFd/utils/events/__init__.py",
+      "start": 53,
+      "qualname": "EventManager.subscribe"
+     },
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:14",
+      "score": 0.624,
+      "text": "# CTFd/utils/validators/__init__.py:14-17  is_safe_url\ndef is_safe_url(target):\n    ref_url = urlparse(request.host_url)\n    test_url = urlparse(urljoin(request.host_url, target))\n    return test_url.scheme in (\"http\", \"https\") and ref_url.netloc == test_url.netloc",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 14,
+      "qualname": "is_safe_url"
+     },
+     {
+      "id": "ctfd:CTFd/utils/events/__init__.py:104",
+      "score": 0.624,
+      "text": "# CTFd/utils/events/__init__.py:104-120  RedisEventManager.subscribe\n    def subscribe(self, channel=\"ctf\"):\n        q = defaultdict(Queue)\n        self.clients[id(q)] = q\n        try:\n            # Immediately yield a ping event to force Response headers to be set\n            # or else some reverse proxies will incorrectly buffer SSE\n            yield ServerSentEvent(data=\"\", type=\"ping\")\n            while True:\n                try:\n                    with Timeout(5):\n                        message = q[channel].get()\n                        yield ServerSentEvent(**message)\n                except Timeout:\n                    yield ServerSentEvent(data=\"\", type=\"ping\")\n        finally:\n            del self.clients[id(q)]\n            del q",
+      "file": "CTFd/utils/events/__init__.py",
+      "start": 104,
+      "qualname": "RedisEventManager.subscribe"
+     },
+     {
+      "id": "ctfd:CTFd/plugins/flags/__init__.py:module",
+      "score": 0.619,
+      "text": "# CTFd/plugins/flags/__init__.py (module level)\nimport re\nfrom CTFd.plugins import register_plugin_assets_directory\nclass FlagException(Exception):\nclass BaseFlag(object):\n    name = None\n    templates = {}\n    @staticmethod\nclass CTFdStaticFlag(BaseFlag):\n    name = \"static\"\n    templates = {  # Nunjucks templates used for key editing & viewing\n        \"create\": \"/plugins/flags/assets/static/create.html\",\n        \"update\": \"/plugins/flags/assets/static/edit.html\",\n    }\n    @staticmethod\nclass CTFdRegexFlag(BaseFlag):\n    name = \"regex\"\n    templates = {  # Nunjucks templates used for key editing & viewing\n        \"create\": \"/plugins/flags/assets/regex/create.html\",\n        \"update\": \"/plugins/flags/assets/regex/edit.html\",\n    }\n    @staticmethod\nFLAG_CLASSES = {\"static\": CTFdStaticFlag, \"regex\": CTFdRegexFlag}",
+      "file": "CTFd/plugins/flags/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "CTFd/__init__.py:13",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/__init__.py:14",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/errors.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1474,
+   "tokens_out": 85,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"CTFd/__init__.py:13\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/__init__.py:14\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/errors.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 1474,
+     "out": 85,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 1433,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1433,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2907,
+  "tokens_out": 120,
+  "cost_usd_est": 0.0,
+  "seconds": 0.1
+ },
+ "created": "2026-11-10T00:06:21+00:00",
+ "code_version": "a3e1ef4"
+}

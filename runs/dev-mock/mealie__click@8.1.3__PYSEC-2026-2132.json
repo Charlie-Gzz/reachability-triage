@@ -1,0 +1,291 @@
+{
+ "finding_id": "mealie/click@8.1.3/PYSEC-2026-2132",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-7246",
+   "GHSA-47fr-3ffg-hgmw",
+   "PYSEC-2026-2132"
+  ],
+  "cves": [
+   "CVE-2026-7246"
+  ],
+  "cwes": [],
+  "direct_dependency": false,
+  "finding_id": "mealie/click@8.1.3/PYSEC-2026-2132",
+  "first_fixed_above_installed": "8.3.3",
+  "fixed_versions": [
+   "8.3.3"
+  ],
+  "max_cvss": "7.2",
+  "package": "click",
+  "published": "2026-04-30T14:16:36.433Z",
+  "summary": "Pallets Click, versions 8.3.2 and below, contain a command injection vulnerability in the click.edit() function, allowing attackers to pass arbitrary OS commands from an unprivileged account.",
+  "target": "mealie",
+  "version": "8.1.3",
+  "vuln_id": "PYSEC-2026-2132"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "click.edit",
+   "edit"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "click.edit",
+  "edit"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/click@8.1.3/PYSEC-2026-2132",
+    "package": "click",
+    "version": "8.1.3",
+    "vuln_id": "PYSEC-2026-2132",
+    "aliases": [
+     "CVE-2026-7246",
+     "GHSA-47fr-3ffg-hgmw",
+     "PYSEC-2026-2132"
+    ],
+    "summary": "Pallets Click, versions 8.3.2 and below, contain a command injection vulnerability in the click.edit() function, allowing attackers to pass arbitrary OS commands from an unprivileged account.",
+    "max_cvss": "7.2",
+    "fixed_versions": [
+     "8.3.3"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "PYSEC-2026-2132#1",
+      "score": 0.934,
+      "text": "PYSEC-2026-2132 (click) details:\nPallets Click, versions 8.3.2 and below, contain a command injection vulnerability in the click.edit() function, allowing attackers to pass arbitrary OS commands from an unprivileged account.",
+      "vuln_id": "PYSEC-2026-2132"
+     },
+     {
+      "id": "PYSEC-2026-2132#0",
+      "score": 0.675,
+      "text": "PYSEC-2026-2132 (CVE-2026-7246, GHSA-47fr-3ffg-hgmw)\npackage: click\nsummary: \naffected: >=0, <8.3.3",
+      "vuln_id": "PYSEC-2026-2132"
+     }
+    ],
+    "symbols": [
+     "click.edit",
+     "edit"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 26.1,
+   "output": {
+    "package": "click",
+    "import_names": [
+     "click"
+    ],
+    "symbols": [
+     "click.edit",
+     "edit"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "click: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['click.edit', 'edit']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 36.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/services/event_bus_service/event_bus_listeners.py:92",
+      "score": 0.606,
+      "text": "# mealie/services/event_bus_service/event_bus_listeners.py:92-107  AppriseEventListener.update_urls_with_event_data\n    def update_urls_with_event_data(urls: list[str], event: Event):\n        params = {\n            \"event_type\": event.event_type.name,\n            \"integration_id\": event.integration_id,\n            \"document_data\": json.dumps(jsonable_encoder(event.document_data)),\n            \"event_id\": str(event.event_id),\n            \"timestamp\": event.timestamp.isoformat() if event.timestamp else None,\n        }\n\n        return [\n            # We use query params to add custom key: value pairs to the Apprise payload by prepending the key with \":\".\n            AppriseEventListener.merge_query_parameters(url, {f\":{k}\": v for k, v in params.items()})\n            # only certain endpoints support the custom key: value pairs, so we only apply them to those endpoints\n            if AppriseEventListener.is_custom_url(url) else url\n            for url in urls\n        ]",
+      "file": "mealie/services/event_bus_service/event_bus_listeners.py",
+      "start": 92,
+      "qualname": "AppriseEventListener.update_urls_with_event_data"
+     },
+     {
+      "id": "mealie:mealie/routes/spa/__init__.py:45",
+      "score": 0.603,
+      "text": "# mealie/routes/spa/__init__.py:45-71  inject_meta\ndef inject_meta(contents: str, tags: list[MetaTag]) -> str:\n    soup = BeautifulSoup(contents, \"lxml\")\n    scraped_meta_tags = soup.find_all(\"meta\")\n\n    tags_by_hid = {tag.hid: tag for tag in tags}\n    for scraped_meta_tag in scraped_meta_tags:\n        try:\n            scraped_hid = scraped_meta_tag[\"data-hid\"]\n        except KeyError:\n            continue\n\n        if not (matched_tag := tags_by_hid.pop(scraped_hid, None)):\n            continue\n\n        scraped_meta_tag[\"property\"] = matched_tag.property_name\n        scraped_meta_tag[\"content\"] = matched_tag.content\n\n    # add any tags we didn't find\n    if soup.html and soup.html.head:\n        for tag in tags_by_hid.values():\n            html_tag = soup.new_tag(\n                \"meta\",\n                **{\"data-n-head\": \"1\", \"data-hid\": tag.hid, \"property\": tag.property_name, \"content\": tag.content},\n            )\n            soup.html.head.append(html_tag)\n\n    return str(soup)",
+      "file": "mealie/routes/spa/__init__.py",
+      "start": 45,
+      "qualname": "inject_meta"
+     },
+     {
+      "id": "mealie:mealie/services/scraper/cleaner.py:122",
+      "score": 0.591,
+      "text": "# mealie/services/scraper/cleaner.py:122-213  clean_instructions\ndef clean_instructions(steps_object: list | dict | str, default: list | None = None) -> list[dict]:\n    \"\"\"\n    instructions attempts to parse the instructions field from a recipe and return a list of\n    dictionaries. See match statement for supported types and structures\n\n    Raises:\n        TypeError: If the instructions field is not a supported type a TypeError is raised.\n\n    Returns:\n        list[dict]: An ordered list of dictionaries with the keys `text`\n    \"\"\"\n    if not steps_object:\n        return default or []\n\n    match steps_object:\n        case [{\"text\": str()}]:  # Base Case\n            return steps_object\n        case [{\"text\": str()}, *_]:\n            # The is the most common case. Most other operations eventually resolve to this\n            # match case before being converted to a list of instructions\n            #\n            # [\n            #   {\"text\": \"Instruction A\"},\n            #   {\"text\": \"Instruction B\"},\n            # ]\n            #\n            return [\n                {\"text\": _sanitize_instruction_text(instruction[\"text\"])}\n                for instruction in steps_object\n                if instruction[\"text\"].strip()\n            ]\n        case {0: {\"text\": str()}} | {\"0\": {\"text\": str()}} | {1: {\"text\": str()}} | {\"1\": {\"text\": str()}}:\n            # Some recipes have a dict with a string key representing the index, unsure if these can\n            # be an int or not so we match against both. Additionally, we match against both 0 and 1 indexed\n            # list like dicts.\n            #\n            # {\n            #     \"0\": {\"text\": \"Instruction A\"},\n            #     \"1\": {\"text\": \"Instruction B\"},\n            # }\n            #\n            steps_object = typing.cast(dict, steps_object)\n            return clean_instructions([x for x in steps_object.values()])\n        case str(step_as_str):\n            # Strings are weird, some sites return a single string with newlines\n            # others returns a json string for some reasons\n            #\n            # \"Instruction A\\nInstruction B\\nInstruction C\"\n            # '{\"0\": {\"text\": \"Instruction A\"}, \"1\": {\"text\": \"Instruction B\"}, \"2\": {\"text\": \"Instruction C\"}}'\n            #\n            if step_as_str.startswith(\"[\") or step_as_str.startswith(\"{\"):\n                try:\n                    return clean_instructions(json.loads(step_as_str))\n                except json.JSONDecodeError:\n                    pass\n            return [\n                {\"text\": _sanitize_instruction_text(instruction)}\n                for instruction in step_as_str.splitlines()\n                if instruction.strip()\n            ]",
+      "file": "mealie/services/scraper/cleaner.py",
+      "start": 122,
+      "qualname": "clean_instructions"
+     },
+     {
+      "id": "mealie:mealie/services/scraper/cleaner.py:216",
+      "score": 0.589,
+      "text": "# mealie/services/scraper/cleaner.py:216-242  _sanitize_instruction_text\ndef _sanitize_instruction_text(line: str | dict) -> str:\n    \"\"\"\n    _sanitize_instructions_text does some basic checking if the value is a string or dictionary\n    and returns the value of the `text` key if it is a dictionary. The returned string is passed through the\n    `clean_string` function to remove any html tags and extra whitespace in a loop until the string\n    is stable.\n\n    Calling `clean_string` in a loop is necessary because some sites return a string with erroneously escaped\n    html tags or markup.\n    \"\"\"\n    if isinstance(line, dict):\n        # Some Recipes dotnot adhear to schema\n        try:\n            line = line[\"text\"]\n        except Exception:\n            line = \"\"\n\n    if not line:\n        return \"\"\n\n    line = typing.cast(str, line)\n    clean_line = clean_string(line.strip())\n\n    while not clean_line == (clean_line := clean_string(clean_line)):\n        pass\n\n    return clean_line",
+      "file": "mealie/services/scraper/cleaner.py",
+      "start": 216,
+      "qualname": "_sanitize_instruction_text"
+     },
+     {
+      "id": "mealie:mealie/routes/users/_helpers.py:7",
+      "score": 0.588,
+      "text": "# mealie/routes/users/_helpers.py:7-10  assert_user_change_allowed\ndef assert_user_change_allowed(id: UUID4, current_user: PrivateUser):\n    if current_user.id != id and not current_user.admin:\n        # only admins can edit other users\n        raise HTTPException(status.HTTP_403_FORBIDDEN, detail=\"NOT_AN_ADMIN\")",
+      "file": "mealie/routes/users/_helpers.py",
+      "start": 7,
+      "qualname": "assert_user_change_allowed"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "click.edit",
+     "edit"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1755,
+   "tokens_out": 40,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"click.edit\", \"edit\"]}",
+     "in": 1755,
+     "out": 40,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1687,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1687,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3442,
+  "tokens_out": 76,
+  "cost_usd_est": 0.0,
+  "seconds": 0.1
+ },
+ "created": "2026-11-10T00:06:22+00:00",
+ "code_version": "a3e1ef4"
+}

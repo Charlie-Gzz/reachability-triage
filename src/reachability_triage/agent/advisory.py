@@ -22,7 +22,7 @@ STOP = {
     "ReDoS", "DoS", "XSS", "CSRF", "SSRF", "RCE", "README", "PoC", "NodeJS", "IPv", "IPython", "UTF", "NumPy",
     "PyYAML", "CPU", "GHSA", "CVE", "PYSEC", "Werkzeug", "Django", "Flask", "Jinja", "FastAPI", "SQLAlchemy",
     "MarkupSafe", "Pillow", "OpenID", "SameSite", "LibreOffice", "ImageMagick", "GraphQL", "ReportLab",
-    "MongoDB", "MicroPython", "HackerOne", "BeautifulSoup", "LibTIFF", "FreeType", "WebP", "BlueSky", "YouTube",
+    "MongoDB", "MicroPython", "ReDOS", "CodeQL", "CxSCA", "AppSec", "CodeAnt", "MitM", "UltraJSON", "TianGong", "HackerOne", "BeautifulSoup", "LibTIFF", "FreeType", "WebP", "BlueSky", "YouTube",
     "PayPal", "OpenAI", "NVIDIA", "MacBook", "OpenBSD", "FreeBSD", "NetBSD", "UTF8", "OpenSSH", "VirusTotal",
 }
 STOP_SNAKE = {"pip_install", "proof_of", "end_of", "out_of", "file_name", "user_id"}
@@ -104,7 +104,7 @@ def extract_symbols(text: str, import_names: list[str], package: str, max_n: int
             return
         if sym.split(".")[0] in ("e", "i", "eg", "etc", "v", "www", "http", "https", "self") or re.match(r"^v?\d", sym):
             return
-        if re.fullmatch(r"[A-Z]{2,}\d*", sym):      # acronyms like CVE, HTML
+        if re.fullmatch(r"[A-Z][A-Z0-9_]+", sym):      # acronyms and ALL_CAPS markers (CVE, HTML, EVOHUNT_X)
             return
         scored[sym] = max(scored.get(sym, 0), score)
 

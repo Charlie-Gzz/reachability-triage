@@ -1,0 +1,342 @@
+{
+ "finding_id": "mealie/ecdsa@0.18.0/GHSA-9f5j-8jwj-x28g",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-33936",
+   "GHSA-9f5j-8jwj-x28g",
+   "PYSEC-2026-2467"
+  ],
+  "cves": [
+   "CVE-2026-33936"
+  ],
+  "cwes": [
+   "CWE-130",
+   "CWE-20"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/ecdsa@0.18.0/GHSA-9f5j-8jwj-x28g",
+  "first_fixed_above_installed": "0.19.2",
+  "fixed_versions": [
+   "0.19.2"
+  ],
+  "max_cvss": "5.3",
+  "package": "ecdsa",
+  "published": "2026-03-27T15:56:01Z",
+  "summary": "python-ecdsa: Denial of Service via improper DER length validation in crafted private keys",
+  "target": "mealie",
+  "version": "0.18.0",
+  "vuln_id": "GHSA-9f5j-8jwj-x28g"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "ecdsa.der",
+   "ecdsa.der.remove_octet_string",
+   "ecdsa.__version__",
+   "UnexpectedDER",
+   "SigningKey.from_der"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "ecdsa.der",
+  "ecdsa.der.remove_octet_string",
+  "ecdsa.__version__",
+  "UnexpectedDER",
+  "SigningKey.from_der",
+  "ValueError",
+  "remove_octet_string",
+  "from_der"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/ecdsa@0.18.0/GHSA-9f5j-8jwj-x28g",
+    "package": "ecdsa",
+    "version": "0.18.0",
+    "vuln_id": "GHSA-9f5j-8jwj-x28g",
+    "aliases": [
+     "CVE-2026-33936",
+     "GHSA-9f5j-8jwj-x28g",
+     "PYSEC-2026-2467"
+    ],
+    "summary": "python-ecdsa: Denial of Service via improper DER length validation in crafted private keys",
+    "max_cvss": "5.3",
+    "fixed_versions": [
+     "0.19.2"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 28.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-9f5j-8jwj-x28g#0",
+      "score": 0.9,
+      "text": "GHSA-9f5j-8jwj-x28g (CVE-2026-33936)\npackage: ecdsa\nsummary: python-ecdsa: Denial of Service via improper DER length validation in crafted private keys\naffected: >=0, <0.19.2",
+      "vuln_id": "GHSA-9f5j-8jwj-x28g"
+     },
+     {
+      "id": "GHSA-9f5j-8jwj-x28g#2",
+      "score": 0.82,
+      "text": "GHSA-9f5j-8jwj-x28g (ecdsa) details:\nPotential denial-of-service when parsing untrusted DER private keys due to unexpected internal exceptions, and malformed DER acceptance due to missing bounds checks in DER helper functions.\n\n## Reproduction\n\nAttach and run the following PoCs:\n\n###  poc_truncated_der_octet.py\n\n```python\nfrom ecdsa.der import remove_octet_string, UnexpectedDER\n\n# OCTET STRING (0x04)\n# Declared length: 0x82 0x10 0x00  -> 4096 bytes\n# Actual body: only 3 bytes -> truncated DER\nbad = b\"\\x04\\x82\\x10\\x00\" + b\"ABC\"\n\ntry:\n    body, rest = remove_octet_string(bad)\n    print(\"[BUG] remove_octet_string accepted truncated DER.\")\n    print(\"Declared length=4096, actual body_len=\", len(body), \"rest_len=\", len(rest))\n    print(\"Body=\", body)\n    print(\"Rest=\", rest)\nexcept UnexpectedDER as e:\n    print(\"[OK] Rejected malformed DER:\", e)\n```",
+      "vuln_id": "GHSA-9f5j-8jwj-x28g"
+     },
+     {
+      "id": "GHSA-9f5j-8jwj-x28g#1",
+      "score": 0.815,
+      "text": "GHSA-9f5j-8jwj-x28g (ecdsa) details:\n## Summary\n\nAn issue in the low-level DER parsing functions can cause unexpected exceptions to be raised from the public API functions.\n\n1. `ecdsa.der.remove_octet_string()` accepts truncated DER where the encoded length exceeds the available buffer. For example, an OCTET STRING that declares a length of 4096 bytes but provides only 3 bytes is parsed successfully instead of being rejected.\n\n2. Because of that, a crafted DER input can cause `SigningKey.from_der()` to raise an internal exception (`IndexError: index out of bounds on dimension 1`) rather than cleanly rejecting malformed DER (e.g., raising `UnexpectedDER` or `ValueError`). Applications that parse untrusted DER private keys may crash if they do not handle unexpected exceptions, resulting in a denial of service.\n\n## Impact",
+      "vuln_id": "GHSA-9f5j-8jwj-x28g"
+     },
+     {
+      "id": "GHSA-9f5j-8jwj-x28g#3",
+      "score": 0.812,
+      "text": "GHSA-9f5j-8jwj-x28g (ecdsa) details:\n- Expected: reject malformed DER when declared length exceeds available bytes\n- Actual: accepts the truncated DER and returns a shorter body\n- Example output:\n```\nParsed body_len= 3 rest_len= 0 (while declared length is 4096)\n```\n\n### poc_signingkey_from_der_indexerror.py\n\n```python\nfrom ecdsa import SigningKey, NIST256p\nimport ecdsa\n\nprint(\"ecdsa version:\", ecdsa.__version__)\n\nsk = SigningKey.generate(curve=NIST256p)\ngood = sk.to_der()\nprint(\"Good DER len:\", len(good))\n\ndef find_crashing_mutation(data: bytes):\n    b = bytearray(data)\n\n# Try every OCTET STRING tag position and corrupt a short-form length byte\n    for i in range(len(b) - 4):\n        if b[i] != 0x04:  # OCTET STRING tag\n            continue\n\nL = b[i + 1]\n        if L >= 0x80:\n            # skip long-form lengths for simplicity\n            continue",
+      "vuln_id": "GHSA-9f5j-8jwj-x28g"
+     },
+     {
+      "id": "GHSA-8qxj-f9rh-9fg2#0",
+      "score": 0.816,
+      "text": "GHSA-8qxj-f9rh-9fg2 (CVE-2019-14859)\npackage: ecdsa\nsummary: Improper Verification of Cryptographic Signature in Pure-Python ECDSA\naffected: >=0, <0.13.3",
+      "vuln_id": "GHSA-8qxj-f9rh-9fg2"
+     },
+     {
+      "id": "GHSA-pwfw-mgfj-7g3g#0",
+      "score": 0.811,
+      "text": "GHSA-pwfw-mgfj-7g3g (CVE-2019-14853)\npackage: ecdsa\nsummary: ecdsa Denial of Service vulnerability in signature verification and signature malleability\naffected: >=0, <0.13.3",
+      "vuln_id": "GHSA-pwfw-mgfj-7g3g"
+     }
+    ],
+    "symbols": [
+     "ecdsa.der",
+     "ecdsa.der.remove_octet_string",
+     "ecdsa.__version__",
+     "UnexpectedDER",
+     "SigningKey.from_der",
+     "ValueError",
+     "remove_octet_string",
+     "from_der"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 73.3,
+   "output": {
+    "package": "ecdsa",
+    "import_names": [
+     "ecdsa"
+    ],
+    "symbols": [
+     "ecdsa.der",
+     "ecdsa.der.remove_octet_string",
+     "ecdsa.__version__",
+     "UnexpectedDER",
+     "SigningKey.from_der",
+     "ValueError",
+     "remove_octet_string",
+     "from_der"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "ecdsa: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['ecdsa.der', 'ecdsa.der.remove_octet_string', 'ecdsa.__version__', 'UnexpectedDER', 'SigningKey.from_der', 'ValueError', 'remove_octet_string', 'from_der']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 37.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/core/security/hasher.py:26",
+      "score": 0.689,
+      "text": "# mealie/core/security/hasher.py:26-27  PasslibHasher.__init__\n    def __init__(self) -> None:\n        self.ctx = CryptContext(schemes=[\"bcrypt\"], deprecated=\"auto\")",
+      "file": "mealie/core/security/hasher.py",
+      "start": 26,
+      "qualname": "PasslibHasher.__init__"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/utils.py:89",
+      "score": 0.658,
+      "text": "# mealie/services/parser_services/crfpp/utils.py:89-99  insideParenthesis\ndef insideParenthesis(token, tokens):\n    \"\"\"\n    Returns true if the word is inside parenthesis in the phrase.\n    \"\"\"\n    if token in [\"(\", \")\"]:\n        return True\n    else:\n        line = \" \".join(tokens)\n        return (\n            re.match(r\".*\\(.*\" + re.escape(token) + r\".*\\).*\", line) is not None  # noqa: W605 - invalid dscape sequence\n        )",
+      "file": "mealie/services/parser_services/crfpp/utils.py",
+      "start": 89,
+      "qualname": "insideParenthesis"
+     },
+     {
+      "id": "mealie:mealie/core/security/hasher.py:module",
+      "score": 0.655,
+      "text": "# mealie/core/security/hasher.py (module level)\nfrom functools import lru_cache\nfrom typing import Protocol\nfrom passlib.context import CryptContext\nfrom mealie.core.config import get_app_settings\nclass Hasher(Protocol):\nclass FakeHasher:\nclass PasslibHasher:\n@lru_cache(maxsize=1)",
+      "file": "mealie/core/security/hasher.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/core/security/security.py:90",
+      "score": 0.648,
+      "text": "# mealie/core/security/security.py:90-92  url_safe_token\ndef url_safe_token() -> str:\n    \"\"\"Generates a cryptographic token without embedded data. Used for password reset tokens and invitation tokens\"\"\"\n    return secrets.token_urlsafe(24)",
+      "file": "mealie/core/security/security.py",
+      "start": 90,
+      "qualname": "url_safe_token"
+     },
+     {
+      "id": "mealie:mealie/pkgs/i18n/json_provider.py:16",
+      "score": 0.647,
+      "text": "# mealie/pkgs/i18n/json_provider.py:16-38  JsonProvider.t\n    def t(self, key: str, default=None, **kwargs) -> str:\n        keys = key.split(\".\")\n\n        translation_value: dict | str = self.translations\n        last = len(keys) - 1\n\n        for i, k in enumerate(keys):\n            if k not in translation_value:\n                break\n\n            try:\n                translation_value = translation_value[k]  # type: ignore\n            except Exception:\n                break\n\n            if i == last:\n                for key, value in kwargs.items():\n                    if not value:\n                        value = \"\"\n                    translation_value = translation_value.replace(\"{\" + key + \"}\", value)\n                return translation_value\n\n        return default or key",
+      "file": "mealie/pkgs/i18n/json_provider.py",
+      "start": 16,
+      "qualname": "JsonProvider.t"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "ecdsa.der",
+     "ecdsa.der.remove_octet_string",
+     "ecdsa.__version__",
+     "UnexpectedDER",
+     "SigningKey.from_der"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1731,
+   "tokens_out": 61,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"ecdsa.der\", \"ecdsa.der.remove_octet_string\", \"ecdsa.__version__\", \"UnexpectedDER\", \"SigningKey.from_der\"]}",
+     "in": 1731,
+     "out": 61,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1663,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1663,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3394,
+  "tokens_out": 97,
+  "cost_usd_est": 0.0,
+  "seconds": 0.14
+ },
+ "created": "2026-11-10T00:06:22+00:00",
+ "code_version": "a3e1ef4"
+}

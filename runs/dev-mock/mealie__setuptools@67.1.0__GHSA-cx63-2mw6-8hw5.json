@@ -1,0 +1,301 @@
+{
+ "finding_id": "mealie/setuptools@67.1.0/GHSA-cx63-2mw6-8hw5",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-6345",
+   "GHSA-cx63-2mw6-8hw5",
+   "PYSEC-2026-1918"
+  ],
+  "cves": [
+   "CVE-2024-6345"
+  ],
+  "cwes": [
+   "CWE-94"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/setuptools@67.1.0/GHSA-cx63-2mw6-8hw5",
+  "first_fixed_above_installed": "70.0.0",
+  "fixed_versions": [
+   "70.0.0"
+  ],
+  "max_cvss": "8.8",
+  "package": "setuptools",
+  "published": "2024-07-15T03:30:57Z",
+  "summary": "setuptools vulnerable to Command Injection via package URL",
+  "target": "mealie",
+  "version": "67.1.0",
+  "vuln_id": "GHSA-cx63-2mw6-8hw5"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "package_index"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "package_index"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/setuptools@67.1.0/GHSA-cx63-2mw6-8hw5",
+    "package": "setuptools",
+    "version": "67.1.0",
+    "vuln_id": "GHSA-cx63-2mw6-8hw5",
+    "aliases": [
+     "CVE-2024-6345",
+     "GHSA-cx63-2mw6-8hw5",
+     "PYSEC-2026-1918"
+    ],
+    "summary": "setuptools vulnerable to Command Injection via package URL",
+    "max_cvss": "8.8",
+    "fixed_versions": [
+     "70.0.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-cx63-2mw6-8hw5#0",
+      "score": 0.885,
+      "text": "GHSA-cx63-2mw6-8hw5 (CVE-2024-6345)\npackage: setuptools\nsummary: setuptools vulnerable to Command Injection via package URL\naffected: >=0, <70.0.0",
+      "vuln_id": "GHSA-cx63-2mw6-8hw5"
+     },
+     {
+      "id": "GHSA-cx63-2mw6-8hw5#1",
+      "score": 0.845,
+      "text": "GHSA-cx63-2mw6-8hw5 (setuptools) details:\nA vulnerability in the `package_index` module of pypa/setuptools versions up to 69.1.1 allows for remote code execution via its download functions. These functions, which are used to download packages from URLs provided by users or retrieved from package index servers, are susceptible to code injection. If these functions are exposed to user-controlled inputs, such as package URLs, they can execute arbitrary commands on the system. The issue is fixed in version 70.0.",
+      "vuln_id": "GHSA-cx63-2mw6-8hw5"
+     },
+     {
+      "id": "GHSA-5rjg-fvgr-3xxf#0",
+      "score": 0.84,
+      "text": "GHSA-5rjg-fvgr-3xxf (CVE-2025-47273)\npackage: setuptools\nsummary: setuptools has a path traversal vulnerability in PackageIndex.download that leads to Arbitrary File Write\naffected: >=0, <78.1.1",
+      "vuln_id": "GHSA-5rjg-fvgr-3xxf"
+     },
+     {
+      "id": "GHSA-27x4-j476-jp5f#0",
+      "score": 0.837,
+      "text": "GHSA-27x4-j476-jp5f (CVE-2013-1633)\npackage: setuptools\nsummary: Setuptools vulnerable to Man-in-the-middle attacks\naffected: >=0, <0.7",
+      "vuln_id": "GHSA-27x4-j476-jp5f"
+     }
+    ],
+    "symbols": [
+     "package_index"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 21.5,
+   "output": {
+    "package": "setuptools",
+    "import_names": [
+     "pkg_resources",
+     "setuptools"
+    ],
+    "symbols": [
+     "package_index"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "setuptools: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['package_index']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 38.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/core/settings/__init__.py:module",
+      "score": 0.671,
+      "text": "# mealie/core/settings/__init__.py (module level)\nfrom .directories import *\nfrom .settings import *",
+      "file": "mealie/core/settings/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/urls/url_constructors.py:module",
+      "score": 0.669,
+      "text": "# mealie/services/urls/url_constructors.py (module level)\nfrom pydantic import UUID4\nfrom mealie.core.config import get_app_settings",
+      "file": "mealie/services/urls/url_constructors.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/schema/make_dependable.py:module",
+      "score": 0.668,
+      "text": "# mealie/schema/make_dependable.py (module level)\nfrom inspect import signature\nfrom fastapi.exceptions import HTTPException, RequestValidationError\nfrom pydantic import ValidationError",
+      "file": "mealie/schema/make_dependable.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/urls/__init__.py:module",
+      "score": 0.663,
+      "text": "# mealie/services/urls/__init__.py (module level)\nfrom .url_constructors import *",
+      "file": "mealie/services/urls/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/__init__.py:module",
+      "score": 0.655,
+      "text": "# mealie/core/dependencies/__init__.py (module level)\nfrom .dependencies import *",
+      "file": "mealie/core/dependencies/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "package_index"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 841,
+   "tokens_out": 39,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"package_index\"]}",
+     "in": 841,
+     "out": 39,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 774,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 774,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 1615,
+  "tokens_out": 75,
+  "cost_usd_est": 0.0,
+  "seconds": 0.1
+ },
+ "created": "2026-11-10T00:06:30+00:00",
+ "code_version": "a3e1ef4"
+}

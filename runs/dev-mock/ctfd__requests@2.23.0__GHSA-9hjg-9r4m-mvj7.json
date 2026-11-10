@@ -1,0 +1,373 @@
+{
+ "finding_id": "ctfd/requests@2.23.0/GHSA-9hjg-9r4m-mvj7",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-47081",
+   "GHSA-9hjg-9r4m-mvj7",
+   "PYSEC-2026-1872"
+  ],
+  "cves": [
+   "CVE-2024-47081"
+  ],
+  "cwes": [
+   "CWE-522"
+  ],
+  "direct_dependency": true,
+  "finding_id": "ctfd/requests@2.23.0/GHSA-9hjg-9r4m-mvj7",
+  "first_fixed_above_installed": "2.32.4",
+  "fixed_versions": [
+   "2.32.4"
+  ],
+  "max_cvss": "5.3",
+  "package": "requests",
+  "published": "2025-06-09T19:06:08Z",
+  "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+  "target": "ctfd",
+  "version": "2.23.0",
+  "vuln_id": "GHSA-9hjg-9r4m-mvj7"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "trust_env"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "CTFd/auth.py:3",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/utils/email/mailgun.py:3",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/utils/updates/__init__.py:6",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "trust_env"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/requests@2.23.0/GHSA-9hjg-9r4m-mvj7",
+    "package": "requests",
+    "version": "2.23.0",
+    "vuln_id": "GHSA-9hjg-9r4m-mvj7",
+    "aliases": [
+     "CVE-2024-47081",
+     "GHSA-9hjg-9r4m-mvj7",
+     "PYSEC-2026-1872"
+    ],
+    "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+    "max_cvss": "5.3",
+    "fixed_versions": [
+     "2.32.4"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 25.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-9hjg-9r4m-mvj7#0",
+      "score": 0.85,
+      "text": "GHSA-9hjg-9r4m-mvj7 (CVE-2024-47081)\npackage: requests\nsummary: Requests vulnerable to .netrc credentials leak via malicious URLs\naffected: >=0, <2.32.4",
+      "vuln_id": "GHSA-9hjg-9r4m-mvj7"
+     },
+     {
+      "id": "GHSA-9hjg-9r4m-mvj7#1",
+      "score": 0.846,
+      "text": "GHSA-9hjg-9r4m-mvj7 (requests) details:\n### Impact\n\nDue to a URL parsing issue, Requests releases prior to 2.32.4 may leak .netrc credentials to third parties for specific maliciously-crafted URLs.\n\n### Workarounds\nFor older versions of Requests, use of the .netrc file can be disabled with `trust_env=False` on your Requests Session ([docs](https://requests.readthedocs.io/en/latest/api/#requests.Session.trust_env)).",
+      "vuln_id": "GHSA-9hjg-9r4m-mvj7"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#1",
+      "score": 0.774,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\n### Impact\n\nSince Requests v2.3.0, Requests has been vulnerable to potentially leaking `Proxy-Authorization` headers to destination servers, specifically during redirects to an HTTPS origin. This is a product of how `rebuild_proxies` is used to recompute and [reattach the `Proxy-Authorization` header](https://github.com/psf/requests/blob/f2629e9e3c7ce3c3c8c025bcd8db551101cbc773/requests/sessions.py#L319-L328) to requests when redirected. Note this behavior has _only_ been observed to affect proxied requests when credentials are supplied in the URL user information component (e.g. `https://username:password@proxy:8080`).\n\n**Current vulnerable behavior(s):**\n\n1. HTTP \u2192 HTTPS: **leak**\n2. HTTPS \u2192 HTTP: **no leak**\n3. HTTPS \u2192 HTTPS: **leak**\n4. HTTP \u2192 HTTP: **no leak**",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-gc5v-m9x4-r6x2#1",
+      "score": 0.768,
+      "text": "GHSA-gc5v-m9x4-r6x2 (requests) details:\n### Impact\nThe `requests.utils.extract_zipped_paths()` utility function uses a predictable filename when extracting files from zip archives into the system temporary directory. If the target file already exists, it is reused without validation. A local attacker with write access to the temp directory could pre-create a malicious file that would be loaded in place of the legitimate one.\n\n### Affected usages\n**Standard usage of the Requests library is not affected by this vulnerability.** Only applications that call `extract_zipped_paths()` directly are impacted.\n\n### Remediation\nUpgrade to at least Requests 2.33.0, where the library now extracts files to a non-deterministic location.\n\nIf developers are unable to upgrade, they can set `TMPDIR` in their environment to a directory with restricted write access.",
+      "vuln_id": "GHSA-gc5v-m9x4-r6x2"
+     }
+    ],
+    "symbols": [
+     "trust_env"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 44.4,
+   "output": {
+    "package": "requests",
+    "import_names": [
+     "requests"
+    ],
+    "symbols": [
+     "trust_env"
+    ],
+    "imported": true,
+    "import_locations": [
+     "CTFd/auth.py:3",
+     "CTFd/utils/email/mailgun.py:3",
+     "CTFd/utils/updates/__init__.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 24,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/auth.py:475",
+      "code": "token_request = requests.post(url, data=data, headers=headers)",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/auth.py:477",
+      "code": "if token_request.status_code == requests.codes.ok:",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/auth.py:489",
+      "code": "api_data = requests.get(url=user_url, headers=headers).json()",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/email/mailgun.py:18",
+      "code": "r = requests.post(",
+      "function": "CTFd.utils.email.mailgun:sendmail",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/email/mailgun.py:29",
+      "code": "except requests.RequestException as e:",
+      "function": "CTFd.utils.email.mailgun:sendmail",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:55",
+      "code": "check = requests.get(",
+      "function": "CTFd.utils.updates:update_check",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:58",
+      "code": "except requests.exceptions.RequestException:",
+      "function": "CTFd.utils.updates:update_check",
+      "in_test": false
+     }
+    ],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "requests: imported in 3 non-test location(s); 24 package call/reference site(s); named vulnerable symbols ['trust_env']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 28.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:14",
+      "score": 0.69,
+      "text": "# CTFd/utils/validators/__init__.py:14-17  is_safe_url\ndef is_safe_url(target):\n    ref_url = urlparse(request.host_url)\n    test_url = urlparse(urljoin(request.host_url, target))\n    return test_url.scheme in (\"http\", \"https\") and ref_url.netloc == test_url.netloc",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 14,
+      "qualname": "is_safe_url"
+     },
+     {
+      "id": "ctfd:CTFd/utils/user/__init__.py:145",
+      "score": 0.667,
+      "text": "# CTFd/utils/user/__init__.py:145-167  get_ip\ndef get_ip(req=None):\n    \"\"\" Returns the IP address of the currently in scope request. The approach is to define a list of trusted proxies\n     (in this case the local network), and only trust the most recently defined untrusted IP address.\n     Taken from http://stackoverflow.com/a/22936947/4285524 but the generator there makes no sense.\n     The trusted_proxies regexes is taken from Ruby on Rails.\n\n     This has issues if the clients are also on the local network so you can remove proxies from config.py.\n\n     CTFd does not use IP address for anything besides cursory tracking of teams and it is ill-advised to do much\n     more than that if you do not know what you're doing.\n    \"\"\"\n    if req is None:\n        req = request\n    trusted_proxies = app.config[\"TRUSTED_PROXIES\"]\n    combined = \"(\" + \")|(\".join(trusted_proxies) + \")\"\n    route = req.access_route + [req.remote_addr]\n    for addr in reversed(route):\n        if not re.match(combined, addr):  # IP is not trusted but we trust the proxies\n            remote_addr = addr\n            break\n    else:\n        remote_addr = req.remote_addr\n    return remote_addr",
+      "file": "CTFd/utils/user/__init__.py",
+      "start": 145,
+      "qualname": "get_ip"
+     },
+     {
+      "id": "ctfd:CTFd/utils/helpers/__init__.py:31",
+      "score": 0.66,
+      "text": "# CTFd/utils/helpers/__init__.py:31-41  env_asset_url_default\ndef env_asset_url_default(endpoint, values):\n    \"\"\"Create asset URLs dependent on the current env\"\"\"\n    if endpoint == \"views.themes\":\n        path = values.get(\"path\", \"\")\n        static_asset = path.endswith(\".js\") or path.endswith(\".css\")\n        direct_access = \".dev\" in path or \".min\" in path\n        if static_asset and not direct_access:\n            env = values.get(\"env\", current_app.env)\n            mode = \".dev\" if env == \"development\" else \".min\"\n            base, ext = os.path.splitext(path)\n            values[\"path\"] = base + mode + ext",
+      "file": "CTFd/utils/helpers/__init__.py",
+      "start": 31,
+      "qualname": "env_asset_url_default"
+     },
+     {
+      "id": "ctfd:CTFd/utils/security/passwords.py:20",
+      "score": 0.66,
+      "text": "# CTFd/utils/security/passwords.py:20-24  sha256\ndef sha256(p):\n    print(\n        \"This function will be deprecated in a future release. Please update to CTFd.utils.crypto.sha256\"\n    )\n    return sha(p)",
+      "file": "CTFd/utils/security/passwords.py",
+      "start": 20,
+      "qualname": "sha256"
+     },
+     {
+      "id": "ctfd:CTFd/utils/config/integrations.py:4",
+      "score": 0.65,
+      "text": "# CTFd/utils/config/integrations.py:4-9  mlc\ndef mlc():\n    admin_config = get_config(\"oauth_client_id\") and get_config(\"oauth_client_secret\")\n    main_config = get_app_config(\"OAUTH_CLIENT_ID\") and get_app_config(\n        \"OAUTH_CLIENT_SECRET\"\n    )\n    return admin_config or main_config",
+      "file": "CTFd/utils/config/integrations.py",
+      "start": 4,
+      "qualname": "mlc"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "trust_env"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "CTFd/auth.py:3",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/utils/email/mailgun.py:3",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:6",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1670,
+   "tokens_out": 94,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"CTFd/auth.py:3\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/utils/email/mailgun.py:3\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/utils/updates/__init__.py:6\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"trust_env\"]}",
+     "in": 1670,
+     "out": 94,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 1.2,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1636,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1636,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3306,
+  "tokens_out": 130,
+  "cost_usd_est": 0.0,
+  "seconds": 0.11
+ },
+ "created": "2026-11-10T00:06:18+00:00",
+ "code_version": "a3e1ef4"
+}

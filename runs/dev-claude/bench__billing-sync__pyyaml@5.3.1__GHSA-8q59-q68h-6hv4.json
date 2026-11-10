@@ -1,0 +1,371 @@
+{
+ "finding_id": "bench/billing-sync/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+ "config": "dev-claude",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/billing-sync",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2020-14343",
+   "GHSA-8q59-q68h-6hv4",
+   "PYSEC-2021-142"
+  ],
+  "cves": [
+   "CVE-2020-14343"
+  ],
+  "cwes": [
+   "CWE-20"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/billing-sync/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+  "first_fixed_above_installed": "5.4",
+  "fixed_versions": [
+   "5.4"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "pyyaml",
+  "published": "2021-03-25T21:26:26Z",
+  "split": "dev",
+  "summary": "Improper Input Validation in PyYAML",
+  "target": "bench/billing-sync",
+  "version": "5.3.1",
+  "vuln_id": "GHSA-8q59-q68h-6hv4"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.72,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.78,
+  "vulnerable_symbols": [
+   "yaml.full_load",
+   "yaml.FullLoader"
+  ],
+  "reasoning": "The only use of the vulnerable PyYAML API (yaml.full_load) in the application is in billing/legacy.py:7 inside import_v1_plans. Static analysis explicitly states this function has NO callers anywhere in the project and no path exists from any entry point (route, CLI, task, etc.). The other billing files (client.py, sync.py) do not reference import_v1_plans or legacy.py at all. Since the vulnerable call site is unreachable dead code per the project's own call-graph evidence, no untrusted (or any) YAML input ever reaches yaml.full_load in production.",
+  "evidence": [
+   {
+    "location": "billing/legacy.py:7",
+    "explanation": "The only call to the vulnerable yaml.full_load API in the codebase."
+   },
+   {
+    "location": "billing/legacy.py:5-8",
+    "explanation": "import_v1_plans is the sole enclosing function for the vulnerable call and is confirmed to have no callers anywhere in the project."
+   },
+   {
+    "location": "billing/sync.py (module level)",
+    "explanation": "sync.py imports only StripeLikeClient from billing.client, not anything from billing.legacy, confirming no wiring to the vulnerable function."
+   },
+   {
+    "location": "billing/client.py:2-3",
+    "explanation": "StripeLikeClient is unrelated to YAML parsing, showing the active billing path does not involve legacy.py."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that static call-graph analysis can miss dynamic invocation paths (e.g., a management command, admin script, scheduled job, or someone importing billing.legacy.import_v1_plans directly from a shell/REPL/ops runbook to migrate old plan files) that wouldn't show up as a traced caller. The function's name and docstring ('2019 billing system') strongly suggest it's a one-off migration utility intentionally invoked out-of-band rather than wired into the app's HTTP/CLI entry points \u2014 which is exactly the kind of legacy script that gets run manually against untrusted or stale YAML files during a migration, making the 'no entry point reaches it' framing slightly misleading (it's unreachable from this app's request/CLI surface, not necessarily unreachable in the operational sense). However, the evidence provided is explicit and specific: zero callers project-wide, sync.py (the only other wired-up billing module) imports only StripeLikeClient and never references legacy.py, and client.py is unrelated. No wrapper, dispatch table, settings flag, or dynamic import/getattr pattern is shown anywhere that could invoke import_v1_plans indirectly. Given the evidence as presented, there is no demonstrated path into the vulnerable yaml.full_load call within the application's analyzed scope \u2014 the counter-argument is plausible speculation about operational usage, not something the evidence supports or refutes directly, so it doesn't meet the bar to force a retry.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.72
+ },
+ "symbols": [
+  "FullLoader",
+  "full_load"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/billing-sync/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+    "package": "pyyaml",
+    "version": "5.3.1",
+    "vuln_id": "GHSA-8q59-q68h-6hv4",
+    "aliases": [
+     "CVE-2020-14343",
+     "GHSA-8q59-q68h-6hv4",
+     "PYSEC-2021-142"
+    ],
+    "summary": "Improper Input Validation in PyYAML",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "5.4"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 49.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-8q59-q68h-6hv4#1",
+      "score": 0.855,
+      "text": "GHSA-8q59-q68h-6hv4 (pyyaml) details:\nA vulnerability was discovered in the PyYAML library in versions before 5.4, where it is susceptible to arbitrary code execution when it processes untrusted YAML files through the full_load method or with the FullLoader loader. Applications that use the library to process untrusted input may be vulnerable to this flaw. This flaw allows an attacker to execute arbitrary code on the system by abusing the python/object/new constructor. This flaw is due to an incomplete fix for CVE-2020-1747.",
+      "vuln_id": "GHSA-8q59-q68h-6hv4"
+     },
+     {
+      "id": "GHSA-8q59-q68h-6hv4#0",
+      "score": 0.851,
+      "text": "GHSA-8q59-q68h-6hv4 (CVE-2020-14343)\npackage: pyyaml\nsummary: Improper Input Validation in PyYAML\naffected: >=0, <5.4",
+      "vuln_id": "GHSA-8q59-q68h-6hv4"
+     },
+     {
+      "id": "GHSA-6757-jp84-gxfx#0",
+      "score": 0.834,
+      "text": "GHSA-6757-jp84-gxfx (CVE-2020-1747)\npackage: pyyaml\nsummary: Improper Input Validation in PyYAML\naffected: >=5.1b7, <5.3.1",
+      "vuln_id": "GHSA-6757-jp84-gxfx"
+     },
+     {
+      "id": "GHSA-6757-jp84-gxfx#1",
+      "score": 0.828,
+      "text": "GHSA-6757-jp84-gxfx (pyyaml) details:\nA vulnerability was discovered in the PyYAML library in versions before 5.3.1, where it is susceptible to arbitrary code execution when it processes untrusted YAML files through the full_load method or with the FullLoader loader. Applications that use the library to process untrusted input may be vulnerable to this flaw. An attacker could use this flaw to execute arbitrary code on the system by abusing the python/object/new constructor.",
+      "vuln_id": "GHSA-6757-jp84-gxfx"
+     }
+    ],
+    "symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 4.0,
+   "output": {
+    "package": "pyyaml",
+    "import_names": [
+     "yaml"
+    ],
+    "symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "imported": true,
+    "import_locations": [
+     "billing/legacy.py:2"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3,
+    "vulnerable_call_sites": [
+     {
+      "file": "billing/legacy.py",
+      "line": 7,
+      "code": "doc = yaml.full_load(f)",
+      "resolved": "yaml.full_load",
+      "function": "billing.legacy:import_v1_plans",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": false,
+      "path": [],
+      "callers": 0,
+      "snippet": "    4  \n    5  def import_v1_plans(path):\n    6      with open(path) as f:\n    7          doc = yaml.full_load(f)\n    8      return [{\"id\": p[\"code\"], \"amount\": p[\"cents\"], \"interval\": p[\"period\"]} for p in doc[\"plans\"]]"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "billing/legacy.py:7",
+      "code": "doc = yaml.full_load(f)",
+      "function": "billing.legacy:import_v1_plans",
+      "in_test": false
+     }
+    ],
+    "entry_points": 1,
+    "paths": [],
+    "summary": "pyyaml: imported in 1 non-test location(s); 3 package call/reference site(s); named vulnerable symbols ['FullLoader', 'full_load']; 1 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 52.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:billing/legacy.py:7",
+      "score": 1.0,
+      "file": "billing/legacy.py",
+      "start": 7,
+      "qualname": "billing.legacy:import_v1_plans",
+      "text": "# billing/legacy.py around line 7\n    4  \n    5  def import_v1_plans(path):\n    6      with open(path) as f:\n    7          doc = yaml.full_load(f)\n    8      return [{\"id\": p[\"code\"], \"amount\": p[\"cents\"], \"interval\": p[\"period\"]} for p in doc[\"plans\"]]"
+     },
+     {
+      "id": "bench/billing-sync:billing/legacy.py:module",
+      "score": 0.647,
+      "text": "# billing/legacy.py (module level)\n\"\"\"Format used by the 2019 billing system.\"\"\"\nimport yaml",
+      "file": "billing/legacy.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/billing-sync:billing/client.py:module",
+      "score": 0.602,
+      "text": "# billing/client.py (module level)\nclass StripeLikeClient:",
+      "file": "billing/client.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/billing-sync:billing/legacy.py:5",
+      "score": 0.587,
+      "text": "# billing/legacy.py:5-8  import_v1_plans\ndef import_v1_plans(path):\n    with open(path) as f:\n        doc = yaml.full_load(f)\n    return [{\"id\": p[\"code\"], \"amount\": p[\"cents\"], \"interval\": p[\"period\"]} for p in doc[\"plans\"]]",
+      "file": "billing/legacy.py",
+      "start": 5,
+      "qualname": "import_v1_plans"
+     },
+     {
+      "id": "bench/billing-sync:billing/client.py:2",
+      "score": 0.558,
+      "text": "# billing/client.py:2-3  StripeLikeClient.__init__\n    def __init__(self):\n        self.plans = {}",
+      "file": "billing/client.py",
+      "start": 2,
+      "qualname": "StripeLikeClient.__init__"
+     },
+     {
+      "id": "bench/billing-sync:billing/sync.py:module",
+      "score": 0.549,
+      "text": "# billing/sync.py (module level)\nimport json\nfrom pathlib import Path\nfrom billing.client import StripeLikeClient\nif __name__ == \"__main__\":\n    import sys\n    print(sync_plans(sys.argv[1]))",
+      "file": "billing/sync.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 8796.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.78,
+    "vulnerable_symbols": [
+     "yaml.full_load",
+     "yaml.FullLoader"
+    ],
+    "reasoning": "The only use of the vulnerable PyYAML API (yaml.full_load) in the application is in billing/legacy.py:7 inside import_v1_plans. Static analysis explicitly states this function has NO callers anywhere in the project and no path exists from any entry point (route, CLI, task, etc.). The other billing files (client.py, sync.py) do not reference import_v1_plans or legacy.py at all. Since the vulnerable call site is unreachable dead code per the project's own call-graph evidence, no untrusted (or any) YAML input ever reaches yaml.full_load in production.",
+    "evidence": [
+     {
+      "location": "billing/legacy.py:7",
+      "explanation": "The only call to the vulnerable yaml.full_load API in the codebase."
+     },
+     {
+      "location": "billing/legacy.py:5-8",
+      "explanation": "import_v1_plans is the sole enclosing function for the vulnerable call and is confirmed to have no callers anywhere in the project."
+     },
+     {
+      "location": "billing/sync.py (module level)",
+      "explanation": "sync.py imports only StripeLikeClient from billing.client, not anything from billing.legacy, confirming no wiring to the vulnerable function."
+     },
+     {
+      "location": "billing/client.py:2-3",
+      "explanation": "StripeLikeClient is unrelated to YAML parsing, showing the active billing path does not involve legacy.py."
+     }
+    ]
+   },
+   "tokens_in": 2869,
+   "tokens_out": 691,
+   "llm_calls": 1,
+   "llm_seconds": 8.8,
+   "cost_usd_est": 0.018972,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.78,\"vulnerable_symbols\":[\"yaml.full_load\",\"yaml.FullLoader\"],\"reasoning\":\"The only use of the vulnerable PyYAML API (yaml.full_load) in the application is in billing/legacy.py:7 inside import_v1_plans. Static analysis explicitly states this function has NO callers anywhere in the project and no path exists from any entry point (route, CLI, task, etc.). The other billing files (client.py, sync.py) do not reference import_v1_plans or legacy.py at all. Since the vulnerable call site is unreachable dead code per the project's own call-graph evidence, no untrusted (or any) YAML input ever reaches yaml.full_load in production.\",\"evidence\":[{\"location\":\"billing/legacy.py:7\",\"explanation\":\"The only call to the vulnerable yaml.full_load API in the codebase.\"},{\"location\":\"billing/legacy.py:5-8\",\"explanation\":\"import_v1_plans is the sole enclosing function for the vulnerable call and is confirmed to have no callers anywhere in the project.\"},{\"location\":\"billing/sync.py (module level)\",\"explanation\":\"sync.py imports only StripeLikeClient from billing.client, not anything from billing.legacy, confirming no wiring to the vulnerable function.\"},{\"location\":\"billing/client.py:2-3\",\"explanation\":\"StripeLikeClient is unrelated to YAML parsing, showing the active billing path does not involve legacy.py.\"}]}",
+     "in": 2869,
+     "out": 691,
+     "s": 8.8,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 15888.7,
+   "output": {
+    "critique": "The strongest counter-argument is that static call-graph analysis can miss dynamic invocation paths (e.g., a management command, admin script, scheduled job, or someone importing billing.legacy.import_v1_plans directly from a shell/REPL/ops runbook to migrate old plan files) that wouldn't show up as a traced caller. The function's name and docstring ('2019 billing system') strongly suggest it's a one-off migration utility intentionally invoked out-of-band rather than wired into the app's HTTP/CLI entry points \u2014 which is exactly the kind of legacy script that gets run manually against untrusted or stale YAML files during a migration, making the 'no entry point reaches it' framing slightly misleading (it's unreachable from this app's request/CLI surface, not necessarily unreachable in the operational sense). However, the evidence provided is explicit and specific: zero callers project-wide, sync.py (the only other wired-up billing module) imports only StripeLikeClient and never references legacy.py, and client.py is unrelated. No wrapper, dispatch table, settings flag, or dynamic import/getattr pattern is shown anywhere that could invoke import_v1_plans indirectly. Given the evidence as presented, there is no demonstrated path into the vulnerable yaml.full_load call within the application's analyzed scope \u2014 the counter-argument is plausible speculation about operational usage, not something the evidence supports or refutes directly, so it doesn't meet the bar to force a retry.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.72
+   },
+   "tokens_in": 2733,
+   "tokens_out": 1117,
+   "llm_calls": 1,
+   "llm_seconds": 15.88,
+   "cost_usd_est": 0.024954,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument is that static call-graph analysis can miss dynamic invocation paths (e.g., a management command, admin script, scheduled job, or someone importing billing.legacy.import_v1_plans directly from a shell/REPL/ops runbook to migrate old plan files) that wouldn't show up as a traced caller. The function's name and docstring ('2019 billing system') strongly suggest it's a one-off migration utility intentionally invoked out-of-band rather than wired into the app's HTTP/CLI entry points \u2014 which is exactly the kind of legacy script that gets run manually against untrusted or stale YAML files during a migration, making the 'no entry point reaches it' framing slightly misleading (it's unreachable from this app's request/CLI surface, not necessarily unreachable in the operational sense). However, the evidence provided is explicit and specific: zero callers project-wide, sync.py (the only other wired-up billing module) imports only StripeLikeClient and never references legacy.py, and client.py is unrelated. No wrapper, dispatch table, settings flag, or dynamic import/getattr pattern is shown anywhere that could invoke import_v1_plans indirectly. Given the evidence as presented, there is no demonstrated path into the vulnerable yaml.full_load call within the application's analyzed scope \u2014 the counter-argument is plausible speculation about operational usage, not something the evidence supports or refutes directly, so it doesn't meet the bar to force a retry.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.72}",
+     "in": 2733,
+     "out": 1117,
+     "s": 15.88,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.72,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 5602,
+  "tokens_out": 1808,
+  "cost_usd_est": 0.043926,
+  "seconds": 24.8
+ },
+ "created": "2026-11-10T00:12:10+00:00",
+ "code_version": "a3e1ef4"
+}

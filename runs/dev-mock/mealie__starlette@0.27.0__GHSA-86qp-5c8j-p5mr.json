@@ -1,0 +1,557 @@
+{
+ "finding_id": "mealie/starlette@0.27.0/GHSA-86qp-5c8j-p5mr",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-48710",
+   "GHSA-86qp-5c8j-p5mr",
+   "PYSEC-2026-161",
+   "X41-2026-002"
+  ],
+  "cves": [
+   "CVE-2026-48710"
+  ],
+  "cwes": [
+   "CWE-1289",
+   "CWE-444"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/starlette@0.27.0/GHSA-86qp-5c8j-p5mr",
+  "first_fixed_above_installed": "1.0.1",
+  "fixed_versions": [
+   "1.0.1"
+  ],
+  "max_cvss": "6.5",
+  "package": "starlette",
+  "published": "2026-06-04T13:15:17Z",
+  "summary": "Starlette has missing Host header validation that poisons request.url.path, bypassing path-based security checks",
+  "target": "mealie",
+  "version": "0.27.0",
+  "vuln_id": "GHSA-86qp-5c8j-p5mr"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "Host",
+   "request.url",
+   "request.url.path",
+   "scope",
+   "host"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/routes/_base/controller.py:13",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/routes/media/media_recipe.py:5",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/routes/media/media_user.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "Host",
+  "request.url",
+  "request.url.path",
+  "scope",
+  "host"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/starlette@0.27.0/GHSA-86qp-5c8j-p5mr",
+    "package": "starlette",
+    "version": "0.27.0",
+    "vuln_id": "GHSA-86qp-5c8j-p5mr",
+    "aliases": [
+     "CVE-2026-48710",
+     "GHSA-86qp-5c8j-p5mr",
+     "PYSEC-2026-161",
+     "X41-2026-002"
+    ],
+    "summary": "Starlette has missing Host header validation that poisons request.url.path, bypassing path-based security checks",
+    "max_cvss": "6.5",
+    "fixed_versions": [
+     "1.0.1"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-86qp-5c8j-p5mr#0",
+      "score": 0.901,
+      "text": "GHSA-86qp-5c8j-p5mr (CVE-2026-48710)\npackage: starlette\nsummary: Starlette has missing Host header validation that poisons request.url.path, bypassing path-based security checks\naffected: >=0, <1.0.1",
+      "vuln_id": "GHSA-86qp-5c8j-p5mr"
+     },
+     {
+      "id": "GHSA-86qp-5c8j-p5mr#1",
+      "score": 0.832,
+      "text": "GHSA-86qp-5c8j-p5mr (starlette) details:\n### Summary\nIn affected versions, the HTTP `Host` request header was not validated before being used to reconstruct `request.url`. Because the routing algorithm relies on the raw HTTP path while `request.url` is rebuilt from the `Host` header, a malformed header could make `request.url.path` differ from the path that was actually requested. Middleware and endpoints that apply security restrictions based on `request.url` (rather than the raw `scope` path) could therefore be bypassed.\n\n### Details\nWhen a client requests `http://example.com/foo`, it sends:\n\n```http\nGET /foo HTTP/1.1\nHost: example.com\n```",
+      "vuln_id": "GHSA-86qp-5c8j-p5mr"
+     },
+     {
+      "id": "GHSA-86qp-5c8j-p5mr#4",
+      "score": 0.812,
+      "text": "GHSA-86qp-5c8j-p5mr (starlette) details:\n### Mitigation\nUpgrade to a patched version, which validates the `Host` header against the grammar of [RFC 9112 \u00a73.2](https://www.rfc-editor.org/rfc/rfc9112.html#section-3.2-6) / [RFC 3986 \u00a73.2.2](https://www.rfc-editor.org/rfc/rfc3986.html#section-3.2.2) when constructing `request.url` and falls back to `scope[\"server\"]` for malformed values.",
+      "vuln_id": "GHSA-86qp-5c8j-p5mr"
+     },
+     {
+      "id": "GHSA-86qp-5c8j-p5mr#2",
+      "score": 0.8,
+      "text": "GHSA-86qp-5c8j-p5mr (starlette) details:\nAffected versions reconstructed the URL by concatenating `http://{host}{path}` and re-parsing the result. The `Host` value is only valid as a `uri-host [ \":\" port ]` per [RFC 9112 \u00a73.2](https://www.rfc-editor.org/rfc/rfc9112.html#section-3.2-6), where `uri-host` follows the restricted `host` grammar of [RFC 3986 \u00a73.2.2](https://www.rfc-editor.org/rfc/rfc3986.html#section-3.2.2). When it contains characters outside that grammar - notably `/`, `?`, or `#` - those characters move the path/query/fragment boundaries during re-parsing, so the parsed `request.url.path` no longer matches the path the server actually received. For example:\n\n```http\nGET /foo HTTP/1.1\nHost: example.com/abc?bar=\n```",
+      "vuln_id": "GHSA-86qp-5c8j-p5mr"
+     },
+     {
+      "id": "GHSA-v5gw-mw7f-84px#0",
+      "score": 0.824,
+      "text": "GHSA-v5gw-mw7f-84px (CVE-2023-29159)\npackage: starlette\nsummary: Starlette has Path Traversal vulnerability in StaticFiles\naffected: >=0.13.5, <0.27.0",
+      "vuln_id": "GHSA-v5gw-mw7f-84px"
+     },
+     {
+      "id": "GHSA-jp82-jpqv-5vv3#0",
+      "score": 0.812,
+      "text": "GHSA-jp82-jpqv-5vv3 (CVE-2026-54282)\npackage: starlette\nsummary: Starlette: Unvalidated request path concatenated into authority poisons request.url.hostname\naffected: >=0, <1.3.0",
+      "vuln_id": "GHSA-jp82-jpqv-5vv3"
+     }
+    ],
+    "symbols": [
+     "Host",
+     "request.url",
+     "request.url.path",
+     "scope",
+     "host"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 51.0,
+   "output": {
+    "package": "starlette",
+    "import_names": [
+     "starlette"
+    ],
+    "symbols": [
+     "Host",
+     "request.url",
+     "request.url.path",
+     "scope",
+     "host"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/routes/_base/controller.py:13",
+     "mealie/routes/media/media_recipe.py:5",
+     "mealie/routes/media/media_user.py:3",
+     "mealie/routes/recipe/recipe_crud_routes.py:12",
+     "mealie/routes/spa/__init__.py:10",
+     "mealie/routes/utility_routes.py:4",
+     "mealie/services/scheduler/runner.py:12"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 25,
+    "vulnerable_call_sites": [
+     {
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "line": 184,
+      "code": "message=self.t(  [url=urls.recipe_url(self.group.slug, new_recipe.slug, self.settings.BASE_URL)]",
+      "resolved": "self.t",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeController.parse_recipe_url",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.recipe.recipe_crud_routes:RecipeController.parse_recipe_url"
+      ],
+      "snippet": "  181              self.publish_event(\n  182                  event_type=EventTypes.recipe_created,\n  183                  document_data=EventRecipeData(operation=EventOperation.create, recipe_slug=new_recipe.slug),\n  184                  message=self.t(\n  185                      \"notifications.generic-created-with-url\",\n  186                      name=new_recipe.name,\n  187                      url=urls.recipe_url(self.group.slug, new_recipe.slug, self.settings.BASE_URL),"
+     },
+     {
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "line": 303,
+      "code": "message=self.t(  [url=urls.recipe_url(self.group.slug, new_recipe.slug, self.settings.BASE_URL)]",
+      "resolved": "self.t",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeController.create_one",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.recipe.recipe_crud_routes:RecipeController.create_one"
+      ],
+      "snippet": "  300              self.publish_event(\n  301                  event_type=EventTypes.recipe_created,\n  302                  document_data=EventRecipeData(operation=EventOperation.create, recipe_slug=new_recipe.slug),\n  303                  message=self.t(\n  304                      \"notifications.generic-created-with-url\",\n  305                      name=new_recipe.name,\n  306                      url=urls.recipe_url(self.group.slug, new_recipe.slug, self.settings.BASE_URL),"
+     },
+     {
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "line": 344,
+      "code": "message=self.t(  [url=urls.recipe_url(self.group.slug, recipe.slug, self.settings.BASE_URL)]",
+      "resolved": "self.t",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeController.update_one",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.recipe.recipe_crud_routes:RecipeController.update_one"
+      ],
+      "snippet": "  341              self.publish_event(\n  342                  event_type=EventTypes.recipe_updated,\n  343                  document_data=EventRecipeData(operation=EventOperation.update, recipe_slug=recipe.slug),\n  344                  message=self.t(\n  345                      \"notifications.generic-updated-with-url\",\n  346                      name=recipe.name,\n  347                      url=urls.recipe_url(self.group.slug, recipe.slug, self.settings.BASE_URL),"
+     },
+     {
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "line": 365,
+      "code": "message=self.t(  [url=urls.recipe_url(self.group.slug, recipe.slug, self.settings.BASE_URL)]",
+      "resolved": "self.t",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeController.patch_one",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.recipe.recipe_crud_routes:RecipeController.patch_one"
+      ],
+      "snippet": "  362              self.publish_event(\n  363                  event_type=EventTypes.recipe_updated,\n  364                  document_data=EventRecipeData(operation=EventOperation.update, recipe_slug=recipe.slug),\n  365                  message=self.t(\n  366                      \"notifications.generic-updated-with-url\",\n  367                      name=recipe.name,\n  368                      url=urls.recipe_url(self.group.slug, recipe.slug, self.settings.BASE_URL),"
+     },
+     {
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "line": 387,
+      "code": "message=self.t(  [url=urls.recipe_url(self.group.slug, recipe.slug, self.settings.BASE_URL)]",
+      "resolved": "self.t",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeController.update_last_made",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.recipe.recipe_crud_routes:RecipeController.update_last_made"
+      ],
+      "snippet": "  384              self.publish_event(\n  385                  event_type=EventTypes.recipe_updated,\n  386                  document_data=EventRecipeData(operation=EventOperation.update, recipe_slug=recipe.slug),\n  387                  message=self.t(\n  388                      \"notifications.generic-updated-with-url\",\n  389                      name=recipe.name,\n  390                      url=urls.recipe_url(self.group.slug, recipe.slug, self.settings.BASE_URL),"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/routes/_base/controller.py:119",
+      "code": "route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:123",
+      "code": "routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:178",
+      "code": "def _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:",
+      "function": "mealie.routes._base.controller:_update_cbv_route_endpoint_signature",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:33",
+      "code": "return FileResponse(recipe_image)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_img",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:51",
+      "code": "return FileResponse(timeline_event_image)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_timeline_event_img",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:62",
+      "code": "return FileResponse(file)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_asset",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:22",
+      "code": "return FileResponse(recipe_image, media_type=\"image/webp\")",
+      "function": "mealie.routes.media.media_user:get_user_image",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:15",
+      "code": "@router.get(\"/{user_id}/{file_name}\", response_class=FileResponse)",
+      "function": "mealie.routes.media.media_user:get_user_image",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:115",
+      "code": "return FileResponse(file)",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:104",
+      "code": "@router_exports.get(\"/{slug}/exports\", response_class=FileResponse)",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:133",
+      "code": "return FileResponse(temp_path, filename=f\"{slug}.zip\")",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_zip",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/spa/__init__.py:32",
+      "code": "except HTTPException as ex:",
+      "function": "mealie.routes.spa:SPAStaticFiles.get_response",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/utility_routes.py:27",
+      "code": "return FileResponse(file_path, media_type=\"application/octet-stream\", filename=file_path.name)",
+      "function": "mealie.routes.utility_routes:download_file",
+      "in_test": false
+     },
+     {
+      "location": "mealie/services/scheduler/runner.py:69",
+      "code": "await run_in_threadpool(func)",
+      "function": "mealie.services.scheduler.runner:loop",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [
+     [
+      "mealie.routes.recipe.recipe_crud_routes:RecipeController.parse_recipe_url"
+     ],
+     [
+      "mealie.routes.recipe.recipe_crud_routes:RecipeController.create_one"
+     ],
+     [
+      "mealie.routes.recipe.recipe_crud_routes:RecipeController.update_one"
+     ],
+     [
+      "mealie.routes.recipe.recipe_crud_routes:RecipeController.patch_one"
+     ],
+     [
+      "mealie.routes.recipe.recipe_crud_routes:RecipeController.update_last_made"
+     ]
+    ],
+    "summary": "starlette: imported in 7 non-test location(s); 25 package call/reference site(s); named vulnerable symbols ['Host', 'request.url', 'request.url.path', 'scope', 'host']; 0 production call site(s) of those symbols (+5 weak name-only), 5 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 35.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:mealie/routes/recipe/recipe_crud_routes.py:365",
+      "score": 1.0,
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 365,
+      "qualname": "mealie.routes.recipe.recipe_crud_routes:RecipeController.patch_one",
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py around line 365\n  362              self.publish_event(\n  363                  event_type=EventTypes.recipe_updated,\n  364                  document_data=EventRecipeData(operation=EventOperation.update, recipe_slug=recipe.slug),\n  365                  message=self.t(\n  366                      \"notifications.generic-updated-with-url\",\n  367                      name=recipe.name,\n  368                      url=urls.recipe_url(self.group.slug, recipe.slug, self.settings.BASE_URL),"
+     },
+     {
+      "id": "site:mealie/routes/recipe/recipe_crud_routes.py:344",
+      "score": 1.0,
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 344,
+      "qualname": "mealie.routes.recipe.recipe_crud_routes:RecipeController.update_one",
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py around line 344\n  341              self.publish_event(\n  342                  event_type=EventTypes.recipe_updated,\n  343                  document_data=EventRecipeData(operation=EventOperation.update, recipe_slug=recipe.slug),\n  344                  message=self.t(\n  345                      \"notifications.generic-updated-with-url\",\n  346                      name=recipe.name,\n  347                      url=urls.recipe_url(self.group.slug, recipe.slug, self.settings.BASE_URL),"
+     },
+     {
+      "id": "site:mealie/routes/recipe/recipe_crud_routes.py:303",
+      "score": 1.0,
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 303,
+      "qualname": "mealie.routes.recipe.recipe_crud_routes:RecipeController.create_one",
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py around line 303\n  300              self.publish_event(\n  301                  event_type=EventTypes.recipe_created,\n  302                  document_data=EventRecipeData(operation=EventOperation.create, recipe_slug=new_recipe.slug),\n  303                  message=self.t(\n  304                      \"notifications.generic-created-with-url\",\n  305                      name=new_recipe.name,\n  306                      url=urls.recipe_url(self.group.slug, new_recipe.slug, self.settings.BASE_URL),"
+     },
+     {
+      "id": "site:mealie/routes/recipe/recipe_crud_routes.py:184",
+      "score": 1.0,
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 184,
+      "qualname": "mealie.routes.recipe.recipe_crud_routes:RecipeController.parse_recipe_url",
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py around line 184\n  181              self.publish_event(\n  182                  event_type=EventTypes.recipe_created,\n  183                  document_data=EventRecipeData(operation=EventOperation.create, recipe_slug=new_recipe.slug),\n  184                  message=self.t(\n  185                      \"notifications.generic-created-with-url\",\n  186                      name=new_recipe.name,\n  187                      url=urls.recipe_url(self.group.slug, new_recipe.slug, self.settings.BASE_URL),"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:151",
+      "score": 0.69,
+      "text": "# mealie/core/dependencies/dependencies.py:151-175  validate_file_token\ndef validate_file_token(token: str | None = None) -> Path:\n    \"\"\"\n    Args:\n        token (Optional[str], optional): _description_. Defaults to None.\n\n    Raises:\n        HTTPException: 400 Bad Request when no token or the file doesn't exist\n        HTTPException: 401 Unauthorized when the token is invalid\n    \"\"\"\n    if not token:\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    try:\n        payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])\n        file_path = Path(payload.get(\"file\"))\n    except JWTError as e:\n        raise HTTPException(\n            status_code=status.HTTP_401_UNAUTHORIZED,\n            detail=\"could not validate file token\",\n        ) from e\n\n    if not file_path.exists():\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    return file_path",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 151,
+      "qualname": "validate_file_token"
+     },
+     {
+      "id": "mealie:mealie/routes/utility_routes.py:module",
+      "score": 0.688,
+      "text": "# mealie/routes/utility_routes.py (module level)\nfrom pathlib import Path\nfrom fastapi import APIRouter, Depends, HTTPException, status\nfrom starlette.responses import FileResponse\nfrom mealie.core.config import get_app_dirs\nfrom mealie.core.dependencies import validate_file_token\nrouter = APIRouter(prefix=\"/api/utils\", tags=[\"Utils\"], include_in_schema=True)\n@router.get(\"/download\")",
+      "file": "mealie/routes/utility_routes.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:105",
+      "score": 0.687,
+      "text": "# mealie/services/recipe/recipe_data_service.py:105-116  RecipeDataService._validate_image_url\n    def _validate_image_url(url: str) -> bool:\n        # sourcery skip: invert-any-all, use-any\n        \"\"\"\n        Validates that the URL is of an allowed source and restricts certain sources to prevent\n        malicious images from being downloaded.\n        \"\"\"\n        invalid_domains = {\"127.0.0.1\", \"localhost\"}\n        for domain in invalid_domains:\n            if domain in url:\n                return False\n\n        return True",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 105,
+      "qualname": "RecipeDataService._validate_image_url"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "Host",
+     "request.url",
+     "request.url.path",
+     "scope",
+     "host"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/routes/_base/controller.py:13",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:5",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2543,
+   "tokens_out": 114,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/routes/_base/controller.py:13\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/routes/media/media_recipe.py:5\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/routes/media/media_user.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"Host\", \"request.url\", \"request.url.path\", \"scope\", \"host\"]}",
+     "in": 2543,
+     "out": 114,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 2516,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2516,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 5059,
+  "tokens_out": 150,
+  "cost_usd_est": 0.0,
+  "seconds": 0.12
+ },
+ "created": "2026-11-10T00:06:32+00:00",
+ "code_version": "a3e1ef4"
+}

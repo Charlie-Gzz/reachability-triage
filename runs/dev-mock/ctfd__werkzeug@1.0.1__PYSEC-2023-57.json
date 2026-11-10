@@ -1,0 +1,378 @@
+{
+ "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2023-57",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-23934",
+   "GHSA-px8h-6qxv-m22q",
+   "PYSEC-2023-57"
+  ],
+  "cves": [
+   "CVE-2023-23934"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2023-57",
+  "first_fixed_above_installed": "2.2.3",
+  "fixed_versions": [
+   "2.2.3",
+   "cf275f42acad1b5950c50ffe8ef58fe62cdce028"
+  ],
+  "max_cvss": null,
+  "package": "werkzeug",
+  "published": "2023-02-14T20:15:00Z",
+  "summary": "Werkzeug is a comprehensive WSGI web application library. Browsers may allow \"nameless\" cookies that look like `=value` instead of `key=value`. A vulnerable browser may allow a compromised application",
+  "target": "ctfd",
+  "version": "1.0.1",
+  "vuln_id": "PYSEC-2023-57"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "CTFd/__init__.py:13",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/__init__.py:14",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/errors.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2023-57",
+    "package": "werkzeug",
+    "version": "1.0.1",
+    "vuln_id": "PYSEC-2023-57",
+    "aliases": [
+     "CVE-2023-23934",
+     "GHSA-px8h-6qxv-m22q",
+     "PYSEC-2023-57"
+    ],
+    "summary": "Werkzeug is a comprehensive WSGI web application library. Browsers may allow \"nameless\" cookies that look like `=value` instead of `key=value`. A vulnerable browser may allow a compromised application",
+    "max_cvss": null,
+    "fixed_versions": [
+     "2.2.3",
+     "cf275f42acad1b5950c50ffe8ef58fe62cdce028"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 38.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-px8h-6qxv-m22q#1",
+      "score": 0.883,
+      "text": "GHSA-px8h-6qxv-m22q (werkzeug) details:\nBrowsers may allow \"nameless\" cookies that look like `=value` instead of `key=value`. A vulnerable browser may allow a compromised application on an adjacent subdomain to exploit this to set a cookie like `=__Host-test=bad` for another subdomain.\n\nWerkzeug <= 2.2.2 will parse the cookie `=__Host-test=bad` as `__Host-test=bad`. If a Werkzeug application is running next to a vulnerable or malicious subdomain which sets such a cookie using a vulnerable browser, the Werkzeug application will see the bad cookie value but the valid cookie key.",
+      "vuln_id": "GHSA-px8h-6qxv-m22q"
+     },
+     {
+      "id": "GHSA-px8h-6qxv-m22q#0",
+      "score": 0.741,
+      "text": "GHSA-px8h-6qxv-m22q (CVE-2023-23934)\npackage: werkzeug\nsummary: Incorrect parsing of nameless cookies leads to __Host- cookies bypass\naffected: >=0, <2.2.3",
+      "vuln_id": "GHSA-px8h-6qxv-m22q"
+     },
+     {
+      "id": "GHSA-h2fp-xgx6-xh6f#1",
+      "score": 0.837,
+      "text": "GHSA-h2fp-xgx6-xh6f (werkzeug) details:\nCross-site scripting (XSS) vulnerability in the render_full function in debug/tbtools.py in the debugger in Pallets Werkzeug before 0.11.11 (as used in Pallets Flask and other products) allows remote attackers to inject arbitrary web script or HTML via a field that contains an exception message.",
+      "vuln_id": "GHSA-h2fp-xgx6-xh6f"
+     },
+     {
+      "id": "GHSA-3p3h-qghp-hvh2#1",
+      "score": 0.78,
+      "text": "GHSA-3p3h-qghp-hvh2 (werkzeug) details:\nOpen redirect vulnerability in werkzeug before 0.11.6 via a double slash in the URL.",
+      "vuln_id": "GHSA-3p3h-qghp-hvh2"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 33.1,
+   "output": {
+    "package": "werkzeug",
+    "import_names": [
+     "werkzeug"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "CTFd/__init__.py:13",
+     "CTFd/__init__.py:14",
+     "CTFd/errors.py:3",
+     "CTFd/utils/initialization/__init__.py:8",
+     "CTFd/utils/sessions/__init__.py:6",
+     "CTFd/utils/uploads/uploaders.py:10"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 17,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/__init__.py:37",
+      "code": "@cached_property",
+      "function": "CTFd:CTFdRequest.path",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:250",
+      "code": "app.wsgi_app = ProxyFix(app.wsgi_app, *proxyfix_args)",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:252",
+      "code": "app.wsgi_app = ProxyFix(",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:8",
+      "code": "isinstance(error, InternalServerError)",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:9",
+      "code": "and error.description == InternalServerError.description",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/initialization/__init__.py:307",
+      "code": "app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {application_root: app})",
+      "function": "CTFd.utils.initialization:init_request_processors",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/sessions/__init__.py:28",
+      "code": "CallbackDict.__init__(self, initial, on_update)",
+      "function": "CTFd.utils.sessions:CachedSession.__init__",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:57",
+      "code": "filename = secure_filename(filename)",
+      "function": "CTFd.utils.uploads.uploaders:FilesystemUploader.upload",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:105",
+      "code": "self._clean_filename, secure_filename(filename).replace(\" \", \"_\")",
+      "function": "CTFd.utils.uploads.uploaders:S3Uploader.upload",
+      "in_test": false
+     }
+    ],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "werkzeug: imported in 6 non-test location(s); 17 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/constants/users.py:module",
+      "score": 0.62,
+      "text": "# CTFd/constants/users.py (module level)\nfrom collections import namedtuple\nUserAttrs = namedtuple(\n    \"UserAttrs\",\n    [\n        \"id\",\n        \"oauth_id\",\n        \"name\",\n        \"email\",\n        \"type\",\n        \"secret\",\n        \"website\",\n        \"affiliation\",\n        \"country\",\n        \"bracket\",\n        \"hidden\",\n        \"banned\",\n        \"verified\",\n        \"team_id\",\n        \"created\",\n    ],\n)\nclass _UserAttrsWrapper:\n    @property\n    @property\nUser = _UserAttrsWrapper()",
+      "file": "CTFd/constants/users.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/security/sanitize.py:module",
+      "score": 0.618,
+      "text": "# CTFd/utils/security/sanitize.py (module level)\nfrom pybluemonday import UGCPolicy\n# Copied from lxml:\n# https://github.com/lxml/lxml/blob/e986a9cb5d54827c59aefa8803bc90954d67221e/src/lxml/html/defs.py#L38\n# fmt: off\nSAFE_ATTRS = (\n    'abbr', 'accept', 'accept-charset', 'accesskey', 'action', 'align',\n    'alt', 'axis', 'border', 'cellpadding', 'cellspacing', 'char', 'charoff',\n    'charset', 'checked', 'cite', 'class', 'clear', 'cols', 'colspan',\n    'color', 'compact', 'coords', 'datetime', 'dir', 'disabled', 'enctype',\n    'for', 'frame', 'headers', 'height', 'href', 'hreflang', 'hspace', 'id',\n    'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'media', 'method',\n    'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt', 'readonly',\n    'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape',\n    'size', 'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title',\n    'type', 'usemap', 'valign', 'value', 'vspace', 'width'\n)\n# fmt: on\nPAGE_STRUCTURE_TAGS = {\n    \"title\": [],\n}\nMETA_TAGS = {\n    \"meta\": [\"name\", \"content\", \"property\"],\n}\nFORM_TAGS = {\n    \"form\": [\"method\", \"action\"],\n    \"button\": [\"name\", \"type\", \"value\", \"disabled\"],\n    \"input\": [\"name\", \"type\", \"value\", \"placeholder\"],\n    \"select\": [\"name\", \"value\", \"placeholder\"],\n    \"option\": [\"value\"],\n    \"textarea\": [\"name\", \"value\", \"placeholder\"],\n    \"label\": [\"for\"],\n}\nANNOYING_TAGS = {\n    \"blink\": [],\n    \"marquee\": [],\n}\nMEDIA_TAGS = {\n    \"audio\": [\"autoplay\", \"controls\", \"crossorigin\", \"loop\", \"muted\", \"preload\", \"src\"],\n    \"video\": [\n        \"autoplay\",\n        \"buffered\",\n        \"controls\",\n        \"crossorigin\",\n        \"loop\",\n        \"muted\",\n        \"playsinline\",\n        \"poster\",\n        \"preload\",\n        \"src\",\n    ],\n    \"source\": [\"src\", \"type\"],\n    \"iframe\": [\"width\", \"height\", \"src\", \"frameborder\", \"allow\", \"allowfullscreen\"],\n}\nSANITIZER = UGCPolicy()\nfor TAGS in (PAGE_STRUCTURE_TAGS, META_TAGS, FORM_TAGS, ANNOYING_TAGS, MEDIA_TAGS):\n    for element in TAGS:\n        SANITIZER.AllowElements(element)\n        SANITIZER.AllowAttrs(*TAGS[element]).OnElements(element)\n# Allow safe attrs copied from lxml\nSANITIZER.AllowAttrs(*SAFE_ATTRS).Globally()",
+      "file": "CTFd/utils/security/sanitize.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/plugins/__init__.py:142",
+      "score": 0.609,
+      "text": "# CTFd/plugins/__init__.py:142-155  get_user_page_menu_bar\ndef get_user_page_menu_bar():\n    \"\"\"\n    Access the list used to store the user page menu bar\n\n    :return: Returns a list of Menu namedtuples. They have name, and route attributes.\n    \"\"\"\n    pages = []\n    for p in get_pages() + app.plugin_menu_bar:\n        if p.route.startswith(\"http\"):\n            route = p.route\n        else:\n            route = url_for(\"views.static_html\", route=p.route)\n        pages.append(Menu(title=p.title, route=route))\n    return pages",
+      "file": "CTFd/plugins/__init__.py",
+      "start": 142,
+      "qualname": "get_user_page_menu_bar"
+     },
+     {
+      "id": "ctfd:CTFd/views.py:346",
+      "score": 0.606,
+      "text": "# CTFd/views.py:346-359  static_html\ndef static_html(route):\n    \"\"\"\n    Route in charge of routing users to Pages.\n    :param route:\n    :return:\n    \"\"\"\n    page = get_page(route)\n    if page is None:\n        abort(404)\n    else:\n        if page.auth_required and authed() is False:\n            return redirect(url_for(\"auth.login\", next=request.full_path))\n\n        return render_template(\"page.html\", content=page.html, title=page.title)",
+      "file": "CTFd/views.py",
+      "start": 346,
+      "qualname": "static_html"
+     },
+     {
+      "id": "ctfd:CTFd/utils/encoding/__init__.py:7",
+      "score": 0.6,
+      "text": "# CTFd/utils/encoding/__init__.py:7-15  hexencode\ndef hexencode(s):\n    if isinstance(s, string_types):\n        s = s.encode(\"utf-8\")\n    encoded = codecs.encode(s, \"hex\")\n    try:\n        encoded = encoded.decode(\"utf-8\")\n    except UnicodeDecodeError:\n        pass\n    return encoded",
+      "file": "CTFd/utils/encoding/__init__.py",
+      "start": 7,
+      "qualname": "hexencode"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "CTFd/__init__.py:13",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/__init__.py:14",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/errors.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1646,
+   "tokens_out": 85,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"CTFd/__init__.py:13\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/__init__.py:14\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/errors.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 1646,
+     "out": 85,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 1605,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1605,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3251,
+  "tokens_out": 120,
+  "cost_usd_est": 0.0,
+  "seconds": 0.11
+ },
+ "created": "2026-11-10T00:06:21+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,376 @@
+{
+ "finding_id": "mealie/pillow@10.2.0/PYSEC-2026-2257",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-55798",
+   "GHSA-4x4j-2g7c-83w6",
+   "PYSEC-2026-2257"
+  ],
+  "cves": [
+   "CVE-2026-55798"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "mealie/pillow@10.2.0/PYSEC-2026-2257",
+  "first_fixed_above_installed": "12.3.0",
+  "fixed_versions": [
+   "12.3.0"
+  ],
+  "max_cvss": "4.5",
+  "package": "pillow",
+  "published": "2026-07-06T19:17:08.830Z",
+  "summary": "Pillow is a Python imaging library. Prior to 12.3.0, WindowsViewer.get_command() constructed a cmd.exe shell command by directly embedding a file path into an f-string without escaping and passed the ",
+  "target": "mealie",
+  "version": "10.2.0",
+  "vuln_id": "PYSEC-2026-2257"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "PIL.ImageShow",
+   "subprocess.Popen",
+   "WindowsViewer.get_command",
+   "cmd.exe",
+   "MacViewer"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/pkgs/img/minify.py:6",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "PIL.ImageShow",
+  "subprocess.Popen",
+  "WindowsViewer.get_command",
+  "cmd.exe",
+  "MacViewer",
+  "shlex.quote",
+  "UnixViewer",
+  "os.system"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pillow@10.2.0/PYSEC-2026-2257",
+    "package": "pillow",
+    "version": "10.2.0",
+    "vuln_id": "PYSEC-2026-2257",
+    "aliases": [
+     "CVE-2026-55798",
+     "GHSA-4x4j-2g7c-83w6",
+     "PYSEC-2026-2257"
+    ],
+    "summary": "Pillow is a Python imaging library. Prior to 12.3.0, WindowsViewer.get_command() constructed a cmd.exe shell command by directly embedding a file path into an f-string without escaping and passed the ",
+    "max_cvss": "4.5",
+    "fixed_versions": [
+     "12.3.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 39.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-4x4j-2g7c-83w6#2",
+      "score": 0.818,
+      "text": "GHSA-4x4j-2g7c-83w6 (pillow) details:\ndef get_command(self, file: str, **options: Any) -> str:\n        return (\n            f'start \"Pillow\" /WAIT \"{file}\" '    # \u2190 f-string, no escaping\n            \"&& ping -n 4 127.0.0.1 >NUL \"\n            f'&& del /f \"{file}\"'                # \u2190 same path, unescaped again\n        )\n\ndef show_file(self, path: str, **options: Any) -> int:\n        if not os.path.exists(path):\n            raise FileNotFoundError\n        subprocess.Popen(\n            self.get_command(path, **options),\n            shell=True,                          # \u2190 shell=True\n            creationflags=getattr(subprocess, \"CREATE_NO_WINDOW\"),\n        )  # nosec                               # \u2190 Bandit warning suppressed manually\n        return 1\n```",
+      "vuln_id": "GHSA-4x4j-2g7c-83w6"
+     },
+     {
+      "id": "GHSA-4x4j-2g7c-83w6#0",
+      "score": 0.797,
+      "text": "GHSA-4x4j-2g7c-83w6 (CVE-2026-55798)\npackage: pillow\nsummary: Pillow: WindowsViewer.get_command() OS command injection via unescaped shell path\naffected: >=0, <12.3.0",
+      "vuln_id": "GHSA-4x4j-2g7c-83w6"
+     },
+     {
+      "id": "GHSA-4x4j-2g7c-83w6#1",
+      "score": 0.789,
+      "text": "GHSA-4x4j-2g7c-83w6 (pillow) details:\n### 1. Summary\n\n`WindowsViewer.get_command()` constructs a `cmd.exe` shell command by directly embedding a\nfile path into an f-string without escaping. The result is passed to\n`subprocess.Popen(..., shell=True)`. Shell metacharacters in the file path \u2014 most\nimportantly a double-quote (`\"`) that breaks out of the wrapping, followed by `&` \u2014 allow\ninjection of arbitrary `cmd.exe` commands.\n\nThe macOS equivalent (`MacViewer`) correctly applies `shlex.quote()` to the same parameter.\nThe Linux equivalent (`UnixViewer`) does likewise. Windows is the only platform missing this\nprotection, despite `shlex.quote` being **already imported** on line 21 of `ImageShow.py`.\n\n---\n\n### 2. Vulnerable Code\n\n**File:** `src/PIL/ImageShow.py`, lines 133\u2013150\n\n```python\nclass WindowsViewer(Viewer):\n    format = \"PNG\"\n    options = {\"compress_level\": 1, \"save_all\": True}",
+      "vuln_id": "GHSA-4x4j-2g7c-83w6"
+     },
+     {
+      "id": "GHSA-4x4j-2g7c-83w6#4",
+      "score": 0.783,
+      "text": "GHSA-4x4j-2g7c-83w6 (pillow) details:\n---\n### 3. Proof of Concept\n\nA full working PoC is at `poc_pillow_injection.py`. Key parts:\n\n**Part A \u2014 Injection string construction (static, no execution):**\n```python\nfrom PIL.ImageShow import WindowsViewer\n\nviewer = WindowsViewer()\nevil_path = r'C:\\Temp\\evil\" & echo PWNED & echo \"'\ncmd = viewer.get_command(evil_path)\nprint(cmd)\n# Output:\n# start \"Pillow\" /WAIT \"C:\\Temp\\evil\" & echo PWNED & echo \"\" && ping ...\n# \u250c\u2500 start \"Pillow\" /WAIT \"C:\\Temp\\evil\"   \u2192 fails (file not found)\n# \u251c\u2500 & echo PWNED                           \u2192 INJECTED COMMAND\n# \u2514\u2500 & echo \"\"  && ping ...                \u2192 continues\n```\n\n**Part B \u2014 Live execution via `os.system()` (verified on Windows 11, Pillow 12.1.1):**\n```python\nimport os, tempfile\nfrom PIL.ImageShow import WindowsViewer\n\nviewer = WindowsViewer()\npoc_dir = tempfile.mkdtemp()\nmarker  = os.path.join(poc_dir, \"INJECTION_CONFIRMED.txt\")",
+      "vuln_id": "GHSA-4x4j-2g7c-83w6"
+     },
+     {
+      "id": "GHSA-8m9x-pxwq-j236#1",
+      "score": 0.808,
+      "text": "GHSA-8m9x-pxwq-j236 (pillow) details:\nPython Image Library (PIL) 1.1.7 and earlier and Pillow before 2.5.0 might allow remote attackers to execute arbitrary commands via shell metacharacters in unspecified vectors related to CVE-2014-1932, possibly JpegImagePlugin.py.",
+      "vuln_id": "GHSA-8m9x-pxwq-j236"
+     },
+     {
+      "id": "GHSA-pw3c-h7wp-cvhx#1",
+      "score": 0.808,
+      "text": "GHSA-pw3c-h7wp-cvhx (pillow) details:\nPillow is the friendly PIL (Python Imaging Library) fork. `path_getbbox` in `path.c` in Pillow before 9.0.0 improperly initializes `ImagePath.Path`.",
+      "vuln_id": "GHSA-pw3c-h7wp-cvhx"
+     }
+    ],
+    "symbols": [
+     "PIL.ImageShow",
+     "subprocess.Popen",
+     "WindowsViewer.get_command",
+     "cmd.exe",
+     "MacViewer",
+     "shlex.quote",
+     "UnixViewer",
+     "os.system"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 73.5,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [
+     "PIL.ImageShow",
+     "subprocess.Popen",
+     "WindowsViewer.get_command",
+     "cmd.exe",
+     "MacViewer",
+     "shlex.quote",
+     "UnixViewer",
+     "os.system"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/pkgs/img/minify.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 10,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "code": "img = Image.open(image)",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pillow: imported in 1 non-test location(s); 10 package call/reference site(s); named vulnerable symbols ['PIL.ImageShow', 'subprocess.Popen', 'WindowsViewer.get_command', 'cmd.exe', 'MacViewer', 'shlex.quote', 'UnixViewer', 'os.system']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 43.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:module",
+      "score": 0.662,
+      "text": "# mealie/pkgs/img/minify.py (module level)\nfrom abc import ABC, abstractmethod\nfrom dataclasses import dataclass\nfrom logging import Logger\nfrom pathlib import Path\nfrom PIL import Image\nWEBP = \".webp\"\nFORMAT = \"WEBP\"\nIMAGE_EXTENSIONS = {\".jpg\", \".jpeg\", \".png\", \".webp\"}\n@dataclass\nclass MinifierOptions:\n    original: bool = True\n    miniature: bool = True\n    tiny: bool = True\nclass ABCMinifier(ABC):\n    @abstractmethod\nclass PillowMinifier(ABCMinifier):\n    @staticmethod\n    @staticmethod",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/repos/seed/seeders.py:19",
+      "score": 0.66,
+      "text": "# mealie/repos/seed/seeders.py:19-21  MultiPurposeLabelSeeder.get_file\n    def get_file(self, locale: str | None = None) -> pathlib.Path:\n        locale_path = self.resources / \"labels\" / \"locales\" / f\"{locale}.json\"\n        return locale_path if locale_path.exists() else labels.en_US",
+      "file": "mealie/repos/seed/seeders.py",
+      "start": 19,
+      "qualname": "MultiPurposeLabelSeeder.get_file"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:14",
+      "score": 0.657,
+      "text": "# mealie/pkgs/img/minify.py:14-16  get_format\ndef get_format(image: Path) -> str:\n    img = Image.open(image)\n    return img.format",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 14,
+      "qualname": "get_format"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:87",
+      "score": 0.657,
+      "text": "# mealie/pkgs/img/minify.py:87-127  PillowMinifier.minify\n    def minify(self, image_file: Path, force=True):\n        if not image_file.exists():\n            raise FileNotFoundError(f\"{image_file.name} does not exist\")\n\n        org_dest = image_file.parent.joinpath(\"original.webp\")\n        min_dest = image_file.parent.joinpath(\"min-original.webp\")\n        tiny_dest = image_file.parent.joinpath(\"tiny-original.webp\")\n\n        if not force and min_dest.exists() and tiny_dest.exists() and org_dest.exists():\n            self._logger.info(f\"{image_file.name} already minified\")\n            return\n\n        success = False\n\n        if self._opts.original:\n            if not force and org_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, org_dest, quality=70)\n                success = True\n\n        if self._opts.miniature:\n            if not force and min_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, min_dest, quality=70)\n                self._logger.info(f\"{image_file.name} minified\")\n                success = True\n\n        if self._opts.tiny:\n            if not force and tiny_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                img = Image.open(image_file)\n                tiny_image = PillowMinifier.crop_center(img)\n                tiny_image.save(tiny_dest, FORMAT, quality=70)\n                self._logger.info(\"Tiny image saved\")\n                success = True\n\n        if self._purge and success:\n            self.purge(image_file)",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 87,
+      "qualname": "PillowMinifier.minify"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/utils.py:102",
+      "score": 0.65,
+      "text": "# mealie/services/parser_services/crfpp/utils.py:102-110  displayIngredient\ndef displayIngredient(ingredient):\n    \"\"\"\n    Format a list of (tag, [tokens]) tuples as an HTML string for display.\n\n        displayIngredient([(\"qty\", [\"1\"]), (\"name\", [\"cat\", \"pie\"])])\n        # => <span class='qty'>1</span> <span class='name'>cat pie</span>\n    \"\"\"\n\n    return \"\".join([\"<span class='{}'>{}</span>\".format(tag, \" \".join(tokens)) for tag, tokens in ingredient])",
+      "file": "mealie/services/parser_services/crfpp/utils.py",
+      "start": 102,
+      "qualname": "displayIngredient"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "PIL.ImageShow",
+     "subprocess.Popen",
+     "WindowsViewer.get_command",
+     "cmd.exe",
+     "MacViewer"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:6",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2037,
+   "tokens_out": 76,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/pkgs/img/minify.py:6\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"PIL.ImageShow\", \"subprocess.Popen\", \"WindowsViewer.get_command\", \"cmd.exe\", \"MacViewer\"]}",
+     "in": 2037,
+     "out": 76,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.6,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1980,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1980,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4017,
+  "tokens_out": 112,
+  "cost_usd_est": 0.0,
+  "seconds": 0.16
+ },
+ "created": "2026-11-10T00:06:26+00:00",
+ "code_version": "a3e1ef4"
+}

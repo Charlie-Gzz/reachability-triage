@@ -19,6 +19,9 @@ ROUTE_DECORATORS = {"route", "get", "post", "put", "patch", "delete", "websocket
 VIEW_BASES = {"View", "TemplateView", "FormView", "APIView", "MethodView", "Resource", "ListView", "DetailView",
               "CreateView", "UpdateView", "DeleteView", "RedirectView", "Command", "BaseCommand", "Form", "ModelForm",
               "Middleware", "MiddlewareMixin", "BaseHTTPMiddleware", "Namespace", "Model", "Admin", "ModelAdmin"}
+REGISTER_CALLS = {"path", "re_path", "url", "add_url_rule", "add_api_route", "add_route", "add_get", "add_post",
+                  "add_put", "add_delete", "add_patch", "add_view", "register", "add_middleware", "connect",
+                  "add_api_websocket_route", "add_resource", "add_command", "add_task"}
 SKIP_DIRS = {".git", ".venv", "venv", "node_modules", "__pycache__", "migrations", "site-packages", "frontend",
              "docs", "dist", "build"}
 
@@ -59,6 +62,8 @@ class Evidence:
     vulnerable_call_sites: list[dict]
     config_references: list[dict]
     template_references: list[dict]
+    package_usages: list[dict]
+    searched: dict
     entry_points: int
     paths: list[list[str]]
     summary: str
@@ -95,6 +100,8 @@ class _FileVisitor(ast.NodeVisitor):
         self.imports: list[tuple[str, int]] = []   # (dotted module, line)
         self.funcs: list[Func] = []
         self.calls: list[tuple[str, int, str, str]] = []   # (resolved, line, enclosing, attr)
+        self.kwargs: list[tuple[str, int, str, str, str]] = []  # (resolved callee, line, enclosing, kw, value src)
+        self.registered: set[str] = set()                   # function names handed to route/url registration
         self.strings: list[tuple[str, int]] = []
         self.stack: list[Func] = []
         self.class_stack: list[str] = []
@@ -184,11 +191,39 @@ class _FileVisitor(ast.NodeVisitor):
             return f"{base}.{rest}" if rest else base
         return dotted
 
+    def visit_Assign(self, node: ast.Assign):
+        # Module-level containers that reference functions (dispatch tables, urlpatterns) become graph nodes,
+        # so `OPS[name](...)` inside a function still links to every function listed in OPS.
+        if not self.stack and not self.class_stack:
+            names = {n.id for n in ast.walk(node.value) if isinstance(n, ast.Name)} | {
+                n.attr for n in ast.walk(node.value) if isinstance(n, ast.Attribute)}
+            for tgt in node.targets:
+                if isinstance(tgt, ast.Name) and names and isinstance(node.value, ast.Dict | ast.List | ast.Tuple | ast.Set):
+                    f = Func(f"{self.module}:{tgt.id}", tgt.id, self.rel, node.lineno,
+                             getattr(node, "end_lineno", node.lineno), in_test=self.in_test, calls=set(names))
+                    if tgt.id in ("urlpatterns", "MIDDLEWARE", "routes"):
+                        f.is_entry, f.entry_kind = True, tgt.id
+                    self.funcs.append(f)
+        self.generic_visit(node)
+
     def visit_Call(self, node: ast.Call):
         d = self._dotted(node.func)
         enclosing = self.stack[-1].qualname if self.stack else f"{self.module}:<module>"
+        if d and d.rsplit(".", 1)[-1] in REGISTER_CALLS:
+            for a in [*node.args, *(k.value for k in node.keywords)]:
+                if isinstance(a, ast.Name):
+                    self.registered.add(a.id)
+                elif isinstance(a, ast.Attribute):
+                    self.registered.add(a.attr)
         if d:
             resolved = self._resolve(d)
+            for kw in node.keywords:
+                if kw.arg:
+                    try:
+                        val = ast.unparse(kw.value)[:80]
+                    except Exception:
+                        val = "?"
+                    self.kwargs.append((resolved, node.lineno, enclosing, kw.arg, val))
             attr = d.rsplit(".", 1)[-1]
             self.calls.append((resolved, node.lineno, enclosing, attr))
             if self.stack:
@@ -249,6 +284,10 @@ def _build_index(root_s: str, app_dirs: tuple, test_dirs: tuple) -> ProjectIndex
         files[rel] = v
         for f in v.funcs:
             funcs[f.qualname] = f
+    registered = set().union(*(v.registered for v in files.values())) if files else set()
+    for f in funcs.values():
+        if not f.is_entry and f.name in registered and not f.in_test:
+            f.is_entry, f.entry_kind = True, "registered handler"
     by_name: dict[str, list[str]] = defaultdict(list)
     for q, f in funcs.items():
         by_name[f.name].append(q)
@@ -305,24 +344,41 @@ def gather(root: Path, app_dirs: list[str] | None, test_dirs: list[str] | None, 
     pkg_calls = 0
     sites: list[CallSite] = []
     config_refs, tmpl_refs = [], []
+    usages: list[dict] = []
     for rel, v in idx.files.items():
         for mod, line in v.imports:
             if mod.split(".")[0] in roots:
                 (import_tests if v.in_test else imports).append(f"{rel}:{line}")
         uses_pkg = any(mod.split(".")[0] in roots for mod, _ in v.imports)
         seen_lines = set()
+        usage_lines = set()
         for resolved, line, enclosing, attr in v.calls:
             rr = resolved.replace("().", ".")
             if rr.split(".")[0] in roots:
                 pkg_calls += 1
+                if line not in usage_lines and len(usages) < 40:
+                    usage_lines.add(line)
+                    code = v.lines[line - 1].strip() if 0 < line <= len(v.lines) else ""
+                    usages.append({"location": f"{rel}:{line}", "code": code[:200], "function": enclosing,
+                                   "in_test": v.in_test})
             for sym in symbols:
                 strong = _matches(resolved, sym, roots)
                 weak = (not strong and uses_pkg and attr not in ("@ref",) and "." not in sym.strip("`()")
                         and attr == sym.strip("`()") and rr.split(".")[0] not in roots and len(attr) > 4)
-                if (strong or weak) and (line, sym) not in seen_lines:
-                    seen_lines.add((line, sym))
+                if (strong or weak) and line not in seen_lines:
+                    seen_lines.add(line)
                     code = v.lines[line - 1].strip() if 0 < line <= len(v.lines) else ""
                     sites.append(CallSite(rel, line, code[:200], rr, enclosing, v.in_test, weak=weak))
+        for resolved, line, enclosing, kw, val in v.kwargs:
+            rr = resolved.replace("().", ".")
+            if rr.split(".")[0] not in roots and not uses_pkg:
+                continue
+            for sym in symbols:
+                if kw == sym.strip("`()").split(".")[-1] and line not in seen_lines:
+                    seen_lines.add(line)
+                    code = v.lines[line - 1].strip() if 0 < line <= len(v.lines) else ""
+                    sites.append(CallSite(rel, line, f"{code[:170]}  [{kw}={val}]", rr, enclosing, v.in_test,
+                                          weak=rr.split(".")[0] not in roots))
         for s, line in v.strings:
             for sym in symbols:
                 bare = sym.strip("`()")
@@ -330,12 +386,14 @@ def gather(root: Path, app_dirs: list[str] | None, test_dirs: list[str] | None, 
                                       and s.split(".")[0] in roots):
                     config_refs.append({"location": f"{rel}:{line}", "value": s, "symbol": sym, "in_test": v.in_test})
     # template filters/tags ({{ x|urlize }}, {% load ... %})
+    n_templates = 0
     for d in template_dirs or []:
         for p in (root / d).rglob("*.html") if (root / d).exists() else []:
             try:
                 text = p.read_text(encoding="utf-8", errors="replace")
             except OSError:
                 continue
+            n_templates += 1
             for sym in symbols:
                 bare = sym.strip("`()").split(".")[-1]
                 if len(bare) < 4:
@@ -352,6 +410,7 @@ def gather(root: Path, app_dirs: list[str] | None, test_dirs: list[str] | None, 
         d = asdict(s)
         d["reachable_from_entry"] = path is not None
         d["path"] = path or []
+        d["callers"] = len(idx.callers.get(s.function, ())) if not s.function.endswith(":<module>") else None
         if path:
             paths.append(path)
         vulnerable.append(d)
@@ -367,8 +426,11 @@ def gather(root: Path, app_dirs: list[str] | None, test_dirs: list[str] | None, 
                + (f"; {len(vulnerable) - len(prod_sites)} only in tests" if len(vulnerable) > len(prod_sites) else "")
                + (f"; {len(config_refs)} config/string reference(s)" if config_refs else "")
                + (f"; {len(tmpl_refs)} template use(s)" if tmpl_refs else ""))
+    usages.sort(key=lambda u: u["in_test"])
     return Evidence(package, roots, symbols, bool(imports), imports[:20], bool(import_tests) and not imports, pkg_calls,
-                    vulnerable, config_refs[:10], tmpl_refs[:10], entries, paths[:5], summary)
+                    vulnerable, config_refs[:10], tmpl_refs[:10], usages[:15],
+                    {"python_files": len(idx.files), "template_dirs": list(template_dirs or []),
+                     "template_files": n_templates}, entries, paths[:5], summary)
 
 
 def function_source(root: Path, rel: str, line: int, context: int = 3) -> str:

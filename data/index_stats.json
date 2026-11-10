@@ -1,0 +1,18 @@
+{
+  "embed_model": "BAAI/bge-small-en-v1.5",
+  "dim": 384,
+  "advisories": {
+    "chunks": 2039,
+    "seconds": 129.6
+  },
+  "code": {
+    "chunks": 4149,
+    "seconds": 192.5,
+    "per_codebase": {
+      "healthchecks": 1931,
+      "ctfd": 734,
+      "mealie": 1340
+    },
+    "bench_chunks": 144
+  }
+}

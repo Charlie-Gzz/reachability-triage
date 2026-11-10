@@ -1,0 +1,411 @@
+{
+ "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2023-58",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-25577",
+   "GHSA-xg9f-g7g7-2323",
+   "PYSEC-2023-58"
+  ],
+  "cves": [
+   "CVE-2023-25577"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2023-58",
+  "first_fixed_above_installed": "2.2.3",
+  "fixed_versions": [
+   "2.2.3",
+   "517cac5a804e8c4dc4ed038bb20dacd038e7a9f1"
+  ],
+  "max_cvss": null,
+  "package": "werkzeug",
+  "published": "2023-02-14T20:15:00Z",
+  "summary": "Werkzeug is a comprehensive WSGI web application library. Prior to version 2.2.3, Werkzeug's multipart form data parser will parse an unlimited number of parts, including file parts. Parts can be a sm",
+  "target": "ctfd",
+  "version": "1.0.1",
+  "vuln_id": "PYSEC-2023-58"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "request.data",
+   "request.form",
+   "request.files",
+   "request.get_data",
+   "get_data"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "CTFd/__init__.py:13",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/__init__.py:14",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/errors.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "request.data",
+  "request.form",
+  "request.files",
+  "request.get_data",
+  "get_data",
+  "parse_form_data"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2023-58",
+    "package": "werkzeug",
+    "version": "1.0.1",
+    "vuln_id": "PYSEC-2023-58",
+    "aliases": [
+     "CVE-2023-25577",
+     "GHSA-xg9f-g7g7-2323",
+     "PYSEC-2023-58"
+    ],
+    "summary": "Werkzeug is a comprehensive WSGI web application library. Prior to version 2.2.3, Werkzeug's multipart form data parser will parse an unlimited number of parts, including file parts. Parts can be a sm",
+    "max_cvss": null,
+    "fixed_versions": [
+     "2.2.3",
+     "517cac5a804e8c4dc4ed038bb20dacd038e7a9f1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 39.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-xg9f-g7g7-2323#1",
+      "score": 0.818,
+      "text": "GHSA-xg9f-g7g7-2323 (werkzeug) details:\nWerkzeug's multipart form data parser will parse an unlimited number of parts, including file parts. Parts can be a small amount of bytes, but each requires CPU time to parse and may use more memory as Python data. If a request can be made to an endpoint that accesses `request.data`, `request.form`, `request.files`, or `request.get_data(parse_form_data=False)`, it can cause unexpectedly high resource usage.\n\nThis allows an attacker to cause a denial of service by sending crafted multipart data to an endpoint that will parse it. The amount of CPU time required can block worker processes from handling legitimate requests. The amount of RAM required can trigger an out of memory kill of the process. Unlimited file parts can use up memory and file handles. If many concurrent requests are sent continuously, this can exhaust or kill all available workers.",
+      "vuln_id": "GHSA-xg9f-g7g7-2323"
+     },
+     {
+      "id": "GHSA-xg9f-g7g7-2323#0",
+      "score": 0.75,
+      "text": "GHSA-xg9f-g7g7-2323 (CVE-2023-25577)\npackage: werkzeug\nsummary: High resource usage when parsing multipart form data with many fields\naffected: >=0, <2.2.3",
+      "vuln_id": "GHSA-xg9f-g7g7-2323"
+     },
+     {
+      "id": "GHSA-h2fp-xgx6-xh6f#1",
+      "score": 0.816,
+      "text": "GHSA-h2fp-xgx6-xh6f (werkzeug) details:\nCross-site scripting (XSS) vulnerability in the render_full function in debug/tbtools.py in the debugger in Pallets Werkzeug before 0.11.11 (as used in Pallets Flask and other products) allows remote attackers to inject arbitrary web script or HTML via a field that contains an exception message.",
+      "vuln_id": "GHSA-h2fp-xgx6-xh6f"
+     },
+     {
+      "id": "GHSA-q34m-jh98-gwm2#1",
+      "score": 0.8,
+      "text": "GHSA-q34m-jh98-gwm2 (werkzeug) details:\nApplications using Werkzeug to parse `multipart/form-data` requests are vulnerable to resource exhaustion. A specially crafted form body can bypass the `Request.max_form_memory_size` setting.\n\nThe `Request.max_content_length` setting, as well as resource limits provided by deployment software and platforms, are also available to limit the resources used during a request. This vulnerability does not affect those settings. All three types of limits should be considered and set appropriately when deploying an application.",
+      "vuln_id": "GHSA-q34m-jh98-gwm2"
+     }
+    ],
+    "symbols": [
+     "request.data",
+     "request.form",
+     "request.files",
+     "request.get_data",
+     "get_data",
+     "parse_form_data"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 87.3,
+   "output": {
+    "package": "werkzeug",
+    "import_names": [
+     "werkzeug"
+    ],
+    "symbols": [
+     "request.data",
+     "request.form",
+     "request.files",
+     "request.get_data",
+     "get_data",
+     "parse_form_data"
+    ],
+    "imported": true,
+    "import_locations": [
+     "CTFd/__init__.py:13",
+     "CTFd/__init__.py:14",
+     "CTFd/errors.py:3",
+     "CTFd/utils/initialization/__init__.py:8",
+     "CTFd/utils/sessions/__init__.py:6",
+     "CTFd/utils/uploads/uploaders.py:10"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 17,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/__init__.py:37",
+      "code": "@cached_property",
+      "function": "CTFd:CTFdRequest.path",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:250",
+      "code": "app.wsgi_app = ProxyFix(app.wsgi_app, *proxyfix_args)",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:252",
+      "code": "app.wsgi_app = ProxyFix(",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:8",
+      "code": "isinstance(error, InternalServerError)",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:9",
+      "code": "and error.description == InternalServerError.description",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/initialization/__init__.py:307",
+      "code": "app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {application_root: app})",
+      "function": "CTFd.utils.initialization:init_request_processors",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/sessions/__init__.py:28",
+      "code": "CallbackDict.__init__(self, initial, on_update)",
+      "function": "CTFd.utils.sessions:CachedSession.__init__",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:57",
+      "code": "filename = secure_filename(filename)",
+      "function": "CTFd.utils.uploads.uploaders:FilesystemUploader.upload",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:105",
+      "code": "self._clean_filename, secure_filename(filename).replace(\" \", \"_\")",
+      "function": "CTFd.utils.uploads.uploaders:S3Uploader.upload",
+      "in_test": false
+     }
+    ],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "werkzeug: imported in 6 non-test location(s); 17 package call/reference site(s); named vulnerable symbols ['request.data', 'request.form', 'request.files', 'request.get_data', 'get_data', 'parse_form_data']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 37.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/api/v1/files.py:63",
+      "score": 0.661,
+      "text": "# CTFd/api/v1/files.py:63-75  FilesList.get\n    def get(self, query_args):\n        q = query_args.pop(\"q\", None)\n        field = str(query_args.pop(\"field\", None))\n        filters = build_model_filters(model=Files, query=q, field=field)\n\n        files = Files.query.filter_by(**query_args).filter(*filters).all()\n        schema = FileSchema(many=True)\n        response = schema.dump(files)\n\n        if response.errors:\n            return {\"success\": False, \"errors\": response.errors}, 400\n\n        return {\"success\": True, \"data\": response.data}",
+      "file": "CTFd/api/v1/files.py",
+      "start": 63,
+      "qualname": "FilesList.get"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/files.py:module",
+      "score": 0.658,
+      "text": "# CTFd/api/v1/files.py (module level)\nfrom typing import List\nfrom flask import request\nfrom flask_restx import Namespace, Resource\nfrom CTFd.api.v1.helpers.request import validate_args\nfrom CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic\nfrom CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse\nfrom CTFd.constants import RawEnum\nfrom CTFd.models import Files, db\nfrom CTFd.schemas.files import FileSchema\nfrom CTFd.utils import uploads\nfrom CTFd.utils.decorators import admins_only\nfrom CTFd.utils.helpers.models import build_model_filters\nfiles_namespace = Namespace(\"files\", description=\"Endpoint to retrieve Files\")\nFileModel = sqlalchemy_to_pydantic(Files)\nclass FileDetailedSuccessResponse(APIDetailedSuccessResponse):\n    data: FileModel\nclass FileListSuccessResponse(APIListSuccessResponse):\n    data: List[FileModel]\nfiles_namespace.schema_model(\n    \"FileDetailedSuccessResponse\", FileDetailedSuccessResponse.apidoc()\n)\nfiles_namespace.schema_model(\n    \"FileListSuccessResponse\", FileListSuccessResponse.apidoc()\n)\n@files_namespace.route(\"\")\nclass FilesList(Resource):\n    @admins_only\n    @files_namespace.doc(\n        description=\"Endpoint to get file objects in bulk\",\n        responses={\n            200: (\"Success\", \"FileListSuccessResponse\"),\n            400: (\n                \"An error occured processing the provided or stored data\",\n                \"APISimpleErrorResponse\",\n            ),\n        },\n    )\n    @validate_args(\n        {\n            \"type\": (str, None),\n            \"location\": (str, None),\n            \"q\": (str, None),\n            \"field\": (\n                RawEnum(\"FileFields\", {\"type\": \"type\", \"location\": \"location\"}),\n                None,\n            ),\n        },\n        location=\"query\",\n    )\n    @admins_only\n    @files_namespace.doc(\n        description=\"Endpoint to get file objects in bulk\",\n        responses={\n            200: (\"Success\", \"FileDetailedSuccessResponse\"),\n            400: (\n                \"An error occured processing the provided or stored data\",\n                \"APISimpleErrorResponse\",\n            ),\n        },\n    )",
+      "file": "CTFd/api/v1/files.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/statistics/submissions.py:module",
+      "score": 0.649,
+      "text": "# CTFd/api/v1/statistics/submissions.py (module level)\nfrom flask_restx import Resource\nfrom sqlalchemy import func\nfrom CTFd.api.v1.statistics import statistics_namespace\nfrom CTFd.models import Submissions\nfrom CTFd.utils.decorators import admins_only\n@statistics_namespace.route(\"/submissions/<column>\")\nclass SubmissionPropertyCounts(Resource):\n    @admins_only",
+      "file": "CTFd/api/v1/statistics/submissions.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/config.py:module",
+      "score": 0.645,
+      "text": "# CTFd/api/v1/config.py (module level)\nfrom typing import List\nfrom flask import request\nfrom flask_restx import Namespace, Resource\nfrom CTFd.api.v1.helpers.request import validate_args\nfrom CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic\nfrom CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse\nfrom CTFd.cache import clear_config, clear_standings\nfrom CTFd.constants import RawEnum\nfrom CTFd.models import Configs, Fields, db\nfrom CTFd.schemas.config import ConfigSchema\nfrom CTFd.schemas.fields import FieldSchema\nfrom CTFd.utils import set_config\nfrom CTFd.utils.decorators import admins_only\nfrom CTFd.utils.helpers.models import build_model_filters\nconfigs_namespace = Namespace(\"configs\", description=\"Endpoint to retrieve Configs\")\nConfigModel = sqlalchemy_to_pydantic(Configs)\nclass ConfigDetailedSuccessResponse(APIDetailedSuccessResponse):\n    data: ConfigModel\nclass ConfigListSuccessResponse(APIListSuccessResponse):\n    data: List[ConfigModel]\nconfigs_namespace.schema_model(\n    \"ConfigDetailedSuccessResponse\", ConfigDetailedSuccessResponse.apidoc()\n)\nconfigs_namespace.schema_model(\n    \"ConfigListSuccessResponse\", ConfigListSuccessResponse.apidoc()\n)\n@configs_namespace.route(\"\")\nclass ConfigList(Resource):\n    @admins_only\n    @configs_namespace.doc(\n        description=\"Endpoint to get Config objects in bulk\",\n        responses={\n            200: (\"Success\", \"ConfigListSuccessResponse\"),\n            400: (\n                \"An error occured processing the provided or stored data\",\n                \"APISimpleErrorResponse\",\n            ),\n        },\n    )\n    @validate_args(\n        {\n            \"key\": (str, None),\n            \"value\": (str, None),\n            \"q\": (str, None),\n            \"field\": (RawEnum(\"ConfigFields\", {\"key\": \"key\", \"value\": \"value\"}), None),\n        },\n        location=\"query\",\n    )\n    @admins_only\n    @configs_namespace.doc(\n        description=\"Endpoint to get create a Config object\",\n        responses={\n            200: (\"Success\", \"ConfigDetailedSuccessResponse\"),\n            400: (\n                \"An error occured processing the provided or stored data\",\n                \"APISimpleErrorResponse\",\n            ),\n        },\n    )\n    @admins_only",
+      "file": "CTFd/api/v1/config.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/submissions.py:module",
+      "score": 0.645,
+      "text": "# CTFd/api/v1/submissions.py (module level)\nfrom typing import List\nfrom flask_restx import Namespace, Resource\nfrom CTFd.api.v1.helpers.request import validate_args\nfrom CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic\nfrom CTFd.api.v1.schemas import (\n    APIDetailedSuccessResponse,\n    PaginatedAPIListSuccessResponse,\n)\nfrom CTFd.cache import clear_standings\nfrom CTFd.constants import RawEnum\nfrom CTFd.models import Submissions, db\nfrom CTFd.schemas.submissions import SubmissionSchema\nfrom CTFd.utils.decorators import admins_only\nfrom CTFd.utils.helpers.models import build_model_filters\nsubmissions_namespace = Namespace(\n    \"submissions\", description=\"Endpoint to retrieve Submission\"\n)\nSubmissionModel = sqlalchemy_to_pydantic(Submissions)\nTransientSubmissionModel = sqlalchemy_to_pydantic(Submissions, exclude=[\"id\"])\nclass SubmissionDetailedSuccessResponse(APIDetailedSuccessResponse):\n    data: SubmissionModel\nclass SubmissionListSuccessResponse(PaginatedAPIListSuccessResponse):\n    data: List[SubmissionModel]\nsubmissions_namespace.schema_model(\n    \"SubmissionDetailedSuccessResponse\", SubmissionDetailedSuccessResponse.apidoc()\n)\nsubmissions_namespace.schema_model(\n    \"SubmissionListSuccessResponse\", SubmissionListSuccessResponse.apidoc()\n)\n@submissions_namespace.route(\"\")\nclass SubmissionsList(Resource):\n    @admins_only\n    @submissions_namespace.doc(\n        description=\"Endpoint to get submission objects in bulk\",\n        responses={\n            200: (\"Success\", \"SubmissionListSuccessResponse\"),\n            400: (\n                \"An error occured processing the provided or stored data\",\n                \"APISimpleErrorResponse\",\n            ),\n        },\n    )\n    @validate_args(\n        {\n            \"challenge_id\": (int, None),\n            \"user_id\": (int, None),\n            \"team_id\": (int, None),\n            \"ip\": (str, None),\n            \"provided\": (str, None),\n            \"type\": (str, None),\n            \"q\": (str, None),\n            \"field\": (\n                RawEnum(\n                    \"SubmissionFields\",\n                    {\n                        \"challenge_id\": \"challenge_id\",\n                        \"user_id\": \"user_id\",\n                        \"team_id\": \"team_id\",\n                        \"ip\": \"ip\",\n                        \"provided\": \"provided\",",
+      "file": "CTFd/api/v1/submissions.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "request.data",
+     "request.form",
+     "request.files",
+     "request.get_data",
+     "get_data"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "CTFd/__init__.py:13",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/__init__.py:14",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/errors.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2400,
+   "tokens_out": 106,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"CTFd/__init__.py:13\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/__init__.py:14\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/errors.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"request.data\", \"request.form\", \"request.files\", \"request.get_data\", \"get_data\"]}",
+     "in": 2400,
+     "out": 106,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 2360,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2360,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4760,
+  "tokens_out": 142,
+  "cost_usd_est": 0.0,
+  "seconds": 0.17
+ },
+ "created": "2026-11-10T00:06:21+00:00",
+ "code_version": "a3e1ef4"
+}

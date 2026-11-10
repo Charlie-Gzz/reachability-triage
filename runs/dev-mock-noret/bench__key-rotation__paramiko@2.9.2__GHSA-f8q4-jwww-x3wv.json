@@ -1,0 +1,238 @@
+{
+ "finding_id": "bench/key-rotation/paramiko@2.9.2/GHSA-f8q4-jwww-x3wv",
+ "config": "dev-mock-noret",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/key-rotation",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-24302",
+   "GHSA-f8q4-jwww-x3wv",
+   "PYSEC-2022-166"
+  ],
+  "cves": [
+   "CVE-2022-24302"
+  ],
+  "cwes": [
+   "CWE-362"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/key-rotation/paramiko@2.9.2/GHSA-f8q4-jwww-x3wv",
+  "first_fixed_above_installed": "2.9.3",
+  "fixed_versions": [
+   "2.9.3",
+   "2.10.1"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+  "package": "paramiko",
+  "published": "2022-03-19T00:01:03Z",
+  "split": "dev",
+  "summary": "Race Condition in Paramiko",
+  "target": "bench/key-rotation",
+  "version": "2.9.2",
+  "vuln_id": "GHSA-f8q4-jwww-x3wv"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "rotate/keys.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/key-rotation/paramiko@2.9.2/GHSA-f8q4-jwww-x3wv",
+    "package": "paramiko",
+    "version": "2.9.2",
+    "vuln_id": "GHSA-f8q4-jwww-x3wv",
+    "aliases": [
+     "CVE-2022-24302",
+     "GHSA-f8q4-jwww-x3wv",
+     "PYSEC-2022-166"
+    ],
+    "summary": "Race Condition in Paramiko",
+    "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+    "fixed_versions": [
+     "2.9.3",
+     "2.10.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.6,
+   "output": {
+    "package": "paramiko",
+    "import_names": [
+     "paramiko"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "rotate/keys.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 4,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "entry_points": 1,
+    "paths": [],
+    "summary": "paramiko: imported in 1 non-test location(s); 4 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "rotate/keys.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 402,
+   "tokens_out": 50,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"rotate/keys.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 402,
+     "out": 50,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 342,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 342,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 744,
+  "tokens_out": 85,
+  "cost_usd_est": 0.0,
+  "seconds": 0.01
+ },
+ "created": "2026-11-10T00:00:22+00:00",
+ "code_version": "a3e1ef4"
+}

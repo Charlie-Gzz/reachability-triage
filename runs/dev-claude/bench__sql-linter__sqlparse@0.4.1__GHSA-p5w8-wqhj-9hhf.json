@@ -1,0 +1,363 @@
+{
+ "finding_id": "bench/sql-linter/sqlparse@0.4.1/GHSA-p5w8-wqhj-9hhf",
+ "config": "dev-claude",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/sql-linter",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-32839",
+   "GHSA-p5w8-wqhj-9hhf",
+   "PYSEC-2021-333"
+  ],
+  "cves": [
+   "CVE-2021-32839"
+  ],
+  "cwes": [
+   "CWE-400"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/sql-linter/sqlparse@0.4.1/GHSA-p5w8-wqhj-9hhf",
+  "first_fixed_above_installed": "0.4.2",
+  "fixed_versions": [
+   "0.4.2",
+   "8238a9e450ed1524e40cb3a8b0b3c00606903aeb"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+  "package": "sqlparse",
+  "published": "2021-09-10T17:56:06Z",
+  "split": "dev",
+  "summary": "StripComments filter contains a regular expression that is vulnerable to ReDOS (Regular Expression Denial of Service)",
+  "target": "bench/sql-linter",
+  "version": "0.4.1",
+  "vuln_id": "GHSA-p5w8-wqhj-9hhf"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.88,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "sqlparse.format(..., strip_comments=True)",
+   "sqlparse.filters.StripComments"
+  ],
+  "reasoning": "GHSA-p5w8-wqhj-9hhf specifically affects the StripComments filter, which is only invoked when sqlparse.format() is called with strip_comments=True. The application's only call to sqlparse.format (lint/format.py:4-5) passes reindent=True, keyword_case='upper', identifier_case='lower' and does not set strip_comments, so the vulnerable regex path is never executed. The other sqlparse call, sqlparse.split (lint/format.py:8-9), is unrelated to the StripComments filter and is not covered by this specific advisory (it relates to a different CVE/GHSA for the general parser regex). Static analysis confirms 0 production call sites of the named vulnerable symbols (StripComments, strip_comments) with a path from an entry point. Since the advisory's stated workaround ('don't use strip_comments=True') is already satisfied by the app's usage, the vulnerable feature is not exercised.",
+  "evidence": [
+   {
+    "location": "lint/format.py:4-5",
+    "explanation": "sqlparse.format is called without strip_comments=True, so StripComments filter is never engaged."
+   },
+   {
+    "location": "lint/format.py:8-9",
+    "explanation": "sqlparse.split is used here but is not the vulnerable function named in this advisory."
+   },
+   {
+    "location": "advisory",
+    "explanation": "The advisory explicitly scopes the vulnerability to the strip_comments=True formatting feature only."
+   },
+   {
+    "location": "static evidence",
+    "explanation": "0 production call sites of StripComments/strip_comments symbols with a path from an entry point."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument would be that the app calls sqlparse.format() and sqlparse.split() on fully attacker-controlled SQL content (file content via CLI argument), so any ReDoS in sqlparse's parsing/formatting pipeline is potentially reachable regardless of flags. However, this specific advisory (GHSA-p5w8-wqhj-9hhf / CVE-2021-32839) is narrowly scoped to the StripComments filter, which is only invoked when strip_comments=True is explicitly passed to sqlparse.format(). The cited code at lint/format.py:4-5 passes reindent=True, keyword_case='upper', identifier_case='lower' and omits strip_comments entirely; since strip_comments defaults to False in sqlparse's API, the StripComments filter class is never instantiated or run. The sqlparse.split() call is also irrelevant to this specific filter. The static evidence (0 call sites of StripComments/strip_comments reaching an entry point) corroborates this. The broader ReDoS advisories (GHSA-rrm6-wvj7-cwh2, GHSA-prg7-hcfm-mfcr) that cover general parser regexes in split()/format() are different CVEs and not what this alert is about \u2014 conflating them would be scope creep beyond the advisory under review. The verdict correctly matches the advisory's precondition (strip_comments=True) against the actual call site and finds it unmet.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.88
+ },
+ "symbols": [
+  "sqlformat.format",
+  "sqlformat",
+  "StripComments",
+  "strip_comments"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/sql-linter/sqlparse@0.4.1/GHSA-p5w8-wqhj-9hhf",
+    "package": "sqlparse",
+    "version": "0.4.1",
+    "vuln_id": "GHSA-p5w8-wqhj-9hhf",
+    "aliases": [
+     "CVE-2021-32839",
+     "GHSA-p5w8-wqhj-9hhf",
+     "PYSEC-2021-333"
+    ],
+    "summary": "StripComments filter contains a regular expression that is vulnerable to ReDOS (Regular Expression Denial of Service)",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+    "fixed_versions": [
+     "0.4.2",
+     "8238a9e450ed1524e40cb3a8b0b3c00606903aeb"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-p5w8-wqhj-9hhf#0",
+      "score": 0.921,
+      "text": "GHSA-p5w8-wqhj-9hhf (CVE-2021-32839)\npackage: sqlparse\nsummary: StripComments filter contains a regular expression that is vulnerable to ReDOS (Regular Expression Denial of Service)\naffected: >=0.4.0, <0.4.2",
+      "vuln_id": "GHSA-p5w8-wqhj-9hhf"
+     },
+     {
+      "id": "GHSA-p5w8-wqhj-9hhf#1",
+      "score": 0.832,
+      "text": "GHSA-p5w8-wqhj-9hhf (sqlparse) details:\n### Impact\nThe formatter function that strips comments from a SQL contains a regular expression that is vulnerable to [ReDoS](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS) (Regular Expression Denial of Service). The regular expression may cause exponential backtracking on strings containing many repetitions of '\\r\\n' in SQL comments.\n\n### Patches\nThe issues has been fixed in sqlparse 0.4.2.\n\n### Workarounds\nOnly the formatting feature that removes comments from SQL statements is affected by this regular expression. As a workaround don't use the `sqlformat.format` function with keyword `strip_comments=True` or the `--strip-comments` command line flag when using the `sqlformat` command line tool.",
+      "vuln_id": "GHSA-p5w8-wqhj-9hhf"
+     },
+     {
+      "id": "GHSA-rrm6-wvj7-cwh2#1",
+      "score": 0.858,
+      "text": "GHSA-rrm6-wvj7-cwh2 (sqlparse) details:\n### Impact\nThe SQL parser contains a regular expression that is vulnerable to [ReDoS](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS) (Regular Expression Denial of Service). The vulnerability may lead to Denial of Service (DoS).\n\n### Patches\nThis issues has been fixed in sqlparse 0.4.4.\n\n### Workarounds\nNone.",
+      "vuln_id": "GHSA-rrm6-wvj7-cwh2"
+     },
+     {
+      "id": "GHSA-prg7-hcfm-mfcr#9",
+      "score": 0.844,
+      "text": "GHSA-prg7-hcfm-mfcr (sqlparse) details:\nThis is a **Regular Expression Denial of Service (ReDoS)** vulnerability. Any application or service that passes user-controlled SQL text to `sqlparse.parse()`, `sqlparse.format()`, or `sqlparse.split()` is affected. No authentication, special configuration, or elevated privileges are required \u2014 a single crafted HTTP request (or any other input channel carrying SQL text) is sufficient.\n\nUnder sustained attack, one or more CPU cores can be kept at 100% utilization, degrading or completely blocking service for all other users. Because the grouping-stage token limit fires only after the regex work is done, it provides no protection against this attack.\n\nAffected use cases include: web applications that accept and display or format SQL; database administration tools; ORM query inspectors; SQL linters and formatters exposed as APIs.\n\n### Reproduction artifacts\n\n#### `Dockerfile`",
+      "vuln_id": "GHSA-prg7-hcfm-mfcr"
+     }
+    ],
+    "symbols": [
+     "sqlformat.format",
+     "sqlformat",
+     "StripComments",
+     "strip_comments"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.8,
+   "output": {
+    "package": "sqlparse",
+    "import_names": [
+     "sqlparse"
+    ],
+    "symbols": [
+     "sqlformat.format",
+     "sqlformat",
+     "StripComments",
+     "strip_comments"
+    ],
+    "imported": true,
+    "import_locations": [
+     "lint/format.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "lint/format.py:5",
+      "code": "return sqlparse.format(sql, reindent=True, keyword_case=\"upper\", identifier_case=\"lower\")",
+      "function": "lint.format:pretty",
+      "in_test": false
+     },
+     {
+      "location": "lint/format.py:9",
+      "code": "return [s for s in sqlparse.split(sql) if s.strip()]",
+      "function": "lint.format:statements",
+      "in_test": false
+     }
+    ],
+    "entry_points": 1,
+    "paths": [],
+    "summary": "sqlparse: imported in 1 non-test location(s); 6 package call/reference site(s); named vulnerable symbols ['sqlformat.format', 'sqlformat', 'StripComments', 'strip_comments']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "bench/sql-linter:lint/format.py:8",
+      "score": 0.741,
+      "text": "# lint/format.py:8-9  statements\ndef statements(sql: str) -> list:\n    return [s for s in sqlparse.split(sql) if s.strip()]",
+      "file": "lint/format.py",
+      "start": 8,
+      "qualname": "statements"
+     },
+     {
+      "id": "bench/sql-linter:lint/format.py:4",
+      "score": 0.71,
+      "text": "# lint/format.py:4-5  pretty\ndef pretty(sql: str) -> str:\n    return sqlparse.format(sql, reindent=True, keyword_case=\"upper\", identifier_case=\"lower\")",
+      "file": "lint/format.py",
+      "start": 4,
+      "qualname": "pretty"
+     },
+     {
+      "id": "bench/sql-linter:lint/format.py:module",
+      "score": 0.658,
+      "text": "# lint/format.py (module level)\nimport sqlparse",
+      "file": "lint/format.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/sql-linter:lint/cli.py:6",
+      "score": 0.622,
+      "text": "# lint/cli.py:6-10  main\ndef main():\n    sql = open(sys.argv[1]).read()\n    for stmt in statements(sql):\n        print(pretty(stmt))\n        print()",
+      "file": "lint/cli.py",
+      "start": 6,
+      "qualname": "main"
+     },
+     {
+      "id": "bench/sql-linter:lint/cli.py:module",
+      "score": 0.575,
+      "text": "# lint/cli.py (module level)\nimport sys\nfrom lint.format import pretty, statements\nif __name__ == \"__main__\":\n    main()",
+      "file": "lint/cli.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 11775.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "sqlparse.format(..., strip_comments=True)",
+     "sqlparse.filters.StripComments"
+    ],
+    "reasoning": "GHSA-p5w8-wqhj-9hhf specifically affects the StripComments filter, which is only invoked when sqlparse.format() is called with strip_comments=True. The application's only call to sqlparse.format (lint/format.py:4-5) passes reindent=True, keyword_case='upper', identifier_case='lower' and does not set strip_comments, so the vulnerable regex path is never executed. The other sqlparse call, sqlparse.split (lint/format.py:8-9), is unrelated to the StripComments filter and is not covered by this specific advisory (it relates to a different CVE/GHSA for the general parser regex). Static analysis confirms 0 production call sites of the named vulnerable symbols (StripComments, strip_comments) with a path from an entry point. Since the advisory's stated workaround ('don't use strip_comments=True') is already satisfied by the app's usage, the vulnerable feature is not exercised.",
+    "evidence": [
+     {
+      "location": "lint/format.py:4-5",
+      "explanation": "sqlparse.format is called without strip_comments=True, so StripComments filter is never engaged."
+     },
+     {
+      "location": "lint/format.py:8-9",
+      "explanation": "sqlparse.split is used here but is not the vulnerable function named in this advisory."
+     },
+     {
+      "location": "advisory",
+      "explanation": "The advisory explicitly scopes the vulnerability to the strip_comments=True formatting feature only."
+     },
+     {
+      "location": "static evidence",
+      "explanation": "0 production call sites of StripComments/strip_comments symbols with a path from an entry point."
+     }
+    ]
+   },
+   "tokens_in": 3015,
+   "tokens_out": 1024,
+   "llm_calls": 1,
+   "llm_seconds": 11.77,
+   "cost_usd_est": 0.024405,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.85,\"vulnerable_symbols\":[\"sqlparse.format(..., strip_comments=True)\",\"sqlparse.filters.StripComments\"],\"reasoning\":\"GHSA-p5w8-wqhj-9hhf specifically affects the StripComments filter, which is only invoked when sqlparse.format() is called with strip_comments=True. The application's only call to sqlparse.format (lint/format.py:4-5) passes reindent=True, keyword_case='upper', identifier_case='lower' and does not set strip_comments, so the vulnerable regex path is never executed. The other sqlparse call, sqlparse.split (lint/format.py:8-9), is unrelated to the StripComments filter and is not covered by this specific advisory (it relates to a different CVE/GHSA for the general parser regex). Static analysis confirms 0 production call sites of the named vulnerable symbols (StripComments, strip_comments) with a path from an entry point. Since the advisory's stated workaround ('don't use strip_comments=True') is already satisfied by the app's usage, the vulnerable feature is not exercised.\",\"evidence\":[{\"location\":\"lint/format.py:4-5\",\"explanation\":\"sqlparse.format is called without strip_comments=True, so StripComments filter is never engaged.\"},{\"location\":\"lint/format.py:8-9\",\"explanation\":\"sqlparse.split is used here but is not the vulnerable function named in this advisory.\"},{\"location\":\"advisory\",\"explanation\":\"The advisory explicitly scopes the vulnerability to the strip_comments=True formatting feature only.\"},{\"location\":\"static evidence\",\"explanation\":\"0 production call sites of StripComments/strip_comments symbols with a path from an entry point.\"}]}",
+     "in": 3015,
+     "out": 1024,
+     "s": 11.77,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 13278.7,
+   "output": {
+    "critique": "The strongest counter-argument would be that the app calls sqlparse.format() and sqlparse.split() on fully attacker-controlled SQL content (file content via CLI argument), so any ReDoS in sqlparse's parsing/formatting pipeline is potentially reachable regardless of flags. However, this specific advisory (GHSA-p5w8-wqhj-9hhf / CVE-2021-32839) is narrowly scoped to the StripComments filter, which is only invoked when strip_comments=True is explicitly passed to sqlparse.format(). The cited code at lint/format.py:4-5 passes reindent=True, keyword_case='upper', identifier_case='lower' and omits strip_comments entirely; since strip_comments defaults to False in sqlparse's API, the StripComments filter class is never instantiated or run. The sqlparse.split() call is also irrelevant to this specific filter. The static evidence (0 call sites of StripComments/strip_comments reaching an entry point) corroborates this. The broader ReDoS advisories (GHSA-rrm6-wvj7-cwh2, GHSA-prg7-hcfm-mfcr) that cover general parser regexes in split()/format() are different CVEs and not what this alert is about \u2014 conflating them would be scope creep beyond the advisory under review. The verdict correctly matches the advisory's precondition (strip_comments=True) against the actual call site and finds it unmet.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.88
+   },
+   "tokens_in": 3053,
+   "tokens_out": 1031,
+   "llm_calls": 1,
+   "llm_seconds": 13.26,
+   "cost_usd_est": 0.024624,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument would be that the app calls sqlparse.format() and sqlparse.split() on fully attacker-controlled SQL content (file content via CLI argument), so any ReDoS in sqlparse's parsing/formatting pipeline is potentially reachable regardless of flags. However, this specific advisory (GHSA-p5w8-wqhj-9hhf / CVE-2021-32839) is narrowly scoped to the StripComments filter, which is only invoked when strip_comments=True is explicitly passed to sqlparse.format(). The cited code at lint/format.py:4-5 passes reindent=True, keyword_case='upper', identifier_case='lower' and omits strip_comments entirely; since strip_comments defaults to False in sqlparse's API, the StripComments filter class is never instantiated or run. The sqlparse.split() call is also irrelevant to this specific filter. The static evidence (0 call sites of StripComments/strip_comments reaching an entry point) corroborates this. The broader ReDoS advisories (GHSA-rrm6-wvj7-cwh2, GHSA-prg7-hcfm-mfcr) that cover general parser regexes in split()/format() are different CVEs and not what this alert is about \u2014 conflating them would be scope creep beyond the advisory under review. The verdict correctly matches the advisory's precondition (strip_comments=True) against the actual call site and finds it unmet.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.88}",
+     "in": 3053,
+     "out": 1031,
+     "s": 13.26,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 6068,
+  "tokens_out": 2055,
+  "cost_usd_est": 0.049029,
+  "seconds": 25.12
+ },
+ "created": "2026-11-10T00:09:52+00:00",
+ "code_version": "a3e1ef4"
+}

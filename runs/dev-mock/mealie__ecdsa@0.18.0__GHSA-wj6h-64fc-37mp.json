@@ -1,0 +1,308 @@
+{
+ "finding_id": "mealie/ecdsa@0.18.0/GHSA-wj6h-64fc-37mp",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-23342",
+   "GHSA-wj6h-64fc-37mp",
+   "PYSEC-2026-1325"
+  ],
+  "cves": [
+   "CVE-2024-23342"
+  ],
+  "cwes": [
+   "CWE-203",
+   "CWE-208",
+   "CWE-385"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/ecdsa@0.18.0/GHSA-wj6h-64fc-37mp",
+  "first_fixed_above_installed": null,
+  "fixed_versions": [],
+  "max_cvss": "7.4",
+  "package": "ecdsa",
+  "published": "2024-01-22T21:35:27Z",
+  "summary": "Minerva timing attack on P-256 in python-ecdsa",
+  "target": "mealie",
+  "version": "0.18.0",
+  "vuln_id": "GHSA-wj6h-64fc-37mp"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "ecdsa.SigningKey.sign_digest",
+   "sign_digest",
+   "SigningKey"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "ecdsa.SigningKey.sign_digest",
+  "sign_digest",
+  "SigningKey"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/ecdsa@0.18.0/GHSA-wj6h-64fc-37mp",
+    "package": "ecdsa",
+    "version": "0.18.0",
+    "vuln_id": "GHSA-wj6h-64fc-37mp",
+    "aliases": [
+     "CVE-2024-23342",
+     "GHSA-wj6h-64fc-37mp",
+     "PYSEC-2026-1325"
+    ],
+    "summary": "Minerva timing attack on P-256 in python-ecdsa",
+    "max_cvss": "7.4",
+    "fixed_versions": [],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-wj6h-64fc-37mp#0",
+      "score": 0.913,
+      "text": "GHSA-wj6h-64fc-37mp (CVE-2024-23342)\npackage: ecdsa\nsummary: Minerva timing attack on P-256 in python-ecdsa\naffected: >=0",
+      "vuln_id": "GHSA-wj6h-64fc-37mp"
+     },
+     {
+      "id": "GHSA-wj6h-64fc-37mp#1",
+      "score": 0.863,
+      "text": "GHSA-wj6h-64fc-37mp (ecdsa) details:\npython-ecdsa has been found to be subject to a Minerva timing attack on the P-256 curve. Using the `ecdsa.SigningKey.sign_digest()` API function and timing signatures an attacker can leak the internal nonce which may allow for private key discovery. Both ECDSA signatures, key generation, and ECDH operations are affected. ECDSA signature verification is unaffected. The python-ecdsa project considers side channel attacks out of scope for the project and there is no planned fix.",
+      "vuln_id": "GHSA-wj6h-64fc-37mp"
+     },
+     {
+      "id": "GHSA-9f5j-8jwj-x28g#0",
+      "score": 0.755,
+      "text": "GHSA-9f5j-8jwj-x28g (CVE-2026-33936)\npackage: ecdsa\nsummary: python-ecdsa: Denial of Service via improper DER length validation in crafted private keys\naffected: >=0, <0.19.2",
+      "vuln_id": "GHSA-9f5j-8jwj-x28g"
+     },
+     {
+      "id": "GHSA-8qxj-f9rh-9fg2#0",
+      "score": 0.749,
+      "text": "GHSA-8qxj-f9rh-9fg2 (CVE-2019-14859)\npackage: ecdsa\nsummary: Improper Verification of Cryptographic Signature in Pure-Python ECDSA\naffected: >=0, <0.13.3",
+      "vuln_id": "GHSA-8qxj-f9rh-9fg2"
+     }
+    ],
+    "symbols": [
+     "ecdsa.SigningKey.sign_digest",
+     "sign_digest",
+     "SigningKey"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 32.2,
+   "output": {
+    "package": "ecdsa",
+    "import_names": [
+     "ecdsa"
+    ],
+    "symbols": [
+     "ecdsa.SigningKey.sign_digest",
+     "sign_digest",
+     "SigningKey"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "ecdsa: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['ecdsa.SigningKey.sign_digest', 'sign_digest', 'SigningKey']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 32.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/core/security/hasher.py:26",
+      "score": 0.685,
+      "text": "# mealie/core/security/hasher.py:26-27  PasslibHasher.__init__\n    def __init__(self) -> None:\n        self.ctx = CryptContext(schemes=[\"bcrypt\"], deprecated=\"auto\")",
+      "file": "mealie/core/security/hasher.py",
+      "start": 26,
+      "qualname": "PasslibHasher.__init__"
+     },
+     {
+      "id": "mealie:mealie/core/security/security.py:module",
+      "score": 0.656,
+      "text": "# mealie/core/security/security.py (module level)\nimport secrets\nfrom datetime import datetime, timedelta, timezone\nfrom pathlib import Path\nfrom jose import jwt\nfrom mealie.core import root_logger\nfrom mealie.core.config import get_app_settings\nfrom mealie.core.security import ldap\nfrom mealie.core.security.hasher import get_hasher\nfrom mealie.db.models.users.users import AuthMethod\nfrom mealie.repos.all_repositories import get_repositories\nfrom mealie.schema.user import PrivateUser\nfrom mealie.services.user_services.user_service import UserService\nALGORITHM = \"HS256\"\nlogger = root_logger.get_logger(\"security\")\nclass UserLockedOut(Exception):\n    ...",
+      "file": "mealie/core/security/security.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/core/security/security.py:90",
+      "score": 0.651,
+      "text": "# mealie/core/security/security.py:90-92  url_safe_token\ndef url_safe_token() -> str:\n    \"\"\"Generates a cryptographic token without embedded data. Used for password reset tokens and invitation tokens\"\"\"\n    return secrets.token_urlsafe(24)",
+      "file": "mealie/core/security/security.py",
+      "start": 90,
+      "qualname": "url_safe_token"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:78",
+      "score": 0.649,
+      "text": "# mealie/core/dependencies/dependencies.py:78-116  get_current_user\nasync def get_current_user(\n    request: Request, token: str | None = Depends(oauth2_scheme_soft_fail), session=Depends(generate_session)\n) -> PrivateUser:\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},\n    )\n    if token is None and \"mealie.access_token\" in request.cookies:\n        # Try extract from cookie\n        token = request.cookies.get(\"mealie.access_token\", \"\")\n    else:\n        token = token or \"\"\n\n    try:\n        payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])\n        user_id: str = payload.get(\"sub\")\n        long_token: str = payload.get(\"long_token\")\n\n        if long_token is not None:\n            return validate_long_live_token(session, token, payload.get(\"id\"))\n\n        if user_id is None:\n            raise credentials_exception\n\n        token_data = TokenData(user_id=user_id)\n    except JWTError as e:\n        raise credentials_exception from e\n\n    repos = get_repositories(session)\n\n    user = repos.users.get_one(token_data.user_id, \"id\", any_case=False)\n\n    # If we don't commit here, lazy-loads from user relationships will leave some table lock in postgres\n    # which can cause quite a bit of pain further down the line\n    session.commit()\n    if user is None:\n        raise credentials_exception\n    return user",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 78,
+      "qualname": "get_current_user"
+     },
+     {
+      "id": "mealie:mealie/core/settings/settings.py:module",
+      "score": 0.649,
+      "text": "# mealie/core/settings/settings.py (module level)\nimport secrets\nfrom pathlib import Path\nfrom pydantic import BaseSettings, NoneStr, validator\nfrom mealie.core.settings.themes import Theme\nfrom .db_providers import AbstractDBProvider, db_provider_factory\nclass AppSettings(BaseSettings):\n    theme: Theme = Theme()\n    PRODUCTION: bool\n    BASE_URL: str = \"http://localhost:8080\"\n    \"\"\"trailing slashes are trimmed (ex. `http://localhost:8080/` becomes ``http://localhost:8080`)\"\"\"\n    STATIC_FILES: str = \"\"\n    \"\"\"path to static files directory (ex. `mealie/dist`)\"\"\"\n    IS_DEMO: bool = False\n    API_PORT: int = 9000\n    API_DOCS: bool = True\n    TOKEN_TIME: int = 48\n    \"\"\"time in hours\"\"\"\n    SECRET: str\n    LOG_LEVEL: str = \"INFO\"\n    \"\"\"corresponds to standard Python log levels\"\"\"\n    GIT_COMMIT_HASH: str = \"unknown\"\n    ALLOW_SIGNUP: bool = True\n    # ===============================================\n    # Security Configuration\n    SECURITY_MAX_LOGIN_ATTEMPTS: int = 5\n    SECURITY_USER_LOCKOUT_TIME: int = 24\n    \"time in hours\"\n    @validator(\"BASE_URL\")\n    @property\n    @property\n    # ===============================================\n    # Database Configuration\n    DB_ENGINE: str = \"sqlite\"  # Options: 'sqlite', 'postgres'\n    DB_PROVIDER: AbstractDBProvider | None = None\n    @property\n    @property\n    DEFAULT_GROUP: str = \"Home\"\n    _DEFAULT_EMAIL: str = \"changeme@example.com\"\n    \"\"\"\n    This is the default email used for the first user created in the database. This is only used if no users\n    exist in the database. it should no longer be set by end users.\n    \"\"\"\n    _DEFAULT_PASSWORD: str = \"MyPassword\"\n    \"\"\"\n    This is the default password used for the first user created in the database. This is only used if no users\n    exist in the database. it should no longer be set by end users.\n    \"\"\"\n    # ===============================================\n    # Email Configuration\n    SMTP_HOST: str | None\n    SMTP_PORT: str | None = \"587\"\n    SMTP_FROM_NAME: str | None = \"Mealie\"\n    SMTP_FROM_EMAIL: str | None\n    SMTP_USER: str | None\n    SMTP_PASSWORD: str | None\n    SMTP_AUTH_STRATEGY: str | None = \"TLS\"  # Options: 'TLS', 'SSL', 'NONE'\n    @property\n    @staticmethod\n    # ===============================================\n    # LDAP Configuration",
+      "file": "mealie/core/settings/settings.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "ecdsa.SigningKey.sign_digest",
+     "sign_digest",
+     "SigningKey"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1713,
+   "tokens_out": 50,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"ecdsa.SigningKey.sign_digest\", \"sign_digest\", \"SigningKey\"]}",
+     "in": 1713,
+     "out": 50,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 1.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1645,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1645,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3358,
+  "tokens_out": 86,
+  "cost_usd_est": 0.0,
+  "seconds": 0.1
+ },
+ "created": "2026-11-10T00:06:22+00:00",
+ "code_version": "a3e1ef4"
+}

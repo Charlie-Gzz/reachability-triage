@@ -1,0 +1,837 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/GHSA-qw25-v68c-qjf3",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-64458",
+   "GHSA-qw25-v68c-qjf3"
+  ],
+  "cves": [
+   "CVE-2025-64458"
+  ],
+  "cwes": [
+   "CWE-407"
+  ],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/GHSA-qw25-v68c-qjf3",
+  "first_fixed_above_installed": "4.2.26",
+  "fixed_versions": [
+   "4.2.26",
+   "5.1.14",
+   "5.2.8"
+  ],
+  "max_cvss": "7.5",
+  "package": "django",
+  "published": "2025-11-05T15:31:07Z",
+  "summary": "Django has a denial-of-service vulnerability in HttpResponseRedirect and HttpResponsePermanentRedirect on Windows",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "GHSA-qw25-v68c-qjf3"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "django.http.HttpResponseRedirect",
+   "django.http.HttpResponsePermanentRedirect",
+   "django.shortcuts.redirect",
+   "HttpResponseRedirect",
+   "HttpResponsePermanentRedirect"
+  ],
+  "reasoning": "mock: 25 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/accounts/admin.py:169",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/decorators.py:38",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/views.py:107",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "django.http.HttpResponseRedirect",
+  "django.http.HttpResponsePermanentRedirect",
+  "django.shortcuts.redirect",
+  "HttpResponseRedirect",
+  "HttpResponsePermanentRedirect"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/GHSA-qw25-v68c-qjf3",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "GHSA-qw25-v68c-qjf3",
+    "aliases": [
+     "CVE-2025-64458",
+     "GHSA-qw25-v68c-qjf3"
+    ],
+    "summary": "Django has a denial-of-service vulnerability in HttpResponseRedirect and HttpResponsePermanentRedirect on Windows",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "4.2.26",
+     "5.1.14",
+     "5.2.8"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 32.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-qw25-v68c-qjf3#0",
+      "score": 0.88,
+      "text": "GHSA-qw25-v68c-qjf3 (CVE-2025-64458)\npackage: django\nsummary: Django has a denial-of-service vulnerability in HttpResponseRedirect and HttpResponsePermanentRedirect on Windows\naffected: >=0, <4.2.26; >=5.0a1, <5.1.14; >=5.2a1, <5.2.8",
+      "vuln_id": "GHSA-qw25-v68c-qjf3"
+     },
+     {
+      "id": "GHSA-qw25-v68c-qjf3#1",
+      "score": 0.789,
+      "text": "GHSA-qw25-v68c-qjf3 (django) details:\nAn issue was discovered in 5.1 before 5.1.14, 4.2 before 4.2.26, and 5.2 before 5.2.8.\nNFKC normalization in Python is slow on Windows. As a consequence, `django.http.HttpResponseRedirect`, `django.http.HttpResponsePermanentRedirect`, and the shortcut `django.shortcuts.redirect`  were subject to a potential  denial-of-service attack via certain inputs with a very large number of Unicode characters.\nEarlier, unsupported Django series (such as 5.0.x, 4.1.x, and 3.2.x) were not evaluated and may also be affected.\nDjango would like to thank Seokchan Yoon for reporting this issue.",
+      "vuln_id": "GHSA-qw25-v68c-qjf3"
+     },
+     {
+      "id": "GHSA-f6f8-9mx6-9mx2#0",
+      "score": 0.833,
+      "text": "GHSA-f6f8-9mx6-9mx2 (CVE-2024-39614)\npackage: django\nsummary: Django vulnerable to Denial of Service\naffected: >=4.2, <4.2.14; >=5.0, <5.0.7",
+      "vuln_id": "GHSA-f6f8-9mx6-9mx2"
+     },
+     {
+      "id": "GHSA-qg2p-9jwr-mmqf#0",
+      "score": 0.829,
+      "text": "GHSA-qg2p-9jwr-mmqf (CVE-2024-38875)\npackage: django\nsummary: Django vulnerable to Denial of Service\naffected: >=4.2, <4.2.14; >=5.0, <5.0.7",
+      "vuln_id": "GHSA-qg2p-9jwr-mmqf"
+     }
+    ],
+    "symbols": [
+     "django.http.HttpResponseRedirect",
+     "django.http.HttpResponsePermanentRedirect",
+     "django.shortcuts.redirect",
+     "HttpResponseRedirect",
+     "HttpResponsePermanentRedirect"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 161.8,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "django.http.HttpResponseRedirect",
+     "django.http.HttpResponsePermanentRedirect",
+     "django.shortcuts.redirect",
+     "HttpResponseRedirect",
+     "HttpResponsePermanentRedirect"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [
+     {
+      "file": "hc/accounts/admin.py",
+      "line": 169,
+      "code": "return redirect(\"hc-index\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.admin:ProfileAdmin.login"
+      ],
+      "snippet": "  166      def login(self, request, qs):\n  167          profile = qs.get()\n  168          auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")\n  169          return redirect(\"hc-index\")\n  170  \n  171  \n  172  @admin.register(Project)"
+     },
+     {
+      "file": "hc/accounts/decorators.py",
+      "line": 38,
+      "code": "return redirect(request.path)",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.decorators:wrapper",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:add_totp",
+       "hc.accounts.decorators:require_sudo_mode",
+       "hc.accounts.decorators:wrapper"
+      ],
+      "snippet": "   35              if ours and ours == request.POST[\"sudo_code\"]:\n   36                  request.session.pop(\"sudo_code\")\n   37                  request.session[\"sudo\"] = TimestampSigner().sign(\"active\")\n   38                  return redirect(request.path)\n   39  \n   40          if not _session_unsign(request, \"sudo_code\", 900):\n   41              code = \"%06d\" % secrets.randbelow(1000000)"
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 107,
+      "code": "return redirect(redirect_url)",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:_redirect_after_login",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:check_token",
+       "hc.accounts.views:_redirect_after_login"
+      ],
+      "snippet": "  104  \n  105      redirect_url = request.GET.get(\"next\")\n  106      if _allow_redirect(redirect_url):\n  107          return redirect(redirect_url)\n  108  \n  109      if request.user.project_set.count() == 1:\n  110          project = request.user.project_set.first()"
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 111,
+      "code": "return redirect(\"hc-checks\", project.code)",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:_redirect_after_login",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:check_token",
+       "hc.accounts.views:_redirect_after_login"
+      ],
+      "snippet": "  108  \n  109      if request.user.project_set.count() == 1:\n  110          project = request.user.project_set.first()\n  111          return redirect(\"hc-checks\", project.code)\n  112  \n  113      return redirect(\"hc-index\")\n  114  "
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 113,
+      "code": "return redirect(\"hc-index\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:_redirect_after_login",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:check_token",
+       "hc.accounts.views:_redirect_after_login"
+      ],
+      "snippet": "  110          project = request.user.project_set.first()\n  111          return redirect(\"hc-checks\", project.code)\n  112  \n  113      return redirect(\"hc-index\")\n  114  \n  115  \n  116  def _check_2fa(request, user):"
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 136,
+      "code": "return redirect(path)",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:_check_2fa",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:check_token",
+       "hc.accounts.views:_check_2fa"
+      ],
+      "snippet": "  133          if _allow_redirect(redirect_url):\n  134              path += \"?next=%s\" % redirect_url\n  135  \n  136          return redirect(path)\n  137  \n  138      auth_login(request, user)\n  139      return _redirect_after_login(request)"
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 168,
+      "code": "response = redirect(\"hc-login-link-sent\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:login",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:login"
+      ],
+      "snippet": "  165  \n  166                  profile = Profile.objects.for_user(magic_form.user)\n  167                  profile.send_instant_login_link(redirect_url=redirect_url)\n  168                  response = redirect(\"hc-login-link-sent\")\n  169  \n  170                  # check_token_submit looks for this cookie to decide if\n  171                  # it needs to do the extra POST step."
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 192,
+      "code": "return redirect(\"hc-index\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:logout",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:logout"
+      ],
+      "snippet": "  189  \n  190  def logout(request):\n  191      auth_logout(request)\n  192      return redirect(\"hc-index\")\n  193  \n  194  \n  195  @require_POST"
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 244,
+      "code": "return redirect(\"hc-login\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:check_token",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:check_token"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 303,
+      "code": "return redirect(\"hc-checks\", project.code)",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:add_project",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:add_project"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 546,
+      "code": "return redirect(\"hc-profile\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:set_password",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:set_password"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 564,
+      "code": "return redirect(\"hc-change-email-done\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:change_email",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:change_email"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 634,
+      "code": "return redirect(\"hc-login\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:close",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:close"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 648,
+      "code": "return redirect(\"hc-index\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:remove_project",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:remove_project"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 693,
+      "code": "return redirect(\"hc-profile\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:add_webauthn",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:add_webauthn"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 742,
+      "code": "return redirect(\"hc-profile\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:add_totp",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:add_totp"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 760,
+      "code": "return redirect(\"hc-profile\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:remove_totp",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:remove_totp"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 780,
+      "code": "return redirect(\"hc-profile\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:remove_credential",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:remove_credential"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 829,
+      "code": "return redirect(\"hc-login\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:login_webauthn",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:login_webauthn"
+      ]
+     },
+     {
+      "file": "hc/accounts/views.py",
+      "line": 879,
+      "code": "return redirect(\"hc-login\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.accounts.views:login_totp",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.views:login_totp"
+      ]
+     },
+     {
+      "file": "hc/front/views.py",
+      "line": 315,
+      "code": "return redirect(\"hc-login\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.front.views:index",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.front.views:index"
+      ]
+     },
+     {
+      "file": "hc/front/views.py",
+      "line": 378,
+      "code": "return redirect(url + \"?new\")",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.front.views:add_check",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.front.views:add_check"
+      ]
+     },
+     {
+      "file": "hc/front/views.py",
+      "line": 394,
+      "code": "return redirect(\"hc-details\", code)",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.front.views:update_name",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.front.views:update_name"
+      ]
+     },
+     {
+      "file": "hc/front/views.py",
+      "line": 396,
+      "code": "return redirect(\"hc-checks\", check.project.code)",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.front.views:update_name",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.front.views:update_name"
+      ]
+     },
+     {
+      "file": "hc/front/views.py",
+      "line": 412,
+      "code": "return redirect(\"hc-details\", code)",
+      "resolved": "django.shortcuts.redirect",
+      "function": "hc.front.views:filtering_rules",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.front.views:filtering_rules"
+      ]
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 339,
+    "paths": [
+     [
+      "hc.accounts.admin:ProfileAdmin.login"
+     ],
+     [
+      "hc.accounts.views:add_totp",
+      "hc.accounts.decorators:require_sudo_mode",
+      "hc.accounts.decorators:wrapper"
+     ],
+     [
+      "hc.accounts.views:check_token",
+      "hc.accounts.views:_redirect_after_login"
+     ],
+     [
+      "hc.accounts.views:check_token",
+      "hc.accounts.views:_redirect_after_login"
+     ],
+     [
+      "hc.accounts.views:check_token",
+      "hc.accounts.views:_redirect_after_login"
+     ]
+    ],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols ['django.http.HttpResponseRedirect', 'django.http.HttpResponsePermanentRedirect', 'django.shortcuts.redirect', 'HttpResponseRedirect', 'HttpResponsePermanentRedirect']; 25 production call site(s) of those symbols, 25 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 46.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:hc/accounts/views.py:111",
+      "score": 1.0,
+      "file": "hc/accounts/views.py",
+      "start": 111,
+      "qualname": "hc.accounts.views:_redirect_after_login",
+      "text": "# hc/accounts/views.py around line 111\n  108  \n  109      if request.user.project_set.count() == 1:\n  110          project = request.user.project_set.first()\n  111          return redirect(\"hc-checks\", project.code)\n  112  \n  113      return redirect(\"hc-index\")\n  114  "
+     },
+     {
+      "id": "site:hc/accounts/views.py:107",
+      "score": 1.0,
+      "file": "hc/accounts/views.py",
+      "start": 107,
+      "qualname": "hc.accounts.views:_redirect_after_login",
+      "text": "# hc/accounts/views.py around line 107\n  104  \n  105      redirect_url = request.GET.get(\"next\")\n  106      if _allow_redirect(redirect_url):\n  107          return redirect(redirect_url)\n  108  \n  109      if request.user.project_set.count() == 1:\n  110          project = request.user.project_set.first()"
+     },
+     {
+      "id": "site:hc/accounts/decorators.py:38",
+      "score": 1.0,
+      "file": "hc/accounts/decorators.py",
+      "start": 38,
+      "qualname": "hc.accounts.decorators:wrapper",
+      "text": "# hc/accounts/decorators.py around line 38\n   35              if ours and ours == request.POST[\"sudo_code\"]:\n   36                  request.session.pop(\"sudo_code\")\n   37                  request.session[\"sudo\"] = TimestampSigner().sign(\"active\")\n   38                  return redirect(request.path)\n   39  \n   40          if not _session_unsign(request, \"sudo_code\", 900):\n   41              code = \"%06d\" % secrets.randbelow(1000000)"
+     },
+     {
+      "id": "site:hc/accounts/admin.py:169",
+      "score": 1.0,
+      "file": "hc/accounts/admin.py",
+      "start": 169,
+      "qualname": "hc.accounts.admin:ProfileAdmin.login",
+      "text": "# hc/accounts/admin.py around line 169\n  166      def login(self, request, qs):\n  167          profile = qs.get()\n  168          auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")\n  169          return redirect(\"hc-index\")\n  170  \n  171  \n  172  @admin.register(Project)"
+     },
+     {
+      "id": "healthchecks:hc/accounts/views.py:52",
+      "score": 0.742,
+      "text": "# hc/accounts/views.py:52-66  _allow_redirect\ndef _allow_redirect(redirect_url):\n    if not redirect_url:\n        return False\n\n    parsed = urlparse(redirect_url)\n    if parsed.netloc:\n        # Allow redirects only to relative URLs\n        return False\n\n    try:\n        match = resolve(parsed.path)\n    except Resolver404:\n        return False\n\n    return match.url_name in POST_LOGIN_ROUTES",
+      "file": "hc/accounts/views.py",
+      "start": 52,
+      "qualname": "_allow_redirect"
+     },
+     {
+      "id": "healthchecks:hc/accounts/views.py:102",
+      "score": 0.695,
+      "text": "# hc/accounts/views.py:102-113  _redirect_after_login\ndef _redirect_after_login(request):\n    \"\"\" Redirect to the URL indicated in ?next= query parameter. \"\"\"\n\n    redirect_url = request.GET.get(\"next\")\n    if _allow_redirect(redirect_url):\n        return redirect(redirect_url)\n\n    if request.user.project_set.count() == 1:\n        project = request.user.project_set.first()\n        return redirect(\"hc-checks\", project.code)\n\n    return redirect(\"hc-index\")",
+      "file": "hc/accounts/views.py",
+      "start": 102,
+      "qualname": "_redirect_after_login"
+     },
+     {
+      "id": "healthchecks:hc/front/tests/test_pause.py:45",
+      "score": 0.685,
+      "text": "# hc/front/tests/test_pause.py:45-48  PauseTestCase.test_it_does_not_redirect_ajax\n    def test_it_does_not_redirect_ajax(self):\n        self.client.login(username=\"alice@example.org\", password=\"password\")\n        r = self.client.post(self.url, HTTP_X_REQUESTED_WITH=\"XMLHttpRequest\")\n        self.assertEqual(r.status_code, 200)",
+      "file": "hc/front/tests/test_pause.py",
+      "start": 45,
+      "qualname": "PauseTestCase.test_it_does_not_redirect_ajax"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "django.http.HttpResponseRedirect",
+     "django.http.HttpResponsePermanentRedirect",
+     "django.shortcuts.redirect",
+     "HttpResponseRedirect",
+     "HttpResponsePermanentRedirect"
+    ],
+    "reasoning": "mock: 25 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/accounts/admin.py:169",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/decorators.py:38",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/views.py:107",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2047,
+   "tokens_out": 132,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 25 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/accounts/admin.py:169\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/decorators.py:38\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/views.py:107\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"django.http.HttpResponseRedirect\", \"django.http.HttpResponsePermanentRedirect\", \"django.shortcuts.redirect\", \"HttpResponseRedirect\", \"HttpResponsePermanentRedirect\"]}",
+     "in": 2047,
+     "out": 132,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 2011,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2011,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4058,
+  "tokens_out": 167,
+  "cost_usd_est": 0.0,
+  "seconds": 0.25
+ },
+ "created": "2026-11-10T00:06:10+00:00",
+ "code_version": "a3e1ef4"
+}

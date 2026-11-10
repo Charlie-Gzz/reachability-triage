@@ -1,0 +1,238 @@
+{
+ "finding_id": "bench/feed-reader/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+ "config": "dev-mock-noret",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/feed-reader",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-28957",
+   "GHSA-jq4v-f5q6-mjqq",
+   "PYSEC-2021-19"
+  ],
+  "cves": [
+   "CVE-2021-28957"
+  ],
+  "cwes": [
+   "CWE-79"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/feed-reader/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+  "first_fixed_above_installed": "4.6.3",
+  "fixed_versions": [
+   "4.6.3",
+   "a5f9cb52079dc57477c460dbe6ba0f775e14a999"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+  "package": "lxml",
+  "published": "2021-03-22T16:53:53Z",
+  "split": "dev",
+  "summary": "lxml vulnerable to Cross-Site Scripting ",
+  "target": "bench/feed-reader",
+  "version": "4.6.2",
+  "vuln_id": "GHSA-jq4v-f5q6-mjqq"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "reader/feeds.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/feed-reader/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+    "package": "lxml",
+    "version": "4.6.2",
+    "vuln_id": "GHSA-jq4v-f5q6-mjqq",
+    "aliases": [
+     "CVE-2021-28957",
+     "GHSA-jq4v-f5q6-mjqq",
+     "PYSEC-2021-19"
+    ],
+    "summary": "lxml vulnerable to Cross-Site Scripting ",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+    "fixed_versions": [
+     "4.6.3",
+     "a5f9cb52079dc57477c460dbe6ba0f775e14a999"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.1,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 4.6,
+   "output": {
+    "package": "lxml",
+    "import_names": [
+     "lxml"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "reader/feeds.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "entry_points": 0,
+    "paths": [],
+    "summary": "lxml: imported in 1 non-test location(s); 6 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.2,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "reader/feeds.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 412,
+   "tokens_out": 50,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"reader/feeds.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 412,
+     "out": 50,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.7,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 352,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 352,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 764,
+  "tokens_out": 85,
+  "cost_usd_est": 0.0,
+  "seconds": 0.01
+ },
+ "created": "2026-11-10T00:00:22+00:00",
+ "code_version": "a3e1ef4"
+}

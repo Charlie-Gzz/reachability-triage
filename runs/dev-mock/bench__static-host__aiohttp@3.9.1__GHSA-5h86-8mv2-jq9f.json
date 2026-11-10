@@ -1,0 +1,362 @@
+{
+ "finding_id": "bench/static-host/aiohttp@3.9.1/GHSA-5h86-8mv2-jq9f",
+ "config": "dev-mock",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/static-host",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-23334",
+   "GHSA-5h86-8mv2-jq9f",
+   "PYSEC-2024-24"
+  ],
+  "cves": [
+   "CVE-2024-23334"
+  ],
+  "cwes": [
+   "CWE-22"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/static-host/aiohttp@3.9.1/GHSA-5h86-8mv2-jq9f",
+  "first_fixed_above_installed": "3.9.2",
+  "fixed_versions": [
+   "3.9.2",
+   "1c335944d6a8b1298baf179b7c0b3069f10c514b"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+  "package": "aiohttp",
+  "published": "2024-01-29T22:31:03Z",
+  "split": "dev",
+  "summary": "aiohttp is vulnerable to directory traversal",
+  "target": "bench/static-host",
+  "version": "3.9.1",
+  "vuln_id": "GHSA-5h86-8mv2-jq9f"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "follow_symlinks",
+   "add_routes"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "host/server.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "follow_symlinks",
+  "add_routes"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/static-host/aiohttp@3.9.1/GHSA-5h86-8mv2-jq9f",
+    "package": "aiohttp",
+    "version": "3.9.1",
+    "vuln_id": "GHSA-5h86-8mv2-jq9f",
+    "aliases": [
+     "CVE-2024-23334",
+     "GHSA-5h86-8mv2-jq9f",
+     "PYSEC-2024-24"
+    ],
+    "summary": "aiohttp is vulnerable to directory traversal",
+    "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+    "fixed_versions": [
+     "3.9.2",
+     "1c335944d6a8b1298baf179b7c0b3069f10c514b"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-5h86-8mv2-jq9f#0",
+      "score": 0.903,
+      "text": "GHSA-5h86-8mv2-jq9f (CVE-2024-23334)\npackage: aiohttp\nsummary: aiohttp is vulnerable to directory traversal\naffected: >=1.0.5, <3.9.2",
+      "vuln_id": "GHSA-5h86-8mv2-jq9f"
+     },
+     {
+      "id": "GHSA-5h86-8mv2-jq9f#2",
+      "score": 0.804,
+      "text": "GHSA-5h86-8mv2-jq9f (aiohttp) details:\ni.e. An application is only vulnerable with setup code like:\n```\napp.router.add_routes([\n    web.static(\"/static\", \"static/\", follow_symlinks=True),  # Remove follow_symlinks to avoid the vulnerability\n])\n```\n\n### Impact\nThis is a directory traversal vulnerability with CWE ID 22. When using aiohttp as a web server and enabling static resource resolution with `follow_symlinks` set to True, it can lead to this vulnerability. This vulnerability has been present since the introduction of the `follow_symlinks` parameter.\n\n### Workaround\nEven if upgrading to a patched version of aiohttp, we recommend following these steps regardless.",
+      "vuln_id": "GHSA-5h86-8mv2-jq9f"
+     },
+     {
+      "id": "GHSA-5h86-8mv2-jq9f#1",
+      "score": 0.773,
+      "text": "GHSA-5h86-8mv2-jq9f (aiohttp) details:\n### Summary\nImproperly configuring static resource resolution in aiohttp when used as a web server can result in the unauthorized reading of arbitrary files on the system.\n\n### Details\nWhen using aiohttp as a web server and configuring static routes, it is necessary to specify the root path for static files. Additionally, the option 'follow_symlinks' can be used to determine whether to follow symbolic links outside the static root directory. When 'follow_symlinks' is set to True, there is no validation to check if a given file path is within the root directory.This can lead to directory traversal vulnerabilities, resulting in unauthorized access to arbitrary files on the system, even when symlinks are not present.",
+      "vuln_id": "GHSA-5h86-8mv2-jq9f"
+     },
+     {
+      "id": "GHSA-5h86-8mv2-jq9f#3",
+      "score": 0.76,
+      "text": "GHSA-5h86-8mv2-jq9f (aiohttp) details:\nIf using `follow_symlinks=True` outside of a restricted local development environment, disable the option immediately. This option is NOT needed to follow symlinks which point to a location _within_ the static root directory, it is _only_ intended to allow a symlink to break out of the static directory. Even with this CVE fixed, there is still a substantial risk of misconfiguration when using this option on a server that accepts requests from remote users.\n\nAdditionally, aiohttp has always recommended using a reverse proxy server (such as nginx) to handle static resources and _not_ to use these static resources in aiohttp for production environments. Doing so also protects against this vulnerability, and is why we expect the number of affected users to be very low.\n\n-----\n\nPatch: https://github.com/aio-libs/aiohttp/pull/8079/files",
+      "vuln_id": "GHSA-5h86-8mv2-jq9f"
+     },
+     {
+      "id": "GHSA-jwhx-xcg6-8xhj#0",
+      "score": 0.824,
+      "text": "GHSA-jwhx-xcg6-8xhj (CVE-2024-42367)\npackage: aiohttp\nsummary: In aiohttp, compressed files as symlinks are not protected from path traversal\naffected: >=3.10.0b1, <3.10.2",
+      "vuln_id": "GHSA-jwhx-xcg6-8xhj"
+     },
+     {
+      "id": "GHSA-jg22-mg44-37j8#0",
+      "score": 0.803,
+      "text": "GHSA-jg22-mg44-37j8 (CVE-2026-34993)\npackage: aiohttp\nsummary: AIOHTTP is Vulnerable to Deserialization of Untrusted Data\naffected: >=0, <3.14.0",
+      "vuln_id": "GHSA-jg22-mg44-37j8"
+     }
+    ],
+    "symbols": [
+     "follow_symlinks",
+     "add_routes"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.4,
+   "output": {
+    "package": "aiohttp",
+    "import_names": [
+     "aiohttp"
+    ],
+    "symbols": [
+     "follow_symlinks",
+     "add_routes"
+    ],
+    "imported": true,
+    "import_locations": [
+     "host/server.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 11,
+    "vulnerable_call_sites": [
+     {
+      "file": "host/server.py",
+      "line": 11,
+      "code": "app.router.add_static(\"/sites\", SITE_ROOT, follow_symlinks=True, show_index=False)  [follow_symlinks=True]",
+      "resolved": "app.router.add_static",
+      "function": "host.server:make_app",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "host.server:<main>",
+       "host.server:make_app"
+      ],
+      "snippet": "    8  def make_app() -> web.Application:\n    9      app = web.Application()\n   10      # Customer sites are symlinked in from the build cache.\n   11      app.router.add_static(\"/sites\", SITE_ROOT, follow_symlinks=True, show_index=False)\n   12      app.router.add_get(\"/healthz\", lambda r: web.Response(text=\"ok\"))\n   13      return app\n   14  "
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "host/server.py:9",
+      "code": "app = web.Application()",
+      "function": "host.server:make_app",
+      "in_test": false
+     },
+     {
+      "location": "host/server.py:12",
+      "code": "app.router.add_get(\"/healthz\", lambda r: web.Response(text=\"ok\"))",
+      "function": "host.server:make_app",
+      "in_test": false
+     },
+     {
+      "location": "host/server.py:8",
+      "code": "def make_app() -> web.Application:",
+      "function": "host.server:make_app",
+      "in_test": false
+     },
+     {
+      "location": "host/server.py:17",
+      "code": "web.run_app(make_app(), port=8080)",
+      "function": "host.server:<main>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 1,
+    "paths": [
+     [
+      "host.server:<main>",
+      "host.server:make_app"
+     ]
+    ],
+    "summary": "aiohttp: imported in 1 non-test location(s); 11 package call/reference site(s); named vulnerable symbols ['follow_symlinks', 'add_routes']; 0 production call site(s) of those symbols (+1 weak name-only), 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 24.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:host/server.py:11",
+      "score": 1.0,
+      "file": "host/server.py",
+      "start": 11,
+      "qualname": "host.server:make_app",
+      "text": "# host/server.py around line 11\n    8  def make_app() -> web.Application:\n    9      app = web.Application()\n   10      # Customer sites are symlinked in from the build cache.\n   11      app.router.add_static(\"/sites\", SITE_ROOT, follow_symlinks=True, show_index=False)\n   12      app.router.add_get(\"/healthz\", lambda r: web.Response(text=\"ok\"))\n   13      return app\n   14  "
+     },
+     {
+      "id": "bench/static-host:host/server.py:module",
+      "score": 0.737,
+      "text": "# host/server.py (module level)\nfrom pathlib import Path\nfrom aiohttp import web\nSITE_ROOT = Path(\"/srv/sites\")\nif __name__ == \"__main__\":\n    web.run_app(make_app(), port=8080)",
+      "file": "host/server.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/static-host:host/server.py:8",
+      "score": 0.632,
+      "text": "# host/server.py:8-13  make_app\ndef make_app() -> web.Application:\n    app = web.Application()\n    # Customer sites are symlinked in from the build cache.\n    app.router.add_static(\"/sites\", SITE_ROOT, follow_symlinks=True, show_index=False)\n    app.router.add_get(\"/healthz\", lambda r: web.Response(text=\"ok\"))\n    return app",
+      "file": "host/server.py",
+      "start": 8,
+      "qualname": "make_app"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "follow_symlinks",
+     "add_routes"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "host/server.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1434,
+   "tokens_out": 59,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"host/server.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"follow_symlinks\", \"add_routes\"]}",
+     "in": 1434,
+     "out": 59,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1375,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1375,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.1,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2809,
+  "tokens_out": 95,
+  "cost_usd_est": 0.0,
+  "seconds": 0.06
+ },
+ "created": "2026-11-10T00:06:35+00:00",
+ "code_version": "a3e1ef4"
+}

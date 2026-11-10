@@ -1,0 +1,378 @@
+{
+ "finding_id": "bench/recipe-importer/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+ "config": "dev-claude",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/recipe-importer",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2020-14343",
+   "GHSA-8q59-q68h-6hv4",
+   "PYSEC-2021-142"
+  ],
+  "cves": [
+   "CVE-2020-14343"
+  ],
+  "cwes": [
+   "CWE-20"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/recipe-importer/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+  "first_fixed_above_installed": "5.4",
+  "fixed_versions": [
+   "5.4"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "pyyaml",
+  "published": "2021-03-25T21:26:26Z",
+  "split": "dev",
+  "summary": "Improper Input Validation in PyYAML",
+  "target": "bench/recipe-importer",
+  "version": "5.3.1",
+  "vuln_id": "GHSA-8q59-q68h-6hv4"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.92,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.95,
+  "vulnerable_symbols": [
+   "FullLoader",
+   "full_load"
+  ],
+  "reasoning": "The advisory states that yaml.FullLoader (and full_load) remained exploitable for arbitrary code execution via the python/object/new constructor prior to 5.4. The application calls yaml.load(text, Loader=yaml.FullLoader) directly in recipes/importer.py:8, exactly matching the vulnerable API. This call sits in parse_recipe, which is reached from the entry point app:import_recipe, and the input text is described as a 'YAML export from the mobile app' \u2014 i.e., externally supplied/untrusted content, not a fixed internal config. There is no sanitization or restriction of the YAML content before parsing, and no use of yaml.safe_load as a mitigation. Therefore the vulnerable code path is both present and reachable from untrusted input.",
+  "evidence": [
+   {
+    "location": "recipes/importer.py:8",
+    "explanation": "Directly calls yaml.load with Loader=yaml.FullLoader, the exact vulnerable API named in the advisory."
+   },
+   {
+    "location": "recipes/importer.py:6-7",
+    "explanation": "Docstring confirms the YAML text originates from external/untrusted mobile app exports."
+   },
+   {
+    "location": "app.py (entry point) -> recipes.importer:parse_recipe",
+    "explanation": "Static analysis shows a path from the application entry point import_recipe to the vulnerable call, confirming production reachability."
+   },
+   {
+    "location": "advisory",
+    "explanation": "CVE-2020-14343 states FullLoader/full_load remain exploitable for RCE via python/object/new before version 5.4, matching the installed 5.3.1."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest pushback would be to question whether 'YAML exports from the mobile app' really constitutes untrusted input rather than internally generated, trusted content, and whether the static reachability path (app:import_recipe -> parse_recipe) is actually exposed to external users rather than an internal batch job. However, the docstring explicitly frames the data as externally sourced client exports, there's no authentication/sanitization layer shown between the entry point and the yaml.load call, and the advisory's precondition (use of yaml.load with Loader=yaml.FullLoader, or full_load, on attacker-influenced YAML) is met exactly and verbatim by the cited code at importer.py:8. No safe_load substitution, no custom constructor restriction, and no evidence of trusted-only input are present to rebut the verdict. The critique does not overturn the finding \u2014 the evidence strongly supports reachability with the correct vulnerable API and a confirmed call path from an entry point.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.92
+ },
+ "symbols": [
+  "FullLoader",
+  "full_load"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/recipe-importer/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+    "package": "pyyaml",
+    "version": "5.3.1",
+    "vuln_id": "GHSA-8q59-q68h-6hv4",
+    "aliases": [
+     "CVE-2020-14343",
+     "GHSA-8q59-q68h-6hv4",
+     "PYSEC-2021-142"
+    ],
+    "summary": "Improper Input Validation in PyYAML",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "5.4"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 50.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-8q59-q68h-6hv4#1",
+      "score": 0.855,
+      "text": "GHSA-8q59-q68h-6hv4 (pyyaml) details:\nA vulnerability was discovered in the PyYAML library in versions before 5.4, where it is susceptible to arbitrary code execution when it processes untrusted YAML files through the full_load method or with the FullLoader loader. Applications that use the library to process untrusted input may be vulnerable to this flaw. This flaw allows an attacker to execute arbitrary code on the system by abusing the python/object/new constructor. This flaw is due to an incomplete fix for CVE-2020-1747.",
+      "vuln_id": "GHSA-8q59-q68h-6hv4"
+     },
+     {
+      "id": "GHSA-8q59-q68h-6hv4#0",
+      "score": 0.851,
+      "text": "GHSA-8q59-q68h-6hv4 (CVE-2020-14343)\npackage: pyyaml\nsummary: Improper Input Validation in PyYAML\naffected: >=0, <5.4",
+      "vuln_id": "GHSA-8q59-q68h-6hv4"
+     },
+     {
+      "id": "GHSA-6757-jp84-gxfx#0",
+      "score": 0.834,
+      "text": "GHSA-6757-jp84-gxfx (CVE-2020-1747)\npackage: pyyaml\nsummary: Improper Input Validation in PyYAML\naffected: >=5.1b7, <5.3.1",
+      "vuln_id": "GHSA-6757-jp84-gxfx"
+     },
+     {
+      "id": "GHSA-6757-jp84-gxfx#1",
+      "score": 0.828,
+      "text": "GHSA-6757-jp84-gxfx (pyyaml) details:\nA vulnerability was discovered in the PyYAML library in versions before 5.3.1, where it is susceptible to arbitrary code execution when it processes untrusted YAML files through the full_load method or with the FullLoader loader. Applications that use the library to process untrusted input may be vulnerable to this flaw. An attacker could use this flaw to execute arbitrary code on the system by abusing the python/object/new constructor.",
+      "vuln_id": "GHSA-6757-jp84-gxfx"
+     }
+    ],
+    "symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 4.4,
+   "output": {
+    "package": "pyyaml",
+    "import_names": [
+     "yaml"
+    ],
+    "symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "imported": true,
+    "import_locations": [
+     "recipes/importer.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 5,
+    "vulnerable_call_sites": [
+     {
+      "file": "recipes/importer.py",
+      "line": 8,
+      "code": "data = yaml.load(text, Loader=yaml.FullLoader)",
+      "resolved": "yaml.FullLoader",
+      "function": "recipes.importer:parse_recipe",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "app:import_recipe",
+       "recipes.importer:parse_recipe"
+      ],
+      "snippet": "    5  \n    6  def parse_recipe(text: str) -> dict:\n    7      \"\"\"Recipes are shared as YAML exports from the mobile app.\"\"\"\n    8      data = yaml.load(text, Loader=yaml.FullLoader)\n    9      missing = [k for k in REQUIRED if k not in data]\n   10      if missing:\n   11          raise ValueError(f\"missing fields: {missing}\")"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "recipes/importer.py:8",
+      "code": "data = yaml.load(text, Loader=yaml.FullLoader)",
+      "function": "recipes.importer:parse_recipe",
+      "in_test": false
+     }
+    ],
+    "entry_points": 2,
+    "paths": [
+     [
+      "app:import_recipe",
+      "recipes.importer:parse_recipe"
+     ]
+    ],
+    "summary": "pyyaml: imported in 1 non-test location(s); 5 package call/reference site(s); named vulnerable symbols ['FullLoader', 'full_load']; 1 production call site(s) of those symbols, 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 50.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:recipes/importer.py:8",
+      "score": 1.0,
+      "file": "recipes/importer.py",
+      "start": 8,
+      "qualname": "recipes.importer:parse_recipe",
+      "text": "# recipes/importer.py around line 8\n    5  \n    6  def parse_recipe(text: str) -> dict:\n    7      \"\"\"Recipes are shared as YAML exports from the mobile app.\"\"\"\n    8      data = yaml.load(text, Loader=yaml.FullLoader)\n    9      missing = [k for k in REQUIRED if k not in data]\n   10      if missing:\n   11          raise ValueError(f\"missing fields: {missing}\")"
+     },
+     {
+      "id": "bench/recipe-importer:recipes/importer.py:6",
+      "score": 0.661,
+      "text": "# recipes/importer.py:6-12  parse_recipe\ndef parse_recipe(text: str) -> dict:\n    \"\"\"Recipes are shared as YAML exports from the mobile app.\"\"\"\n    data = yaml.load(text, Loader=yaml.FullLoader)\n    missing = [k for k in REQUIRED if k not in data]\n    if missing:\n        raise ValueError(f\"missing fields: {missing}\")\n    return data",
+      "file": "recipes/importer.py",
+      "start": 6,
+      "qualname": "parse_recipe"
+     },
+     {
+      "id": "bench/recipe-importer:recipes/importer.py:module",
+      "score": 0.659,
+      "text": "# recipes/importer.py (module level)\nimport yaml\nREQUIRED = (\"title\", \"ingredients\", \"steps\")",
+      "file": "recipes/importer.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/recipe-importer:recipes/store.py:module",
+      "score": 0.602,
+      "text": "# recipes/store.py (module level)\nimport uuid\n_RECIPES: dict[str, dict] = {}",
+      "file": "recipes/store.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/recipe-importer:app.py:17",
+      "score": 0.57,
+      "text": "# app.py:17-18  health\ndef health():\n    return \"ok\"",
+      "file": "app.py",
+      "start": 17,
+      "qualname": "health"
+     },
+     {
+      "id": "bench/recipe-importer:recipes/store.py:6",
+      "score": 0.568,
+      "text": "# recipes/store.py:6-9  save_recipe\ndef save_recipe(recipe: dict) -> str:\n    rid = uuid.uuid4().hex\n    _RECIPES[rid] = recipe\n    return rid",
+      "file": "recipes/store.py",
+      "start": 6,
+      "qualname": "save_recipe"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 8575.8,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.95,
+    "vulnerable_symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "reasoning": "The advisory states that yaml.FullLoader (and full_load) remained exploitable for arbitrary code execution via the python/object/new constructor prior to 5.4. The application calls yaml.load(text, Loader=yaml.FullLoader) directly in recipes/importer.py:8, exactly matching the vulnerable API. This call sits in parse_recipe, which is reached from the entry point app:import_recipe, and the input text is described as a 'YAML export from the mobile app' \u2014 i.e., externally supplied/untrusted content, not a fixed internal config. There is no sanitization or restriction of the YAML content before parsing, and no use of yaml.safe_load as a mitigation. Therefore the vulnerable code path is both present and reachable from untrusted input.",
+    "evidence": [
+     {
+      "location": "recipes/importer.py:8",
+      "explanation": "Directly calls yaml.load with Loader=yaml.FullLoader, the exact vulnerable API named in the advisory."
+     },
+     {
+      "location": "recipes/importer.py:6-7",
+      "explanation": "Docstring confirms the YAML text originates from external/untrusted mobile app exports."
+     },
+     {
+      "location": "app.py (entry point) -> recipes.importer:parse_recipe",
+      "explanation": "Static analysis shows a path from the application entry point import_recipe to the vulnerable call, confirming production reachability."
+     },
+     {
+      "location": "advisory",
+      "explanation": "CVE-2020-14343 states FullLoader/full_load remain exploitable for RCE via python/object/new before version 5.4, matching the installed 5.3.1."
+     }
+    ]
+   },
+   "tokens_in": 2847,
+   "tokens_out": 602,
+   "llm_calls": 1,
+   "llm_seconds": 8.58,
+   "cost_usd_est": 0.017571,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"reachable\",\n  \"confidence\": 0.95,\n  \"vulnerable_symbols\": [\"FullLoader\", \"full_load\"],\n  \"reasoning\": \"The advisory states that yaml.FullLoader (and full_load) remained exploitable for arbitrary code execution via the python/object/new constructor prior to 5.4. The application calls yaml.load(text, Loader=yaml.FullLoader) directly in recipes/importer.py:8, exactly matching the vulnerable API. This call sits in parse_recipe, which is reached from the entry point app:import_recipe, and the input text is described as a 'YAML export from the mobile app' \u2014 i.e., externally supplied/untrusted content, not a fixed internal config. There is no sanitization or restriction of the YAML content before parsing, and no use of yaml.safe_load as a mitigation. Therefore the vulnerable code path is both present and reachable from untrusted input.\",\n  \"evidence\": [\n    {\"location\": \"recipes/importer.py:8\", \"explanation\": \"Directly calls yaml.load with Loader=yaml.FullLoader, the exact vulnerable API named in the advisory.\"},\n    {\"location\": \"recipes/importer.py:6-7\", \"explanation\": \"Docstring confirms the YAML text originates from external/untrusted mobile app exports.\"},\n    {\"location\": \"app.py (entry point) -> recipes.importer:parse_recipe\", \"explanation\": \"Static analysis shows a path from the application entry point import_recipe to the vulnerable call, confirming production reachability.\"},\n    {\"location\": \"advisory\", \"explanation\": \"CVE-2020-14343 states FullLoader/full_load remain exploitable for RCE via python/object/new before version 5.4, matching the installed 5.3.1.\"}\n  ]\n}\n```",
+     "in": 2847,
+     "out": 602,
+     "s": 8.58,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 11201.2,
+   "output": {
+    "critique": "The strongest pushback would be to question whether 'YAML exports from the mobile app' really constitutes untrusted input rather than internally generated, trusted content, and whether the static reachability path (app:import_recipe -> parse_recipe) is actually exposed to external users rather than an internal batch job. However, the docstring explicitly frames the data as externally sourced client exports, there's no authentication/sanitization layer shown between the entry point and the yaml.load call, and the advisory's precondition (use of yaml.load with Loader=yaml.FullLoader, or full_load, on attacker-influenced YAML) is met exactly and verbatim by the cited code at importer.py:8. No safe_load substitution, no custom constructor restriction, and no evidence of trusted-only input are present to rebut the verdict. The critique does not overturn the finding \u2014 the evidence strongly supports reachability with the correct vulnerable API and a confirmed call path from an entry point.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.92
+   },
+   "tokens_in": 2886,
+   "tokens_out": 773,
+   "llm_calls": 1,
+   "llm_seconds": 11.2,
+   "cost_usd_est": 0.020253,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest pushback would be to question whether 'YAML exports from the mobile app' really constitutes untrusted input rather than internally generated, trusted content, and whether the static reachability path (app:import_recipe -> parse_recipe) is actually exposed to external users rather than an internal batch job. However, the docstring explicitly frames the data as externally sourced client exports, there's no authentication/sanitization layer shown between the entry point and the yaml.load call, and the advisory's precondition (use of yaml.load with Loader=yaml.FullLoader, or full_load, on attacker-influenced YAML) is met exactly and verbatim by the cited code at importer.py:8. No safe_load substitution, no custom constructor restriction, and no evidence of trusted-only input are present to rebut the verdict. The critique does not overturn the finding \u2014 the evidence strongly supports reachability with the correct vulnerable API and a confirmed call path from an entry point.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"reachable\",\"confidence\":0.92}",
+     "in": 2886,
+     "out": 773,
+     "s": 11.2,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.92,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 5733,
+  "tokens_out": 1375,
+  "cost_usd_est": 0.037824,
+  "seconds": 19.89
+ },
+ "created": "2026-11-10T00:07:20+00:00",
+ "code_version": "a3e1ef4"
+}

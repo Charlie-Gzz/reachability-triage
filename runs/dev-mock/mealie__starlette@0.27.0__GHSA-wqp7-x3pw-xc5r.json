@@ -1,0 +1,451 @@
+{
+ "finding_id": "mealie/starlette@0.27.0/GHSA-wqp7-x3pw-xc5r",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-48818",
+   "GHSA-wqp7-x3pw-xc5r",
+   "PYSEC-2026-2281"
+  ],
+  "cves": [
+   "CVE-2026-48818"
+  ],
+  "cwes": [
+   "CWE-918"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/starlette@0.27.0/GHSA-wqp7-x3pw-xc5r",
+  "first_fixed_above_installed": "1.1.0",
+  "fixed_versions": [
+   "1.1.0"
+  ],
+  "max_cvss": "7.5",
+  "package": "starlette",
+  "published": "2026-06-15T20:16:30Z",
+  "summary": "Starlette: SSRF and NTLM credential theft via UNC paths in StaticFiles on Windows",
+  "target": "mealie",
+  "version": "0.27.0",
+  "vuln_id": "GHSA-wqp7-x3pw-xc5r"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "StaticFiles",
+   "os.path.realpath",
+   "realpath",
+   "os.path.abspath",
+   "follow_symlink"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/routes/_base/controller.py:13",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/routes/media/media_recipe.py:5",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/routes/media/media_user.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "StaticFiles",
+  "os.path.realpath",
+  "realpath",
+  "os.path.abspath",
+  "follow_symlink"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/starlette@0.27.0/GHSA-wqp7-x3pw-xc5r",
+    "package": "starlette",
+    "version": "0.27.0",
+    "vuln_id": "GHSA-wqp7-x3pw-xc5r",
+    "aliases": [
+     "CVE-2026-48818",
+     "GHSA-wqp7-x3pw-xc5r",
+     "PYSEC-2026-2281"
+    ],
+    "summary": "Starlette: SSRF and NTLM credential theft via UNC paths in StaticFiles on Windows",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "1.1.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-wqp7-x3pw-xc5r#0",
+      "score": 0.906,
+      "text": "GHSA-wqp7-x3pw-xc5r (CVE-2026-48818)\npackage: starlette\nsummary: Starlette: SSRF and NTLM credential theft via UNC paths in StaticFiles on Windows\naffected: >=0, <1.1.0",
+      "vuln_id": "GHSA-wqp7-x3pw-xc5r"
+     },
+     {
+      "id": "GHSA-wqp7-x3pw-xc5r#4",
+      "score": 0.806,
+      "text": "GHSA-wqp7-x3pw-xc5r (starlette) details:\nApplications not running on Windows are not affected. On Windows, serving static files through a dedicated web server (such as nginx or IIS) instead of `StaticFiles` avoids the issue. Blocking outbound SMB (port 445) from the application host prevents the credential disclosure even if a UNC path is resolved.",
+      "vuln_id": "GHSA-wqp7-x3pw-xc5r"
+     },
+     {
+      "id": "GHSA-wqp7-x3pw-xc5r#1",
+      "score": 0.781,
+      "text": "GHSA-wqp7-x3pw-xc5r (starlette) details:\n### Summary\n\nWhen serving static files on Windows, `StaticFiles` resolves the requested path with [`os.path.realpath`](https://docs.python.org/3/library/os.path.html#os.path.realpath). If a UNC path (such as `\\\\attacker.com\\share`) reaches the resolver, `realpath` causes the process to open a connection to the remote host over SMB (port 445). This is a server-side request forgery (SSRF) that leaks the service account's NTLMv2 credentials to the attacker-controlled host, which can then be cracked offline or relayed to other hosts.\n\n### Details",
+      "vuln_id": "GHSA-wqp7-x3pw-xc5r"
+     },
+     {
+      "id": "GHSA-wqp7-x3pw-xc5r#3",
+      "score": 0.754,
+      "text": "GHSA-wqp7-x3pw-xc5r (starlette) details:\nThis only affects the default configuration (`follow_symlink=False`), which uses [`os.path.realpath`](https://docs.python.org/3/library/os.path.html#os.path.realpath). The `follow_symlink=True` branch uses [`os.path.abspath`](https://docs.python.org/3/library/os.path.html#os.path.abspath), which performs no I/O.\n\n### Impact\n\nApplications running on Windows that serve files with `StaticFiles` (directly, or via a framework built on Starlette such as FastAPI) in the default configuration are affected. `StaticFiles` is typically unauthenticated, so any client can trigger the SMB connection and leak the service account's NTLMv2 hash. A secondary impact is discovering internal hosts reachable over SMB by timing responses for valid versus invalid addresses.\n\n### Mitigation",
+      "vuln_id": "GHSA-wqp7-x3pw-xc5r"
+     },
+     {
+      "id": "GHSA-v5gw-mw7f-84px#0",
+      "score": 0.804,
+      "text": "GHSA-v5gw-mw7f-84px (CVE-2023-29159)\npackage: starlette\nsummary: Starlette has Path Traversal vulnerability in StaticFiles\naffected: >=0.13.5, <0.27.0",
+      "vuln_id": "GHSA-v5gw-mw7f-84px"
+     },
+     {
+      "id": "GHSA-v5gw-mw7f-84px#3",
+      "score": 0.788,
+      "text": "GHSA-v5gw-mw7f-84px (starlette) details:\nroutes = [\n    Mount(\"/static\", app=StaticFiles(directory=\"static\", html=True), name=\"static\"),\n]\n\napp = Starlette(routes=routes)\n\nif __name__ == \"__main__\":\n    uvicorn.run(app, host=\"0.0.0.0\", port=8000)\n```\n\nAnd running the commands:\n\n```shell\ncurl --path-as-is 'localhost:8000/static/../static_disallow/'\ncurl --path-as-is 'localhost:8000/static/../static1.txt'\n```\nThe `static1.txt` and the directory `static_disallow` are exposed.\n\n### Impact\nConfidentiality is breached: An attacker may obtain files that should not be open to the public.\n\n### Credits\nSecurity researcher **Masashi Yamane of LAC Co., Ltd** reported this vulnerability to **JPCERT/CC Vulnerability Coordination Group** and they contacted us to coordinate a patch for the security issue.",
+      "vuln_id": "GHSA-v5gw-mw7f-84px"
+     }
+    ],
+    "symbols": [
+     "StaticFiles",
+     "os.path.realpath",
+     "realpath",
+     "os.path.abspath",
+     "follow_symlink"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 52.8,
+   "output": {
+    "package": "starlette",
+    "import_names": [
+     "starlette"
+    ],
+    "symbols": [
+     "StaticFiles",
+     "os.path.realpath",
+     "realpath",
+     "os.path.abspath",
+     "follow_symlink"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/routes/_base/controller.py:13",
+     "mealie/routes/media/media_recipe.py:5",
+     "mealie/routes/media/media_user.py:3",
+     "mealie/routes/recipe/recipe_crud_routes.py:12",
+     "mealie/routes/spa/__init__.py:10",
+     "mealie/routes/utility_routes.py:4",
+     "mealie/services/scheduler/runner.py:12"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 25,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/routes/_base/controller.py:119",
+      "code": "route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:123",
+      "code": "routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:178",
+      "code": "def _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:",
+      "function": "mealie.routes._base.controller:_update_cbv_route_endpoint_signature",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:33",
+      "code": "return FileResponse(recipe_image)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_img",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:51",
+      "code": "return FileResponse(timeline_event_image)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_timeline_event_img",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:62",
+      "code": "return FileResponse(file)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_asset",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:22",
+      "code": "return FileResponse(recipe_image, media_type=\"image/webp\")",
+      "function": "mealie.routes.media.media_user:get_user_image",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:15",
+      "code": "@router.get(\"/{user_id}/{file_name}\", response_class=FileResponse)",
+      "function": "mealie.routes.media.media_user:get_user_image",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:115",
+      "code": "return FileResponse(file)",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:104",
+      "code": "@router_exports.get(\"/{slug}/exports\", response_class=FileResponse)",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:133",
+      "code": "return FileResponse(temp_path, filename=f\"{slug}.zip\")",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_zip",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/spa/__init__.py:32",
+      "code": "except HTTPException as ex:",
+      "function": "mealie.routes.spa:SPAStaticFiles.get_response",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/utility_routes.py:27",
+      "code": "return FileResponse(file_path, media_type=\"application/octet-stream\", filename=file_path.name)",
+      "function": "mealie.routes.utility_routes:download_file",
+      "in_test": false
+     },
+     {
+      "location": "mealie/services/scheduler/runner.py:69",
+      "code": "await run_in_threadpool(func)",
+      "function": "mealie.services.scheduler.runner:loop",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "starlette: imported in 7 non-test location(s); 25 package call/reference site(s); named vulnerable symbols ['StaticFiles', 'os.path.realpath', 'realpath', 'os.path.abspath', 'follow_symlink']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 34.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:52",
+      "score": 0.631,
+      "text": "# mealie/pkgs/img/minify.py:52-58  ABCMinifier.purge\n    def purge(self, image: Path):\n        if not self._purge:\n            return\n\n        for file in image.parent.glob(\"*.*\"):\n            if file.suffix != WEBP:\n                file.unlink()",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 52,
+      "qualname": "ABCMinifier.purge"
+     },
+     {
+      "id": "mealie:mealie/routes/admin/admin_maintenance.py:41",
+      "score": 0.629,
+      "text": "# mealie/routes/admin/admin_maintenance.py:41-55  clean_recipe_folders\ndef clean_recipe_folders(root_dir: Path, dry_run: bool) -> int:\n    cleaned_dirs = 0\n\n    for recipe_dir in root_dir.iterdir():\n        if recipe_dir.is_dir():\n            # Attempt to convert the folder name to a UUID\n            try:\n                uuid.UUID(recipe_dir.name)\n                continue\n            except ValueError:\n                if not dry_run:\n                    shutil.rmtree(recipe_dir)\n                cleaned_dirs += 1\n\n    return cleaned_dirs",
+      "file": "mealie/routes/admin/admin_maintenance.py",
+      "start": 41,
+      "qualname": "clean_recipe_folders"
+     },
+     {
+      "id": "mealie:mealie/core/settings/settings.py:11",
+      "score": 0.625,
+      "text": "# mealie/core/settings/settings.py:11-24  determine_secrets\ndef determine_secrets(data_dir: Path, production: bool) -> str:\n    if not production:\n        return \"shh-secret-test-key\"\n\n    secrets_file = data_dir.joinpath(\".secret\")\n    if secrets_file.is_file():\n        with open(secrets_file) as f:\n            return f.read()\n    else:\n        data_dir.mkdir(parents=True, exist_ok=True)\n        with open(secrets_file, \"w\") as f:\n            new_secret = secrets.token_hex(32)\n            f.write(new_secret)\n        return new_secret",
+      "file": "mealie/core/settings/settings.py",
+      "start": 11,
+      "qualname": "determine_secrets"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:208",
+      "score": 0.624,
+      "text": "# mealie/core/dependencies/dependencies.py:208-215  temporary_zip_path\nasync def temporary_zip_path() -> AsyncGenerator[Path, None]:\n    app_dirs.TEMP_DIR.mkdir(exist_ok=True, parents=True)\n    temp_path = app_dirs.TEMP_DIR.joinpath(\"my_zip_archive.zip\")\n\n    try:\n        yield temp_path\n    finally:\n        temp_path.unlink(missing_ok=True)",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 208,
+      "qualname": "temporary_zip_path"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/recipe_service.py:61",
+      "score": 0.618,
+      "text": "# mealie/services/recipe/recipe_service.py:61-81  RecipeService.check_assets\n    def check_assets(self, recipe: Recipe, original_slug: str) -> None:\n        \"\"\"Checks if the recipe slug has changed, and if so moves the assets to a new file with the new slug.\"\"\"\n        if original_slug != recipe.slug:\n            current_dir = self.directories.RECIPE_DATA_DIR.joinpath(original_slug)\n\n            try:\n                copytree(current_dir, recipe.directory, dirs_exist_ok=True)\n                self.logger.debug(f\"Renaming Recipe Directory: {original_slug} -> {recipe.slug}\")\n            except FileNotFoundError:\n                self.logger.error(f\"Recipe Directory not Found: {original_slug}\")\n\n        if recipe.assets is None:\n            recipe.assets = []\n\n        all_asset_files = [x.file_name for x in recipe.assets]\n\n        for file in recipe.asset_dir.iterdir():\n            if file.is_dir():\n                continue\n            if file.name not in all_asset_files:\n                file.unlink()",
+      "file": "mealie/services/recipe/recipe_service.py",
+      "start": 61,
+      "qualname": "RecipeService.check_assets"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "StaticFiles",
+     "os.path.realpath",
+     "realpath",
+     "os.path.abspath",
+     "follow_symlink"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/routes/_base/controller.py:13",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:5",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1931,
+   "tokens_out": 120,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/routes/_base/controller.py:13\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/routes/media/media_recipe.py:5\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/routes/media/media_user.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"StaticFiles\", \"os.path.realpath\", \"realpath\", \"os.path.abspath\", \"follow_symlink\"]}",
+     "in": 1931,
+     "out": 120,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1905,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1905,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3836,
+  "tokens_out": 156,
+  "cost_usd_est": 0.0,
+  "seconds": 0.12
+ },
+ "created": "2026-11-10T00:06:32+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,378 @@
+{
+ "finding_id": "ctfd/requests@2.23.0/GHSA-9wx4-h78v-vm56",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-35195",
+   "GHSA-9wx4-h78v-vm56",
+   "PYSEC-2026-1873"
+  ],
+  "cves": [
+   "CVE-2024-35195"
+  ],
+  "cwes": [
+   "CWE-670"
+  ],
+  "direct_dependency": true,
+  "finding_id": "ctfd/requests@2.23.0/GHSA-9wx4-h78v-vm56",
+  "first_fixed_above_installed": "2.32.0",
+  "fixed_versions": [
+   "2.32.0"
+  ],
+  "max_cvss": "5.6",
+  "package": "requests",
+  "published": "2024-05-20T20:15:00Z",
+  "summary": "Requests `Session` object does not verify requests after making first request with verify=False",
+  "target": "ctfd",
+  "version": "2.23.0",
+  "vuln_id": "GHSA-9wx4-h78v-vm56"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "requests.Session",
+   "Session"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "CTFd/auth.py:3",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/utils/email/mailgun.py:3",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/utils/updates/__init__.py:6",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "requests.Session",
+  "Session"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/requests@2.23.0/GHSA-9wx4-h78v-vm56",
+    "package": "requests",
+    "version": "2.23.0",
+    "vuln_id": "GHSA-9wx4-h78v-vm56",
+    "aliases": [
+     "CVE-2024-35195",
+     "GHSA-9wx4-h78v-vm56",
+     "PYSEC-2026-1873"
+    ],
+    "summary": "Requests `Session` object does not verify requests after making first request with verify=False",
+    "max_cvss": "5.6",
+    "fixed_versions": [
+     "2.32.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-9wx4-h78v-vm56#0",
+      "score": 0.854,
+      "text": "GHSA-9wx4-h78v-vm56 (CVE-2024-35195)\npackage: requests\nsummary: Requests `Session` object does not verify requests after making first request with verify=False\naffected: >=0, <2.32.0",
+      "vuln_id": "GHSA-9wx4-h78v-vm56"
+     },
+     {
+      "id": "GHSA-9wx4-h78v-vm56#1",
+      "score": 0.809,
+      "text": "GHSA-9wx4-h78v-vm56 (requests) details:\nWhen using a `requests.Session`, if the first request to a given origin is made with `verify=False`, TLS certificate verification may remain disabled for all subsequent requests to that origin, even if `verify=True` is explicitly specified later.\n\nThis occurs because the underlying connection is reused from the session's connection pool, causing the initial TLS verification setting to persist for the lifetime of the pooled connection. As a result, applications may unintentionally send requests without certificate verification, leading to potential man-in-the-middle attacks and compromised confidentiality or integrity.\n\nThis behavior affects versions of `requests` prior to 2.32.0.",
+      "vuln_id": "GHSA-9wx4-h78v-vm56"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#1",
+      "score": 0.767,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\n### Impact\n\nSince Requests v2.3.0, Requests has been vulnerable to potentially leaking `Proxy-Authorization` headers to destination servers, specifically during redirects to an HTTPS origin. This is a product of how `rebuild_proxies` is used to recompute and [reattach the `Proxy-Authorization` header](https://github.com/psf/requests/blob/f2629e9e3c7ce3c3c8c025bcd8db551101cbc773/requests/sessions.py#L319-L328) to requests when redirected. Note this behavior has _only_ been observed to affect proxied requests when credentials are supplied in the URL user information component (e.g. `https://username:password@proxy:8080`).\n\n**Current vulnerable behavior(s):**\n\n1. HTTP \u2192 HTTPS: **leak**\n2. HTTPS \u2192 HTTP: **no leak**\n3. HTTPS \u2192 HTTPS: **leak**\n4. HTTP \u2192 HTTP: **no leak**",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-pg2w-x9wp-vw92#1",
+      "score": 0.747,
+      "text": "GHSA-pg2w-x9wp-vw92 (requests) details:\nThe `resolve_redirects` function in sessions.py in requests 2.1.0 through 2.5.3 allows remote attackers to conduct session fixation attacks via a cookie without a host value in a redirect.",
+      "vuln_id": "GHSA-pg2w-x9wp-vw92"
+     }
+    ],
+    "symbols": [
+     "requests.Session",
+     "Session"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 51.7,
+   "output": {
+    "package": "requests",
+    "import_names": [
+     "requests"
+    ],
+    "symbols": [
+     "requests.Session",
+     "Session"
+    ],
+    "imported": true,
+    "import_locations": [
+     "CTFd/auth.py:3",
+     "CTFd/utils/email/mailgun.py:3",
+     "CTFd/utils/updates/__init__.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 24,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/auth.py:475",
+      "code": "token_request = requests.post(url, data=data, headers=headers)",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/auth.py:477",
+      "code": "if token_request.status_code == requests.codes.ok:",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/auth.py:489",
+      "code": "api_data = requests.get(url=user_url, headers=headers).json()",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/email/mailgun.py:18",
+      "code": "r = requests.post(",
+      "function": "CTFd.utils.email.mailgun:sendmail",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/email/mailgun.py:29",
+      "code": "except requests.RequestException as e:",
+      "function": "CTFd.utils.email.mailgun:sendmail",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:55",
+      "code": "check = requests.get(",
+      "function": "CTFd.utils.updates:update_check",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:58",
+      "code": "except requests.exceptions.RequestException:",
+      "function": "CTFd.utils.updates:update_check",
+      "in_test": false
+     }
+    ],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "requests: imported in 3 non-test location(s); 24 package call/reference site(s); named vulnerable symbols ['requests.Session', 'Session']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 25.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/sessions/__init__.py:61",
+      "score": 0.723,
+      "text": "# CTFd/utils/sessions/__init__.py:61-84  CachingSessionInterface.open_session\n    def open_session(self, app, request):\n        sid = request.cookies.get(app.session_cookie_name)\n        if not sid:\n            sid = self._generate_sid()\n            return self.session_class(sid=sid, permanent=self.permanent)\n\n        if self.use_signer:\n            try:\n                sid_as_bytes = unsign(sid)\n                sid = sid_as_bytes.decode()\n            except BadSignature:\n                sid = self._generate_sid()\n                return self.session_class(sid=sid, permanent=self.permanent)\n\n        if isinstance(sid, text_type) is False:\n            sid = sid.decode(\"utf-8\", \"strict\")\n        val = cache.get(self.key_prefix + sid)\n        if val is not None:\n            try:\n                data = self.serializer.loads(val)\n                return self.session_class(data, sid=sid)\n            except Exception:\n                return self.session_class(sid=sid, permanent=self.permanent)\n        return self.session_class(sid=sid, permanent=self.permanent)",
+      "file": "CTFd/utils/sessions/__init__.py",
+      "start": 61,
+      "qualname": "CachingSessionInterface.open_session"
+     },
+     {
+      "id": "ctfd:CTFd/utils/sessions/__init__.py:24",
+      "score": 0.704,
+      "text": "# CTFd/utils/sessions/__init__.py:24-32  CachedSession.__init__\n    def __init__(self, initial=None, sid=None, permanent=None):\n        def on_update(self):\n            self.modified = True\n\n        CallbackDict.__init__(self, initial, on_update)\n        self.sid = sid\n        if permanent:\n            self.permanent = permanent\n        self.modified = False",
+      "file": "CTFd/utils/sessions/__init__.py",
+      "start": 24,
+      "qualname": "CachedSession.__init__"
+     },
+     {
+      "id": "ctfd:CTFd/utils/sessions/__init__.py:86",
+      "score": 0.7,
+      "text": "# CTFd/utils/sessions/__init__.py:86-128  CachingSessionInterface.save_session\n    def save_session(self, app, session, response):\n        domain = self.get_cookie_domain(app)\n        path = self.get_cookie_path(app)\n\n        if not session:\n            if session.modified:\n                cache.delete(self.key_prefix + session.sid)\n                response.delete_cookie(\n                    app.session_cookie_name, domain=domain, path=path\n                )\n            return\n\n        if session.modified:\n            httponly = self.get_cookie_httponly(app)\n            secure = self.get_cookie_secure(app)\n            expires = self.get_expiration_time(app, session)\n            samesite = self.get_cookie_samesite(app)\n            val = self.serializer.dumps(dict(session))\n\n            if session.sid is None:\n                session.sid = self._generate_sid()\n\n            cache.set(\n                key=self.key_prefix + session.sid,\n                value=val,\n                timeout=total_seconds(app.permanent_session_lifetime),\n            )\n\n            if self.use_signer:\n                session_id = sign(want_bytes(session.sid))\n            else:\n                session_id = session.sid\n\n            response.set_cookie(\n                app.session_cookie_name,\n                session_id,\n                expires=expires,\n                httponly=httponly,\n                domain=domain,\n                path=path,\n                secure=secure,\n                samesite=samesite,\n            )",
+      "file": "CTFd/utils/sessions/__init__.py",
+      "start": 86,
+      "qualname": "CachingSessionInterface.save_session"
+     },
+     {
+      "id": "ctfd:CTFd/utils/sessions/__init__.py:34",
+      "score": 0.696,
+      "text": "# CTFd/utils/sessions/__init__.py:34-39  CachedSession.regenerate\n    def regenerate(self):\n        cache.delete(self.sid)\n\n        # Empty current sid and mark modified so the interface will give it a new one.\n        self.sid = None\n        self.modified = True",
+      "file": "CTFd/utils/sessions/__init__.py",
+      "start": 34,
+      "qualname": "CachedSession.regenerate"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/users.py:308",
+      "score": 0.696,
+      "text": "# CTFd/api/v1/users.py:308-326  UserPrivate.patch\n    def patch(self):\n        user = get_current_user()\n        data = request.get_json()\n        schema = UserSchema(view=\"self\", instance=user, partial=True)\n        response = schema.load(data)\n        if response.errors:\n            return {\"success\": False, \"errors\": response.errors}, 400\n\n        db.session.commit()\n\n        # Update user's session for the new session hash\n        update_user(user)\n\n        response = schema.dump(response.data)\n        db.session.close()\n\n        clear_standings()\n\n        return {\"success\": True, \"data\": response.data}",
+      "file": "CTFd/api/v1/users.py",
+      "start": 308,
+      "qualname": "UserPrivate.patch"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "requests.Session",
+     "Session"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "CTFd/auth.py:3",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/utils/email/mailgun.py:3",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:6",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1923,
+   "tokens_out": 99,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"CTFd/auth.py:3\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/utils/email/mailgun.py:3\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/utils/updates/__init__.py:6\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"requests.Session\", \"Session\"]}",
+     "in": 1923,
+     "out": 99,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1888,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1888,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3811,
+  "tokens_out": 135,
+  "cost_usd_est": 0.0,
+  "seconds": 0.11
+ },
+ "created": "2026-11-10T00:06:18+00:00",
+ "code_version": "a3e1ef4"
+}

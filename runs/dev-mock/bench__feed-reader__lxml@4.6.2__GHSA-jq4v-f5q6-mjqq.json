@@ -1,0 +1,335 @@
+{
+ "finding_id": "bench/feed-reader/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+ "config": "dev-mock",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/feed-reader",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-28957",
+   "GHSA-jq4v-f5q6-mjqq",
+   "PYSEC-2021-19"
+  ],
+  "cves": [
+   "CVE-2021-28957"
+  ],
+  "cwes": [
+   "CWE-79"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/feed-reader/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+  "first_fixed_above_installed": "4.6.3",
+  "fixed_versions": [
+   "4.6.3",
+   "a5f9cb52079dc57477c460dbe6ba0f775e14a999"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+  "package": "lxml",
+  "published": "2021-03-22T16:53:53Z",
+  "split": "dev",
+  "summary": "lxml vulnerable to Cross-Site Scripting ",
+  "target": "bench/feed-reader",
+  "version": "4.6.2",
+  "vuln_id": "GHSA-jq4v-f5q6-mjqq"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "forms",
+   "Cleaner",
+   "formaction",
+   "safe_attrs_only"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "reader/feeds.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "forms",
+  "Cleaner",
+  "formaction",
+  "safe_attrs_only"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/feed-reader/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+    "package": "lxml",
+    "version": "4.6.2",
+    "vuln_id": "GHSA-jq4v-f5q6-mjqq",
+    "aliases": [
+     "CVE-2021-28957",
+     "GHSA-jq4v-f5q6-mjqq",
+     "PYSEC-2021-19"
+    ],
+    "summary": "lxml vulnerable to Cross-Site Scripting ",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+    "fixed_versions": [
+     "4.6.3",
+     "a5f9cb52079dc57477c460dbe6ba0f775e14a999"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 26.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-jq4v-f5q6-mjqq#0",
+      "score": 0.836,
+      "text": "GHSA-jq4v-f5q6-mjqq (CVE-2021-28957)\npackage: lxml\nsummary: lxml vulnerable to Cross-Site Scripting \naffected: >=0, <4.6.3",
+      "vuln_id": "GHSA-jq4v-f5q6-mjqq"
+     },
+     {
+      "id": "GHSA-jq4v-f5q6-mjqq#1",
+      "score": 0.788,
+      "text": "GHSA-jq4v-f5q6-mjqq (lxml) details:\nAn XSS vulnerability was discovered in the python `lxml` clean module versions before 4.6.3. When disabling `the safe_attrs_only` and `forms` arguments, the `Cleaner` class does not remove the `formaction` attribute allowing for JS to bypass the sanitizer. A remote attacker could exploit this flaw to run arbitrary JS code on users who interact with incorrectly sanitized HTML. This issue is patched in `lxml` 4.6.3.",
+      "vuln_id": "GHSA-jq4v-f5q6-mjqq"
+     },
+     {
+      "id": "GHSA-pgww-xf46-h92r#0",
+      "score": 0.853,
+      "text": "GHSA-pgww-xf46-h92r (CVE-2020-27783)\npackage: lxml\nsummary: lxml vulnerable to Cross-site Scripting\naffected: >=0, <4.6.2",
+      "vuln_id": "GHSA-pgww-xf46-h92r"
+     },
+     {
+      "id": "GHSA-57qw-cc2g-pv5p#0",
+      "score": 0.831,
+      "text": "GHSA-57qw-cc2g-pv5p (CVE-2014-3146)\npackage: lxml\nsummary: lxml Cross-site Scripting Via Control Characters\naffected: >=0, <3.3.5",
+      "vuln_id": "GHSA-57qw-cc2g-pv5p"
+     }
+    ],
+    "symbols": [
+     "forms",
+     "Cleaner",
+     "formaction",
+     "safe_attrs_only"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.9,
+   "output": {
+    "package": "lxml",
+    "import_names": [
+     "lxml"
+    ],
+    "symbols": [
+     "forms",
+     "Cleaner",
+     "formaction",
+     "safe_attrs_only"
+    ],
+    "imported": true,
+    "import_locations": [
+     "reader/feeds.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "reader/feeds.py:12",
+      "code": "parser = etree.XMLParser(resolve_entities=False, no_network=True)",
+      "function": "reader.feeds:parse_items",
+      "in_test": false
+     },
+     {
+      "location": "reader/feeds.py:13",
+      "code": "root = etree.fromstring(xml, parser)",
+      "function": "reader.feeds:parse_items",
+      "in_test": false
+     }
+    ],
+    "entry_points": 0,
+    "paths": [],
+    "summary": "lxml: imported in 1 non-test location(s); 6 package call/reference site(s); named vulnerable symbols ['forms', 'Cleaner', 'formaction', 'safe_attrs_only']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 28.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "bench/feed-reader:reader/feeds.py:module",
+      "score": 0.662,
+      "text": "# reader/feeds.py (module level)\nimport urllib.request\nfrom lxml import etree",
+      "file": "reader/feeds.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/feed-reader:reader/feeds.py:11",
+      "score": 0.601,
+      "text": "# reader/feeds.py:11-14  parse_items\ndef parse_items(xml: bytes) -> list:\n    parser = etree.XMLParser(resolve_entities=False, no_network=True)\n    root = etree.fromstring(xml, parser)\n    return [{\"title\": i.findtext(\"title\"), \"link\": i.findtext(\"link\")} for i in root.iter(\"item\")]",
+      "file": "reader/feeds.py",
+      "start": 11,
+      "qualname": "parse_items"
+     },
+     {
+      "id": "bench/feed-reader:reader/__main__.py:module",
+      "score": 0.575,
+      "text": "# reader/__main__.py (module level)\nimport sys\nfrom reader.feeds import fetch, parse_items\nfor item in parse_items(fetch(sys.argv[1])):\n    print(f\"{item['title']}  {item['link']}\")",
+      "file": "reader/__main__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/feed-reader:reader/feeds.py:6",
+      "score": 0.495,
+      "text": "# reader/feeds.py:6-8  fetch\ndef fetch(url: str) -> bytes:\n    with urllib.request.urlopen(url, timeout=10) as r:\n        return r.read()",
+      "file": "reader/feeds.py",
+      "start": 6,
+      "qualname": "fetch"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "forms",
+     "Cleaner",
+     "formaction",
+     "safe_attrs_only"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "reader/feeds.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 839,
+   "tokens_out": 64,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"reader/feeds.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"forms\", \"Cleaner\", \"formaction\", \"safe_attrs_only\"]}",
+     "in": 839,
+     "out": 64,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 779,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 779,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 1618,
+  "tokens_out": 100,
+  "cost_usd_est": 0.0,
+  "seconds": 0.06
+ },
+ "created": "2026-11-10T00:06:34+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,351 @@
+{
+ "finding_id": "bench/feed-reader/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+ "config": "dev-claude",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/feed-reader",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-28957",
+   "GHSA-jq4v-f5q6-mjqq",
+   "PYSEC-2021-19"
+  ],
+  "cves": [
+   "CVE-2021-28957"
+  ],
+  "cwes": [
+   "CWE-79"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/feed-reader/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+  "first_fixed_above_installed": "4.6.3",
+  "fixed_versions": [
+   "4.6.3",
+   "a5f9cb52079dc57477c460dbe6ba0f775e14a999"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+  "package": "lxml",
+  "published": "2021-03-22T16:53:53Z",
+  "split": "dev",
+  "summary": "lxml vulnerable to Cross-Site Scripting ",
+  "target": "bench/feed-reader",
+  "version": "4.6.2",
+  "vuln_id": "GHSA-jq4v-f5q6-mjqq"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.93,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.94,
+  "vulnerable_symbols": [
+   "Cleaner",
+   "safe_attrs_only",
+   "forms",
+   "formaction"
+  ],
+  "reasoning": "The advisory concerns lxml.html.clean.Cleaner's HTML sanitization logic failing to strip the formaction attribute when safe_attrs_only/forms options are disabled. The application only imports lxml.etree (reader/feeds.py:3) and uses it solely for parsing XML feed items via etree.XMLParser/etree.fromstring (reader/feeds.py:11-14); the lxml.html.clean module and its Cleaner class are never imported or referenced anywhere in production code. Static analysis confirms zero production call sites of Cleaner, forms, safe_attrs_only, or formaction. Since the vulnerable sanitizer component is not used at all, the XSS path described in the advisory cannot be triggered by this application.",
+  "evidence": [
+   {
+    "location": "reader/feeds.py:3",
+    "explanation": "Only lxml.etree is imported, not lxml.html.clean where Cleaner lives."
+   },
+   {
+    "location": "reader/feeds.py:11-14",
+    "explanation": "etree.fromstring with a hardened XMLParser is used purely for XML parsing, unrelated to HTML sanitization."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 production call sites of Cleaner/forms/safe_attrs_only/formaction were found, confirming the vulnerable feature is unused."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict correctly identifies that the advisory's vulnerable feature is lxml.html.clean.Cleaner with specific flag combinations (safe_attrs_only=False, forms=False), and the application only imports lxml.etree for XML parsing in parse_items/fetch, never touching lxml.html or Cleaner. The static evidence confirms zero call sites of Cleaner, forms, safe_attrs_only, or formaction anywhere in production code, and there's no wrapper, dispatch table, or dynamic import mechanism shown that could reach the html.clean module indirectly. The only code paths shown (fetch -> parse_items -> __main__) are purely XML-to-dict extraction with no HTML sanitization or rendering step at all. Attempting to argue reachability would require speculating about code not shown in evidence (e.g., some other module calling Cleaner), but no such evidence exists, and the scanner itself only flags the dependency version, not an actual usage site. The precondition check also holds in reverse here: the advisory requires specific flags disabled on a specific class that is simply absent from the codebase. This is a clean, well-supported suppression.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.93
+ },
+ "symbols": [
+  "forms",
+  "Cleaner",
+  "formaction",
+  "safe_attrs_only"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/feed-reader/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+    "package": "lxml",
+    "version": "4.6.2",
+    "vuln_id": "GHSA-jq4v-f5q6-mjqq",
+    "aliases": [
+     "CVE-2021-28957",
+     "GHSA-jq4v-f5q6-mjqq",
+     "PYSEC-2021-19"
+    ],
+    "summary": "lxml vulnerable to Cross-Site Scripting ",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+    "fixed_versions": [
+     "4.6.3",
+     "a5f9cb52079dc57477c460dbe6ba0f775e14a999"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-jq4v-f5q6-mjqq#0",
+      "score": 0.836,
+      "text": "GHSA-jq4v-f5q6-mjqq (CVE-2021-28957)\npackage: lxml\nsummary: lxml vulnerable to Cross-Site Scripting \naffected: >=0, <4.6.3",
+      "vuln_id": "GHSA-jq4v-f5q6-mjqq"
+     },
+     {
+      "id": "GHSA-jq4v-f5q6-mjqq#1",
+      "score": 0.788,
+      "text": "GHSA-jq4v-f5q6-mjqq (lxml) details:\nAn XSS vulnerability was discovered in the python `lxml` clean module versions before 4.6.3. When disabling `the safe_attrs_only` and `forms` arguments, the `Cleaner` class does not remove the `formaction` attribute allowing for JS to bypass the sanitizer. A remote attacker could exploit this flaw to run arbitrary JS code on users who interact with incorrectly sanitized HTML. This issue is patched in `lxml` 4.6.3.",
+      "vuln_id": "GHSA-jq4v-f5q6-mjqq"
+     },
+     {
+      "id": "GHSA-pgww-xf46-h92r#0",
+      "score": 0.853,
+      "text": "GHSA-pgww-xf46-h92r (CVE-2020-27783)\npackage: lxml\nsummary: lxml vulnerable to Cross-site Scripting\naffected: >=0, <4.6.2",
+      "vuln_id": "GHSA-pgww-xf46-h92r"
+     },
+     {
+      "id": "GHSA-57qw-cc2g-pv5p#0",
+      "score": 0.831,
+      "text": "GHSA-57qw-cc2g-pv5p (CVE-2014-3146)\npackage: lxml\nsummary: lxml Cross-site Scripting Via Control Characters\naffected: >=0, <3.3.5",
+      "vuln_id": "GHSA-57qw-cc2g-pv5p"
+     }
+    ],
+    "symbols": [
+     "forms",
+     "Cleaner",
+     "formaction",
+     "safe_attrs_only"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.7,
+   "output": {
+    "package": "lxml",
+    "import_names": [
+     "lxml"
+    ],
+    "symbols": [
+     "forms",
+     "Cleaner",
+     "formaction",
+     "safe_attrs_only"
+    ],
+    "imported": true,
+    "import_locations": [
+     "reader/feeds.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "reader/feeds.py:12",
+      "code": "parser = etree.XMLParser(resolve_entities=False, no_network=True)",
+      "function": "reader.feeds:parse_items",
+      "in_test": false
+     },
+     {
+      "location": "reader/feeds.py:13",
+      "code": "root = etree.fromstring(xml, parser)",
+      "function": "reader.feeds:parse_items",
+      "in_test": false
+     }
+    ],
+    "entry_points": 0,
+    "paths": [],
+    "summary": "lxml: imported in 1 non-test location(s); 6 package call/reference site(s); named vulnerable symbols ['forms', 'Cleaner', 'formaction', 'safe_attrs_only']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 26.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "bench/feed-reader:reader/feeds.py:module",
+      "score": 0.662,
+      "text": "# reader/feeds.py (module level)\nimport urllib.request\nfrom lxml import etree",
+      "file": "reader/feeds.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/feed-reader:reader/feeds.py:11",
+      "score": 0.601,
+      "text": "# reader/feeds.py:11-14  parse_items\ndef parse_items(xml: bytes) -> list:\n    parser = etree.XMLParser(resolve_entities=False, no_network=True)\n    root = etree.fromstring(xml, parser)\n    return [{\"title\": i.findtext(\"title\"), \"link\": i.findtext(\"link\")} for i in root.iter(\"item\")]",
+      "file": "reader/feeds.py",
+      "start": 11,
+      "qualname": "parse_items"
+     },
+     {
+      "id": "bench/feed-reader:reader/__main__.py:module",
+      "score": 0.575,
+      "text": "# reader/__main__.py (module level)\nimport sys\nfrom reader.feeds import fetch, parse_items\nfor item in parse_items(fetch(sys.argv[1])):\n    print(f\"{item['title']}  {item['link']}\")",
+      "file": "reader/__main__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/feed-reader:reader/feeds.py:6",
+      "score": 0.495,
+      "text": "# reader/feeds.py:6-8  fetch\ndef fetch(url: str) -> bytes:\n    with urllib.request.urlopen(url, timeout=10) as r:\n        return r.read()",
+      "file": "reader/feeds.py",
+      "start": 6,
+      "qualname": "fetch"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 7763.4,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.94,
+    "vulnerable_symbols": [
+     "Cleaner",
+     "safe_attrs_only",
+     "forms",
+     "formaction"
+    ],
+    "reasoning": "The advisory concerns lxml.html.clean.Cleaner's HTML sanitization logic failing to strip the formaction attribute when safe_attrs_only/forms options are disabled. The application only imports lxml.etree (reader/feeds.py:3) and uses it solely for parsing XML feed items via etree.XMLParser/etree.fromstring (reader/feeds.py:11-14); the lxml.html.clean module and its Cleaner class are never imported or referenced anywhere in production code. Static analysis confirms zero production call sites of Cleaner, forms, safe_attrs_only, or formaction. Since the vulnerable sanitizer component is not used at all, the XSS path described in the advisory cannot be triggered by this application.",
+    "evidence": [
+     {
+      "location": "reader/feeds.py:3",
+      "explanation": "Only lxml.etree is imported, not lxml.html.clean where Cleaner lives."
+     },
+     {
+      "location": "reader/feeds.py:11-14",
+      "explanation": "etree.fromstring with a hardened XMLParser is used purely for XML parsing, unrelated to HTML sanitization."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 production call sites of Cleaner/forms/safe_attrs_only/formaction were found, confirming the vulnerable feature is unused."
+     }
+    ]
+   },
+   "tokens_in": 2542,
+   "tokens_out": 569,
+   "llm_calls": 1,
+   "llm_seconds": 7.75,
+   "cost_usd_est": 0.016161,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.94,\"vulnerable_symbols\":[\"Cleaner\",\"safe_attrs_only\",\"forms\",\"formaction\"],\"reasoning\":\"The advisory concerns lxml.html.clean.Cleaner's HTML sanitization logic failing to strip the formaction attribute when safe_attrs_only/forms options are disabled. The application only imports lxml.etree (reader/feeds.py:3) and uses it solely for parsing XML feed items via etree.XMLParser/etree.fromstring (reader/feeds.py:11-14); the lxml.html.clean module and its Cleaner class are never imported or referenced anywhere in production code. Static analysis confirms zero production call sites of Cleaner, forms, safe_attrs_only, or formaction. Since the vulnerable sanitizer component is not used at all, the XSS path described in the advisory cannot be triggered by this application.\",\"evidence\":[{\"location\":\"reader/feeds.py:3\",\"explanation\":\"Only lxml.etree is imported, not lxml.html.clean where Cleaner lives.\"},{\"location\":\"reader/feeds.py:11-14\",\"explanation\":\"etree.fromstring with a hardened XMLParser is used purely for XML parsing, unrelated to HTML sanitization.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 production call sites of Cleaner/forms/safe_attrs_only/formaction were found, confirming the vulnerable feature is unused.\"}]}",
+     "in": 2542,
+     "out": 569,
+     "s": 7.75,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 7091.0,
+   "output": {
+    "critique": "The verdict correctly identifies that the advisory's vulnerable feature is lxml.html.clean.Cleaner with specific flag combinations (safe_attrs_only=False, forms=False), and the application only imports lxml.etree for XML parsing in parse_items/fetch, never touching lxml.html or Cleaner. The static evidence confirms zero call sites of Cleaner, forms, safe_attrs_only, or formaction anywhere in production code, and there's no wrapper, dispatch table, or dynamic import mechanism shown that could reach the html.clean module indirectly. The only code paths shown (fetch -> parse_items -> __main__) are purely XML-to-dict extraction with no HTML sanitization or rendering step at all. Attempting to argue reachability would require speculating about code not shown in evidence (e.g., some other module calling Cleaner), but no such evidence exists, and the scanner itself only flags the dependency version, not an actual usage site. The precondition check also holds in reverse here: the advisory requires specific flags disabled on a specific class that is simply absent from the codebase. This is a clean, well-supported suppression.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.93
+   },
+   "tokens_in": 2510,
+   "tokens_out": 419,
+   "llm_calls": 1,
+   "llm_seconds": 7.08,
+   "cost_usd_est": 0.013815,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict correctly identifies that the advisory's vulnerable feature is lxml.html.clean.Cleaner with specific flag combinations (safe_attrs_only=False, forms=False), and the application only imports lxml.etree for XML parsing in parse_items/fetch, never touching lxml.html or Cleaner. The static evidence confirms zero call sites of Cleaner, forms, safe_attrs_only, or formaction anywhere in production code, and there's no wrapper, dispatch table, or dynamic import mechanism shown that could reach the html.clean module indirectly. The only code paths shown (fetch -> parse_items -> __main__) are purely XML-to-dict extraction with no HTML sanitization or rendering step at all. Attempting to argue reachability would require speculating about code not shown in evidence (e.g., some other module calling Cleaner), but no such evidence exists, and the scanner itself only flags the dependency version, not an actual usage site. The precondition check also holds in reverse here: the advisory requires specific flags disabled on a specific class that is simply absent from the codebase. This is a clean, well-supported suppression.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.93}",
+     "in": 2510,
+     "out": 419,
+     "s": 7.08,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.93,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 5052,
+  "tokens_out": 988,
+  "cost_usd_est": 0.029976,
+  "seconds": 14.92
+ },
+ "created": "2026-11-10T00:09:27+00:00",
+ "code_version": "a3e1ef4"
+}

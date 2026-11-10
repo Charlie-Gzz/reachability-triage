@@ -1,0 +1,345 @@
+{
+ "finding_id": "bench/key-rotation/paramiko@2.9.2/GHSA-f8q4-jwww-x3wv",
+ "config": "dev-mock",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/key-rotation",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-24302",
+   "GHSA-f8q4-jwww-x3wv",
+   "PYSEC-2022-166"
+  ],
+  "cves": [
+   "CVE-2022-24302"
+  ],
+  "cwes": [
+   "CWE-362"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/key-rotation/paramiko@2.9.2/GHSA-f8q4-jwww-x3wv",
+  "first_fixed_above_installed": "2.9.3",
+  "fixed_versions": [
+   "2.9.3",
+   "2.10.1"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+  "package": "paramiko",
+  "published": "2022-03-19T00:01:03Z",
+  "split": "dev",
+  "summary": "Race Condition in Paramiko",
+  "target": "bench/key-rotation",
+  "version": "2.9.2",
+  "vuln_id": "GHSA-f8q4-jwww-x3wv"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "write_private_key_file"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "rotate/keys.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "write_private_key_file"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/key-rotation/paramiko@2.9.2/GHSA-f8q4-jwww-x3wv",
+    "package": "paramiko",
+    "version": "2.9.2",
+    "vuln_id": "GHSA-f8q4-jwww-x3wv",
+    "aliases": [
+     "CVE-2022-24302",
+     "GHSA-f8q4-jwww-x3wv",
+     "PYSEC-2022-166"
+    ],
+    "summary": "Race Condition in Paramiko",
+    "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+    "fixed_versions": [
+     "2.9.3",
+     "2.10.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 24.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-f8q4-jwww-x3wv#0",
+      "score": 0.864,
+      "text": "GHSA-f8q4-jwww-x3wv (CVE-2022-24302)\npackage: paramiko\nsummary: Race Condition in Paramiko\naffected: >=2.10.0, <2.10.1; >=2.9.0, <2.9.3",
+      "vuln_id": "GHSA-f8q4-jwww-x3wv"
+     },
+     {
+      "id": "GHSA-f8q4-jwww-x3wv#1",
+      "score": 0.821,
+      "text": "GHSA-f8q4-jwww-x3wv (paramiko) details:\nIn Paramiko before 2.10.1, a race condition (between creation and chmod) in the write_private_key_file function could allow unauthorized information disclosure.",
+      "vuln_id": "GHSA-f8q4-jwww-x3wv"
+     },
+     {
+      "id": "GHSA-f2j6-wrhh-v25m#0",
+      "score": 0.778,
+      "text": "GHSA-f2j6-wrhh-v25m (CVE-2018-1000805)\npackage: paramiko\nsummary: Paramiko Authentication Bypass vulnerability\naffected: >=1.5.1, <2.0.9; >=2.1.0, <2.1.6; >=2.2.0, <2.2.4; >=2.3.0, <2.3.3; >=2.4.0, <2.4.2",
+      "vuln_id": "GHSA-f2j6-wrhh-v25m"
+     },
+     {
+      "id": "GHSA-f2j6-wrhh-v25m#1",
+      "score": 0.749,
+      "text": "GHSA-f2j6-wrhh-v25m (paramiko) details:\nParamiko version 2.4.1, 2.3.2, 2.2.3, 2.1.5, 2.0.8, 1.18.5, 1.17.6 contains a Incorrect Access Control vulnerability in SSH server that can result in RCE. This attack appear to be exploitable via network connectivity.",
+      "vuln_id": "GHSA-f2j6-wrhh-v25m"
+     }
+    ],
+    "symbols": [
+     "write_private_key_file"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.7,
+   "output": {
+    "package": "paramiko",
+    "import_names": [
+     "paramiko"
+    ],
+    "symbols": [
+     "write_private_key_file"
+    ],
+    "imported": true,
+    "import_locations": [
+     "rotate/keys.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 4,
+    "vulnerable_call_sites": [
+     {
+      "file": "rotate/keys.py",
+      "line": 9,
+      "code": "key.write_private_key_file(str(path))",
+      "resolved": "key.write_private_key_file",
+      "function": "rotate.keys:generate",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "rotate.cli:<main>",
+       "rotate.cli:main",
+       "rotate.keys:generate"
+      ],
+      "snippet": "    6  def generate(path: Path, bits: int = 3072) -> str:\n    7      key = paramiko.RSAKey.generate(bits)\n    8      path.parent.mkdir(parents=True, exist_ok=True)\n    9      key.write_private_key_file(str(path))\n   10      return f\"{key.get_name()} {key.get_base64()}\""
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "rotate/keys.py:7",
+      "code": "key = paramiko.RSAKey.generate(bits)",
+      "function": "rotate.keys:generate",
+      "in_test": false
+     }
+    ],
+    "entry_points": 1,
+    "paths": [
+     [
+      "rotate.cli:<main>",
+      "rotate.cli:main",
+      "rotate.keys:generate"
+     ]
+    ],
+    "summary": "paramiko: imported in 1 non-test location(s); 4 package call/reference site(s); named vulnerable symbols ['write_private_key_file']; 0 production call site(s) of those symbols (+1 weak name-only), 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 24.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:rotate/keys.py:9",
+      "score": 1.0,
+      "file": "rotate/keys.py",
+      "start": 9,
+      "qualname": "rotate.keys:generate",
+      "text": "# rotate/keys.py around line 9\n    6  def generate(path: Path, bits: int = 3072) -> str:\n    7      key = paramiko.RSAKey.generate(bits)\n    8      path.parent.mkdir(parents=True, exist_ok=True)\n    9      key.write_private_key_file(str(path))\n   10      return f\"{key.get_name()} {key.get_base64()}\""
+     },
+     {
+      "id": "bench/key-rotation:rotate/keys.py:6",
+      "score": 0.691,
+      "text": "# rotate/keys.py:6-10  generate\ndef generate(path: Path, bits: int = 3072) -> str:\n    key = paramiko.RSAKey.generate(bits)\n    path.parent.mkdir(parents=True, exist_ok=True)\n    key.write_private_key_file(str(path))\n    return f\"{key.get_name()} {key.get_base64()}\"",
+      "file": "rotate/keys.py",
+      "start": 6,
+      "qualname": "generate"
+     },
+     {
+      "id": "bench/key-rotation:rotate/keys.py:module",
+      "score": 0.666,
+      "text": "# rotate/keys.py (module level)\nfrom pathlib import Path\nimport paramiko",
+      "file": "rotate/keys.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/key-rotation:rotate/cli.py:module",
+      "score": 0.579,
+      "text": "# rotate/cli.py (module level)\nimport argparse\nfrom pathlib import Path\nfrom rotate.keys import generate\nif __name__ == \"__main__\":\n    main()",
+      "file": "rotate/cli.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/key-rotation:rotate/cli.py:7",
+      "score": 0.561,
+      "text": "# rotate/cli.py:7-13  main\ndef main():\n    p = argparse.ArgumentParser()\n    p.add_argument(\"host\")\n    p.add_argument(\"--dir\", default=\"~/.ssh/rotated\")\n    args = p.parse_args()\n    pub = generate(Path(args.dir).expanduser() / args.host)\n    print(pub)",
+      "file": "rotate/cli.py",
+      "start": 7,
+      "qualname": "main"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "write_private_key_file"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "rotate/keys.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 961,
+   "tokens_out": 57,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"rotate/keys.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"write_private_key_file\"]}",
+     "in": 961,
+     "out": 57,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 901,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 901,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 1862,
+  "tokens_out": 93,
+  "cost_usd_est": 0.0,
+  "seconds": 0.06
+ },
+ "created": "2026-11-10T00:06:35+00:00",
+ "code_version": "a3e1ef4"
+}

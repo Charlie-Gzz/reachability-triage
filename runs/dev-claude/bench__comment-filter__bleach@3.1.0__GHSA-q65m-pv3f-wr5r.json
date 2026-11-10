@@ -1,0 +1,382 @@
+{
+ "finding_id": "bench/comment-filter/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+ "config": "dev-claude",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/comment-filter",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2020-6802",
+   "GHSA-q65m-pv3f-wr5r",
+   "PYSEC-2020-27"
+  ],
+  "cves": [
+   "CVE-2020-6802"
+  ],
+  "cwes": [
+   "CWE-79"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/comment-filter/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+  "first_fixed_above_installed": "3.1.1",
+  "fixed_versions": [
+   "3.1.1"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+  "package": "bleach",
+  "published": "2020-02-24T17:33:44Z",
+  "split": "dev",
+  "summary": "XSS in Bleach when noscript and raw tag whitelisted",
+  "target": "bench/comment-filter",
+  "version": "3.1.0",
+  "vuln_id": "GHSA-q65m-pv3f-wr5r"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.9,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.88,
+  "vulnerable_symbols": [
+   "bleach.clean(tags=['noscript', <raw tag>])"
+  ],
+  "reasoning": "The advisory requires bleach.clean to be called with both 'noscript' and a raw/RCDATA tag (title, textarea, script, style, noembed, noframes, iframe, xmp) in the allowed tags list. The only production call site is moderation/filters.py:7, which calls bleach.clean(text, tags=ALLOWED, ...) where ALLOWED = ['b', 'i', 'em', 'strong', 'a'] \u2014 none of these are 'noscript' or any raw tag. There is a second call, bleach.linkify(text) at moderation/filters.py:11, but linkify is unrelated to this advisory's clean()-based mutation XSS. Since the application's only allowed-tags configuration does not include the vulnerable combination, the vulnerable code path is not exercised even though bleach.clean is reachable from an HTTP entry point (moderation.api:post_comment -> clean_comment).",
+  "evidence": [
+   {
+    "location": "moderation/filters.py:7",
+    "explanation": "bleach.clean is called with tags=ALLOWED and strip=True, the only production call site of the vulnerable symbol."
+   },
+   {
+    "location": "moderation/filters.py (module level)",
+    "explanation": "ALLOWED = ['b','i','em','strong','a'] does not include 'noscript' or any raw/RCDATA tag required to trigger the mutation XSS."
+   },
+   {
+    "location": "moderation/api.py:9-10",
+    "explanation": "post_comment reaches clean_comment from an externally-facing POST /comments endpoint, confirming the call is reachable but with a safe tag whitelist."
+   },
+   {
+    "location": "advisory",
+    "explanation": "Advisory explicitly requires whitelisting 'noscript' together with a raw tag (title, textarea, script, style, noembed, noframes, iframe, xmp) for the vuln to apply; this app's whitelist contains neither."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The only production call site passes tags=ALLOWED = ['b','i','em','strong','a'] with strip=True, which contains neither 'noscript' nor any RCDATA/raw tag (title, textarea, script, style, noembed, noframes, iframe, xmp) required by the advisory. The advisory is precondition-specific (a particular combination of whitelisted tags), and the static evidence directly shows the whitelist used in the app, not just that bleach.clean is called. The verdict correctly checked the actual advisory preconditions against the cited code rather than stopping at 'bleach.clean is reachable.' The only possible counter-argument would be if ALLOWED is mutated elsewhere or dynamically extended before being passed in, but no such evidence is shown, and the retrieved code shows ALLOWED as a static module-level list. The linkify call is unrelated to this CVE (clean()-based mutation XSS), so it doesn't change the analysis. The critique does not surface any overlooked path into the vulnerable feature combination.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.9
+ },
+ "symbols": [
+  "bleach.clean",
+  "noscript"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/comment-filter/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+    "package": "bleach",
+    "version": "3.1.0",
+    "vuln_id": "GHSA-q65m-pv3f-wr5r",
+    "aliases": [
+     "CVE-2020-6802",
+     "GHSA-q65m-pv3f-wr5r",
+     "PYSEC-2020-27"
+    ],
+    "summary": "XSS in Bleach when noscript and raw tag whitelisted",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+    "fixed_versions": [
+     "3.1.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 28.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-q65m-pv3f-wr5r#0",
+      "score": 0.897,
+      "text": "GHSA-q65m-pv3f-wr5r (CVE-2020-6802)\npackage: bleach\nsummary: XSS in Bleach when noscript and raw tag whitelisted\naffected: >=0, <3.1.1",
+      "vuln_id": "GHSA-q65m-pv3f-wr5r"
+     },
+     {
+      "id": "GHSA-q65m-pv3f-wr5r#1",
+      "score": 0.866,
+      "text": "GHSA-q65m-pv3f-wr5r (bleach) details:\n### Impact\n\nA [mutation XSS](https://cure53.de/fp170.pdf) affects users calling `bleach.clean` with `noscript` and a raw tag (see below) in the allowed/whitelisted tags option.\n\n### Patches\n\nv3.1.1\n\n### Workarounds\n\n* modify `bleach.clean` calls to not whitelist `noscript` and one or more of the following raw tags:\n\n```\ntitle\ntextarea\nscript\nstyle\nnoembed\nnoframes\niframe\nxmp\n```\n\n* A strong [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) without `unsafe-inline` and `unsafe-eval` [`script-src`s](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src)) will also help mitigate the risk.",
+      "vuln_id": "GHSA-q65m-pv3f-wr5r"
+     },
+     {
+      "id": "GHSA-m6xf-fq7q-8743#0",
+      "score": 0.851,
+      "text": "GHSA-m6xf-fq7q-8743 (CVE-2020-6816)\npackage: bleach\nsummary: Bleach vulnerable to mutation XSS via whitelisted math or svg and raw tag\naffected: >=0, <3.1.2",
+      "vuln_id": "GHSA-m6xf-fq7q-8743"
+     },
+     {
+      "id": "GHSA-m6xf-fq7q-8743#1",
+      "score": 0.846,
+      "text": "GHSA-m6xf-fq7q-8743 (bleach) details:\n### Impact\n\nA [mutation XSS](https://cure53.de/fp170.pdf) affects users calling `bleach.clean` with all of:\n\n* the `svg` or `math` in the allowed/whitelisted tags\n* an RCDATA tag (see below) in the allowed/whitelisted tags\n* the keyword argument `strip=False`\n\n### Patches\n\nUsers are encouraged to upgrade to bleach v3.1.2 or greater.\n\n### Workarounds\n\n* modify `bleach.clean` calls to use `strip=True`, or not whitelist `math` or `svg` tags and one or more of the following tags:\n\n```\nscript\nnoscript\nstyle\nnoframes\nxmp\nnoembed\niframe\n```\n\n* A strong [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) without `unsafe-inline` and `unsafe-eval` [`script-src`s](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src)) will also help mitigate the risk.",
+      "vuln_id": "GHSA-m6xf-fq7q-8743"
+     }
+    ],
+    "symbols": [
+     "bleach.clean",
+     "noscript"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.3,
+   "output": {
+    "package": "bleach",
+    "import_names": [
+     "bleach"
+    ],
+    "symbols": [
+     "bleach.clean",
+     "noscript"
+    ],
+    "imported": true,
+    "import_locations": [
+     "moderation/filters.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [
+     {
+      "file": "moderation/filters.py",
+      "line": 7,
+      "code": "return bleach.clean(text, tags=ALLOWED, attributes={\"a\": [\"href\"]}, strip=True)",
+      "resolved": "bleach.clean",
+      "function": "moderation.filters:clean_comment",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "moderation.api:post_comment",
+       "moderation.filters:clean_comment"
+      ],
+      "snippet": "    4  \n    5  \n    6  def clean_comment(text: str) -> str:\n    7      return bleach.clean(text, tags=ALLOWED, attributes={\"a\": [\"href\"]}, strip=True)\n    8  \n    9  \n   10  def linkify(text: str) -> str:"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "moderation/filters.py:7",
+      "code": "return bleach.clean(text, tags=ALLOWED, attributes={\"a\": [\"href\"]}, strip=True)",
+      "function": "moderation.filters:clean_comment",
+      "in_test": false
+     },
+     {
+      "location": "moderation/filters.py:11",
+      "code": "return bleach.linkify(text)",
+      "function": "moderation.filters:linkify",
+      "in_test": false
+     }
+    ],
+    "entry_points": 1,
+    "paths": [
+     [
+      "moderation.api:post_comment",
+      "moderation.filters:clean_comment"
+     ]
+    ],
+    "summary": "bleach: imported in 1 non-test location(s); 6 package call/reference site(s); named vulnerable symbols ['bleach.clean', 'noscript']; 1 production call site(s) of those symbols, 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 25.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:moderation/filters.py:7",
+      "score": 1.0,
+      "file": "moderation/filters.py",
+      "start": 7,
+      "qualname": "moderation.filters:clean_comment",
+      "text": "# moderation/filters.py around line 7\n    4  \n    5  \n    6  def clean_comment(text: str) -> str:\n    7      return bleach.clean(text, tags=ALLOWED, attributes={\"a\": [\"href\"]}, strip=True)\n    8  \n    9  \n   10  def linkify(text: str) -> str:"
+     },
+     {
+      "id": "bench/comment-filter:moderation/filters.py:6",
+      "score": 0.71,
+      "text": "# moderation/filters.py:6-7  clean_comment\ndef clean_comment(text: str) -> str:\n    return bleach.clean(text, tags=ALLOWED, attributes={\"a\": [\"href\"]}, strip=True)",
+      "file": "moderation/filters.py",
+      "start": 6,
+      "qualname": "clean_comment"
+     },
+     {
+      "id": "bench/comment-filter:moderation/filters.py:module",
+      "score": 0.682,
+      "text": "# moderation/filters.py (module level)\nimport bleach\nALLOWED = [\"b\", \"i\", \"em\", \"strong\", \"a\"]",
+      "file": "moderation/filters.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/comment-filter:moderation/filters.py:10",
+      "score": 0.631,
+      "text": "# moderation/filters.py:10-11  linkify\ndef linkify(text: str) -> str:\n    return bleach.linkify(text)",
+      "file": "moderation/filters.py",
+      "start": 10,
+      "qualname": "linkify"
+     },
+     {
+      "id": "bench/comment-filter:moderation/api.py:module",
+      "score": 0.562,
+      "text": "# moderation/api.py (module level)\nfrom fastapi import FastAPI\nfrom moderation.filters import clean_comment, linkify\napp = FastAPI()\n@app.post(\"/comments\")",
+      "file": "moderation/api.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/comment-filter:moderation/api.py:9",
+      "score": 0.55,
+      "text": "# moderation/api.py:9-10  post_comment\ndef post_comment(body: dict):\n    return {\"html\": linkify(clean_comment(body[\"text\"]))}",
+      "file": "moderation/api.py",
+      "start": 9,
+      "qualname": "post_comment"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 9077.6,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "vulnerable_symbols": [
+     "bleach.clean(tags=['noscript', <raw tag>])"
+    ],
+    "reasoning": "The advisory requires bleach.clean to be called with both 'noscript' and a raw/RCDATA tag (title, textarea, script, style, noembed, noframes, iframe, xmp) in the allowed tags list. The only production call site is moderation/filters.py:7, which calls bleach.clean(text, tags=ALLOWED, ...) where ALLOWED = ['b', 'i', 'em', 'strong', 'a'] \u2014 none of these are 'noscript' or any raw tag. There is a second call, bleach.linkify(text) at moderation/filters.py:11, but linkify is unrelated to this advisory's clean()-based mutation XSS. Since the application's only allowed-tags configuration does not include the vulnerable combination, the vulnerable code path is not exercised even though bleach.clean is reachable from an HTTP entry point (moderation.api:post_comment -> clean_comment).",
+    "evidence": [
+     {
+      "location": "moderation/filters.py:7",
+      "explanation": "bleach.clean is called with tags=ALLOWED and strip=True, the only production call site of the vulnerable symbol."
+     },
+     {
+      "location": "moderation/filters.py (module level)",
+      "explanation": "ALLOWED = ['b','i','em','strong','a'] does not include 'noscript' or any raw/RCDATA tag required to trigger the mutation XSS."
+     },
+     {
+      "location": "moderation/api.py:9-10",
+      "explanation": "post_comment reaches clean_comment from an externally-facing POST /comments endpoint, confirming the call is reachable but with a safe tag whitelist."
+     },
+     {
+      "location": "advisory",
+      "explanation": "Advisory explicitly requires whitelisting 'noscript' together with a raw tag (title, textarea, script, style, noembed, noframes, iframe, xmp) for the vuln to apply; this app's whitelist contains neither."
+     }
+    ]
+   },
+   "tokens_in": 3173,
+   "tokens_out": 710,
+   "llm_calls": 1,
+   "llm_seconds": 9.08,
+   "cost_usd_est": 0.020169,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"not_reachable\",\n  \"confidence\": 0.88,\n  \"vulnerable_symbols\": [\"bleach.clean(tags=['noscript', <raw tag>])\"],\n  \"reasoning\": \"The advisory requires bleach.clean to be called with both 'noscript' and a raw/RCDATA tag (title, textarea, script, style, noembed, noframes, iframe, xmp) in the allowed tags list. The only production call site is moderation/filters.py:7, which calls bleach.clean(text, tags=ALLOWED, ...) where ALLOWED = ['b', 'i', 'em', 'strong', 'a'] \u2014 none of these are 'noscript' or any raw tag. There is a second call, bleach.linkify(text) at moderation/filters.py:11, but linkify is unrelated to this advisory's clean()-based mutation XSS. Since the application's only allowed-tags configuration does not include the vulnerable combination, the vulnerable code path is not exercised even though bleach.clean is reachable from an HTTP entry point (moderation.api:post_comment -> clean_comment).\",\n  \"evidence\": [\n    {\"location\": \"moderation/filters.py:7\", \"explanation\": \"bleach.clean is called with tags=ALLOWED and strip=True, the only production call site of the vulnerable symbol.\"},\n    {\"location\": \"moderation/filters.py (module level)\", \"explanation\": \"ALLOWED = ['b','i','em','strong','a'] does not include 'noscript' or any raw/RCDATA tag required to trigger the mutation XSS.\"},\n    {\"location\": \"moderation/api.py:9-10\", \"explanation\": \"post_comment reaches clean_comment from an externally-facing POST /comments endpoint, confirming the call is reachable but with a safe tag whitelist.\"},\n    {\"location\": \"advisory\", \"explanation\": \"Advisory explicitly requires whitelisting 'noscript' together with a raw tag (title, textarea, script, style, noembed, noframes, iframe, xmp) for the vuln to apply; this app's whitelist contains neither.\"}\n  ]\n}\n```",
+     "in": 3173,
+     "out": 710,
+     "s": 9.08,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 7048.8,
+   "output": {
+    "critique": "The only production call site passes tags=ALLOWED = ['b','i','em','strong','a'] with strip=True, which contains neither 'noscript' nor any RCDATA/raw tag (title, textarea, script, style, noembed, noframes, iframe, xmp) required by the advisory. The advisory is precondition-specific (a particular combination of whitelisted tags), and the static evidence directly shows the whitelist used in the app, not just that bleach.clean is called. The verdict correctly checked the actual advisory preconditions against the cited code rather than stopping at 'bleach.clean is reachable.' The only possible counter-argument would be if ALLOWED is mutated elsewhere or dynamically extended before being passed in, but no such evidence is shown, and the retrieved code shows ALLOWED as a static module-level list. The linkify call is unrelated to this CVE (clean()-based mutation XSS), so it doesn't change the analysis. The critique does not surface any overlooked path into the vulnerable feature combination.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.9
+   },
+   "tokens_in": 3305,
+   "tokens_out": 379,
+   "llm_calls": 1,
+   "llm_seconds": 7.05,
+   "cost_usd_est": 0.0156,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The only production call site passes tags=ALLOWED = ['b','i','em','strong','a'] with strip=True, which contains neither 'noscript' nor any RCDATA/raw tag (title, textarea, script, style, noembed, noframes, iframe, xmp) required by the advisory. The advisory is precondition-specific (a particular combination of whitelisted tags), and the static evidence directly shows the whitelist used in the app, not just that bleach.clean is called. The verdict correctly checked the actual advisory preconditions against the cited code rather than stopping at 'bleach.clean is reachable.' The only possible counter-argument would be if ALLOWED is mutated elsewhere or dynamically extended before being passed in, but no such evidence is shown, and the retrieved code shows ALLOWED as a static module-level list. The linkify call is unrelated to this CVE (clean()-based mutation XSS), so it doesn't change the analysis. The critique does not surface any overlooked path into the vulnerable feature combination.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.9}",
+     "in": 3305,
+     "out": 379,
+     "s": 7.05,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.9,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 6478,
+  "tokens_out": 1089,
+  "cost_usd_est": 0.035769,
+  "seconds": 16.19
+ },
+ "created": "2026-11-10T00:11:17+00:00",
+ "code_version": "a3e1ef4"
+}

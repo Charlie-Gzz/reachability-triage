@@ -1,0 +1,422 @@
+{
+ "finding_id": "healthchecks/requests@2.27.1/GHSA-9hjg-9r4m-mvj7",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-47081",
+   "GHSA-9hjg-9r4m-mvj7",
+   "PYSEC-2026-1872"
+  ],
+  "cves": [
+   "CVE-2024-47081"
+  ],
+  "cwes": [
+   "CWE-522"
+  ],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/requests@2.27.1/GHSA-9hjg-9r4m-mvj7",
+  "first_fixed_above_installed": "2.32.4",
+  "fixed_versions": [
+   "2.32.4"
+  ],
+  "max_cvss": "5.3",
+  "package": "requests",
+  "published": "2025-06-09T19:06:08Z",
+  "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+  "target": "healthchecks",
+  "version": "2.27.1",
+  "vuln_id": "GHSA-9hjg-9r4m-mvj7"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "trust_env"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/api/management/commands/settelegramwebhook.py:5",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/api/transports.py:9",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/front/forms.py:15",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "trust_env"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/requests@2.27.1/GHSA-9hjg-9r4m-mvj7",
+    "package": "requests",
+    "version": "2.27.1",
+    "vuln_id": "GHSA-9hjg-9r4m-mvj7",
+    "aliases": [
+     "CVE-2024-47081",
+     "GHSA-9hjg-9r4m-mvj7",
+     "PYSEC-2026-1872"
+    ],
+    "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+    "max_cvss": "5.3",
+    "fixed_versions": [
+     "2.32.4"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 26.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-9hjg-9r4m-mvj7#0",
+      "score": 0.85,
+      "text": "GHSA-9hjg-9r4m-mvj7 (CVE-2024-47081)\npackage: requests\nsummary: Requests vulnerable to .netrc credentials leak via malicious URLs\naffected: >=0, <2.32.4",
+      "vuln_id": "GHSA-9hjg-9r4m-mvj7"
+     },
+     {
+      "id": "GHSA-9hjg-9r4m-mvj7#1",
+      "score": 0.846,
+      "text": "GHSA-9hjg-9r4m-mvj7 (requests) details:\n### Impact\n\nDue to a URL parsing issue, Requests releases prior to 2.32.4 may leak .netrc credentials to third parties for specific maliciously-crafted URLs.\n\n### Workarounds\nFor older versions of Requests, use of the .netrc file can be disabled with `trust_env=False` on your Requests Session ([docs](https://requests.readthedocs.io/en/latest/api/#requests.Session.trust_env)).",
+      "vuln_id": "GHSA-9hjg-9r4m-mvj7"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#1",
+      "score": 0.774,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\n### Impact\n\nSince Requests v2.3.0, Requests has been vulnerable to potentially leaking `Proxy-Authorization` headers to destination servers, specifically during redirects to an HTTPS origin. This is a product of how `rebuild_proxies` is used to recompute and [reattach the `Proxy-Authorization` header](https://github.com/psf/requests/blob/f2629e9e3c7ce3c3c8c025bcd8db551101cbc773/requests/sessions.py#L319-L328) to requests when redirected. Note this behavior has _only_ been observed to affect proxied requests when credentials are supplied in the URL user information component (e.g. `https://username:password@proxy:8080`).\n\n**Current vulnerable behavior(s):**\n\n1. HTTP \u2192 HTTPS: **leak**\n2. HTTPS \u2192 HTTP: **no leak**\n3. HTTPS \u2192 HTTPS: **leak**\n4. HTTP \u2192 HTTP: **no leak**",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-gc5v-m9x4-r6x2#1",
+      "score": 0.768,
+      "text": "GHSA-gc5v-m9x4-r6x2 (requests) details:\n### Impact\nThe `requests.utils.extract_zipped_paths()` utility function uses a predictable filename when extracting files from zip archives into the system temporary directory. If the target file already exists, it is reused without validation. A local attacker with write access to the temp directory could pre-create a malicious file that would be loaded in place of the legitimate one.\n\n### Affected usages\n**Standard usage of the Requests library is not affected by this vulnerability.** Only applications that call `extract_zipped_paths()` directly are impacted.\n\n### Remediation\nUpgrade to at least Requests 2.33.0, where the library now extracts files to a non-deterministic location.\n\nIf developers are unable to upgrade, they can set `TMPDIR` in their environment to a directory with restricted write access.",
+      "vuln_id": "GHSA-gc5v-m9x4-r6x2"
+     }
+    ],
+    "symbols": [
+     "trust_env"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 67.1,
+   "output": {
+    "package": "requests",
+    "import_names": [
+     "requests"
+    ],
+    "symbols": [
+     "trust_env"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/api/management/commands/settelegramwebhook.py:5",
+     "hc/api/transports.py:9",
+     "hc/front/forms.py:15",
+     "hc/front/views.py:53"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 39,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/api/management/commands/settelegramwebhook.py:23",
+      "code": "r = requests.post(url, json=form)",
+      "function": "hc.api.management.commands.settelegramwebhook:Command.handle",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:187",
+      "code": "r = requests.request(method, url, **options)",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:191",
+      "code": "except requests.exceptions.Timeout:",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:194",
+      "code": "except requests.exceptions.ConnectionError:",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/forms.py:269",
+      "code": "r = requests.post(url, {})",
+      "function": "hc.front.forms:AddMatrixForm.clean_alias",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1238",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_slack_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1323",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_pushbullet_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1383",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_discord_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1875",
+      "code": "boards = requests.get(url).json()",
+      "function": "hc.front.views:trello_settings",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:2025",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_linenotify_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:2043",
+      "code": "result = requests.get(",
+      "function": "hc.front.views:add_linenotify_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/tests/test_notify_slack.py:71",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_slack:NotifySlackTestCase.test_it_handles_timeout",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:48",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_handle_timeouts",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:69",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=ConnectionError)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_handle_connection_errors",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:106",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_dont_retry_when_sending_test_notifications",
+      "in_test": true
+     }
+    ],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "requests: imported in 4 non-test location(s) and 2 test location(s); 39 package call/reference site(s); named vulnerable symbols ['trust_env']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 33.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/front/tests/test_add_webhook.py:71",
+      "score": 0.703,
+      "text": "# hc/front/tests/test_add_webhook.py:71-94  AddWebhookTestCase.test_it_rejects_bad_urls\n    def test_it_rejects_bad_urls(self):\n        urls = [\n            # clearly not an URL\n            \"foo\",\n            # FTP addresses not allowed\n            \"ftp://example.org\",\n            # no loopback\n            \"http://localhost:1234/endpoint\",\n            \"http://127.0.0.1/endpoint\",\n        ]\n\n        self.client.login(username=\"alice@example.org\", password=\"password\")\n        for url in urls:\n            form = {\n                \"method_down\": \"GET\",\n                \"url_down\": url,\n                \"method_up\": \"GET\",\n                \"url_up\": \"\",\n            }\n\n            r = self.client.post(self.url, form)\n            self.assertContains(r, \"Enter a valid URL.\", msg_prefix=url)\n\n            self.assertEqual(Channel.objects.count(), 0)",
+      "file": "hc/front/tests/test_add_webhook.py",
+      "start": 71,
+      "qualname": "AddWebhookTestCase.test_it_rejects_bad_urls"
+     },
+     {
+      "id": "healthchecks:hc/front/tests/test_add_slack.py:28",
+      "score": 0.68,
+      "text": "# hc/front/tests/test_add_slack.py:28-33  AddSlackTestCase.test_it_rejects_bad_url\n    def test_it_rejects_bad_url(self):\n        form = {\"value\": \"not an URL\"}\n\n        self.client.login(username=\"alice@example.org\", password=\"password\")\n        r = self.client.post(self.url, form)\n        self.assertContains(r, \"Enter a valid URL\")",
+      "file": "hc/front/tests/test_add_slack.py",
+      "start": 28,
+      "qualname": "AddSlackTestCase.test_it_rejects_bad_url"
+     },
+     {
+      "id": "healthchecks:hc/api/models.py:144",
+      "score": 0.667,
+      "text": "# hc/api/models.py:144-145  Check.cloaked_url\n    def cloaked_url(self):\n        return settings.SITE_ROOT + reverse(\"hc-uncloak\", args=[self.unique_key])",
+      "file": "hc/api/models.py",
+      "start": 144,
+      "qualname": "Check.cloaked_url"
+     },
+     {
+      "id": "healthchecks:hc/front/tests/test_add_victorops.py:28",
+      "score": 0.667,
+      "text": "# hc/front/tests/test_add_victorops.py:28-33  AddVictorOpsTestCase.test_it_rejects_bad_url\n    def test_it_rejects_bad_url(self):\n        form = {\"value\": \"not an URL\"}\n\n        self.client.login(username=\"alice@example.org\", password=\"password\")\n        r = self.client.post(self.url, form)\n        self.assertContains(r, \"Enter a valid URL\")",
+      "file": "hc/front/tests/test_add_victorops.py",
+      "start": 28,
+      "qualname": "AddVictorOpsTestCase.test_it_rejects_bad_url"
+     },
+     {
+      "id": "healthchecks:hc/accounts/views.py:674",
+      "score": 0.666,
+      "text": "# hc/accounts/views.py:674-718  add_webauthn\ndef add_webauthn(request):\n    if not settings.RP_ID:\n        return HttpResponse(status=404)\n\n    if request.method == \"POST\":\n        form = forms.AddWebAuthnForm(request.POST)\n        if not form.is_valid():\n            return HttpResponseBadRequest()\n\n        credential_data = _get_credential_data(request, form)\n        if not credential_data:\n            return HttpResponseBadRequest()\n\n        c = Credential(user=request.user)\n        c.name = form.cleaned_data[\"name\"]\n        c.data = credential_data\n        c.save()\n\n        request.session[\"added_credential_name\"] = c.name\n        return redirect(\"hc-profile\")\n\n    credentials = [c.unpack() for c in request.user.credentials.all()]\n    # User handle is used in a username-less authentication, to map a credential\n    # received from browser with an user account in the database.\n    # Since we only use security keys as a second factor,\n    # the user handle is not of much use to us.\n    #\n    # The user handle:\n    #  - must not be blank,\n    #  - must not be a constant value,\n    #  - must not contain personally identifiable information.\n    # So we use random bytes, and don't store them on our end:\n    options, state = FIDO2_SERVER.register_begin(\n        {\n            \"id\": token_bytes(16),\n            \"name\": request.user.email,\n            \"displayName\": request.user.email,\n        },\n        credentials,\n    )\n\n    request.session[\"state\"] = state\n\n    ctx = {\"options\": base64.b64encode(cbor.encode(options)).decode()}\n    return render(request, \"accounts/add_credential.html\", ctx)",
+      "file": "hc/accounts/views.py",
+      "start": 674,
+      "qualname": "add_webauthn"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "trust_env"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/api/management/commands/settelegramwebhook.py:5",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/api/transports.py:9",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/front/forms.py:15",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1843,
+   "tokens_out": 99,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/api/management/commands/settelegramwebhook.py:5\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/api/transports.py:9\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/front/forms.py:15\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"trust_env\"]}",
+     "in": 1843,
+     "out": 99,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1812,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1812,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3655,
+  "tokens_out": 135,
+  "cost_usd_est": 0.0,
+  "seconds": 0.13
+ },
+ "created": "2026-11-10T00:06:12+00:00",
+ "code_version": "a3e1ef4"
+}

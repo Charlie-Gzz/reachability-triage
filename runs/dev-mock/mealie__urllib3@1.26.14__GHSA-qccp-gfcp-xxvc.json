@@ -1,0 +1,335 @@
+{
+ "finding_id": "mealie/urllib3@1.26.14/GHSA-qccp-gfcp-xxvc",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-44431",
+   "GHSA-qccp-gfcp-xxvc",
+   "PYSEC-2026-141"
+  ],
+  "cves": [
+   "CVE-2026-44431"
+  ],
+  "cwes": [
+   "CWE-200"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/urllib3@1.26.14/GHSA-qccp-gfcp-xxvc",
+  "first_fixed_above_installed": "2.7.0",
+  "fixed_versions": [
+   "2.7.0"
+  ],
+  "max_cvss": "8.2",
+  "package": "urllib3",
+  "published": "2026-05-11T14:51:20Z",
+  "summary": "urllib3: Sensitive headers forwarded across origins in proxied low-level redirects",
+  "target": "mealie",
+  "version": "1.26.14",
+  "vuln_id": "GHSA-qccp-gfcp-xxvc"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "urllib3.request",
+   "PoolManager.request",
+   "ProxyManager.request",
+   "Authorization",
+   "Cookie"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "urllib3.request",
+  "PoolManager.request",
+  "ProxyManager.request",
+  "Authorization",
+  "Cookie",
+  "Retry.DEFAULT_REMOVE_HEADERS_ON_REDIRECT",
+  "ProxyManager.connection_from_url",
+  "HTTPConnection.urlopen"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/urllib3@1.26.14/GHSA-qccp-gfcp-xxvc",
+    "package": "urllib3",
+    "version": "1.26.14",
+    "vuln_id": "GHSA-qccp-gfcp-xxvc",
+    "aliases": [
+     "CVE-2026-44431",
+     "GHSA-qccp-gfcp-xxvc",
+     "PYSEC-2026-141"
+    ],
+    "summary": "urllib3: Sensitive headers forwarded across origins in proxied low-level redirects",
+    "max_cvss": "8.2",
+    "fixed_versions": [
+     "2.7.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-qccp-gfcp-xxvc#0",
+      "score": 0.846,
+      "text": "GHSA-qccp-gfcp-xxvc (CVE-2026-44431)\npackage: urllib3\nsummary: urllib3: Sensitive headers forwarded across origins in proxied low-level redirects\naffected: >=1.23, <2.7.0",
+      "vuln_id": "GHSA-qccp-gfcp-xxvc"
+     },
+     {
+      "id": "GHSA-qccp-gfcp-xxvc#1",
+      "score": 0.835,
+      "text": "GHSA-qccp-gfcp-xxvc (urllib3) details:\n### Impact\n\nWhen following cross-origin redirects for requests made using urllib3\u2019s high-level APIs, such as `urllib3.request()`, `PoolManager.request()`, and `ProxyManager.request()`, sensitive headers \u2014 `Authorization`, `Cookie`, and `Proxy-Authorization` (defined in `Retry.DEFAULT_REMOVE_HEADERS_ON_REDIRECT`) \u2014 are stripped by default, as expected.\n\nHowever, cross-origin redirects followed from the low-level API via `ProxyManager.connection_from_url().urlopen(..., assert_same_host=False)` still forward these sensitive headers.\n\n### Affected usage\n\nApplications and libraries using urllib3 versions earlier than 2.7.0 may be affected if they allow cross-origin redirects while making requests through `HTTPConnection.urlopen()` instances created via `ProxyManager.connection_from_url()`.\n\n### Remediation",
+      "vuln_id": "GHSA-qccp-gfcp-xxvc"
+     },
+     {
+      "id": "GHSA-qccp-gfcp-xxvc#2",
+      "score": 0.816,
+      "text": "GHSA-qccp-gfcp-xxvc (urllib3) details:\nUpgrade to urllib3 version 2.7.0 or later, in which sensitive headers are stripped from redirects followed by `HTTPConnection`.\n\nIf upgrading is not immediately possible, avoid using this low-level redirect flow for cross-origin redirects. If appropriate for your use case, switch to `ProxyManager.request()`.",
+      "vuln_id": "GHSA-qccp-gfcp-xxvc"
+     },
+     {
+      "id": "GHSA-34jh-p97f-mpxf#1",
+      "score": 0.835,
+      "text": "GHSA-34jh-p97f-mpxf (urllib3) details:\nWhen using urllib3's proxy support with `ProxyManager`, the `Proxy-Authorization` header is only sent to the configured proxy, as expected.\n\nHowever, when sending HTTP requests *without* using urllib3's proxy support, it's possible to accidentally configure the `Proxy-Authorization` header even though it won't have any effect as the request is not using a forwarding proxy or a tunneling proxy. In those cases, urllib3 doesn't treat the `Proxy-Authorization` HTTP header as one carrying authentication material and thus doesn't strip the header on cross-origin redirects.\n\nBecause this is a highly unlikely scenario, we believe the severity of this vulnerability is low for almost all users. Out of an abundance of caution urllib3 will automatically strip the `Proxy-Authorization` header during cross-origin redirects to avoid the small chance that users are doing this on accident.",
+      "vuln_id": "GHSA-34jh-p97f-mpxf"
+     },
+     {
+      "id": "GHSA-34jh-p97f-mpxf#2",
+      "score": 0.832,
+      "text": "GHSA-34jh-p97f-mpxf (urllib3) details:\nUsers should use urllib3's proxy support or disable automatic redirects to achieve safe processing of the `Proxy-Authorization` header, but we still decided to strip the header by default in order to further protect users who aren't using the correct approach.\n\n## Affected usages\n\nWe believe the number of usages affected by this advisory is low. It requires all of the following to be true to be exploited:\n\n* Setting the `Proxy-Authorization` header without using urllib3's built-in proxy support.\n* Not disabling HTTP redirects.\n* Either not using an HTTPS origin server or for the proxy or target origin to redirect to a malicious origin.\n\n## Remediation\n\n* Using the `Proxy-Authorization` header with urllib3's `ProxyManager`.\n* Disabling HTTP redirects using `redirects=False` when sending requests.\n* Not using the `Proxy-Authorization` header.",
+      "vuln_id": "GHSA-34jh-p97f-mpxf"
+     }
+    ],
+    "symbols": [
+     "urllib3.request",
+     "PoolManager.request",
+     "ProxyManager.request",
+     "Authorization",
+     "Cookie",
+     "Retry.DEFAULT_REMOVE_HEADERS_ON_REDIRECT",
+     "ProxyManager.connection_from_url",
+     "HTTPConnection.urlopen"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 77.2,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "urllib3.request",
+     "PoolManager.request",
+     "ProxyManager.request",
+     "Authorization",
+     "Cookie",
+     "Retry.DEFAULT_REMOVE_HEADERS_ON_REDIRECT",
+     "ProxyManager.connection_from_url",
+     "HTTPConnection.urlopen"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['urllib3.request', 'PoolManager.request', 'ProxyManager.request', 'Authorization', 'Cookie', 'Retry.DEFAULT_REMOVE_HEADERS_ON_REDIRECT', 'ProxyManager.connection_from_url', 'HTTPConnection.urlopen']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 34.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/routes/users/_helpers.py:module",
+      "score": 0.705,
+      "text": "# mealie/routes/users/_helpers.py (module level)\nfrom fastapi import HTTPException, status\nfrom pydantic import UUID4\nfrom mealie.schema.user.user import PrivateUser",
+      "file": "mealie/routes/users/_helpers.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/shared_routes.py:module",
+      "score": 0.703,
+      "text": "# mealie/routes/recipe/shared_routes.py (module level)\nfrom fastapi import APIRouter, Depends, HTTPException\nfrom pydantic import UUID4\nfrom sqlalchemy.orm.session import Session\nfrom mealie.db.db_setup import generate_session\nfrom mealie.repos.all_repositories import get_repositories\nfrom mealie.schema.recipe import Recipe\nfrom mealie.schema.response import ErrorResponse\nrouter = APIRouter()\n@router.get(\"/shared/{token_id}\", response_model=Recipe)",
+      "file": "mealie/routes/recipe/shared_routes.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/urls/url_constructors.py:module",
+      "score": 0.691,
+      "text": "# mealie/services/urls/url_constructors.py (module level)\nfrom pydantic import UUID4\nfrom mealie.core.config import get_app_settings",
+      "file": "mealie/services/urls/url_constructors.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/routes/shared/__init__.py:21",
+      "score": 0.691,
+      "text": "# mealie/routes/shared/__init__.py:21-22  RecipeSharedController.mixins\n    def mixins(self):\n        return HttpRepo[RecipeShareTokenSave, RecipeShareToken, RecipeShareTokenCreate](self.repo, self.logger)",
+      "file": "mealie/routes/shared/__init__.py",
+      "start": 21,
+      "qualname": "RecipeSharedController.mixins"
+     },
+     {
+      "id": "mealie:mealie/routes/_base/routers.py:module",
+      "score": 0.69,
+      "text": "# mealie/routes/_base/routers.py (module level)\nimport contextlib\nimport json\nfrom collections.abc import Callable\nfrom enum import Enum\nfrom json.decoder import JSONDecodeError\nfrom fastapi import APIRouter, Depends, Request, Response\nfrom fastapi.routing import APIRoute\nfrom mealie.core.dependencies import get_admin_user, get_current_user\nclass AdminAPIRouter(APIRouter):\n    \"\"\"Router for functions to be protected behind admin authentication\"\"\"\nclass UserAPIRouter(APIRouter):\n    \"\"\"Router for functions to be protected behind user authentication\"\"\"\nclass MealieCrudRoute(APIRoute):\n    \"\"\"Route class to include the last-modified header when returning a MealieModel, when available\"\"\"",
+      "file": "mealie/routes/_base/routers.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "urllib3.request",
+     "PoolManager.request",
+     "ProxyManager.request",
+     "Authorization",
+     "Cookie"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1708,
+   "tokens_out": 58,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"urllib3.request\", \"PoolManager.request\", \"ProxyManager.request\", \"Authorization\", \"Cookie\"]}",
+     "in": 1708,
+     "out": 58,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1640,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1640,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3348,
+  "tokens_out": 94,
+  "cost_usd_est": 0.0,
+  "seconds": 0.15
+ },
+ "created": "2026-11-10T00:06:33+00:00",
+ "code_version": "a3e1ef4"
+}

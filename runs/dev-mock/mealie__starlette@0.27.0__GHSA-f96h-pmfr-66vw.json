@@ -1,0 +1,580 @@
+{
+ "finding_id": "mealie/starlette@0.27.0/GHSA-f96h-pmfr-66vw",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-47874",
+   "GHSA-f96h-pmfr-66vw",
+   "PYSEC-2026-1943"
+  ],
+  "cves": [
+   "CVE-2024-47874"
+  ],
+  "cwes": [
+   "CWE-770"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/starlette@0.27.0/GHSA-f96h-pmfr-66vw",
+  "first_fixed_above_installed": "0.40.0",
+  "fixed_versions": [
+   "0.40.0"
+  ],
+  "max_cvss": "8.7",
+  "package": "starlette",
+  "published": "2024-10-15T18:12:57Z",
+  "summary": "Starlette Denial of service (DoS) via multipart/form-data",
+  "target": "mealie",
+  "version": "0.27.0",
+  "vuln_id": "GHSA-f96h-pmfr-66vw"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "starlette.applications",
+   "starlette.routing",
+   "filename",
+   "form",
+   "request.form"
+  ],
+  "reasoning": "mock: 5 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/routes/_base/controller.py:119",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/routes/_base/controller.py:123",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/routes/_base/controller.py:178",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "starlette.applications",
+  "starlette.routing",
+  "filename",
+  "form",
+  "request.form"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/starlette@0.27.0/GHSA-f96h-pmfr-66vw",
+    "package": "starlette",
+    "version": "0.27.0",
+    "vuln_id": "GHSA-f96h-pmfr-66vw",
+    "aliases": [
+     "CVE-2024-47874",
+     "GHSA-f96h-pmfr-66vw",
+     "PYSEC-2026-1943"
+    ],
+    "summary": "Starlette Denial of service (DoS) via multipart/form-data",
+    "max_cvss": "8.7",
+    "fixed_versions": [
+     "0.40.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 28.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-f96h-pmfr-66vw#0",
+      "score": 0.895,
+      "text": "GHSA-f96h-pmfr-66vw (CVE-2024-47874)\npackage: starlette\nsummary: Starlette Denial of service (DoS) via multipart/form-data\naffected: >=0, <0.40.0",
+      "vuln_id": "GHSA-f96h-pmfr-66vw"
+     },
+     {
+      "id": "GHSA-f96h-pmfr-66vw#2",
+      "score": 0.851,
+      "text": "GHSA-f96h-pmfr-66vw (starlette) details:\napp = Starlette(routes=[\n    Route('/', poc, methods=[\"POST\"]),\n])\n```\n\n```sh\ncurl http://localhost:8000 -F 'big=</dev/urandom'\n```\n\n### Impact\nThis Denial of service (DoS) vulnerability affects all applications built with Starlette (or FastAPI) accepting form requests.",
+      "vuln_id": "GHSA-f96h-pmfr-66vw"
+     },
+     {
+      "id": "GHSA-f96h-pmfr-66vw#1",
+      "score": 0.816,
+      "text": "GHSA-f96h-pmfr-66vw (starlette) details:\n### Summary\nStarlette treats `multipart/form-data` parts without a `filename` as text form fields and buffers those in byte strings with no size limit. This allows an attacker to upload arbitrary large form fields and cause Starlette to both slow down significantly due to excessive memory allocations and copy operations, and also consume more and more memory until the server starts swapping and grinds to a halt, or the OS terminates the server process with an OOM error. Uploading multiple such requests in parallel may be enough to render a service practically unusable, even if reasonable request size limits are enforced by a reverse proxy in front of Starlette.\n\n### PoC\n\n```python\nfrom starlette.applications import Starlette\nfrom starlette.routing import Route\n\nasync def poc(request):\n    async with request.form():\n        pass",
+      "vuln_id": "GHSA-f96h-pmfr-66vw"
+     },
+     {
+      "id": "GHSA-2c2j-9gv5-cj73#0",
+      "score": 0.865,
+      "text": "GHSA-2c2j-9gv5-cj73 (CVE-2025-54121)\npackage: starlette\nsummary: Starlette has possible denial-of-service vector when parsing large files in multipart forms\naffected: >=0, <0.47.2",
+      "vuln_id": "GHSA-2c2j-9gv5-cj73"
+     },
+     {
+      "id": "GHSA-82w8-qh3p-5jfq#4",
+      "score": 0.834,
+      "text": "GHSA-82w8-qh3p-5jfq (starlette) details:\n### Impact\nThis Denial of service (DoS) vulnerability affects all applications built with Starlette (or FastAPI) that call `request.form()` on `application/x-www-form-urlencoded` requests. A single request with a very large number of fields blocks the event loop for several seconds, and a single request with a very large field forces unbounded memory allocation; in either case, parallel requests can render the service unusable. A reverse proxy that enforces a request body size limit reduces but does not eliminate the exposure, since a sub-10MB body is already enough to block the event loop.",
+      "vuln_id": "GHSA-82w8-qh3p-5jfq"
+     }
+    ],
+    "symbols": [
+     "starlette.applications",
+     "starlette.routing",
+     "filename",
+     "form",
+     "request.form"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 58.4,
+   "output": {
+    "package": "starlette",
+    "import_names": [
+     "starlette"
+    ],
+    "symbols": [
+     "starlette.applications",
+     "starlette.routing",
+     "filename",
+     "form",
+     "request.form"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/routes/_base/controller.py:13",
+     "mealie/routes/media/media_recipe.py:5",
+     "mealie/routes/media/media_user.py:3",
+     "mealie/routes/recipe/recipe_crud_routes.py:12",
+     "mealie/routes/spa/__init__.py:10",
+     "mealie/routes/utility_routes.py:4",
+     "mealie/services/scheduler/runner.py:12"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 25,
+    "vulnerable_call_sites": [
+     {
+      "file": "mealie/routes/_base/controller.py",
+      "line": 119,
+      "code": "route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)",
+      "resolved": "starlette.routing.Route",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.app.app_about:get_startup_info",
+       "mealie.db.models.users.users:User.__init__",
+       "mealie.db.models._model_utils.auto_init:auto_init",
+       "mealie.routes._base.controller:decorator",
+       "mealie.routes._base.controller:_cbv",
+       "mealie.routes._base.controller:_register_endpoints"
+      ],
+      "snippet": "  116          raise Exception(\"An identical route role has been implemented more then once\")\n  117  \n  118      numbered_routes_by_endpoint = {\n  119          route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)\n  120      }\n  121  \n  122      prefix_length = len(router.prefix)"
+     },
+     {
+      "file": "mealie/routes/_base/controller.py",
+      "line": 123,
+      "code": "routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []",
+      "resolved": "starlette.routing.Route",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.app.app_about:get_startup_info",
+       "mealie.db.models.users.users:User.__init__",
+       "mealie.db.models._model_utils.auto_init:auto_init",
+       "mealie.routes._base.controller:decorator",
+       "mealie.routes._base.controller:_cbv",
+       "mealie.routes._base.controller:_register_endpoints"
+      ],
+      "snippet": "  120      }\n  121  \n  122      prefix_length = len(router.prefix)\n  123      routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []\n  124      for _, func in function_members:\n  125          index_route = numbered_routes_by_endpoint.get(func)\n  126  "
+     },
+     {
+      "file": "mealie/routes/_base/controller.py",
+      "line": 178,
+      "code": "def _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:",
+      "resolved": "starlette.routing.Route",
+      "function": "mealie.routes._base.controller:_update_cbv_route_endpoint_signature",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.app.app_about:get_startup_info",
+       "mealie.db.models.users.users:User.__init__",
+       "mealie.db.models._model_utils.auto_init:auto_init",
+       "mealie.routes._base.controller:decorator",
+       "mealie.routes._base.controller:_cbv",
+       "mealie.routes._base.controller:_register_endpoints",
+       "mealie.routes._base.controller:_update_cbv_route_endpoint_signature"
+      ],
+      "snippet": "  175                  api_resource(func)\n  176  \n  177  \n  178  def _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:\n  179      \"\"\"\n  180      Fixes the endpoint signature for a cbv route to ensure FastAPI performs dependency injection properly.\n  181      \"\"\""
+     },
+     {
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "line": 133,
+      "code": "return FileResponse(temp_path, filename=f\"{slug}.zip\")  [filename=f'{slug}.zip']",
+      "resolved": "starlette.responses.FileResponse",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_zip",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_zip"
+      ],
+      "snippet": "  130              if image_asset.is_file():\n  131                  myzip.write(image_asset, arcname=image_asset.name)\n  132  \n  133          return FileResponse(temp_path, filename=f\"{slug}.zip\")\n  134  \n  135  \n  136  router = UserAPIRouter(prefix=\"/recipes\", tags=[\"Recipe: CRUD\"], route_class=MealieCrudRoute)"
+     },
+     {
+      "file": "mealie/routes/utility_routes.py",
+      "line": 27,
+      "code": "return FileResponse(file_path, media_type=\"application/octet-stream\", filename=file_path.name)  [filename=file_path.name]",
+      "resolved": "starlette.responses.FileResponse",
+      "function": "mealie.routes.utility_routes:download_file",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.utility_routes:download_file"
+      ],
+      "snippet": "   24      if not file_path.is_file():\n   25          raise HTTPException(status.HTTP_400_BAD_REQUEST)\n   26  \n   27      return FileResponse(file_path, media_type=\"application/octet-stream\", filename=file_path.name)"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/routes/_base/controller.py:119",
+      "code": "route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:123",
+      "code": "routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []",
+      "function": "mealie.routes._base.controller:_register_endpoints",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:178",
+      "code": "def _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:",
+      "function": "mealie.routes._base.controller:_update_cbv_route_endpoint_signature",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:33",
+      "code": "return FileResponse(recipe_image)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_img",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:51",
+      "code": "return FileResponse(timeline_event_image)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_timeline_event_img",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_recipe.py:62",
+      "code": "return FileResponse(file)",
+      "function": "mealie.routes.media.media_recipe:get_recipe_asset",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:22",
+      "code": "return FileResponse(recipe_image, media_type=\"image/webp\")",
+      "function": "mealie.routes.media.media_user:get_user_image",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/media/media_user.py:15",
+      "code": "@router.get(\"/{user_id}/{file_name}\", response_class=FileResponse)",
+      "function": "mealie.routes.media.media_user:get_user_image",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:115",
+      "code": "return FileResponse(file)",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:104",
+      "code": "@router_exports.get(\"/{slug}/exports\", response_class=FileResponse)",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:133",
+      "code": "return FileResponse(temp_path, filename=f\"{slug}.zip\")",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_zip",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/spa/__init__.py:32",
+      "code": "except HTTPException as ex:",
+      "function": "mealie.routes.spa:SPAStaticFiles.get_response",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/utility_routes.py:27",
+      "code": "return FileResponse(file_path, media_type=\"application/octet-stream\", filename=file_path.name)",
+      "function": "mealie.routes.utility_routes:download_file",
+      "in_test": false
+     },
+     {
+      "location": "mealie/services/scheduler/runner.py:69",
+      "code": "await run_in_threadpool(func)",
+      "function": "mealie.services.scheduler.runner:loop",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [
+     [
+      "mealie.routes.app.app_about:get_startup_info",
+      "mealie.db.models.users.users:User.__init__",
+      "mealie.db.models._model_utils.auto_init:auto_init",
+      "mealie.routes._base.controller:decorator",
+      "mealie.routes._base.controller:_cbv",
+      "mealie.routes._base.controller:_register_endpoints"
+     ],
+     [
+      "mealie.routes.app.app_about:get_startup_info",
+      "mealie.db.models.users.users:User.__init__",
+      "mealie.db.models._model_utils.auto_init:auto_init",
+      "mealie.routes._base.controller:decorator",
+      "mealie.routes._base.controller:_cbv",
+      "mealie.routes._base.controller:_register_endpoints"
+     ],
+     [
+      "mealie.routes.app.app_about:get_startup_info",
+      "mealie.db.models.users.users:User.__init__",
+      "mealie.db.models._model_utils.auto_init:auto_init",
+      "mealie.routes._base.controller:decorator",
+      "mealie.routes._base.controller:_cbv",
+      "mealie.routes._base.controller:_register_endpoints",
+      "mealie.routes._base.controller:_update_cbv_route_endpoint_signature"
+     ],
+     [
+      "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_zip"
+     ],
+     [
+      "mealie.routes.utility_routes:download_file"
+     ]
+    ],
+    "summary": "starlette: imported in 7 non-test location(s); 25 package call/reference site(s); named vulnerable symbols ['starlette.applications', 'starlette.routing', 'filename', 'form', 'request.form']; 5 production call site(s) of those symbols, 5 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 33.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:mealie/routes/recipe/recipe_crud_routes.py:133",
+      "score": 1.0,
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 133,
+      "qualname": "mealie.routes.recipe.recipe_crud_routes:RecipeExportController.get_recipe_as_zip",
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py around line 133\n  130              if image_asset.is_file():\n  131                  myzip.write(image_asset, arcname=image_asset.name)\n  132  \n  133          return FileResponse(temp_path, filename=f\"{slug}.zip\")\n  134  \n  135  \n  136  router = UserAPIRouter(prefix=\"/recipes\", tags=[\"Recipe: CRUD\"], route_class=MealieCrudRoute)"
+     },
+     {
+      "id": "site:mealie/routes/_base/controller.py:178",
+      "score": 1.0,
+      "file": "mealie/routes/_base/controller.py",
+      "start": 178,
+      "qualname": "mealie.routes._base.controller:_update_cbv_route_endpoint_signature",
+      "text": "# mealie/routes/_base/controller.py around line 178\n  175                  api_resource(func)\n  176  \n  177  \n  178  def _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:\n  179      \"\"\"\n  180      Fixes the endpoint signature for a cbv route to ensure FastAPI performs dependency injection properly.\n  181      \"\"\""
+     },
+     {
+      "id": "site:mealie/routes/_base/controller.py:123",
+      "score": 1.0,
+      "file": "mealie/routes/_base/controller.py",
+      "start": 123,
+      "qualname": "mealie.routes._base.controller:_register_endpoints",
+      "text": "# mealie/routes/_base/controller.py around line 123\n  120      }\n  121  \n  122      prefix_length = len(router.prefix)\n  123      routes_to_append: list[tuple[int, Route | WebSocketRoute]] = []\n  124      for _, func in function_members:\n  125          index_route = numbered_routes_by_endpoint.get(func)\n  126  "
+     },
+     {
+      "id": "site:mealie/routes/_base/controller.py:119",
+      "score": 1.0,
+      "file": "mealie/routes/_base/controller.py",
+      "start": 119,
+      "qualname": "mealie.routes._base.controller:_register_endpoints",
+      "text": "# mealie/routes/_base/controller.py around line 119\n  116          raise Exception(\"An identical route role has been implemented more then once\")\n  117  \n  118      numbered_routes_by_endpoint = {\n  119          route.endpoint: (i, route) for i, route in enumerate(router.routes) if isinstance(route, Route | WebSocketRoute)\n  120      }\n  121  \n  122      prefix_length = len(router.prefix)"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:151",
+      "score": 0.664,
+      "text": "# mealie/core/dependencies/dependencies.py:151-175  validate_file_token\ndef validate_file_token(token: str | None = None) -> Path:\n    \"\"\"\n    Args:\n        token (Optional[str], optional): _description_. Defaults to None.\n\n    Raises:\n        HTTPException: 400 Bad Request when no token or the file doesn't exist\n        HTTPException: 401 Unauthorized when the token is invalid\n    \"\"\"\n    if not token:\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    try:\n        payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])\n        file_path = Path(payload.get(\"file\"))\n    except JWTError as e:\n        raise HTTPException(\n            status_code=status.HTTP_401_UNAUTHORIZED,\n            detail=\"could not validate file token\",\n        ) from e\n\n    if not file_path.exists():\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    return file_path",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 151,
+      "qualname": "validate_file_token"
+     },
+     {
+      "id": "mealie:mealie/routes/utility_routes.py:module",
+      "score": 0.658,
+      "text": "# mealie/routes/utility_routes.py (module level)\nfrom pathlib import Path\nfrom fastapi import APIRouter, Depends, HTTPException, status\nfrom starlette.responses import FileResponse\nfrom mealie.core.config import get_app_dirs\nfrom mealie.core.dependencies import validate_file_token\nrouter = APIRouter(prefix=\"/api/utils\", tags=[\"Utils\"], include_in_schema=True)\n@router.get(\"/download\")",
+      "file": "mealie/routes/utility_routes.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:178",
+      "score": 0.641,
+      "text": "# mealie/core/dependencies/dependencies.py:178-205  validate_recipe_token\ndef validate_recipe_token(token: str | None = None) -> str:\n    \"\"\"\n    Args:\n        token (Optional[str], optional): _description_. Defaults to None.\n\n    Raises:\n        HTTPException: 400 Bad Request when no token or the recipe doesn't exist\n        HTTPException: 401 JWTError when token is invalid\n\n    Returns:\n        str: token data\n    \"\"\"\n    if not token:\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    try:\n        payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])\n        slug: str | None = payload.get(\"slug\")\n    except JWTError as e:\n        raise HTTPException(\n            status_code=status.HTTP_401_UNAUTHORIZED,\n            detail=\"could not validate file token\",\n        ) from e\n\n    if slug is None:\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    return slug",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 178,
+      "qualname": "validate_recipe_token"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "starlette.applications",
+     "starlette.routing",
+     "filename",
+     "form",
+     "request.form"
+    ],
+    "reasoning": "mock: 5 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/routes/_base/controller.py:119",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:123",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/routes/_base/controller.py:178",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2548,
+   "tokens_out": 120,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 5 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/routes/_base/controller.py:119\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/routes/_base/controller.py:123\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/routes/_base/controller.py:178\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"starlette.applications\", \"starlette.routing\", \"filename\", \"form\", \"request.form\"]}",
+     "in": 2548,
+     "out": 120,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 2521,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2521,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 5069,
+  "tokens_out": 155,
+  "cost_usd_est": 0.0,
+  "seconds": 0.12
+ },
+ "created": "2026-11-10T00:06:32+00:00",
+ "code_version": "a3e1ef4"
+}

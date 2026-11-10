@@ -1,0 +1,776 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-190",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-28346",
+   "GHSA-2gwj-7jmv-h26r",
+   "PYSEC-2022-190"
+  ],
+  "cves": [
+   "CVE-2022-28346"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-190",
+  "first_fixed_above_installed": "4.0.4",
+  "fixed_versions": [
+   "2.2.28",
+   "3.2.13",
+   "4.0.4"
+  ],
+  "max_cvss": null,
+  "package": "django",
+  "published": "2022-04-12T05:15:00Z",
+  "summary": "An issue was discovered in Django 2.2 before 2.2.28, 3.2 before 3.2.13, and 4.0 before 4.0.4. QuerySet.annotate(), aggregate(), and extra() methods are subject to SQL injection in column aliases via a",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "PYSEC-2022-190"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "QuerySet.annotate",
+   "aggregate",
+   "extra",
+   "annotate",
+   "QuerySet"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/accounts/admin.py:1",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:2",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "QuerySet.annotate",
+  "aggregate",
+  "extra",
+  "annotate",
+  "QuerySet"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-190",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "PYSEC-2022-190",
+    "aliases": [
+     "CVE-2022-28346",
+     "GHSA-2gwj-7jmv-h26r",
+     "PYSEC-2022-190"
+    ],
+    "summary": "An issue was discovered in Django 2.2 before 2.2.28, 3.2 before 3.2.13, and 4.0 before 4.0.4. QuerySet.annotate(), aggregate(), and extra() methods are subject to SQL injection in column aliases via a",
+    "max_cvss": null,
+    "fixed_versions": [
+     "2.2.28",
+     "3.2.13",
+     "4.0.4"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 43.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-2gwj-7jmv-h26r#1",
+      "score": 0.883,
+      "text": "GHSA-2gwj-7jmv-h26r (django) details:\nAn issue was discovered in Django 2.2 before 2.2.28, 3.2 before 3.2.13, and 4.0 before 4.0.4. `QuerySet.annotate()`, `aggregate()`, and `extra()` methods are subject to SQL injection in column aliases via a crafted dictionary (with dictionary expansion) as the passed `**kwargs`.",
+      "vuln_id": "GHSA-2gwj-7jmv-h26r"
+     },
+     {
+      "id": "GHSA-2gwj-7jmv-h26r#0",
+      "score": 0.792,
+      "text": "GHSA-2gwj-7jmv-h26r (CVE-2022-28346)\npackage: django\nsummary: SQL Injection in Django\naffected: >=2.2, <2.2.28; >=3.2, <3.2.13; >=4.0, <4.0.4",
+      "vuln_id": "GHSA-2gwj-7jmv-h26r"
+     },
+     {
+      "id": "GHSA-hpr9-3m2g-3j9p#1",
+      "score": 0.876,
+      "text": "GHSA-hpr9-3m2g-3j9p (django) details:\nAn issue was discovered in Django 4.2 before 4.2.25, 5.1 before 5.1.13, and 5.2 before 5.2.7. QuerySet.annotate(), QuerySet.alias(), QuerySet.aggregate(), and QuerySet.extra() are subject to SQL injection in column aliases, when using a suitably crafted dictionary, with dictionary expansion, as the **kwargs passed to these methods (on MySQL and MariaDB).",
+      "vuln_id": "GHSA-hpr9-3m2g-3j9p"
+     },
+     {
+      "id": "GHSA-rqw2-ghq9-44m7#0",
+      "score": 0.833,
+      "text": "GHSA-rqw2-ghq9-44m7 (CVE-2025-13372)\npackage: django\nsummary: Django is vulnerable to SQL injection in column aliases\naffected: >=4.2a1, <4.2.27; >=5.1a1, <5.1.15; >=5.2a1, <5.2.9",
+      "vuln_id": "GHSA-rqw2-ghq9-44m7"
+     }
+    ],
+    "symbols": [
+     "QuerySet.annotate",
+     "aggregate",
+     "extra",
+     "annotate",
+     "QuerySet"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 153.7,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "QuerySet.annotate",
+     "aggregate",
+     "extra",
+     "annotate",
+     "QuerySet"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [
+     {
+      "file": "hc/accounts/admin.py",
+      "line": 133,
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "resolved": "qs.annotate",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.admin:ProfileAdmin.get_queryset"
+      ],
+      "snippet": "  130      def get_queryset(self, request):\n  131          qs = super(ProfileAdmin, self).get_queryset(request)\n  132          qs = qs.prefetch_related(\"user__project_set\")\n  133          qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))\n  134          qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))\n  135          qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))\n  136          return qs"
+     },
+     {
+      "file": "hc/accounts/admin.py",
+      "line": 134,
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "resolved": "qs.annotate",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.admin:ProfileAdmin.get_queryset"
+      ],
+      "snippet": "  131          qs = super(ProfileAdmin, self).get_queryset(request)\n  132          qs = qs.prefetch_related(\"user__project_set\")\n  133          qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))\n  134          qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))\n  135          qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))\n  136          return qs\n  137  "
+     },
+     {
+      "file": "hc/accounts/admin.py",
+      "line": 135,
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "resolved": "qs.annotate",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.admin:ProfileAdmin.get_queryset"
+      ],
+      "snippet": "  132          qs = qs.prefetch_related(\"user__project_set\")\n  133          qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))\n  134          qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))\n  135          qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))\n  136          return qs\n  137  \n  138      @mark_safe"
+     },
+     {
+      "file": "hc/accounts/admin.py",
+      "line": 184,
+      "code": "qs = qs.annotate(num_channels=Count(\"channel\", distinct=True))",
+      "resolved": "qs.annotate",
+      "function": "hc.accounts.admin:ProjectAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.admin:ProjectAdmin.get_queryset"
+      ],
+      "snippet": "  181  \n  182      def get_queryset(self, request):\n  183          qs = super(ProjectAdmin, self).get_queryset(request)\n  184          qs = qs.annotate(num_channels=Count(\"channel\", distinct=True))\n  185          qs = qs.annotate(num_checks=Count(\"check\", distinct=True))\n  186          qs = qs.annotate(num_members=Count(\"member\", distinct=True))\n  187          return qs"
+     },
+     {
+      "file": "hc/accounts/admin.py",
+      "line": 185,
+      "code": "qs = qs.annotate(num_checks=Count(\"check\", distinct=True))",
+      "resolved": "qs.annotate",
+      "function": "hc.accounts.admin:ProjectAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.admin:ProjectAdmin.get_queryset"
+      ],
+      "snippet": "  182      def get_queryset(self, request):\n  183          qs = super(ProjectAdmin, self).get_queryset(request)\n  184          qs = qs.annotate(num_channels=Count(\"channel\", distinct=True))\n  185          qs = qs.annotate(num_checks=Count(\"check\", distinct=True))\n  186          qs = qs.annotate(num_members=Count(\"member\", distinct=True))\n  187          return qs\n  188  "
+     },
+     {
+      "file": "hc/accounts/admin.py",
+      "line": 186,
+      "code": "qs = qs.annotate(num_members=Count(\"member\", distinct=True))",
+      "resolved": "qs.annotate",
+      "function": "hc.accounts.admin:ProjectAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.admin:ProjectAdmin.get_queryset"
+      ],
+      "snippet": "  183          qs = super(ProjectAdmin, self).get_queryset(request)\n  184          qs = qs.annotate(num_channels=Count(\"channel\", distinct=True))\n  185          qs = qs.annotate(num_checks=Count(\"check\", distinct=True))\n  186          qs = qs.annotate(num_members=Count(\"member\", distinct=True))\n  187          return qs\n  188  \n  189      def name_(self, obj):"
+     },
+     {
+      "file": "hc/accounts/admin.py",
+      "line": 232,
+      "code": "qs = qs.annotate(num_checks=Count(\"project__check\", distinct=True))",
+      "resolved": "qs.annotate",
+      "function": "hc.accounts.admin:HcUserAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.admin:ProfileAdmin.get_queryset",
+       "hc.accounts.admin:HcUserAdmin.get_queryset"
+      ],
+      "snippet": "  229  \n  230      def get_queryset(self, request):\n  231          qs = super().get_queryset(request)\n  232          qs = qs.annotate(num_checks=Count(\"project__check\", distinct=True))\n  233          qs = qs.annotate(num_channels=Count(\"project__channel\", distinct=True))\n  234  \n  235          return qs"
+     },
+     {
+      "file": "hc/accounts/admin.py",
+      "line": 233,
+      "code": "qs = qs.annotate(num_channels=Count(\"project__channel\", distinct=True))",
+      "resolved": "qs.annotate",
+      "function": "hc.accounts.admin:HcUserAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.admin:ProfileAdmin.get_queryset",
+       "hc.accounts.admin:HcUserAdmin.get_queryset"
+      ],
+      "snippet": "  230      def get_queryset(self, request):\n  231          qs = super().get_queryset(request)\n  232          qs = qs.annotate(num_checks=Count(\"project__check\", distinct=True))\n  233          qs = qs.annotate(num_channels=Count(\"project__channel\", distinct=True))\n  234  \n  235          return qs\n  236  "
+     },
+     {
+      "file": "hc/accounts/management/commands/pruneusers.py",
+      "line": 26,
+      "code": "q = q.annotate(n_teams=Count(\"memberships\"))",
+      "resolved": "q.annotate",
+      "function": "hc.accounts.management.commands.pruneusers:Command.handle",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.management.commands.pruneusers:Command.handle"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 167,
+      "code": "q = q.annotate(n_down=n_down)",
+      "resolved": "q.annotate",
+      "function": "hc.accounts.models:Profile.annotated_projects",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:Profile.annotated_projects"
+      ]
+     },
+     {
+      "file": "hc/accounts/models.py",
+      "line": 183,
+      "code": "result = checks.aggregate(models.Max(\"last_ping\"))",
+      "resolved": "checks.aggregate",
+      "function": "hc.accounts.models:Profile.send_report",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.accounts.models:Profile.send_report"
+      ]
+     },
+     {
+      "file": "hc/api/admin.py",
+      "line": 36,
+      "code": "qs = qs.annotate(email=F(\"project__owner__email\"))",
+      "resolved": "qs.annotate",
+      "function": "hc.api.admin:ChecksAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.api.admin:ChecksAdmin.get_queryset"
+      ]
+     },
+     {
+      "file": "hc/api/admin.py",
+      "line": 37,
+      "code": "qs = qs.annotate(project_name=F(\"project__name\"))",
+      "resolved": "qs.annotate",
+      "function": "hc.api.admin:ChecksAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.api.admin:ChecksAdmin.get_queryset"
+      ]
+     },
+     {
+      "file": "hc/api/admin.py",
+      "line": 189,
+      "code": "qs = qs.annotate(project_code=F(\"project__code\"))",
+      "resolved": "qs.annotate",
+      "function": "hc.api.admin:ChannelsAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.api.admin:ChannelsAdmin.get_queryset"
+      ]
+     },
+     {
+      "file": "hc/api/admin.py",
+      "line": 190,
+      "code": "qs = qs.annotate(project_name=F(\"project__name\"))",
+      "resolved": "qs.annotate",
+      "function": "hc.api.admin:ChannelsAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.api.admin:ChannelsAdmin.get_queryset"
+      ]
+     },
+     {
+      "file": "hc/api/admin.py",
+      "line": 191,
+      "code": "qs = qs.annotate(email=F(\"project__owner__email\"))",
+      "resolved": "qs.annotate",
+      "function": "hc.api.admin:ChannelsAdmin.get_queryset",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.api.admin:ChannelsAdmin.get_queryset"
+      ]
+     },
+     {
+      "file": "hc/api/management/commands/prunenotifications.py",
+      "line": 14,
+      "code": "q = q.annotate(min_ping_date=Min(\"ping__created\"))",
+      "resolved": "q.annotate",
+      "function": "hc.api.management.commands.prunenotifications:Command.handle",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.api.management.commands.prunenotifications:Command.handle"
+      ]
+     },
+     {
+      "file": "hc/front/views.py",
+      "line": 298,
+      "code": "q = q.annotate(n_checks=Count(\"check\", distinct=True))",
+      "resolved": "q.annotate",
+      "function": "hc.front.views:index",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.front.views:index"
+      ]
+     },
+     {
+      "file": "hc/front/views.py",
+      "line": 299,
+      "code": "q = q.annotate(n_channels=Count(\"channel\", distinct=True))",
+      "resolved": "q.annotate",
+      "function": "hc.front.views:index",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.front.views:index"
+      ]
+     },
+     {
+      "file": "hc/front/views.py",
+      "line": 300,
+      "code": "q = q.annotate(owner_email=F(\"owner__email\"))",
+      "resolved": "q.annotate",
+      "function": "hc.front.views:index",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.front.views:index"
+      ]
+     },
+     {
+      "file": "hc/front/views.py",
+      "line": 790,
+      "code": "channels = channels.annotate(n_checks=Count(\"checks\"))",
+      "resolved": "channels.annotate",
+      "function": "hc.front.views:channels",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.front.views:channels"
+      ]
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 339,
+    "paths": [
+     [
+      "hc.accounts.admin:ProfileAdmin.get_queryset"
+     ],
+     [
+      "hc.accounts.admin:ProfileAdmin.get_queryset"
+     ],
+     [
+      "hc.accounts.admin:ProfileAdmin.get_queryset"
+     ],
+     [
+      "hc.accounts.admin:ProjectAdmin.get_queryset"
+     ],
+     [
+      "hc.accounts.admin:ProjectAdmin.get_queryset"
+     ]
+    ],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols ['QuerySet.annotate', 'aggregate', 'extra', 'annotate', 'QuerySet']; 0 production call site(s) of those symbols (+21 weak name-only), 21 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 43.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:hc/accounts/admin.py:184",
+      "score": 1.0,
+      "file": "hc/accounts/admin.py",
+      "start": 184,
+      "qualname": "hc.accounts.admin:ProjectAdmin.get_queryset",
+      "text": "# hc/accounts/admin.py around line 184\n  181  \n  182      def get_queryset(self, request):\n  183          qs = super(ProjectAdmin, self).get_queryset(request)\n  184          qs = qs.annotate(num_channels=Count(\"channel\", distinct=True))\n  185          qs = qs.annotate(num_checks=Count(\"check\", distinct=True))\n  186          qs = qs.annotate(num_members=Count(\"member\", distinct=True))\n  187          return qs"
+     },
+     {
+      "id": "site:hc/accounts/admin.py:135",
+      "score": 1.0,
+      "file": "hc/accounts/admin.py",
+      "start": 135,
+      "qualname": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "text": "# hc/accounts/admin.py around line 135\n  132          qs = qs.prefetch_related(\"user__project_set\")\n  133          qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))\n  134          qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))\n  135          qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))\n  136          return qs\n  137  \n  138      @mark_safe"
+     },
+     {
+      "id": "site:hc/accounts/admin.py:134",
+      "score": 1.0,
+      "file": "hc/accounts/admin.py",
+      "start": 134,
+      "qualname": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "text": "# hc/accounts/admin.py around line 134\n  131          qs = super(ProfileAdmin, self).get_queryset(request)\n  132          qs = qs.prefetch_related(\"user__project_set\")\n  133          qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))\n  134          qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))\n  135          qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))\n  136          return qs\n  137  "
+     },
+     {
+      "id": "site:hc/accounts/admin.py:133",
+      "score": 1.0,
+      "file": "hc/accounts/admin.py",
+      "start": 133,
+      "qualname": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "text": "# hc/accounts/admin.py around line 133\n  130      def get_queryset(self, request):\n  131          qs = super(ProfileAdmin, self).get_queryset(request)\n  132          qs = qs.prefetch_related(\"user__project_set\")\n  133          qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))\n  134          qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))\n  135          qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))\n  136          return qs"
+     },
+     {
+      "id": "healthchecks:hc/api/admin.py:34",
+      "score": 0.714,
+      "text": "# hc/api/admin.py:34-38  ChecksAdmin.get_queryset\n    def get_queryset(self, request):\n        qs = super().get_queryset(request)\n        qs = qs.annotate(email=F(\"project__owner__email\"))\n        qs = qs.annotate(project_name=F(\"project__name\"))\n        return qs",
+      "file": "hc/api/admin.py",
+      "start": 34,
+      "qualname": "ChecksAdmin.get_queryset"
+     },
+     {
+      "id": "healthchecks:hc/accounts/models.py:156",
+      "score": 0.712,
+      "text": "# hc/accounts/models.py:156-168  Profile.annotated_projects\n    def annotated_projects(self):\n        \"\"\" Return all projects, annotated with 'n_down'. \"\"\"\n\n        # Subquery for getting project ids\n        project_ids = self.projects().values(\"id\")\n\n        # Main query with the n_down annotation.\n        # Must use the subquery, otherwise ORM gets confused by\n        # joins and group by's\n        q = Project.objects.filter(id__in=project_ids)\n        n_down = Count(\"check\", filter=Q(check__status=\"down\"))\n        q = q.annotate(n_down=n_down)\n        return q.order_by(\"name\")",
+      "file": "hc/accounts/models.py",
+      "start": 156,
+      "qualname": "Profile.annotated_projects"
+     },
+     {
+      "id": "healthchecks:hc/accounts/admin.py:182",
+      "score": 0.71,
+      "text": "# hc/accounts/admin.py:182-187  ProjectAdmin.get_queryset\n    def get_queryset(self, request):\n        qs = super(ProjectAdmin, self).get_queryset(request)\n        qs = qs.annotate(num_channels=Count(\"channel\", distinct=True))\n        qs = qs.annotate(num_checks=Count(\"check\", distinct=True))\n        qs = qs.annotate(num_members=Count(\"member\", distinct=True))\n        return qs",
+      "file": "hc/accounts/admin.py",
+      "start": 182,
+      "qualname": "ProjectAdmin.get_queryset"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "QuerySet.annotate",
+     "aggregate",
+     "extra",
+     "annotate",
+     "QuerySet"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/accounts/admin.py:1",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:2",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2297,
+   "tokens_out": 106,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/accounts/admin.py:1\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:2\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"QuerySet.annotate\", \"aggregate\", \"extra\", \"annotate\", \"QuerySet\"]}",
+     "in": 2297,
+     "out": 106,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.7,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 2260,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2260,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4557,
+  "tokens_out": 142,
+  "cost_usd_est": 0.0,
+  "seconds": 0.25
+ },
+ "created": "2026-11-10T00:06:10+00:00",
+ "code_version": "a3e1ef4"
+}

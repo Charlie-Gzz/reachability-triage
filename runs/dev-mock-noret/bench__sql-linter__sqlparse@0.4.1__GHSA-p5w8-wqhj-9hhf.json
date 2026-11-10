@@ -1,0 +1,253 @@
+{
+ "finding_id": "bench/sql-linter/sqlparse@0.4.1/GHSA-p5w8-wqhj-9hhf",
+ "config": "dev-mock-noret",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/sql-linter",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-32839",
+   "GHSA-p5w8-wqhj-9hhf",
+   "PYSEC-2021-333"
+  ],
+  "cves": [
+   "CVE-2021-32839"
+  ],
+  "cwes": [
+   "CWE-400"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/sql-linter/sqlparse@0.4.1/GHSA-p5w8-wqhj-9hhf",
+  "first_fixed_above_installed": "0.4.2",
+  "fixed_versions": [
+   "0.4.2",
+   "8238a9e450ed1524e40cb3a8b0b3c00606903aeb"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+  "package": "sqlparse",
+  "published": "2021-09-10T17:56:06Z",
+  "split": "dev",
+  "summary": "StripComments filter contains a regular expression that is vulnerable to ReDOS (Regular Expression Denial of Service)",
+  "target": "bench/sql-linter",
+  "version": "0.4.1",
+  "vuln_id": "GHSA-p5w8-wqhj-9hhf"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "StripComments",
+   "ReDOS"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "lint/format.py:1",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "StripComments",
+  "ReDOS"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/sql-linter/sqlparse@0.4.1/GHSA-p5w8-wqhj-9hhf",
+    "package": "sqlparse",
+    "version": "0.4.1",
+    "vuln_id": "GHSA-p5w8-wqhj-9hhf",
+    "aliases": [
+     "CVE-2021-32839",
+     "GHSA-p5w8-wqhj-9hhf",
+     "PYSEC-2021-333"
+    ],
+    "summary": "StripComments filter contains a regular expression that is vulnerable to ReDOS (Regular Expression Denial of Service)",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+    "fixed_versions": [
+     "0.4.2",
+     "8238a9e450ed1524e40cb3a8b0b3c00606903aeb"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.3,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "StripComments",
+     "ReDOS"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.7,
+   "output": {
+    "package": "sqlparse",
+    "import_names": [
+     "sqlparse"
+    ],
+    "symbols": [
+     "StripComments",
+     "ReDOS"
+    ],
+    "imported": true,
+    "import_locations": [
+     "lint/format.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "entry_points": 1,
+    "paths": [],
+    "summary": "sqlparse: imported in 1 non-test location(s); 6 package call/reference site(s); named vulnerable symbols ['StripComments', 'ReDOS']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.1,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "StripComments",
+     "ReDOS"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "lint/format.py:1",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 438,
+   "tokens_out": 57,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"lint/format.py:1\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"StripComments\", \"ReDOS\"]}",
+     "in": 438,
+     "out": 57,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 378,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 378,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 816,
+  "tokens_out": 93,
+  "cost_usd_est": 0.0,
+  "seconds": 0.01
+ },
+ "created": "2026-11-10T00:00:22+00:00",
+ "code_version": "a3e1ef4"
+}

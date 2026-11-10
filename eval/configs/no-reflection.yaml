@@ -1,0 +1,6 @@
+# Ablation: no self-reflection step.
+provider: {provider: claude-code, model: sonnet}
+retrieval: true
+reflection: false
+store: chroma
+max_retries: 1

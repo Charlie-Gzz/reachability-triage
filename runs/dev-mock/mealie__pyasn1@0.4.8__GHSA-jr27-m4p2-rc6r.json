@@ -1,0 +1,328 @@
+{
+ "finding_id": "mealie/pyasn1@0.4.8/GHSA-jr27-m4p2-rc6r",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-30922",
+   "GHSA-jr27-m4p2-rc6r",
+   "PYSEC-2026-2263"
+  ],
+  "cves": [
+   "CVE-2026-30922"
+  ],
+  "cwes": [
+   "CWE-674",
+   "CWE-835"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/pyasn1@0.4.8/GHSA-jr27-m4p2-rc6r",
+  "first_fixed_above_installed": "0.6.3",
+  "fixed_versions": [
+   "0.6.3"
+  ],
+  "max_cvss": "7.5",
+  "package": "pyasn1",
+  "published": "2026-03-17T16:17:33Z",
+  "summary": "Denial of Service in pyasn1 via Unbounded Recursion",
+  "target": "mealie",
+  "version": "0.4.8",
+  "vuln_id": "GHSA-jr27-m4p2-rc6r"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "RecursionError",
+   "decodeFun",
+   "indefLenValueDecoder",
+   "ByteDance"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "RecursionError",
+  "decodeFun",
+  "indefLenValueDecoder",
+  "ByteDance"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pyasn1@0.4.8/GHSA-jr27-m4p2-rc6r",
+    "package": "pyasn1",
+    "version": "0.4.8",
+    "vuln_id": "GHSA-jr27-m4p2-rc6r",
+    "aliases": [
+     "CVE-2026-30922",
+     "GHSA-jr27-m4p2-rc6r",
+     "PYSEC-2026-2263"
+    ],
+    "summary": "Denial of Service in pyasn1 via Unbounded Recursion",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "0.6.3"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-jr27-m4p2-rc6r#0",
+      "score": 0.886,
+      "text": "GHSA-jr27-m4p2-rc6r (CVE-2026-30922)\npackage: pyasn1\nsummary: Denial of Service in pyasn1 via Unbounded Recursion\naffected: >=0, <0.6.3",
+      "vuln_id": "GHSA-jr27-m4p2-rc6r"
+     },
+     {
+      "id": "GHSA-jr27-m4p2-rc6r#1",
+      "score": 0.872,
+      "text": "GHSA-jr27-m4p2-rc6r (pyasn1) details:\n### Summary\nThe `pyasn1` library is vulnerable to a Denial of Service (DoS) attack caused by uncontrolled recursion when decoding ASN.1 data with deeply nested structures. An attacker can supply a crafted payload containing nested `SEQUENCE` (`0x30`) or `SET` (`0x31`) tags with Indefinite Length (`0x80`) markers. This forces the decoder to recursively call itself until the Python interpreter crashes with a `RecursionError` or consumes all available memory (OOM), crashing the host application.",
+      "vuln_id": "GHSA-jr27-m4p2-rc6r"
+     },
+     {
+      "id": "GHSA-jr27-m4p2-rc6r#5",
+      "score": 0.84,
+      "text": "GHSA-jr27-m4p2-rc6r (pyasn1) details:\n### Impact\n- This is an unhandled runtime exception that typically terminates the worker process or thread handling the request. This allows a remote attacker to trivially kill service workers with a small payload (<100KB), resulting in a Denial of Service. Furthermore, in environments where recursion limits are increased, this leads to server-wide memory exhaustion.\n- Service Crash: Any service using `pyasn1` to parse untrusted ASN.1 data (e.g., LDAP, SNMP, Kerberos, X.509 parsers) can be crashed remotely.\n- Resource Exhaustion: The attack consumes RAM linearly with the nesting depth. A small payload (<200KB) can consume hundreds of megabytes of RAM or exhaust the stack.\n\n### Credits\nVulnerability discovered by Kevin Tu of TMIR at ByteDance.",
+      "vuln_id": "GHSA-jr27-m4p2-rc6r"
+     },
+     {
+      "id": "GHSA-jr27-m4p2-rc6r#2",
+      "score": 0.726,
+      "text": "GHSA-jr27-m4p2-rc6r (pyasn1) details:\n### Details\nThe vulnerability exists because the decoder iterates through the input stream and recursively calls `decodeFun` (the decoding callback) for every nested component found, without tracking or limiting the recursion depth.\nVulnerable Code Locations:\n1. `indefLenValueDecoder` (Line 998):\n```for component in decodeFun(substrate, asn1Spec, allowEoo=True, **options):```\nThis method handles indefinite-length constructed types. It sits inside a `while True` loop and recursively calls the decoder for every nested tag.",
+      "vuln_id": "GHSA-jr27-m4p2-rc6r"
+     },
+     {
+      "id": "GHSA-8ppf-4f7h-5ppj#0",
+      "score": 0.832,
+      "text": "GHSA-8ppf-4f7h-5ppj (CVE-2026-59885)\npackage: pyasn1\nsummary: pyasn1: Quadratic complexity in OBJECT IDENTIFIER and RELATIVE-OID processing allows denial of service\naffected: >=0, <0.6.4",
+      "vuln_id": "GHSA-8ppf-4f7h-5ppj"
+     },
+     {
+      "id": "GHSA-m4p7-r5rc-7g4j#0",
+      "score": 0.809,
+      "text": "GHSA-m4p7-r5rc-7g4j (CVE-2026-59884)\npackage: pyasn1\nsummary: pyasn1 BER/CER/DER decoder denial of service via unbounded long-form tag IDs\naffected: >=0, <0.6.4",
+      "vuln_id": "GHSA-m4p7-r5rc-7g4j"
+     }
+    ],
+    "symbols": [
+     "RecursionError",
+     "decodeFun",
+     "indefLenValueDecoder",
+     "ByteDance"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 45.1,
+   "output": {
+    "package": "pyasn1",
+    "import_names": [
+     "pyasn1"
+    ],
+    "symbols": [
+     "RecursionError",
+     "decodeFun",
+     "indefLenValueDecoder",
+     "ByteDance"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pyasn1: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['RecursionError', 'decodeFun', 'indefLenValueDecoder', 'ByteDance']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 35.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/core/security/hasher.py:26",
+      "score": 0.669,
+      "text": "# mealie/core/security/hasher.py:26-27  PasslibHasher.__init__\n    def __init__(self) -> None:\n        self.ctx = CryptContext(schemes=[\"bcrypt\"], deprecated=\"auto\")",
+      "file": "mealie/core/security/hasher.py",
+      "start": 26,
+      "qualname": "PasslibHasher.__init__"
+     },
+     {
+      "id": "mealie:mealie/routes/handlers.py:18",
+      "score": 0.658,
+      "text": "# mealie/routes/handlers.py:18-31  register_debug_handler\ndef register_debug_handler(app: FastAPI):\n    settings = get_app_settings()\n\n    if settings.PRODUCTION and not settings.TESTING:\n        return\n\n    @app.exception_handler(RequestValidationError)\n    async def validation_exception_handler(request: Request, exc: RequestValidationError):\n        exc_str = f\"{exc}\".replace(\"\\n\", \" \").replace(\"   \", \" \")\n        log_wrapper(request, exc)\n        content = {\"status_code\": status.HTTP_422_UNPROCESSABLE_ENTITY, \"message\": exc_str, \"data\": None}\n        return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)\n\n    return validation_exception_handler",
+      "file": "mealie/routes/handlers.py",
+      "start": 18,
+      "qualname": "register_debug_handler"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:module",
+      "score": 0.657,
+      "text": "# mealie/services/recipe/recipe_data_service.py (module level)\nimport asyncio\nimport shutil\nfrom pathlib import Path\nfrom httpx import AsyncClient, Response\nfrom pydantic import UUID4\nfrom mealie.pkgs import img\nfrom mealie.schema.recipe.recipe import Recipe\nfrom mealie.services._base_service import BaseService\n_FIREFOX_UA = \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0\"\nclass NotAnImageError(Exception):\n    pass\nclass InvalidDomainError(Exception):\n    pass\nclass RecipeDataService(BaseService):\n    minifier: img.ABCMinifier\n    @staticmethod",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/pkgs/i18n/provider_factory.py:module",
+      "score": 0.656,
+      "text": "# mealie/pkgs/i18n/provider_factory.py (module level)\nfrom dataclasses import dataclass, field\nfrom pathlib import Path\nfrom .json_provider import JsonProvider\n@dataclass(slots=True)\nclass InUseProvider:\n    provider: JsonProvider\n    locks: int\n@dataclass(slots=True)\nclass ProviderFactory:\n    directory: Path\n    fallback_locale: str = \"en-US\"\n    filename_format = \"{locale}.{format}\"\n    _store: dict[str, InUseProvider] = field(default_factory=dict)\n    @property",
+      "file": "mealie/pkgs/i18n/provider_factory.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/utils.py:89",
+      "score": 0.655,
+      "text": "# mealie/services/parser_services/crfpp/utils.py:89-99  insideParenthesis\ndef insideParenthesis(token, tokens):\n    \"\"\"\n    Returns true if the word is inside parenthesis in the phrase.\n    \"\"\"\n    if token in [\"(\", \")\"]:\n        return True\n    else:\n        line = \" \".join(tokens)\n        return (\n            re.match(r\".*\\(.*\" + re.escape(token) + r\".*\\).*\", line) is not None  # noqa: W605 - invalid dscape sequence\n        )",
+      "file": "mealie/services/parser_services/crfpp/utils.py",
+      "start": 89,
+      "qualname": "insideParenthesis"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "RecursionError",
+     "decodeFun",
+     "indefLenValueDecoder",
+     "ByteDance"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1638,
+   "tokens_out": 51,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"RecursionError\", \"decodeFun\", \"indefLenValueDecoder\", \"ByteDance\"]}",
+     "in": 1638,
+     "out": 51,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1570,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1570,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3208,
+  "tokens_out": 87,
+  "cost_usd_est": 0.0,
+  "seconds": 0.12
+ },
+ "created": "2026-11-10T00:06:27+00:00",
+ "code_version": "a3e1ef4"
+}

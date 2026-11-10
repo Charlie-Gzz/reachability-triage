@@ -1,0 +1,290 @@
+{
+ "finding_id": "ctfd/gunicorn@20.0.4/GHSA-w3h3-4rj7-4ph4",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-1135",
+   "GHSA-w3h3-4rj7-4ph4",
+   "PYSEC-2026-1434"
+  ],
+  "cves": [
+   "CVE-2024-1135"
+  ],
+  "cwes": [
+   "CWE-444"
+  ],
+  "direct_dependency": true,
+  "finding_id": "ctfd/gunicorn@20.0.4/GHSA-w3h3-4rj7-4ph4",
+  "first_fixed_above_installed": "22.0.0",
+  "fixed_versions": [
+   "22.0.0"
+  ],
+  "max_cvss": "8.2",
+  "package": "gunicorn",
+  "published": "2024-04-16T00:30:32Z",
+  "summary": "Request smuggling leading to endpoint restriction bypass in Gunicorn",
+  "target": "ctfd",
+  "version": "20.0.4",
+  "vuln_id": "GHSA-w3h3-4rj7-4ph4"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/gunicorn@20.0.4/GHSA-w3h3-4rj7-4ph4",
+    "package": "gunicorn",
+    "version": "20.0.4",
+    "vuln_id": "GHSA-w3h3-4rj7-4ph4",
+    "aliases": [
+     "CVE-2024-1135",
+     "GHSA-w3h3-4rj7-4ph4",
+     "PYSEC-2026-1434"
+    ],
+    "summary": "Request smuggling leading to endpoint restriction bypass in Gunicorn",
+    "max_cvss": "8.2",
+    "fixed_versions": [
+     "22.0.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-w3h3-4rj7-4ph4#0",
+      "score": 0.871,
+      "text": "GHSA-w3h3-4rj7-4ph4 (CVE-2024-1135)\npackage: gunicorn\nsummary: Request smuggling leading to endpoint restriction bypass in Gunicorn\naffected: >=0, <22.0.0",
+      "vuln_id": "GHSA-w3h3-4rj7-4ph4"
+     },
+     {
+      "id": "GHSA-w3h3-4rj7-4ph4#1",
+      "score": 0.83,
+      "text": "GHSA-w3h3-4rj7-4ph4 (gunicorn) details:\nGunicorn fails to properly validate Transfer-Encoding headers, leading to HTTP Request Smuggling (HRS) vulnerabilities. By crafting requests with conflicting Transfer-Encoding headers, attackers can bypass security restrictions and access restricted endpoints. This issue is due to Gunicorn's handling of Transfer-Encoding headers, where it incorrectly processes requests with multiple, conflicting Transfer-Encoding headers, treating them as chunked regardless of the final encoding specified. This vulnerability has been shown to allow access to endpoints restricted by gunicorn. This issue has been addressed in version 22.0.0.\n\nTo be affected users must have a network path which does not filter out invalid requests. These users are advised to block access to restricted endpoints via a firewall or other mechanism if they are unable to update.",
+      "vuln_id": "GHSA-w3h3-4rj7-4ph4"
+     },
+     {
+      "id": "GHSA-hc5x-x2vx-497g#0",
+      "score": 0.827,
+      "text": "GHSA-hc5x-x2vx-497g (CVE-2024-6827)\npackage: gunicorn\nsummary: Gunicorn HTTP Request/Response Smuggling vulnerability\naffected: >=0, <22.0.0",
+      "vuln_id": "GHSA-hc5x-x2vx-497g"
+     },
+     {
+      "id": "GHSA-hc5x-x2vx-497g#1",
+      "score": 0.801,
+      "text": "GHSA-hc5x-x2vx-497g (gunicorn) details:\nGunicorn version 21.2.0 does not properly validate the value of the 'Transfer-Encoding' header as specified in the RFC standards, which leads to the default fallback method of 'Content-Length,' making it vulnerable to TE.CL request smuggling. This vulnerability can lead to cache poisoning, data exposure, session manipulation, SSRF, XSS, DoS, data integrity compromise, security bypass, information leakage, and business logic abuse.",
+      "vuln_id": "GHSA-hc5x-x2vx-497g"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 33.4,
+   "output": {
+    "package": "gunicorn",
+    "import_names": [
+     "gunicorn"
+    ],
+    "symbols": [],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "gunicorn: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 25.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/api/v1/unlocks.py:73",
+      "score": 0.657,
+      "text": "# CTFd/api/v1/unlocks.py:73-85  UnlockList.get\n    def get(self, query_args):\n        q = query_args.pop(\"q\", None)\n        field = str(query_args.pop(\"field\", None))\n        filters = build_model_filters(model=Unlocks, query=q, field=field)\n\n        unlocks = Unlocks.query.filter_by(**query_args).filter(*filters).all()\n        schema = UnlockSchema()\n        response = schema.dump(unlocks)\n\n        if response.errors:\n            return {\"success\": False, \"errors\": response.errors}, 400\n\n        return {\"success\": True, \"data\": response.data}",
+      "file": "CTFd/api/v1/unlocks.py",
+      "start": 73,
+      "qualname": "UnlockList.get"
+     },
+     {
+      "id": "ctfd:CTFd/utils/decorators/__init__.py:158",
+      "score": 0.655,
+      "text": "# CTFd/utils/decorators/__init__.py:158-188  ratelimit\ndef ratelimit(method=\"POST\", limit=50, interval=300, key_prefix=\"rl\"):\n    def ratelimit_decorator(f):\n        @functools.wraps(f)\n        def ratelimit_function(*args, **kwargs):\n            ip_address = current_user.get_ip()\n            key = \"{}:{}:{}\".format(key_prefix, ip_address, request.endpoint)\n            current = cache.get(key)\n\n            if request.method == method:\n                if (\n                    current and int(current) > limit - 1\n                ):  # -1 in order to align expected limit with the real value\n                    resp = jsonify(\n                        {\n                            \"code\": 429,\n                            \"message\": \"Too many requests. Limit is %s requests in %s seconds\"\n                            % (limit, interval),\n                        }\n                    )\n                    resp.status_code = 429\n                    return resp\n                else:\n                    if current is None:\n                        cache.set(key, 1, timeout=interval)\n                    else:\n                        cache.set(key, int(current) + 1, timeout=interval)\n            return f(*args, **kwargs)\n\n        return ratelimit_function\n\n    return ratelimit_decorator",
+      "file": "CTFd/utils/decorators/__init__.py",
+      "start": 158,
+      "qualname": "ratelimit"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/challenges.py:755",
+      "score": 0.652,
+      "text": "# CTFd/api/v1/challenges.py:755-793  ChallengeSolves.get\n    def get(self, challenge_id):\n        response = []\n        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()\n\n        # TODO: Need a generic challenge visibility call.\n        # However, it should be stated that a solve on a gated challenge is not considered private.\n        if challenge.state == \"hidden\" and is_admin() is False:\n            abort(404)\n\n        Model = get_model()\n\n        solves = (\n            Solves.query.join(Model, Solves.account_id == Model.id)\n            .filter(\n                Solves.challenge_id == challenge_id,\n                Model.banned == False,\n                Model.hidden == False,\n            )\n            .order_by(Solves.date.asc())\n        )\n\n        freeze = get_config(\"freeze\")\n        if freeze:\n            preview = request.args.get(\"preview\")\n            if (is_admin() is False) or (is_admin() is True and preview):\n                dt = datetime.datetime.utcfromtimestamp(freeze)\n                solves = solves.filter(Solves.date < dt)\n\n        for solve in solves:\n            response.append(\n                {\n                    \"account_id\": solve.account_id,\n                    \"name\": solve.account.name,\n                    \"date\": isoformat(solve.date),\n                    \"account_url\": generate_account_url(account_id=solve.account_id),\n                }\n            )\n\n        return {\"success\": True, \"data\": response}",
+      "file": "CTFd/api/v1/challenges.py",
+      "start": 755,
+      "qualname": "ChallengeSolves.get"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/unlocks.py:100",
+      "score": 0.648,
+      "text": "# CTFd/api/v1/unlocks.py:100-164  UnlockList.post\n    def post(self):\n        req = request.get_json()\n        user = get_current_user()\n\n        req[\"user_id\"] = user.id\n        req[\"team_id\"] = user.team_id\n\n        Model = get_class_by_tablename(req[\"type\"])\n        target = Model.query.filter_by(id=req[\"target\"]).first_or_404()\n\n        # We should use the team's score if in teams mode\n        # user.account gives the appropriate account based on team mode\n        if target.cost > user.account.score:\n            return (\n                {\n                    \"success\": False,\n                    \"errors\": {\n                        \"score\": \"You do not have enough points to unlock this hint\"\n                    },\n                },\n                400,\n            )\n\n        schema = UnlockSchema()\n        response = schema.load(req, session=db.session)\n\n        if response.errors:\n            return {\"success\": False, \"errors\": response.errors}, 400\n\n        # Search for an existing unlock that matches the target and type\n        # And matches either the requesting user id or the requesting team id\n        existing = Unlocks.query.filter(\n            Unlocks.target == req[\"target\"],\n            Unlocks.type == req[\"type\"],\n            Unlocks.account_id == user.account_id,\n        ).first()\n        if existing:\n            return (\n                {\n                    \"success\": False,\n                    \"errors\": {\"target\": \"You've already unlocked this this target\"},\n                },\n                400,\n            )\n\n        db.session.add(response.data)\n\n        award_schema = AwardSchema()\n        award = {\n            \"user_id\": user.id,\n            \"team_id\": user.team_id,\n            \"name\": target.name,\n            \"description\": target.description,\n            \"value\": (-target.cost),\n            \"category\": target.category,\n        }\n\n        award = award_schema.load(award)\n        db.session.add(award.data)\n        db.session.commit()",
+      "file": "CTFd/api/v1/unlocks.py",
+      "start": 100,
+      "qualname": "UnlockList.post"
+     },
+     {
+      "id": "ctfd:CTFd/__init__.py:38",
+      "score": 0.647,
+      "text": "# CTFd/__init__.py:38-46  CTFdRequest.path\n    def path(self):\n        \"\"\"\n        Hijack the original Flask request path because it does not account for subdirectory deployments in an intuitive\n        manner. We append script_root so that the path always points to the full path as seen in the browser.\n        e.g. /subdirectory/path/route vs /path/route\n\n        :return: string\n        \"\"\"\n        return self.script_root + super(CTFdRequest, self).path",
+      "file": "CTFd/__init__.py",
+      "start": 38,
+      "qualname": "CTFdRequest.path"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2180,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": []}",
+     "in": 2180,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2113,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2113,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4293,
+  "tokens_out": 71,
+  "cost_usd_est": 0.0,
+  "seconds": 0.09
+ },
+ "created": "2026-11-10T00:06:16+00:00",
+ "code_version": "a3e1ef4"
+}

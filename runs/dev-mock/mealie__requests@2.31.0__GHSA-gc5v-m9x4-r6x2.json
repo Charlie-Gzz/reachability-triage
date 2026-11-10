@@ -1,0 +1,367 @@
+{
+ "finding_id": "mealie/requests@2.31.0/GHSA-gc5v-m9x4-r6x2",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-25645",
+   "GHSA-gc5v-m9x4-r6x2",
+   "PYSEC-2026-2275"
+  ],
+  "cves": [
+   "CVE-2026-25645"
+  ],
+  "cwes": [
+   "CWE-377"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/requests@2.31.0/GHSA-gc5v-m9x4-r6x2",
+  "first_fixed_above_installed": "2.33.0",
+  "fixed_versions": [
+   "2.33.0"
+  ],
+  "max_cvss": "5.5",
+  "package": "requests",
+  "published": "2026-03-25T16:56:28Z",
+  "summary": "Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function",
+  "target": "mealie",
+  "version": "2.31.0",
+  "vuln_id": "GHSA-gc5v-m9x4-r6x2"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "requests.utils.extract_zipped_paths",
+   "extract_zipped_paths"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/core/release_checker.py:4",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/scripts/healthcheck.py:4",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/scripts/install_model.py:1",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "requests.utils.extract_zipped_paths",
+  "extract_zipped_paths"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/requests@2.31.0/GHSA-gc5v-m9x4-r6x2",
+    "package": "requests",
+    "version": "2.31.0",
+    "vuln_id": "GHSA-gc5v-m9x4-r6x2",
+    "aliases": [
+     "CVE-2026-25645",
+     "GHSA-gc5v-m9x4-r6x2",
+     "PYSEC-2026-2275"
+    ],
+    "summary": "Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function",
+    "max_cvss": "5.5",
+    "fixed_versions": [
+     "2.33.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 31.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-gc5v-m9x4-r6x2#0",
+      "score": 0.898,
+      "text": "GHSA-gc5v-m9x4-r6x2 (CVE-2026-25645)\npackage: requests\nsummary: Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function\naffected: >=0, <2.33.0",
+      "vuln_id": "GHSA-gc5v-m9x4-r6x2"
+     },
+     {
+      "id": "GHSA-gc5v-m9x4-r6x2#1",
+      "score": 0.881,
+      "text": "GHSA-gc5v-m9x4-r6x2 (requests) details:\n### Impact\nThe `requests.utils.extract_zipped_paths()` utility function uses a predictable filename when extracting files from zip archives into the system temporary directory. If the target file already exists, it is reused without validation. A local attacker with write access to the temp directory could pre-create a malicious file that would be loaded in place of the legitimate one.\n\n### Affected usages\n**Standard usage of the Requests library is not affected by this vulnerability.** Only applications that call `extract_zipped_paths()` directly are impacted.\n\n### Remediation\nUpgrade to at least Requests 2.33.0, where the library now extracts files to a non-deterministic location.\n\nIf developers are unable to upgrade, they can set `TMPDIR` in their environment to a directory with restricted write access.",
+      "vuln_id": "GHSA-gc5v-m9x4-r6x2"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#1",
+      "score": 0.742,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\n### Impact\n\nSince Requests v2.3.0, Requests has been vulnerable to potentially leaking `Proxy-Authorization` headers to destination servers, specifically during redirects to an HTTPS origin. This is a product of how `rebuild_proxies` is used to recompute and [reattach the `Proxy-Authorization` header](https://github.com/psf/requests/blob/f2629e9e3c7ce3c3c8c025bcd8db551101cbc773/requests/sessions.py#L319-L328) to requests when redirected. Note this behavior has _only_ been observed to affect proxied requests when credentials are supplied in the URL user information component (e.g. `https://username:password@proxy:8080`).\n\n**Current vulnerable behavior(s):**\n\n1. HTTP \u2192 HTTPS: **leak**\n2. HTTPS \u2192 HTTP: **no leak**\n3. HTTPS \u2192 HTTPS: **leak**\n4. HTTP \u2192 HTTP: **no leak**",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-9hjg-9r4m-mvj7#1",
+      "score": 0.73,
+      "text": "GHSA-9hjg-9r4m-mvj7 (requests) details:\n### Impact\n\nDue to a URL parsing issue, Requests releases prior to 2.32.4 may leak .netrc credentials to third parties for specific maliciously-crafted URLs.\n\n### Workarounds\nFor older versions of Requests, use of the .netrc file can be disabled with `trust_env=False` on your Requests Session ([docs](https://requests.readthedocs.io/en/latest/api/#requests.Session.trust_env)).",
+      "vuln_id": "GHSA-9hjg-9r4m-mvj7"
+     }
+    ],
+    "symbols": [
+     "requests.utils.extract_zipped_paths",
+     "extract_zipped_paths"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 27.5,
+   "output": {
+    "package": "requests",
+    "import_names": [
+     "requests"
+    ],
+    "symbols": [
+     "requests.utils.extract_zipped_paths",
+     "extract_zipped_paths"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/core/release_checker.py:4",
+     "mealie/scripts/healthcheck.py:4",
+     "mealie/scripts/install_model.py:1",
+     "mealie/services/event_bus_service/publisher.py:4"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 14,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/core/release_checker.py:19",
+      "code": "response = requests.get(url)",
+      "function": "mealie.core.release_checker:get_latest_github_release",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/release_checker.py:43",
+      "code": "except requests.RequestException:",
+      "function": "mealie.core.release_checker:get_latest_version",
+      "in_test": false
+     },
+     {
+      "location": "mealie/scripts/healthcheck.py:15",
+      "code": "r = requests.get(url)",
+      "function": "mealie.scripts.healthcheck:main",
+      "in_test": false
+     },
+     {
+      "location": "mealie/scripts/install_model.py:13",
+      "code": "r = requests.get(MODEL_URL, stream=True, allow_redirects=True)",
+      "function": "mealie.scripts.install_model:main",
+      "in_test": false
+     },
+     {
+      "location": "mealie/services/event_bus_service/publisher.py:48",
+      "code": "r = requests.post(url, json=event_payload, timeout=15)",
+      "function": "mealie.services.event_bus_service.publisher:WebhookPublisher.publish",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "requests: imported in 4 non-test location(s); 14 package call/reference site(s); named vulnerable symbols ['requests.utils.extract_zipped_paths', 'extract_zipped_paths']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 37.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:208",
+      "score": 0.797,
+      "text": "# mealie/core/dependencies/dependencies.py:208-215  temporary_zip_path\nasync def temporary_zip_path() -> AsyncGenerator[Path, None]:\n    app_dirs.TEMP_DIR.mkdir(exist_ok=True, parents=True)\n    temp_path = app_dirs.TEMP_DIR.joinpath(\"my_zip_archive.zip\")\n\n    try:\n        yield temp_path\n    finally:\n        temp_path.unlink(missing_ok=True)",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 208,
+      "qualname": "temporary_zip_path"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/template_service.py:132",
+      "score": 0.755,
+      "text": "# mealie/services/recipe/template_service.py:132-148  TemplateService._render_zip\n    def _render_zip(self, recipe: Recipe) -> Path:\n        self.__check_temp(self._render_jinja2)\n\n        image_asset = recipe.image_dir.joinpath(RecipeImageTypes.original.value)\n\n        if self.temp is None:\n            raise ValueError(\"Temporary directory must be provided for method _render_zip\")\n\n        zip_temp = self.temp.joinpath(f\"{recipe.slug}.zip\")\n\n        with ZipFile(zip_temp, \"w\") as myzip:\n            myzip.writestr(f\"{recipe.slug}.json\", recipe.json())\n\n            if image_asset.is_file():\n                myzip.write(image_asset, arcname=image_asset.name)\n\n        return zip_temp",
+      "file": "mealie/services/recipe/template_service.py",
+      "start": 132,
+      "qualname": "TemplateService._render_zip"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:228",
+      "score": 0.749,
+      "text": "# mealie/core/dependencies/dependencies.py:228-243  temporary_file\ndef temporary_file(ext: str = \"\") -> Callable[[], Generator[tempfile._TemporaryFileWrapper, None, None]]:\n    \"\"\"\n    Returns a temporary file with the specified extension\n    \"\"\"\n\n    def func():\n        temp_path = app_dirs.TEMP_DIR.joinpath(uuid4().hex + ext)\n        temp_path.touch()\n\n        with tempfile.NamedTemporaryFile(mode=\"w+b\", suffix=ext) as f:\n            try:\n                yield f\n            finally:\n                temp_path.unlink(missing_ok=True)\n\n    return func",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 228,
+      "qualname": "temporary_file"
+     },
+     {
+      "id": "mealie:mealie/services/backups_v2/backup_file.py:51",
+      "score": 0.744,
+      "text": "# mealie/services/backups_v2/backup_file.py:51-54  BackupFile.__enter__\n    def __enter__(self) -> BackupContents:\n        self.temp_dir = Path(tempfile.mkdtemp())\n        shutil.unpack_archive(str(self.zip), str(self.temp_dir))\n        return BackupContents(self.temp_dir)",
+      "file": "mealie/services/backups_v2/backup_file.py",
+      "start": 51,
+      "qualname": "BackupFile.__enter__"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:118",
+      "score": 0.742,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:118-133  RecipeExportController.get_recipe_as_zip\n    def get_recipe_as_zip(self, slug: str, token: str, temp_path=Depends(temporary_zip_path)):\n        \"\"\"Get a Recipe and It's Original Image as a Zip File\"\"\"\n        slug = validate_recipe_token(token)\n\n        if slug != slug:\n            raise HTTPException(status_code=400, detail=\"Invalid Slug\")\n\n        recipe: Recipe = self.mixins.get_one(slug)\n        image_asset = recipe.image_dir.joinpath(RecipeImageTypes.original.value)\n        with ZipFile(temp_path, \"w\") as myzip:\n            myzip.writestr(f\"{slug}.json\", recipe.json())\n\n            if image_asset.is_file():\n                myzip.write(image_asset, arcname=image_asset.name)\n\n        return FileResponse(temp_path, filename=f\"{slug}.zip\")",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 118,
+      "qualname": "RecipeExportController.get_recipe_as_zip"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "requests.utils.extract_zipped_paths",
+     "extract_zipped_paths"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/core/release_checker.py:4",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/scripts/healthcheck.py:4",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/scripts/install_model.py:1",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1738,
+   "tokens_out": 112,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/core/release_checker.py:4\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/scripts/healthcheck.py:4\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/scripts/install_model.py:1\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"requests.utils.extract_zipped_paths\", \"extract_zipped_paths\"]}",
+     "in": 1738,
+     "out": 112,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1708,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1708,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3446,
+  "tokens_out": 148,
+  "cost_usd_est": 0.0,
+  "seconds": 0.1
+ },
+ "created": "2026-11-10T00:06:30+00:00",
+ "code_version": "a3e1ef4"
+}

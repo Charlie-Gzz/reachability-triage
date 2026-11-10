@@ -1,0 +1,298 @@
+{
+ "finding_id": "ctfd/pybluemonday@0.0.7/GHSA-x95h-979x-cf3j",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-42576",
+   "GHSA-x95h-979x-cf3j",
+   "PYSEC-2021-849"
+  ],
+  "cves": [
+   "CVE-2021-42576"
+  ],
+  "cwes": [
+   "CWE-20"
+  ],
+  "direct_dependency": true,
+  "finding_id": "ctfd/pybluemonday@0.0.7/GHSA-x95h-979x-cf3j",
+  "first_fixed_above_installed": "0.0.8",
+  "fixed_versions": [
+   "0.0.8"
+  ],
+  "max_cvss": "9.8",
+  "package": "pybluemonday",
+  "published": "2021-10-19T20:15:30Z",
+  "summary": "Policies not properly enforced in bluemonday",
+  "target": "ctfd",
+  "version": "0.0.7",
+  "vuln_id": "GHSA-x95h-979x-cf3j"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "CTFd/utils/security/sanitize.py:1",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/pybluemonday@0.0.7/GHSA-x95h-979x-cf3j",
+    "package": "pybluemonday",
+    "version": "0.0.7",
+    "vuln_id": "GHSA-x95h-979x-cf3j",
+    "aliases": [
+     "CVE-2021-42576",
+     "GHSA-x95h-979x-cf3j",
+     "PYSEC-2021-849"
+    ],
+    "summary": "Policies not properly enforced in bluemonday",
+    "max_cvss": "9.8",
+    "fixed_versions": [
+     "0.0.8"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-x95h-979x-cf3j#0",
+      "score": 0.884,
+      "text": "GHSA-x95h-979x-cf3j (CVE-2021-42576)\npackage: pybluemonday\nsummary: Policies not properly enforced in bluemonday\naffected: >=0, <0.0.8",
+      "vuln_id": "GHSA-x95h-979x-cf3j"
+     },
+     {
+      "id": "GHSA-x95h-979x-cf3j#1",
+      "score": 0.821,
+      "text": "GHSA-x95h-979x-cf3j (pybluemonday) details:\nThe bluemonday sanitizer before 1.0.16 for Go, and before 0.0.8 for Python (in pybluemonday), does not properly enforce policies associated with the SELECT, STYLE, and OPTION elements.",
+      "vuln_id": "GHSA-x95h-979x-cf3j"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 37.0,
+   "output": {
+    "package": "pybluemonday",
+    "import_names": [
+     "pybluemonday",
+     "tests"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "CTFd/utils/security/sanitize.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 1,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/utils/security/sanitize.py:62",
+      "code": "SANITIZER = UGCPolicy()",
+      "function": "CTFd.utils.security.sanitize:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "pybluemonday: imported in 1 non-test location(s); 1 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 26.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/security/sanitize.py:module",
+      "score": 0.628,
+      "text": "# CTFd/utils/security/sanitize.py (module level)\nfrom pybluemonday import UGCPolicy\n# Copied from lxml:\n# https://github.com/lxml/lxml/blob/e986a9cb5d54827c59aefa8803bc90954d67221e/src/lxml/html/defs.py#L38\n# fmt: off\nSAFE_ATTRS = (\n    'abbr', 'accept', 'accept-charset', 'accesskey', 'action', 'align',\n    'alt', 'axis', 'border', 'cellpadding', 'cellspacing', 'char', 'charoff',\n    'charset', 'checked', 'cite', 'class', 'clear', 'cols', 'colspan',\n    'color', 'compact', 'coords', 'datetime', 'dir', 'disabled', 'enctype',\n    'for', 'frame', 'headers', 'height', 'href', 'hreflang', 'hspace', 'id',\n    'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'media', 'method',\n    'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt', 'readonly',\n    'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape',\n    'size', 'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title',\n    'type', 'usemap', 'valign', 'value', 'vspace', 'width'\n)\n# fmt: on\nPAGE_STRUCTURE_TAGS = {\n    \"title\": [],\n}\nMETA_TAGS = {\n    \"meta\": [\"name\", \"content\", \"property\"],\n}\nFORM_TAGS = {\n    \"form\": [\"method\", \"action\"],\n    \"button\": [\"name\", \"type\", \"value\", \"disabled\"],\n    \"input\": [\"name\", \"type\", \"value\", \"placeholder\"],\n    \"select\": [\"name\", \"value\", \"placeholder\"],\n    \"option\": [\"value\"],\n    \"textarea\": [\"name\", \"value\", \"placeholder\"],\n    \"label\": [\"for\"],\n}\nANNOYING_TAGS = {\n    \"blink\": [],\n    \"marquee\": [],\n}\nMEDIA_TAGS = {\n    \"audio\": [\"autoplay\", \"controls\", \"crossorigin\", \"loop\", \"muted\", \"preload\", \"src\"],\n    \"video\": [\n        \"autoplay\",\n        \"buffered\",\n        \"controls\",\n        \"crossorigin\",\n        \"loop\",\n        \"muted\",\n        \"playsinline\",\n        \"poster\",\n        \"preload\",\n        \"src\",\n    ],\n    \"source\": [\"src\", \"type\"],\n    \"iframe\": [\"width\", \"height\", \"src\", \"frameborder\", \"allow\", \"allowfullscreen\"],\n}\nSANITIZER = UGCPolicy()\nfor TAGS in (PAGE_STRUCTURE_TAGS, META_TAGS, FORM_TAGS, ANNOYING_TAGS, MEDIA_TAGS):\n    for element in TAGS:\n        SANITIZER.AllowElements(element)\n        SANITIZER.AllowAttrs(*TAGS[element]).OnElements(element)\n# Allow safe attrs copied from lxml\nSANITIZER.AllowAttrs(*SAFE_ATTRS).Globally()",
+      "file": "CTFd/utils/security/sanitize.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/initialization/__init__.py:183",
+      "score": 0.608,
+      "text": "# CTFd/utils/initialization/__init__.py:183-307  init_request_processors\ndef init_request_processors(app):\n    @app.url_defaults\n    def inject_theme(endpoint, values):\n        if \"theme\" not in values and app.url_map.is_endpoint_expecting(\n            endpoint, \"theme\"\n        ):\n            values[\"theme\"] = ctf_theme()\n\n    @app.before_request\n    def needs_setup():\n        if is_setup() is False:\n            if request.endpoint in (\n                \"views.setup\",\n                \"views.integrations\",\n                \"views.themes\",\n                \"views.files\",\n            ):\n                return\n            else:\n                return redirect(url_for(\"views.setup\"))\n\n    @app.before_request\n    def tracker():\n        if request.endpoint == \"views.themes\":\n            return\n\n        if authed():\n            user_ips = get_current_user_recent_ips()\n            ip = get_ip()\n\n            track = None\n            if (ip not in user_ips) or (request.method != \"GET\"):\n                track = Tracking.query.filter_by(\n                    ip=get_ip(), user_id=session[\"id\"]\n                ).first()\n\n                if track:\n                    track.date = datetime.datetime.utcnow()\n                else:\n                    track = Tracking(ip=get_ip(), user_id=session[\"id\"])\n                    db.session.add(track)\n\n            if track:\n                try:\n                    db.session.commit()\n                except (InvalidRequestError, IntegrityError):\n                    db.session.rollback()\n                    db.session.close()\n                    logout_user()\n                else:\n                    clear_user_recent_ips(user_id=session[\"id\"])\n\n    @app.before_request\n    def banned():\n        if request.endpoint == \"views.themes\":\n            return\n\n        if authed():\n            user = get_current_user_attrs()\n            team = get_current_team_attrs()",
+      "file": "CTFd/utils/initialization/__init__.py",
+      "start": 183,
+      "qualname": "init_request_processors"
+     },
+     {
+      "id": "ctfd:CTFd/__init__.py:134",
+      "score": 0.604,
+      "text": "# CTFd/__init__.py:134-145  confirm_upgrade\ndef confirm_upgrade():\n    if sys.stdin.isatty():\n        print(\"/*\\\\ CTFd has updated and must update the database! /*\\\\\")\n        print(\"/*\\\\ Please backup your database before proceeding! /*\\\\\")\n        print(\"/*\\\\ CTFd maintainers are not responsible for any data loss! /*\\\\\")\n        if input(\"Run database migrations (Y/N)\").lower().strip() == \"y\":  # nosec B322\n            return True\n        else:\n            print(\"/*\\\\ Ignored database migrations... /*\\\\\")\n            return False\n    else:\n        return True",
+      "file": "CTFd/__init__.py",
+      "start": 134,
+      "qualname": "confirm_upgrade"
+     },
+     {
+      "id": "ctfd:CTFd/views.py:270",
+      "score": 0.598,
+      "text": "# CTFd/views.py:270-294  integrations\ndef integrations():\n    if is_admin() or is_setup() is False:\n        name = request.values.get(\"name\")\n        state = request.values.get(\"state\")\n\n        try:\n            state = unserialize(state, max_age=3600)\n        except (BadSignature, BadTimeSignature):\n            state = False\n        except Exception:\n            state = False\n\n        if state:\n            if name == \"mlc\":\n                mlc_client_id = request.values.get(\"mlc_client_id\")\n                mlc_client_secret = request.values.get(\"mlc_client_secret\")\n                set_config(\"oauth_client_id\", mlc_client_id)\n                set_config(\"oauth_client_secret\", mlc_client_secret)\n                return render_template(\"admin/integrations.html\")\n            else:\n                abort(404)\n        else:\n            abort(403)\n    else:\n        abort(403)",
+      "file": "CTFd/views.py",
+      "start": 270,
+      "qualname": "integrations"
+     },
+     {
+      "id": "ctfd:CTFd/models/__init__.py:431",
+      "score": 0.594,
+      "text": "# CTFd/models/__init__.py:431-439  Users.get_fails\n    def get_fails(self, admin=False):\n        from CTFd.utils import get_config\n\n        fails = Fails.query.filter_by(user_id=self.id)\n        freeze = get_config(\"freeze\")\n        if freeze and admin is False:\n            dt = datetime.datetime.utcfromtimestamp(freeze)\n            fails = fails.filter(Fails.date < dt)\n        return fails.all()",
+      "file": "CTFd/models/__init__.py",
+      "start": 431,
+      "qualname": "Users.get_fails"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "CTFd/utils/security/sanitize.py:1",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1756,
+   "tokens_out": 54,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"CTFd/utils/security/sanitize.py:1\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 1756,
+     "out": 54,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 1699,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1699,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3455,
+  "tokens_out": 89,
+  "cost_usd_est": 0.0,
+  "seconds": 0.1
+ },
+ "created": "2026-11-10T00:06:17+00:00",
+ "code_version": "a3e1ef4"
+}

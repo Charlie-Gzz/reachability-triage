@@ -1,0 +1,327 @@
+{
+ "finding_id": "mealie/pyasn1@0.4.8/GHSA-8ppf-4f7h-5ppj",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-59885",
+   "GHSA-8ppf-4f7h-5ppj",
+   "PYSEC-2026-3456"
+  ],
+  "cves": [
+   "CVE-2026-59885"
+  ],
+  "cwes": [
+   "CWE-400",
+   "CWE-407"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/pyasn1@0.4.8/GHSA-8ppf-4f7h-5ppj",
+  "first_fixed_above_installed": "0.6.4",
+  "fixed_versions": [
+   "0.6.4"
+  ],
+  "max_cvss": "7.5",
+  "package": "pyasn1",
+  "published": "2026-07-21T19:11:03Z",
+  "summary": "pyasn1: Quadratic complexity in OBJECT IDENTIFIER and RELATIVE-OID processing allows denial of service",
+  "target": "mealie",
+  "version": "0.4.8",
+  "vuln_id": "GHSA-8ppf-4f7h-5ppj"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "decode",
+   "ObjectIdentifierPayloadDecoder",
+   "RelativeOIDPayloadDecoder",
+   "ObjectIdentifierEncoder",
+   "RelativeOIDEncoder"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "decode",
+  "ObjectIdentifierPayloadDecoder",
+  "RelativeOIDPayloadDecoder",
+  "ObjectIdentifierEncoder",
+  "RelativeOIDEncoder"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pyasn1@0.4.8/GHSA-8ppf-4f7h-5ppj",
+    "package": "pyasn1",
+    "version": "0.4.8",
+    "vuln_id": "GHSA-8ppf-4f7h-5ppj",
+    "aliases": [
+     "CVE-2026-59885",
+     "GHSA-8ppf-4f7h-5ppj",
+     "PYSEC-2026-3456"
+    ],
+    "summary": "pyasn1: Quadratic complexity in OBJECT IDENTIFIER and RELATIVE-OID processing allows denial of service",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "0.6.4"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-8ppf-4f7h-5ppj#0",
+      "score": 0.897,
+      "text": "GHSA-8ppf-4f7h-5ppj (CVE-2026-59885)\npackage: pyasn1\nsummary: pyasn1: Quadratic complexity in OBJECT IDENTIFIER and RELATIVE-OID processing allows denial of service\naffected: >=0, <0.6.4",
+      "vuln_id": "GHSA-8ppf-4f7h-5ppj"
+     },
+     {
+      "id": "GHSA-8ppf-4f7h-5ppj#2",
+      "score": 0.783,
+      "text": "GHSA-8ppf-4f7h-5ppj (pyasn1) details:\n### Affected components\nObjectIdentifierPayloadDecoder and RelativeOIDPayloadDecoder in pyasn1/codec/ber/decoder.py; ObjectIdentifierEncoder and RelativeOIDEncoder in pyasn1/codec/ber/encoder.py. The CER and DER codecs inherit these and are equally affected.\n\n### Patches\nFixed in pyasn1 0.6.4: arc accumulation in both decoders and encoders now runs in linear time.\n\n### Workarounds\nLimit the size of untrusted ASN.1 input before decoding.",
+      "vuln_id": "GHSA-8ppf-4f7h-5ppj"
+     },
+     {
+      "id": "GHSA-8ppf-4f7h-5ppj#1",
+      "score": 0.722,
+      "text": "GHSA-8ppf-4f7h-5ppj (pyasn1) details:\n### Impact\nThe BER/CER/DER decoders process OBJECT IDENTIFIER and RELATIVE-OID values in quadratic time relative to the number of arcs. A small crafted payload (tens of kilobytes) containing an OID with many arcs consumes seconds of CPU per decode() call, allowing denial of service in any application that decodes untrusted ASN.1 data (certificates, LDAP, SNMP, Kerberos, etc.). The corresponding encoders have the same quadratic behavior, reachable when an application re-encodes previously decoded attacker-supplied values.\n\nThe arc-size limit introduced for CVE-2026-23490 bounds the byte length of an individual arc but not the number of arcs, so it does not mitigate this issue.",
+      "vuln_id": "GHSA-8ppf-4f7h-5ppj"
+     },
+     {
+      "id": "GHSA-jr27-m4p2-rc6r#1",
+      "score": 0.835,
+      "text": "GHSA-jr27-m4p2-rc6r (pyasn1) details:\n### Summary\nThe `pyasn1` library is vulnerable to a Denial of Service (DoS) attack caused by uncontrolled recursion when decoding ASN.1 data with deeply nested structures. An attacker can supply a crafted payload containing nested `SEQUENCE` (`0x30`) or `SET` (`0x31`) tags with Indefinite Length (`0x80`) markers. This forces the decoder to recursively call itself until the Python interpreter crashes with a `RecursionError` or consumes all available memory (OOM), crashing the host application.",
+      "vuln_id": "GHSA-jr27-m4p2-rc6r"
+     },
+     {
+      "id": "GHSA-jr27-m4p2-rc6r#0",
+      "score": 0.803,
+      "text": "GHSA-jr27-m4p2-rc6r (CVE-2026-30922)\npackage: pyasn1\nsummary: Denial of Service in pyasn1 via Unbounded Recursion\naffected: >=0, <0.6.3",
+      "vuln_id": "GHSA-jr27-m4p2-rc6r"
+     }
+    ],
+    "symbols": [
+     "decode",
+     "ObjectIdentifierPayloadDecoder",
+     "RelativeOIDPayloadDecoder",
+     "ObjectIdentifierEncoder",
+     "RelativeOIDEncoder"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 52.8,
+   "output": {
+    "package": "pyasn1",
+    "import_names": [
+     "pyasn1"
+    ],
+    "symbols": [
+     "decode",
+     "ObjectIdentifierPayloadDecoder",
+     "RelativeOIDPayloadDecoder",
+     "ObjectIdentifierEncoder",
+     "RelativeOIDEncoder"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pyasn1: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['decode', 'ObjectIdentifierPayloadDecoder', 'RelativeOIDPayloadDecoder', 'ObjectIdentifierEncoder', 'RelativeOIDEncoder']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 37.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/schema/user/auth.py:module",
+      "score": 0.636,
+      "text": "# mealie/schema/user/auth.py (module level)\nfrom pydantic import UUID4, BaseModel\nfrom pydantic.types import constr\nfrom mealie.schema._mealie.mealie_model import MealieModel\nclass Token(BaseModel):\n    access_token: str\n    token_type: str\nclass TokenData(BaseModel):\n    user_id: UUID4 | None\n    username: constr(to_lower=True, strip_whitespace=True) | None = None  # type: ignore\nclass UnlockResults(MealieModel):\n    unlocked: int = 0",
+      "file": "mealie/schema/user/auth.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/brute/process.py:module",
+      "score": 0.635,
+      "text": "# mealie/services/parser_services/brute/process.py (module level)\nimport string\nimport unicodedata\nfrom pydantic import BaseModel\nfrom .._helpers import check_char, move_parens_to_end\nclass BruteParsedIngredient(BaseModel):\n    food: str = \"\"\n    note: str = \"\"\n    amount: float = 1.0\n    unit: str = \"\"\n    class Config:\n        anystr_strip_whitespace = True",
+      "file": "mealie/services/parser_services/brute/process.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/repos/repository_generic.py:67",
+      "score": 0.634,
+      "text": "# mealie/repos/repository_generic.py:67-76  RepositoryGeneric._filter_builder\n    def _filter_builder(self, **kwargs) -> dict[str, Any]:\n        dct = {}\n\n        if self.user_id:\n            dct[\"user_id\"] = self.user_id\n\n        if self.group_id:\n            dct[\"group_id\"] = self.group_id\n\n        return {**dct, **kwargs}",
+      "file": "mealie/repos/repository_generic.py",
+      "start": 67,
+      "qualname": "RepositoryGeneric._filter_builder"
+     },
+     {
+      "id": "mealie:mealie/schema/user/user_passwords.py:module",
+      "score": 0.634,
+      "text": "# mealie/schema/user/user_passwords.py (module level)\nfrom pydantic import UUID4\nfrom sqlalchemy.orm import selectinload\nfrom sqlalchemy.orm.interfaces import LoaderOption\nfrom mealie.schema._mealie import MealieModel\nfrom ...db.models.users import PasswordResetModel, User\nfrom .user import PrivateUser\nclass ForgotPassword(MealieModel):\n    email: str\nclass PasswordResetToken(MealieModel):\n    token: str\nclass ValidateResetToken(MealieModel):\n    token: str\nclass ResetPassword(ValidateResetToken):\n    email: str\n    password: str\n    passwordConfirm: str\nclass SavePasswordResetToken(MealieModel):\n    user_id: UUID4\n    token: str\nclass PrivatePasswordResetToken(SavePasswordResetToken):\n    user: PrivateUser\n    class Config:\n        orm_mode = True\n    @classmethod",
+      "file": "mealie/schema/user/user_passwords.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/core/security/hasher.py:26",
+      "score": 0.633,
+      "text": "# mealie/core/security/hasher.py:26-27  PasslibHasher.__init__\n    def __init__(self) -> None:\n        self.ctx = CryptContext(schemes=[\"bcrypt\"], deprecated=\"auto\")",
+      "file": "mealie/core/security/hasher.py",
+      "start": 26,
+      "qualname": "PasslibHasher.__init__"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "decode",
+     "ObjectIdentifierPayloadDecoder",
+     "RelativeOIDPayloadDecoder",
+     "ObjectIdentifierEncoder",
+     "RelativeOIDEncoder"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1518,
+   "tokens_out": 65,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"decode\", \"ObjectIdentifierPayloadDecoder\", \"RelativeOIDPayloadDecoder\", \"ObjectIdentifierEncoder\", \"RelativeOIDEncoder\"]}",
+     "in": 1518,
+     "out": 65,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1450,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1450,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2968,
+  "tokens_out": 101,
+  "cost_usd_est": 0.0,
+  "seconds": 0.13
+ },
+ "created": "2026-11-10T00:06:27+00:00",
+ "code_version": "a3e1ef4"
+}

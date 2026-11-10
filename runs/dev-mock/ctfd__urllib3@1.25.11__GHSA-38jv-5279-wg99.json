@@ -1,0 +1,327 @@
+{
+ "finding_id": "ctfd/urllib3@1.25.11/GHSA-38jv-5279-wg99",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-21441",
+   "GHSA-38jv-5279-wg99",
+   "PYSEC-2026-1996"
+  ],
+  "cves": [
+   "CVE-2026-21441"
+  ],
+  "cwes": [
+   "CWE-409"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/urllib3@1.25.11/GHSA-38jv-5279-wg99",
+  "first_fixed_above_installed": "2.6.3",
+  "fixed_versions": [
+   "2.6.3"
+  ],
+  "max_cvss": "8.9",
+  "package": "urllib3",
+  "published": "2026-01-07T19:18:14Z",
+  "summary": "Decompression-bomb safeguards bypassed when following HTTP redirects (streaming API)",
+  "target": "ctfd",
+  "version": "1.25.11",
+  "vuln_id": "GHSA-38jv-5279-wg99"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "gzip",
+   "deflate",
+   "zstd",
+   "preload_content"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "gzip",
+  "deflate",
+  "zstd",
+  "preload_content"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/urllib3@1.25.11/GHSA-38jv-5279-wg99",
+    "package": "urllib3",
+    "version": "1.25.11",
+    "vuln_id": "GHSA-38jv-5279-wg99",
+    "aliases": [
+     "CVE-2026-21441",
+     "GHSA-38jv-5279-wg99",
+     "PYSEC-2026-1996"
+    ],
+    "summary": "Decompression-bomb safeguards bypassed when following HTTP redirects (streaming API)",
+    "max_cvss": "8.9",
+    "fixed_versions": [
+     "2.6.3"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-38jv-5279-wg99#0",
+      "score": 0.904,
+      "text": "GHSA-38jv-5279-wg99 (CVE-2026-21441)\npackage: urllib3\nsummary: Decompression-bomb safeguards bypassed when following HTTP redirects (streaming API)\naffected: >=1.22, <2.6.3",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#2",
+      "score": 0.861,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\nHowever, for HTTP redirect responses, the library would read the entire response body to drain the connection and decompress the content unnecessarily. This decompression occurred even before any read methods were called, and configured read limits did not restrict the amount of decompressed data. As a result, there was no safeguard against decompression bombs. A malicious server could exploit this to trigger excessive resource consumption on the client (high CPU usage and large memory allocations for decompressed data; CWE-409).\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.6.2 and earlier to stream content from untrusted sources by setting `preload_content=False` when they do not disable redirects.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.3 in which the library does not decode content of redirect responses when `preload_content=False`.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#1",
+      "score": 0.801,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\n### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.6.2/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nurllib3 can perform decoding or decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). When using the streaming API, the library decompresses only the necessary bytes, enabling partial content consumption.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#3",
+      "score": 0.779,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\nIf upgrading is not immediately possible, disable [redirects](https://urllib3.readthedocs.io/en/2.6.2/user-guide.html#retrying-requests) by setting `redirect=False` for requests to untrusted source.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     },
+     {
+      "id": "GHSA-mf9v-mfxr-j63j#0",
+      "score": 0.867,
+      "text": "GHSA-mf9v-mfxr-j63j (CVE-2026-44432)\npackage: urllib3\nsummary: urllib3: Decompression-bomb safeguards bypassed in parts of the streaming API\naffected: >=2.6.0, <2.7.0",
+      "vuln_id": "GHSA-mf9v-mfxr-j63j"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#2",
+      "score": 0.826,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\nThe decompression logic could cause urllib3 to fully decode a small amount of highly compressed data in a single operation. This can result in excessive resource consumption (high CPU usage and massive memory allocation for the decompressed data; CWE-409) on the client side, even if the application only requested a small chunk of data.\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier to stream large compressed responses or content from untrusted sources.\n\n`stream()`, `read(amt=256)`, `read1(amt=256)`, `read_chunked(amt=256)`, `readinto(b)` are examples of `urllib3.HTTPResponse` method calls using the affected logic unless decoding is disabled explicitly.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library avoids decompressing data that exceeds the requested amount.",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     }
+    ],
+    "symbols": [
+     "gzip",
+     "deflate",
+     "zstd",
+     "preload_content"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 65.8,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "gzip",
+     "deflate",
+     "zstd",
+     "preload_content"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['gzip', 'deflate', 'zstd', 'preload_content']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/exports/__init__.py:84",
+      "score": 0.666,
+      "text": "# CTFd/utils/exports/__init__.py:84-358  import_ctf\ndef import_ctf(backup, erase=True):\n    if not zipfile.is_zipfile(backup):\n        raise zipfile.BadZipfile\n\n    backup = zipfile.ZipFile(backup)\n\n    members = backup.namelist()\n    max_content_length = get_app_config(\"MAX_CONTENT_LENGTH\")\n    for f in members:\n        if f.startswith(\"/\") or \"..\" in f:\n            # Abort on malicious zip files\n            raise zipfile.BadZipfile\n        info = backup.getinfo(f)\n        if max_content_length:\n            if info.file_size > max_content_length:\n                raise zipfile.LargeZipFile\n\n    # Get list of directories in zipfile\n    member_dirs = [os.path.split(m)[0] for m in members if \"/\" in m]\n    if \"db\" not in member_dirs:\n        raise Exception(\n            'CTFd couldn\\'t find the \"db\" folder in this backup. '\n            \"The backup may be malformed or corrupted and the import process cannot continue.\"\n        )\n\n    try:\n        alembic_version = json.loads(backup.open(\"db/alembic_version.json\").read())\n        alembic_version = alembic_version[\"results\"][0][\"version_num\"]\n    except Exception:\n        raise Exception(\n            \"Could not determine appropriate database version. This backup cannot be automatically imported.\"\n        )\n\n    # Check if the alembic version is from CTFd 1.x\n    if alembic_version in (\n        \"1ec4a28fe0ff\",\n        \"2539d8b5082e\",\n        \"7e9efd084c5a\",\n        \"87733981ca0e\",\n        \"a4e30c94c360\",\n        \"c12d2a1b0926\",\n        \"c7225db614c1\",\n        \"cb3cfcc47e2f\",\n        \"cbf5620f8e15\",\n        \"d5a224bf5862\",\n        \"d6514ec92738\",\n        \"dab615389702\",\n        \"e62fd69bd417\",\n    ):\n        raise Exception(\n            \"The version of CTFd that this backup is from is too old to be automatically imported.\"\n        )\n\n    sqlite = get_app_config(\"SQLALCHEMY_DATABASE_URI\").startswith(\"sqlite\")\n    postgres = get_app_config(\"SQLALCHEMY_DATABASE_URI\").startswith(\"postgres\")\n    mysql = get_app_config(\"SQLALCHEMY_DATABASE_URI\").startswith(\"mysql\")\n\n    if erase:\n        # Clear out existing connections to release any locks\n        db.session.close()",
+      "file": "CTFd/utils/exports/__init__.py",
+      "start": 84,
+      "qualname": "import_ctf"
+     },
+     {
+      "id": "ctfd:CTFd/views.py:388",
+      "score": 0.664,
+      "text": "# CTFd/views.py:388-450  files\ndef files(path):\n    \"\"\"\n    Route in charge of dealing with making sure that CTF challenges are only accessible during the competition.\n    :param path:\n    :return:\n    \"\"\"\n    f = Files.query.filter_by(location=path).first_or_404()\n    if f.type == \"challenge\":\n        if challenges_visible():\n            if current_user.is_admin() is False:\n                if not ctftime():\n                    if ctf_ended() and view_after_ctf():\n                        pass\n                    else:\n                        abort(403)\n        else:\n            if not ctftime():\n                abort(403)\n\n            # Allow downloads if a valid token is provided\n            token = request.args.get(\"token\", \"\")\n            try:\n                data = unserialize(token, max_age=3600)\n                user_id = data.get(\"user_id\")\n                team_id = data.get(\"team_id\")\n                file_id = data.get(\"file_id\")\n                user = Users.query.filter_by(id=user_id).first()\n                team = Teams.query.filter_by(id=team_id).first()\n\n                # Check user is admin if challenge_visibility is admins only\n                if (\n                    get_config(ConfigTypes.CHALLENGE_VISIBILITY) == \"admins\"\n                    and user.type != \"admin\"\n                ):\n                    abort(403)\n\n                # Check that the user exists and isn't banned\n                if user:\n                    if user.banned:\n                        abort(403)\n                else:\n                    abort(403)\n\n                # Check that the team isn't banned\n                if team:\n                    if team.banned:\n                        abort(403)\n                else:\n                    pass\n\n                # Check that the token properly refers to the file\n                if file_id != f.id:\n                    abort(403)\n\n            # The token isn't expired or broken\n            except (BadTimeSignature, SignatureExpired, BadSignature):\n                abort(403)\n\n    uploader = get_uploader()\n    try:",
+      "file": "CTFd/views.py",
+      "start": 388,
+      "qualname": "files"
+     },
+     {
+      "id": "ctfd:CTFd/views.py:363",
+      "score": 0.656,
+      "text": "# CTFd/views.py:363-371  tos\ndef tos():\n    tos_url = get_config(\"tos_url\")\n    tos_text = get_config(\"tos_text\")\n    if tos_url:\n        return redirect(tos_url)\n    elif tos_text:\n        return render_template(\"page.html\", content=build_markdown(tos_text))\n    else:\n        abort(404)",
+      "file": "CTFd/views.py",
+      "start": 363,
+      "qualname": "tos"
+     },
+     {
+      "id": "ctfd:CTFd/utils/uploads/__init__.py:52",
+      "score": 0.656,
+      "text": "# CTFd/utils/uploads/__init__.py:52-53  rmdir\ndef rmdir(directory):\n    shutil.rmtree(directory, ignore_errors=True)",
+      "file": "CTFd/utils/uploads/__init__.py",
+      "start": 52,
+      "qualname": "rmdir"
+     },
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:14",
+      "score": 0.652,
+      "text": "# CTFd/utils/validators/__init__.py:14-17  is_safe_url\ndef is_safe_url(target):\n    ref_url = urlparse(request.host_url)\n    test_url = urlparse(urljoin(request.host_url, target))\n    return test_url.scheme in (\"http\", \"https\") and ref_url.netloc == test_url.netloc",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 14,
+      "qualname": "is_safe_url"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "gzip",
+     "deflate",
+     "zstd",
+     "preload_content"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2118,
+   "tokens_out": 46,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"gzip\", \"deflate\", \"zstd\", \"preload_content\"]}",
+     "in": 2118,
+     "out": 46,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2050,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2050,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4168,
+  "tokens_out": 82,
+  "cost_usd_est": 0.0,
+  "seconds": 0.13
+ },
+ "created": "2026-11-10T00:06:19+00:00",
+ "code_version": "a3e1ef4"
+}

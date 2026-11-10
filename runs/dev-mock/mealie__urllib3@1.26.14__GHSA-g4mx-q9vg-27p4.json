@@ -1,0 +1,302 @@
+{
+ "finding_id": "mealie/urllib3@1.26.14/GHSA-g4mx-q9vg-27p4",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-45803",
+   "GHSA-g4mx-q9vg-27p4"
+  ],
+  "cves": [
+   "CVE-2023-45803"
+  ],
+  "cwes": [
+   "CWE-200"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/urllib3@1.26.14/GHSA-g4mx-q9vg-27p4",
+  "first_fixed_above_installed": "1.26.18",
+  "fixed_versions": [
+   "1.26.18",
+   "2.0.7"
+  ],
+  "max_cvss": "5.7",
+  "package": "urllib3",
+  "published": "2023-10-17T20:15:25Z",
+  "summary": "urllib3's request body not stripped after redirect from 303 status changes request method to GET",
+  "target": "mealie",
+  "version": "1.26.14",
+  "vuln_id": "GHSA-g4mx-q9vg-27p4"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/urllib3@1.26.14/GHSA-g4mx-q9vg-27p4",
+    "package": "urllib3",
+    "version": "1.26.14",
+    "vuln_id": "GHSA-g4mx-q9vg-27p4",
+    "aliases": [
+     "CVE-2023-45803",
+     "GHSA-g4mx-q9vg-27p4"
+    ],
+    "summary": "urllib3's request body not stripped after redirect from 303 status changes request method to GET",
+    "max_cvss": "5.7",
+    "fixed_versions": [
+     "1.26.18",
+     "2.0.7"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-g4mx-q9vg-27p4#0",
+      "score": 0.877,
+      "text": "GHSA-g4mx-q9vg-27p4 (CVE-2023-45803)\npackage: urllib3\nsummary: urllib3's request body not stripped after redirect from 303 status changes request method to GET\naffected: >=0, <1.26.18; >=2.0.0, <2.0.7",
+      "vuln_id": "GHSA-g4mx-q9vg-27p4"
+     },
+     {
+      "id": "GHSA-g4mx-q9vg-27p4#1",
+      "score": 0.818,
+      "text": "GHSA-g4mx-q9vg-27p4 (urllib3) details:\nurllib3 previously wouldn't remove the HTTP request body when an HTTP redirect response using status 303 \"See Other\" after the request had its method changed from one that could accept a request body (like `POST`) to `GET` as is required by HTTP RFCs. Although the behavior of removing the request body is not specified in the section for redirects, it can be inferred by piecing together information from different sections and we have observed the behavior in other major HTTP client implementations like curl and web browsers.\n\nFrom [RFC 9110 Section 9.3.1](https://www.rfc-editor.org/rfc/rfc9110.html#name-get):\n\n> A client SHOULD NOT generate content in a GET request unless it is made directly to an origin server that has previously indicated, in or out of band, that such a request has a purpose and will be adequately supported.\n\n## Affected usages",
+      "vuln_id": "GHSA-g4mx-q9vg-27p4"
+     },
+     {
+      "id": "GHSA-g4mx-q9vg-27p4#2",
+      "score": 0.8,
+      "text": "GHSA-g4mx-q9vg-27p4 (urllib3) details:\nBecause the vulnerability requires a previously trusted service to become compromised in order to have an impact on confidentiality we believe the exploitability of this vulnerability is low. Additionally, many users aren't putting sensitive data in HTTP request bodies, if this is the case then this vulnerability isn't exploitable.\n\nBoth of the following conditions must be true to be affected by this vulnerability:\n\n* If you're using urllib3 and submitting sensitive information in the HTTP request body (such as form data or JSON)\n* The origin service is compromised and starts redirecting using 303 to a malicious peer or the redirected-to service becomes compromised.\n\n## Remediation\n\nYou can remediate this vulnerability with any of the following steps:",
+      "vuln_id": "GHSA-g4mx-q9vg-27p4"
+     },
+     {
+      "id": "GHSA-g4mx-q9vg-27p4#3",
+      "score": 0.786,
+      "text": "GHSA-g4mx-q9vg-27p4 (urllib3) details:\n* Upgrade to a patched version of urllib3 (v1.26.18 or v2.0.7)\n* Disable redirects for services that you aren't expecting to respond with redirects with `redirects=False`.\n* Disable automatic redirects with `redirects=False` and handle 303 redirects manually by stripping the HTTP request body.",
+      "vuln_id": "GHSA-g4mx-q9vg-27p4"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#3",
+      "score": 0.799,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\nIf upgrading is not immediately possible, disable [redirects](https://urllib3.readthedocs.io/en/2.6.2/user-guide.html#retrying-requests) by setting `redirect=False` for requests to untrusted source.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     },
+     {
+      "id": "GHSA-34jh-p97f-mpxf#2",
+      "score": 0.783,
+      "text": "GHSA-34jh-p97f-mpxf (urllib3) details:\nUsers should use urllib3's proxy support or disable automatic redirects to achieve safe processing of the `Proxy-Authorization` header, but we still decided to strip the header by default in order to further protect users who aren't using the correct approach.\n\n## Affected usages\n\nWe believe the number of usages affected by this advisory is low. It requires all of the following to be true to be exploited:\n\n* Setting the `Proxy-Authorization` header without using urllib3's built-in proxy support.\n* Not disabling HTTP redirects.\n* Either not using an HTTPS origin server or for the proxy or target origin to redirect to a malicious origin.\n\n## Remediation\n\n* Using the `Proxy-Authorization` header with urllib3's `ProxyManager`.\n* Disabling HTTP redirects using `redirects=False` when sending requests.\n* Not using the `Proxy-Authorization` header.",
+      "vuln_id": "GHSA-34jh-p97f-mpxf"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 9.0,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:208",
+      "score": 0.684,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:208-218  RecipeController.test_parse_recipe_url\n    async def test_parse_recipe_url(self, url: ScrapeRecipeTest):\n        # Debugger should produce the same result as the scraper sees before cleaning\n        try:\n            if scraped_data := await RecipeScraperPackage(url.url).scrape_url():\n                return scraped_data.schema.data\n        except ForceTimeoutException as e:\n            raise HTTPException(\n                status_code=408, detail=ErrorResponse.respond(message=\"Recipe Scraping Timed Out\")\n            ) from e\n\n        return \"recipe_scrapers was unable to scrape this URL\"",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 208,
+      "qualname": "RecipeController.test_parse_recipe_url"
+     },
+     {
+      "id": "mealie:mealie/routes/_base/routers.py:30",
+      "score": 0.671,
+      "text": "# mealie/routes/_base/routers.py:30-45  MealieCrudRoute.get_route_handler\n    def get_route_handler(self) -> Callable:\n        original_route_handler = super().get_route_handler()\n\n        async def custom_route_handler(request: Request) -> Response:\n            with contextlib.suppress(JSONDecodeError):\n                response = await original_route_handler(request)\n                response_body = json.loads(response.body)\n                if isinstance(response_body, dict):\n                    if last_modified := response_body.get(\"updateAt\"):\n                        response.headers[\"last-modified\"] = last_modified\n\n                        # Force no-cache for all responses to prevent browser from caching API calls\n                        response.headers[\"Cache-Control\"] = \"no-cache, no-store, must-revalidate\"\n            return response\n\n        return custom_route_handler",
+      "file": "mealie/routes/_base/routers.py",
+      "start": 30,
+      "qualname": "MealieCrudRoute.get_route_handler"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:417",
+      "score": 0.667,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:417-435  RecipeController.scrape_image_url\n    async def scrape_image_url(self, slug: str, url: ScrapeRecipe):\n        recipe = self.mixins.get_one(slug)\n        data_service = RecipeDataService(recipe.id)\n\n        try:\n            await data_service.scrape_image(url.url)\n        except NotAnImageError as e:\n            raise HTTPException(\n                status_code=400,\n                detail=ErrorResponse.respond(\"Url is not an image\"),\n            ) from e\n        except InvalidDomainError as e:\n            raise HTTPException(\n                status_code=400,\n                detail=ErrorResponse.respond(\"Url is not from an allowed domain\"),\n            ) from e\n\n        recipe.image = cache.cache_key.new_key()\n        self.service.update_one(recipe.slug, recipe)",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 417,
+      "qualname": "RecipeController.scrape_image_url"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:164",
+      "score": 0.665,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:164-191  RecipeController.parse_recipe_url\n    async def parse_recipe_url(self, req: ScrapeRecipe):\n        \"\"\"Takes in a URL and attempts to scrape data and load it into the database\"\"\"\n        try:\n            recipe, extras = await create_from_url(req.url)\n        except ForceTimeoutException as e:\n            raise HTTPException(\n                status_code=408, detail=ErrorResponse.respond(message=\"Recipe Scraping Timed Out\")\n            ) from e\n\n        if req.include_tags:\n            ctx = ScraperContext(self.user.id, self.group_id, self.repos)\n\n            recipe.tags = extras.use_tags(ctx)  # type: ignore\n\n        new_recipe = self.service.create_one(recipe)\n\n        if new_recipe:\n            self.publish_event(\n                event_type=EventTypes.recipe_created,\n                document_data=EventRecipeData(operation=EventOperation.create, recipe_slug=new_recipe.slug),\n                message=self.t(\n                    \"notifications.generic-created-with-url\",\n                    name=new_recipe.name,\n                    url=urls.recipe_url(self.group.slug, new_recipe.slug, self.settings.BASE_URL),\n                ),\n            )\n\n        return new_recipe.slug",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 164,
+      "qualname": "RecipeController.parse_recipe_url"
+     },
+     {
+      "id": "mealie:mealie/routes/spa/__init__.py:29",
+      "score": 0.661,
+      "text": "# mealie/routes/spa/__init__.py:29-38  SPAStaticFiles.get_response\n    async def get_response(self, path: str, scope):\n        try:\n            return await super().get_response(path, scope)\n        except HTTPException as ex:\n            if ex.status_code == 404:\n                return await super().get_response(\"index.html\", scope)\n            else:\n                raise ex\n        except Exception as e:\n            raise e",
+      "file": "mealie/routes/spa/__init__.py",
+      "start": 29,
+      "qualname": "SPAStaticFiles.get_response"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.1,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2302,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": []}",
+     "in": 2302,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2234,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2234,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4536,
+  "tokens_out": 71,
+  "cost_usd_est": 0.0,
+  "seconds": 0.07
+ },
+ "created": "2026-11-10T00:06:33+00:00",
+ "code_version": "a3e1ef4"
+}

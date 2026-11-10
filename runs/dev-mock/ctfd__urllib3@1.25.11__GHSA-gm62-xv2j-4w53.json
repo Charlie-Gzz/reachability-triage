@@ -1,0 +1,306 @@
+{
+ "finding_id": "ctfd/urllib3@1.25.11/GHSA-gm62-xv2j-4w53",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-66418",
+   "GHSA-gm62-xv2j-4w53",
+   "PYSEC-2026-1998"
+  ],
+  "cves": [
+   "CVE-2025-66418"
+  ],
+  "cwes": [
+   "CWE-770"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/urllib3@1.25.11/GHSA-gm62-xv2j-4w53",
+  "first_fixed_above_installed": "2.6.0",
+  "fixed_versions": [
+   "2.6.0"
+  ],
+  "max_cvss": "8.9",
+  "package": "urllib3",
+  "published": "2025-12-05T18:15:19Z",
+  "summary": "urllib3 allows an unbounded number of links in the decompression chain",
+  "target": "ctfd",
+  "version": "1.25.11",
+  "vuln_id": "GHSA-gm62-xv2j-4w53"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "preload_content"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "preload_content"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/urllib3@1.25.11/GHSA-gm62-xv2j-4w53",
+    "package": "urllib3",
+    "version": "1.25.11",
+    "vuln_id": "GHSA-gm62-xv2j-4w53",
+    "aliases": [
+     "CVE-2025-66418",
+     "GHSA-gm62-xv2j-4w53",
+     "PYSEC-2026-1998"
+    ],
+    "summary": "urllib3 allows an unbounded number of links in the decompression chain",
+    "max_cvss": "8.9",
+    "fixed_versions": [
+     "2.6.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 26.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-gm62-xv2j-4w53#0",
+      "score": 0.899,
+      "text": "GHSA-gm62-xv2j-4w53 (CVE-2025-66418)\npackage: urllib3\nsummary: urllib3 allows an unbounded number of links in the decompression chain\naffected: >=1.24, <2.6.0",
+      "vuln_id": "GHSA-gm62-xv2j-4w53"
+     },
+     {
+      "id": "GHSA-gm62-xv2j-4w53#1",
+      "score": 0.861,
+      "text": "GHSA-gm62-xv2j-4w53 (urllib3) details:\n## Impact\n\nurllib3 supports chained HTTP encoding algorithms for response content according to RFC 9110 (e.g., `Content-Encoding: gzip, zstd`).\n\nHowever, the number of links in the decompression chain was unbounded allowing a malicious server to insert a virtually unlimited number of compression steps leading to high CPU usage and massive memory allocation for the decompressed data.\n\n## Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier for HTTP requests to untrusted sources unless they disable content decoding explicitly.\n\n## Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library limits the number of links to 5.",
+      "vuln_id": "GHSA-gm62-xv2j-4w53"
+     },
+     {
+      "id": "GHSA-gm62-xv2j-4w53#2",
+      "score": 0.682,
+      "text": "GHSA-gm62-xv2j-4w53 (urllib3) details:\nIf upgrading is not immediately possible, use [`preload_content=False`](https://urllib3.readthedocs.io/en/2.5.0/advanced-usage.html#streaming-and-i-o) and ensure that `resp.headers[\"content-encoding\"]` contains a safe number of encodings before reading the response content.",
+      "vuln_id": "GHSA-gm62-xv2j-4w53"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#2",
+      "score": 0.816,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\nThe decompression logic could cause urllib3 to fully decode a small amount of highly compressed data in a single operation. This can result in excessive resource consumption (high CPU usage and massive memory allocation for the decompressed data; CWE-409) on the client side, even if the application only requested a small chunk of data.\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier to stream large compressed responses or content from untrusted sources.\n\n`stream()`, `read(amt=256)`, `read1(amt=256)`, `read_chunked(amt=256)`, `readinto(b)` are examples of `urllib3.HTTPResponse` method calls using the affected logic unless decoding is disabled explicitly.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library avoids decompressing data that exceeds the requested amount.",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#2",
+      "score": 0.812,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\nHowever, for HTTP redirect responses, the library would read the entire response body to drain the connection and decompress the content unnecessarily. This decompression occurred even before any read methods were called, and configured read limits did not restrict the amount of decompressed data. As a result, there was no safeguard against decompression bombs. A malicious server could exploit this to trigger excessive resource consumption on the client (high CPU usage and large memory allocations for decompressed data; CWE-409).\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.6.2 and earlier to stream content from untrusted sources by setting `preload_content=False` when they do not disable redirects.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.3 in which the library does not decode content of redirect responses when `preload_content=False`.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     }
+    ],
+    "symbols": [
+     "preload_content"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 42.2,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "preload_content"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['preload_content']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 26.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/csv/__init__.py:248",
+      "score": 0.66,
+      "text": "# CTFd/utils/csv/__init__.py:248-284  load_challenges_csv\ndef load_challenges_csv(dict_reader):\n    for line in dict_reader:\n        flags = line.pop(\"flags\", None)\n        tags = line.pop(\"tags\", None)\n        hints = line.pop(\"hints\", None)\n        challenge_type = line.pop(\"type\", \"standard\")\n\n        # Load in custom type_data\n        type_data = json.loads(line.pop(\"type_data\", \"{}\") or \"{}\")\n        line.update(type_data)\n\n        ChallengeClass = get_chal_class(challenge_type)\n        challenge = ChallengeClass.challenge_model(**line)\n        db.session.add(challenge)\n        db.session.commit()\n\n        if flags:\n            flags = [flag.strip() for flag in flags.split(\",\")]\n            for flag in flags:\n                f = Flags(type=\"static\", challenge_id=challenge.id, content=flag,)\n                db.session.add(f)\n                db.session.commit()\n\n        if tags:\n            tags = [tag.strip() for tag in tags.split(\",\")]\n            for tag in tags:\n                t = Tags(challenge_id=challenge.id, value=tag,)\n                db.session.add(t)\n                db.session.commit()\n\n        if hints:\n            hints = [hint.strip() for hint in hints.split(\",\")]\n            for hint in hints:\n                h = Hints(challenge_id=challenge.id, content=hint,)\n                db.session.add(h)\n                db.session.commit()\n    return True",
+      "file": "CTFd/utils/csv/__init__.py",
+      "start": 248,
+      "qualname": "load_challenges_csv"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/schemas/__init__.py:62",
+      "score": 0.655,
+      "text": "# CTFd/api/v1/schemas/__init__.py:62-100  PaginatedAPIListSuccessResponse.apidoc\n    def apidoc(cls):\n        \"\"\"\n        Helper to inline references from the generated schema\n        \"\"\"\n        schema = cls.schema()\n\n        schema[\"properties\"][\"meta\"] = {\n            \"title\": \"Meta\",\n            \"type\": \"object\",\n            \"properties\": {\n                \"pagination\": {\n                    \"title\": \"Pagination\",\n                    \"type\": \"object\",\n                    \"properties\": {\n                        \"page\": {\"title\": \"Page\", \"type\": \"integer\"},\n                        \"next\": {\"title\": \"Next\", \"type\": \"integer\"},\n                        \"prev\": {\"title\": \"Prev\", \"type\": \"integer\"},\n                        \"pages\": {\"title\": \"Pages\", \"type\": \"integer\"},\n                        \"per_page\": {\"title\": \"Per Page\", \"type\": \"integer\"},\n                        \"total\": {\"title\": \"Total\", \"type\": \"integer\"},\n                    },\n                    \"required\": [\"page\", \"next\", \"prev\", \"pages\", \"per_page\", \"total\"],\n                }\n            },\n            \"required\": [\"pagination\"],\n        }\n\n        try:\n            key = schema[\"properties\"][\"data\"][\"items\"][\"$ref\"]\n            ref = key.split(\"/\").pop()\n            definition = schema[\"definitions\"][ref]\n            schema[\"properties\"][\"data\"][\"items\"] = definition\n            del schema[\"definitions\"][ref]\n            if bool(schema[\"definitions\"]) is False:\n                del schema[\"definitions\"]\n        except KeyError:\n            pass\n\n        return schema",
+      "file": "CTFd/api/v1/schemas/__init__.py",
+      "start": 62,
+      "qualname": "PaginatedAPIListSuccessResponse.apidoc"
+     },
+     {
+      "id": "ctfd:CTFd/schemas/pages.py:module",
+      "score": 0.655,
+      "text": "# CTFd/schemas/pages.py (module level)\nfrom marshmallow import pre_load, validate\nfrom marshmallow_sqlalchemy import field_for\nfrom CTFd.models import Pages, ma\nfrom CTFd.utils import string_types\nclass PageSchema(ma.ModelSchema):\n    class Meta:\n        model = Pages\n        include_fk = True\n        dump_only = (\"id\",)\n    title = field_for(\n        Pages,\n        \"title\",\n        validate=[\n            validate.Length(\n                min=0, max=80, error=\"Page could not be saved. Your title is too long.\",\n            )\n        ],\n    )\n    route = field_for(\n        Pages,\n        \"route\",\n        allow_none=True,\n        validate=[\n            validate.Length(\n                min=0,\n                max=128,\n                error=\"Page could not be saved. Your route is too long.\",\n            )\n        ],\n    )\n    content = field_for(\n        Pages,\n        \"content\",\n        allow_none=True,\n        validate=[\n            validate.Length(\n                min=0,\n                max=65535,\n                error=\"Page could not be saved. Your content is too long.\",\n            )\n        ],\n    )\n    @pre_load",
+      "file": "CTFd/schemas/pages.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/models/__init__.py:79",
+      "score": 0.653,
+      "text": "# CTFd/models/__init__.py:79-80  Pages.__repr__\n    def __repr__(self):\n        return \"<Pages {0}>\".format(self.route)",
+      "file": "CTFd/models/__init__.py",
+      "start": 79,
+      "qualname": "Pages.__repr__"
+     },
+     {
+      "id": "ctfd:CTFd/utils/encoding/__init__.py:39",
+      "score": 0.652,
+      "text": "# CTFd/utils/encoding/__init__.py:39-48  base64decode\ndef base64decode(s):\n    if isinstance(s, string_types):\n        s = s.encode(\"utf-8\")\n\n    decoded = base64.urlsafe_b64decode(s.ljust(len(s) + len(s) % 4, b\"=\"))\n    try:\n        decoded = decoded.decode(\"utf-8\")\n    except UnicodeDecodeError:\n        pass\n    return decoded",
+      "file": "CTFd/utils/encoding/__init__.py",
+      "start": 39,
+      "qualname": "base64decode"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.6,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "preload_content"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2313,
+   "tokens_out": 39,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"preload_content\"]}",
+     "in": 2313,
+     "out": 39,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2245,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2245,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4558,
+  "tokens_out": 75,
+  "cost_usd_est": 0.0,
+  "seconds": 0.1
+ },
+ "created": "2026-11-10T00:06:19+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,368 @@
+{
+ "finding_id": "bench/comment-filter/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+ "config": "dev-mock",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/comment-filter",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2020-6802",
+   "GHSA-q65m-pv3f-wr5r",
+   "PYSEC-2020-27"
+  ],
+  "cves": [
+   "CVE-2020-6802"
+  ],
+  "cwes": [
+   "CWE-79"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/comment-filter/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+  "first_fixed_above_installed": "3.1.1",
+  "fixed_versions": [
+   "3.1.1"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+  "package": "bleach",
+  "published": "2020-02-24T17:33:44Z",
+  "split": "dev",
+  "summary": "XSS in Bleach when noscript and raw tag whitelisted",
+  "target": "bench/comment-filter",
+  "version": "3.1.0",
+  "vuln_id": "GHSA-q65m-pv3f-wr5r"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "bleach.clean",
+   "noscript"
+  ],
+  "reasoning": "mock: 1 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "moderation/filters.py:7",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "moderation/filters.py:1",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "bleach.clean",
+  "noscript"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/comment-filter/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+    "package": "bleach",
+    "version": "3.1.0",
+    "vuln_id": "GHSA-q65m-pv3f-wr5r",
+    "aliases": [
+     "CVE-2020-6802",
+     "GHSA-q65m-pv3f-wr5r",
+     "PYSEC-2020-27"
+    ],
+    "summary": "XSS in Bleach when noscript and raw tag whitelisted",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+    "fixed_versions": [
+     "3.1.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 28.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-q65m-pv3f-wr5r#0",
+      "score": 0.897,
+      "text": "GHSA-q65m-pv3f-wr5r (CVE-2020-6802)\npackage: bleach\nsummary: XSS in Bleach when noscript and raw tag whitelisted\naffected: >=0, <3.1.1",
+      "vuln_id": "GHSA-q65m-pv3f-wr5r"
+     },
+     {
+      "id": "GHSA-q65m-pv3f-wr5r#1",
+      "score": 0.866,
+      "text": "GHSA-q65m-pv3f-wr5r (bleach) details:\n### Impact\n\nA [mutation XSS](https://cure53.de/fp170.pdf) affects users calling `bleach.clean` with `noscript` and a raw tag (see below) in the allowed/whitelisted tags option.\n\n### Patches\n\nv3.1.1\n\n### Workarounds\n\n* modify `bleach.clean` calls to not whitelist `noscript` and one or more of the following raw tags:\n\n```\ntitle\ntextarea\nscript\nstyle\nnoembed\nnoframes\niframe\nxmp\n```\n\n* A strong [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) without `unsafe-inline` and `unsafe-eval` [`script-src`s](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src)) will also help mitigate the risk.",
+      "vuln_id": "GHSA-q65m-pv3f-wr5r"
+     },
+     {
+      "id": "GHSA-m6xf-fq7q-8743#0",
+      "score": 0.851,
+      "text": "GHSA-m6xf-fq7q-8743 (CVE-2020-6816)\npackage: bleach\nsummary: Bleach vulnerable to mutation XSS via whitelisted math or svg and raw tag\naffected: >=0, <3.1.2",
+      "vuln_id": "GHSA-m6xf-fq7q-8743"
+     },
+     {
+      "id": "GHSA-m6xf-fq7q-8743#1",
+      "score": 0.846,
+      "text": "GHSA-m6xf-fq7q-8743 (bleach) details:\n### Impact\n\nA [mutation XSS](https://cure53.de/fp170.pdf) affects users calling `bleach.clean` with all of:\n\n* the `svg` or `math` in the allowed/whitelisted tags\n* an RCDATA tag (see below) in the allowed/whitelisted tags\n* the keyword argument `strip=False`\n\n### Patches\n\nUsers are encouraged to upgrade to bleach v3.1.2 or greater.\n\n### Workarounds\n\n* modify `bleach.clean` calls to use `strip=True`, or not whitelist `math` or `svg` tags and one or more of the following tags:\n\n```\nscript\nnoscript\nstyle\nnoframes\nxmp\nnoembed\niframe\n```\n\n* A strong [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) without `unsafe-inline` and `unsafe-eval` [`script-src`s](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src)) will also help mitigate the risk.",
+      "vuln_id": "GHSA-m6xf-fq7q-8743"
+     }
+    ],
+    "symbols": [
+     "bleach.clean",
+     "noscript"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.6,
+   "output": {
+    "package": "bleach",
+    "import_names": [
+     "bleach"
+    ],
+    "symbols": [
+     "bleach.clean",
+     "noscript"
+    ],
+    "imported": true,
+    "import_locations": [
+     "moderation/filters.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [
+     {
+      "file": "moderation/filters.py",
+      "line": 7,
+      "code": "return bleach.clean(text, tags=ALLOWED, attributes={\"a\": [\"href\"]}, strip=True)",
+      "resolved": "bleach.clean",
+      "function": "moderation.filters:clean_comment",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "moderation.api:post_comment",
+       "moderation.filters:clean_comment"
+      ],
+      "snippet": "    4  \n    5  \n    6  def clean_comment(text: str) -> str:\n    7      return bleach.clean(text, tags=ALLOWED, attributes={\"a\": [\"href\"]}, strip=True)\n    8  \n    9  \n   10  def linkify(text: str) -> str:"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "moderation/filters.py:7",
+      "code": "return bleach.clean(text, tags=ALLOWED, attributes={\"a\": [\"href\"]}, strip=True)",
+      "function": "moderation.filters:clean_comment",
+      "in_test": false
+     },
+     {
+      "location": "moderation/filters.py:11",
+      "code": "return bleach.linkify(text)",
+      "function": "moderation.filters:linkify",
+      "in_test": false
+     }
+    ],
+    "entry_points": 1,
+    "paths": [
+     [
+      "moderation.api:post_comment",
+      "moderation.filters:clean_comment"
+     ]
+    ],
+    "summary": "bleach: imported in 1 non-test location(s); 6 package call/reference site(s); named vulnerable symbols ['bleach.clean', 'noscript']; 1 production call site(s) of those symbols, 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 25.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:moderation/filters.py:7",
+      "score": 1.0,
+      "file": "moderation/filters.py",
+      "start": 7,
+      "qualname": "moderation.filters:clean_comment",
+      "text": "# moderation/filters.py around line 7\n    4  \n    5  \n    6  def clean_comment(text: str) -> str:\n    7      return bleach.clean(text, tags=ALLOWED, attributes={\"a\": [\"href\"]}, strip=True)\n    8  \n    9  \n   10  def linkify(text: str) -> str:"
+     },
+     {
+      "id": "bench/comment-filter:moderation/filters.py:6",
+      "score": 0.71,
+      "text": "# moderation/filters.py:6-7  clean_comment\ndef clean_comment(text: str) -> str:\n    return bleach.clean(text, tags=ALLOWED, attributes={\"a\": [\"href\"]}, strip=True)",
+      "file": "moderation/filters.py",
+      "start": 6,
+      "qualname": "clean_comment"
+     },
+     {
+      "id": "bench/comment-filter:moderation/filters.py:module",
+      "score": 0.682,
+      "text": "# moderation/filters.py (module level)\nimport bleach\nALLOWED = [\"b\", \"i\", \"em\", \"strong\", \"a\"]",
+      "file": "moderation/filters.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/comment-filter:moderation/filters.py:10",
+      "score": 0.631,
+      "text": "# moderation/filters.py:10-11  linkify\ndef linkify(text: str) -> str:\n    return bleach.linkify(text)",
+      "file": "moderation/filters.py",
+      "start": 10,
+      "qualname": "linkify"
+     },
+     {
+      "id": "bench/comment-filter:moderation/api.py:module",
+      "score": 0.562,
+      "text": "# moderation/api.py (module level)\nfrom fastapi import FastAPI\nfrom moderation.filters import clean_comment, linkify\napp = FastAPI()\n@app.post(\"/comments\")",
+      "file": "moderation/api.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/comment-filter:moderation/api.py:9",
+      "score": 0.55,
+      "text": "# moderation/api.py:9-10  post_comment\ndef post_comment(body: dict):\n    return {\"html\": linkify(clean_comment(body[\"text\"]))}",
+      "file": "moderation/api.py",
+      "start": 9,
+      "qualname": "post_comment"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "bleach.clean",
+     "noscript"
+    ],
+    "reasoning": "mock: 1 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "moderation/filters.py:7",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "moderation/filters.py:1",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1203,
+   "tokens_out": 77,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 1 call sites, imported=True\", \"evidence\": [{\"location\": \"moderation/filters.py:7\", \"explanation\": \"static evidence\"}, {\"location\": \"moderation/filters.py:1\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"bleach.clean\", \"noscript\"]}",
+     "in": 1203,
+     "out": 77,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 1155,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1155,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2358,
+  "tokens_out": 112,
+  "cost_usd_est": 0.0,
+  "seconds": 0.06
+ },
+ "created": "2026-11-10T00:06:36+00:00",
+ "code_version": "a3e1ef4"
+}

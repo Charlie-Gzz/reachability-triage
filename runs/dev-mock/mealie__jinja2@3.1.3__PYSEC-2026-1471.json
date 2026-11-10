@@ -1,0 +1,332 @@
+{
+ "finding_id": "mealie/jinja2@3.1.3/PYSEC-2026-1471",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-27516",
+   "GHSA-cpwx-vrp4-4pq7",
+   "PYSEC-2026-1471"
+  ],
+  "cves": [
+   "CVE-2025-27516"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "mealie/jinja2@3.1.3/PYSEC-2026-1471",
+  "first_fixed_above_installed": "3.1.6",
+  "fixed_versions": [
+   "3.1.6"
+  ],
+  "max_cvss": "5.4",
+  "package": "jinja2",
+  "published": "2026-07-07T14:34:50.446969Z",
+  "summary": "Jinja2 vulnerable to sandbox breakout through attr filter selecting format method",
+  "target": "mealie",
+  "version": "3.1.3",
+  "vuln_id": "PYSEC-2026-1471"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "str.format"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/services/email/email_service.py:3",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/services/recipe/template_service.py:5",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "str.format"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/jinja2@3.1.3/PYSEC-2026-1471",
+    "package": "jinja2",
+    "version": "3.1.3",
+    "vuln_id": "PYSEC-2026-1471",
+    "aliases": [
+     "CVE-2025-27516",
+     "GHSA-cpwx-vrp4-4pq7",
+     "PYSEC-2026-1471"
+    ],
+    "summary": "Jinja2 vulnerable to sandbox breakout through attr filter selecting format method",
+    "max_cvss": "5.4",
+    "fixed_versions": [
+     "3.1.6"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-cpwx-vrp4-4pq7#1",
+      "score": 0.887,
+      "text": "GHSA-cpwx-vrp4-4pq7 (jinja2) details:\nAn oversight in how the Jinja sandboxed environment interacts with the `|attr` filter allows an attacker that controls the content of a template to execute arbitrary Python code.\n\nTo exploit the vulnerability, an attacker needs to control the content of a template. Whether that is the case depends on the type of application using Jinja. This vulnerability impacts users of applications which execute untrusted templates.\n\nJinja's sandbox does catch calls to `str.format` and ensures they don't escape the sandbox. However, it's possible to use the `|attr` filter to get a reference to a string's plain format method, bypassing the sandbox. After the fix, the `|attr` filter no longer bypasses the environment's attribute lookup.",
+      "vuln_id": "GHSA-cpwx-vrp4-4pq7"
+     },
+     {
+      "id": "GHSA-cpwx-vrp4-4pq7#0",
+      "score": 0.883,
+      "text": "GHSA-cpwx-vrp4-4pq7 (CVE-2025-27516)\npackage: jinja2\nsummary: Jinja2 vulnerable to sandbox breakout through attr filter selecting format method\naffected: >=0, <3.1.6",
+      "vuln_id": "GHSA-cpwx-vrp4-4pq7"
+     },
+     {
+      "id": "GHSA-q2x7-8rv6-6q7h#1",
+      "score": 0.843,
+      "text": "GHSA-q2x7-8rv6-6q7h (jinja2) details:\nAn oversight in how the Jinja sandboxed environment detects calls to `str.format` allows an attacker that controls the content of a template to execute arbitrary Python code.\n\nTo exploit the vulnerability, an attacker needs to control the content of a template. Whether that is the case depends on the type of application using Jinja. This vulnerability impacts users of applications which execute untrusted templates.\n\nJinja's sandbox does catch calls to `str.format` and ensures they don't escape the sandbox. However, it's possible to store a reference to a malicious string's `format` method, then pass that to a filter that calls it. No such filters are built-in to Jinja, but could be present through custom filters in an application. After the fix, such indirect calls are also handled by the sandbox.",
+      "vuln_id": "GHSA-q2x7-8rv6-6q7h"
+     },
+     {
+      "id": "GHSA-q2x7-8rv6-6q7h#0",
+      "score": 0.804,
+      "text": "GHSA-q2x7-8rv6-6q7h (CVE-2024-56326)\npackage: jinja2\nsummary: Jinja has a sandbox breakout through indirect reference to format method\naffected: >=0, <3.1.5",
+      "vuln_id": "GHSA-q2x7-8rv6-6q7h"
+     }
+    ],
+    "symbols": [
+     "str.format"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 18.7,
+   "output": {
+    "package": "jinja2",
+    "import_names": [
+     "jinja2"
+    ],
+    "symbols": [
+     "str.format"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/services/email/email_service.py:3",
+     "mealie/services/recipe/template_service.py:5"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 4,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/services/email/email_service.py:25",
+      "code": "tmpl = Template(template.read_text())",
+      "function": "mealie.services.email.email_service:EmailTemplate.render_html",
+      "in_test": false
+     },
+     {
+      "location": "mealie/services/recipe/template_service.py:117",
+      "code": "template = Template(template_text)",
+      "function": "mealie.services.recipe.template_service:TemplateService._render_jinja2",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "jinja2: imported in 2 non-test location(s); 4 package call/reference site(s); named vulnerable symbols ['str.format']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/services/recipe/template_service.py:99",
+      "score": 0.711,
+      "text": "# mealie/services/recipe/template_service.py:99-130  TemplateService._render_jinja2\n    def _render_jinja2(self, recipe: Recipe, j2_template: str | None = None) -> Path:\n        \"\"\"\n        Renders a Jinja2 Template in a temporary directory and returns\n        the path to the file.\n        \"\"\"\n        self.__check_temp(self._render_jinja2)\n\n        if j2_template is None:\n            raise ValueError(\"Template must be provided for method _render_jinja2\")\n\n        j2_path: Path = self.directories.TEMPLATE_DIR / j2_template\n\n        if not j2_path.is_file():\n            raise FileNotFoundError(f\"Template '{j2_path}' not found.\")\n\n        with open(j2_path) as f:\n            template_text = f.read()\n\n        template = Template(template_text)\n        rendered_text = template.render(recipe=recipe.dict(by_alias=True))\n\n        save_name = f\"{recipe.slug}{j2_path.suffix}\"\n\n        if self.temp is None:\n            raise ValueError(\"Temporary directory must be provided for method _render_jinja2\")\n\n        save_path = self.temp.joinpath(save_name)\n\n        with open(save_path, \"w\") as f:\n            f.write(rendered_text)\n\n        return save_path",
+      "file": "mealie/services/recipe/template_service.py",
+      "start": 99,
+      "qualname": "TemplateService._render_jinja2"
+     },
+     {
+      "id": "mealie:mealie/schema/response/query_filter.py:243",
+      "score": 0.661,
+      "text": "# mealie/schema/response/query_filter.py:243-287  QueryFilter.get_model_and_model_attr_from_attr_string\n    def get_model_and_model_attr_from_attr_string(\n        cls, attr_string: str, model: type[Model], *, query: Select | None = None\n    ) -> tuple[SqlAlchemyBase, InstrumentedAttribute, Select | None]:\n        \"\"\"\n        Take an attribute string and traverse a database model and its relationships to get the desired\n        model and model attribute. Optionally provide a query to apply the necessary table joins.\n\n        If the attribute string is invalid, raises a `ValueError`.\n\n        For instance, the attribute string \"user.name\" on `RecipeModel`\n        will return the `User` model's `name` attribute.\n\n        Works with shallow attributes (e.g. \"slug\" from `RecipeModel`)\n        and arbitrarily deep ones (e.g. \"recipe.group.preferences\" on `RecipeTimelineEvent`).\n        \"\"\"\n        model_attr: InstrumentedAttribute | None = None\n        attribute_chain = attr_string.split(\".\")\n        if not attribute_chain:\n            raise ValueError(\"invalid query string: attribute name cannot be empty\")\n\n        current_model: SqlAlchemyBase = model  # type: ignore\n        for i, attribute_link in enumerate(attribute_chain):\n            try:\n                model_attr = getattr(current_model, attribute_link)\n\n                # at the end of the chain there are no more relationships to inspect\n                if i == len(attribute_chain) - 1:\n                    break\n\n                if query is not None:\n                    query = query.join(\n                        model_attr, isouter=True\n                    )  # we use outer joins to not unintentionally filter out values\n\n                mapper: Mapper = inspect(current_model)\n                relationship = mapper.relationships[attribute_link]\n                current_model = relationship.mapper.class_\n\n            except (AttributeError, KeyError) as e:\n                raise ValueError(f\"invalid attribute string: '{attr_string}' does not exist on this schema\") from e\n\n        if model_attr is None:\n            raise ValueError(f\"invalid attribute string: '{attr_string}'\")\n\n        return current_model, model_attr, query",
+      "file": "mealie/schema/response/query_filter.py",
+      "start": 243,
+      "qualname": "QueryFilter.get_model_and_model_attr_from_attr_string"
+     },
+     {
+      "id": "mealie:mealie/repos/repository_generic.py:284",
+      "score": 0.659,
+      "text": "# mealie/repos/repository_generic.py:284-298  RepositoryGeneric._count_attribute\n    def _count_attribute(\n        self,\n        attribute_name: str,\n        attr_match: str | None = None,\n        count=True,\n        override_schema=None,\n    ) -> int | list[Schema]:  # sourcery skip: assign-if-exp\n        eff_schema = override_schema or self.schema\n\n        if count:\n            q = select(func.count(self.model.id)).filter(attribute_name == attr_match)\n            return self.session.scalar(q)\n        else:\n            q = self._query(override_schema=eff_schema).filter(attribute_name == attr_match)\n            return [eff_schema.from_orm(x) for x in self.session.execute(q).scalars().all()]",
+      "file": "mealie/repos/repository_generic.py",
+      "start": 284,
+      "qualname": "RepositoryGeneric._count_attribute"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/static.py:module",
+      "score": 0.653,
+      "text": "# mealie/pkgs/img/static.py (module level)\nNOT_WEBP = {\n    \".jpg\",\n    \".jpeg\",\n    \".jpe\",\n    \".jif\",\n    \".jfif\",\n    \".jfi\",\n    \".png\",\n    \".gif\",\n    \".tiff\",\n    \".tif\",\n    \".psd\",\n    \".raw\",\n    \".arw\",\n    \".cr2\",\n    \".nrw\",\n    \".k25\",\n    \".bmp\",\n    \".dib\",\n    \".heif\",\n    \".heic\",\n    \".ind\",\n    \".jp2\",\n    \".svg\",\n    \".svgz\",\n    \".ai\",\n    \".eps\",\n}",
+      "file": "mealie/pkgs/img/static.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/schema/response/query_search.py:module",
+      "score": 0.649,
+      "text": "# mealie/schema/response/query_search.py (module level)\nimport re\nfrom sqlalchemy import Select\nfrom sqlalchemy.orm import Session\nfrom text_unidecode import unidecode\nfrom ...db.models._model_base import SqlAlchemyBase\nfrom .._mealie import MealieModel, SearchType\nclass SearchFilter:\n    \"\"\"\n    0. fuzzy search (postgres only) and tokenized search are performed separately\n    1. take search string and do a little pre-normalization\n    2. look for internal quoted strings and keep them together as \"literal\" parts of the search\n    3. remove special characters from each non-literal search string\n    \"\"\"\n    punctuation = \"!\\#$%&()*+,-./:;<=>?@[\\\\]^_`{|}~\"  # string.punctuation with ' & \" removed\n    quoted_regex = re.compile(r\"\"\"([\"'])(?:(?=(\\\\?))\\2.)*?\\1\"\"\")\n    remove_quotes_regex = re.compile(r\"\"\"['\"](.*)['\"]\"\"\")\n    @classmethod\n    @classmethod",
+      "file": "mealie/schema/response/query_search.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "str.format"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/services/email/email_service.py:3",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/services/recipe/template_service.py:5",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2106,
+   "tokens_out": 84,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/services/email/email_service.py:3\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/services/recipe/template_service.py:5\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"str.format\"]}",
+     "in": 2106,
+     "out": 84,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 2068,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2068,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4174,
+  "tokens_out": 120,
+  "cost_usd_est": 0.0,
+  "seconds": 0.08
+ },
+ "created": "2026-11-10T00:06:23+00:00",
+ "code_version": "a3e1ef4"
+}

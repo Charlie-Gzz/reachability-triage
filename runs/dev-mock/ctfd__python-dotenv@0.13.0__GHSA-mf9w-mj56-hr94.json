@@ -1,0 +1,339 @@
+{
+ "finding_id": "ctfd/python-dotenv@0.13.0/GHSA-mf9w-mj56-hr94",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-28684",
+   "GHSA-mf9w-mj56-hr94",
+   "PYSEC-2026-2270"
+  ],
+  "cves": [
+   "CVE-2026-28684"
+  ],
+  "cwes": [
+   "CWE-59",
+   "CWE-61"
+  ],
+  "direct_dependency": true,
+  "finding_id": "ctfd/python-dotenv@0.13.0/GHSA-mf9w-mj56-hr94",
+  "first_fixed_above_installed": "1.2.2",
+  "fixed_versions": [
+   "1.2.2"
+  ],
+  "max_cvss": "6.6",
+  "package": "python-dotenv",
+  "published": "2026-04-21T14:38:57Z",
+  "summary": "python-dotenv: Symlink following in set_key allows arbitrary file overwrite via cross-device rename fallback",
+  "target": "ctfd",
+  "version": "0.13.0",
+  "vuln_id": "GHSA-mf9w-mj56-hr94"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "set_key",
+   "unset_key",
+   "rewrite",
+   "shutil.move",
+   "os.replace"
+  ],
+  "reasoning": "mock: 2 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "set_key",
+  "unset_key",
+  "rewrite",
+  "shutil.move",
+  "os.replace",
+  "move",
+  "replace",
+  "read"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/python-dotenv@0.13.0/GHSA-mf9w-mj56-hr94",
+    "package": "python-dotenv",
+    "version": "0.13.0",
+    "vuln_id": "GHSA-mf9w-mj56-hr94",
+    "aliases": [
+     "CVE-2026-28684",
+     "GHSA-mf9w-mj56-hr94",
+     "PYSEC-2026-2270"
+    ],
+    "summary": "python-dotenv: Symlink following in set_key allows arbitrary file overwrite via cross-device rename fallback",
+    "max_cvss": "6.6",
+    "fixed_versions": [
+     "1.2.2"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-mf9w-mj56-hr94#0",
+      "score": 0.894,
+      "text": "GHSA-mf9w-mj56-hr94 (CVE-2026-28684)\npackage: python-dotenv\nsummary: python-dotenv: Symlink following in set_key allows arbitrary file overwrite via cross-device rename fallback\naffected: >=0, <1.2.2",
+      "vuln_id": "GHSA-mf9w-mj56-hr94"
+     },
+     {
+      "id": "GHSA-mf9w-mj56-hr94#1",
+      "score": 0.833,
+      "text": "GHSA-mf9w-mj56-hr94 (python-dotenv) details:\n### Summary\n\n`set_key()` and `unset_key()` in python-dotenv follow symbolic links when rewriting `.env` files, allowing a local attacker to overwrite arbitrary files via a crafted symlink when a cross-device rename fallback is triggered.\n\n### Details\n\nThe `rewrite()` context manager in `dotenv/main.py` is used by both `set_key()` and `unset_key()` to safely modify `.env` files. It works by writing to a temporary file (created in the system's default temp directory, typically `/tmp`) and then using `shutil.move()` to replace the original file.\n\nWhen the `.env` path is a symbolic link and the temp directory resides on a different filesystem than the target (a common configuration on Linux systems using tmpfs for `/tmp`), the following sequence occurs:",
+      "vuln_id": "GHSA-mf9w-mj56-hr94"
+     },
+     {
+      "id": "GHSA-mf9w-mj56-hr94#5",
+      "score": 0.825,
+      "text": "GHSA-mf9w-mj56-hr94 (python-dotenv) details:\n# Attacker pre-places a symlink at the path the application will use as .env\n    env_symlink = os.path.join(workdir, \".env\")\n    os.symlink(target, env_symlink)\n\nbefore = open(target).read()\n\n# Application writes a new key -- triggers the cross-device fallback\n    set_key(env_symlink, \"INJECTED\", \"attacker_value\")\n\nafter = open(target).read()\n\nprint(\"Before:\", repr(before))\n    print(\"After: \", repr(after))\n    print(\"Symlink target overwritten:\", target)\n```\n\n**Expected output:**\n```\nBefore: 'DB_PASSWORD=supersecret\\n'\nAfter:  \"DB_PASSWORD=supersecret\\nINJECTED='attacker_value'\\n\"\nSymlink target overwritten: /home/user/tmp806nut2g/victim_config.txt\n```\n\n### Remediation\n\nThe fix changes the `rewrite()` context manager in the following ways:",
+      "vuln_id": "GHSA-mf9w-mj56-hr94"
+     },
+     {
+      "id": "GHSA-mf9w-mj56-hr94#6",
+      "score": 0.812,
+      "text": "GHSA-mf9w-mj56-hr94 (python-dotenv) details:\n1. **Symlinks are no longer followed by default.** When the `.env` path is a symlink, `rewrite()` now resolves it to the real path before proceeding, or (by default) operates on the symlink entry itself rather than the target.\n2. **A `follow_symlinks: bool = False` parameter** is added to `set_key()` and `unset_key()` for users who explicitly need the old behavior.\n3. **Temp files are written in the same directory** as the target `.env` file (instead of the system temp directory), eliminating the cross-device rename condition entirely.\n4. **`os.replace()` is used instead of `shutil.move()`**, providing atomic replacement without symlink-following fallback behavior.\n\nUsers are advised to upgrade to the patched version as soon as it is available on PyPI.\n\n### Timeline",
+      "vuln_id": "GHSA-mf9w-mj56-hr94"
+     }
+    ],
+    "symbols": [
+     "set_key",
+     "unset_key",
+     "rewrite",
+     "shutil.move",
+     "os.replace",
+     "move",
+     "replace",
+     "read"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 100.2,
+   "output": {
+    "package": "python-dotenv",
+    "import_names": [
+     "dotenv"
+    ],
+    "symbols": [
+     "set_key",
+     "unset_key",
+     "rewrite",
+     "shutil.move",
+     "os.replace",
+     "move",
+     "replace",
+     "read"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [
+     {
+      "location": "CTFd/themes/core/templates/challenge.html:88",
+      "symbol": "os.replace"
+     },
+     {
+      "location": "CTFd/themes/core/templates/challenge.html:88",
+      "symbol": "replace"
+     }
+    ],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "python-dotenv: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['set_key', 'unset_key', 'rewrite', 'shutil.move', 'os.replace', 'move', 'replace', 'read']; 0 production call site(s) of those symbols, 0 with a path from an entry point; 2 template use(s)"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 31.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/__init__.py:38",
+      "score": 0.659,
+      "text": "# CTFd/__init__.py:38-46  CTFdRequest.path\n    def path(self):\n        \"\"\"\n        Hijack the original Flask request path because it does not account for subdirectory deployments in an intuitive\n        manner. We append script_root so that the path always points to the full path as seen in the browser.\n        e.g. /subdirectory/path/route vs /path/route\n\n        :return: string\n        \"\"\"\n        return self.script_root + super(CTFdRequest, self).path",
+      "file": "CTFd/__init__.py",
+      "start": 38,
+      "qualname": "CTFdRequest.path"
+     },
+     {
+      "id": "ctfd:CTFd/utils/uploads/__init__.py:52",
+      "score": 0.65,
+      "text": "# CTFd/utils/uploads/__init__.py:52-53  rmdir\ndef rmdir(directory):\n    shutil.rmtree(directory, ignore_errors=True)",
+      "file": "CTFd/utils/uploads/__init__.py",
+      "start": 52,
+      "qualname": "rmdir"
+     },
+     {
+      "id": "ctfd:CTFd/utils/security/signing.py:module",
+      "score": 0.648,
+      "text": "# CTFd/utils/security/signing.py (module level)\nimport hashlib\nimport hmac as _hmac\nfrom flask import current_app\nfrom itsdangerous import Signer\nfrom itsdangerous.exc import (  # noqa: F401\n    BadSignature,\n    BadTimeSignature,\n    SignatureExpired,\n)\nfrom itsdangerous.url_safe import URLSafeTimedSerializer\nfrom CTFd.utils import string_types",
+      "file": "CTFd/utils/security/signing.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/__init__.py:59",
+      "score": 0.646,
+      "text": "# CTFd/utils/__init__.py:59-73  set_config\ndef set_config(key, value):\n    config = Configs.query.filter_by(key=key).first()\n    if config:\n        config.value = value\n    else:\n        config = Configs(key=key, value=value)\n        db.session.add(config)\n    db.session.commit()\n\n    # Convert enums to raw string values to cache better\n    if isinstance(key, Enum):\n        key = str(key)\n\n    cache.delete_memoized(_get_config, key)\n    return config",
+      "file": "CTFd/utils/__init__.py",
+      "start": 59,
+      "qualname": "set_config"
+     },
+     {
+      "id": "ctfd:CTFd/utils/security/sanitize.py:module",
+      "score": 0.644,
+      "text": "# CTFd/utils/security/sanitize.py (module level)\nfrom pybluemonday import UGCPolicy\n# Copied from lxml:\n# https://github.com/lxml/lxml/blob/e986a9cb5d54827c59aefa8803bc90954d67221e/src/lxml/html/defs.py#L38\n# fmt: off\nSAFE_ATTRS = (\n    'abbr', 'accept', 'accept-charset', 'accesskey', 'action', 'align',\n    'alt', 'axis', 'border', 'cellpadding', 'cellspacing', 'char', 'charoff',\n    'charset', 'checked', 'cite', 'class', 'clear', 'cols', 'colspan',\n    'color', 'compact', 'coords', 'datetime', 'dir', 'disabled', 'enctype',\n    'for', 'frame', 'headers', 'height', 'href', 'hreflang', 'hspace', 'id',\n    'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'media', 'method',\n    'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt', 'readonly',\n    'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape',\n    'size', 'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title',\n    'type', 'usemap', 'valign', 'value', 'vspace', 'width'\n)\n# fmt: on\nPAGE_STRUCTURE_TAGS = {\n    \"title\": [],\n}\nMETA_TAGS = {\n    \"meta\": [\"name\", \"content\", \"property\"],\n}\nFORM_TAGS = {\n    \"form\": [\"method\", \"action\"],\n    \"button\": [\"name\", \"type\", \"value\", \"disabled\"],\n    \"input\": [\"name\", \"type\", \"value\", \"placeholder\"],\n    \"select\": [\"name\", \"value\", \"placeholder\"],\n    \"option\": [\"value\"],\n    \"textarea\": [\"name\", \"value\", \"placeholder\"],\n    \"label\": [\"for\"],\n}\nANNOYING_TAGS = {\n    \"blink\": [],\n    \"marquee\": [],\n}\nMEDIA_TAGS = {\n    \"audio\": [\"autoplay\", \"controls\", \"crossorigin\", \"loop\", \"muted\", \"preload\", \"src\"],\n    \"video\": [\n        \"autoplay\",\n        \"buffered\",\n        \"controls\",\n        \"crossorigin\",\n        \"loop\",\n        \"muted\",\n        \"playsinline\",\n        \"poster\",\n        \"preload\",\n        \"src\",\n    ],\n    \"source\": [\"src\", \"type\"],\n    \"iframe\": [\"width\", \"height\", \"src\", \"frameborder\", \"allow\", \"allowfullscreen\"],\n}\nSANITIZER = UGCPolicy()\nfor TAGS in (PAGE_STRUCTURE_TAGS, META_TAGS, FORM_TAGS, ANNOYING_TAGS, MEDIA_TAGS):\n    for element in TAGS:\n        SANITIZER.AllowElements(element)\n        SANITIZER.AllowAttrs(*TAGS[element]).OnElements(element)\n# Allow safe attrs copied from lxml\nSANITIZER.AllowAttrs(*SAFE_ATTRS).Globally()",
+      "file": "CTFd/utils/security/sanitize.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "set_key",
+     "unset_key",
+     "rewrite",
+     "shutil.move",
+     "os.replace"
+    ],
+    "reasoning": "mock: 2 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1897,
+   "tokens_out": 49,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 2 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"set_key\", \"unset_key\", \"rewrite\", \"shutil.move\", \"os.replace\"]}",
+     "in": 1897,
+     "out": 49,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 1828,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1828,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3725,
+  "tokens_out": 84,
+  "cost_usd_est": 0.0,
+  "seconds": 0.17
+ },
+ "created": "2026-11-10T00:06:18+00:00",
+ "code_version": "a3e1ef4"
+}

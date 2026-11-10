@@ -1,0 +1,316 @@
+{
+ "finding_id": "ctfd/idna@2.10/GHSA-65pc-fj4g-8rjx",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-45409",
+   "GHSA-65pc-fj4g-8rjx",
+   "PYSEC-2026-215"
+  ],
+  "cves": [
+   "CVE-2026-45409"
+  ],
+  "cwes": [
+   "CWE-1333"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/idna@2.10/GHSA-65pc-fj4g-8rjx",
+  "first_fixed_above_installed": "3.15",
+  "fixed_versions": [
+   "3.15"
+  ],
+  "max_cvss": "6.9",
+  "package": "idna",
+  "published": "2026-05-19T14:34:32Z",
+  "summary": "Internationalized Domain Names in Applications (IDNA): Specially crafted inputs to idna.encode() can bypass CVE-2024-3651 fix",
+  "target": "ctfd",
+  "version": "2.10",
+  "vuln_id": "GHSA-65pc-fj4g-8rjx"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "idna.encode",
+   "valid_contexto",
+   "encode"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "idna.encode",
+  "valid_contexto",
+  "encode"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/idna@2.10/GHSA-65pc-fj4g-8rjx",
+    "package": "idna",
+    "version": "2.10",
+    "vuln_id": "GHSA-65pc-fj4g-8rjx",
+    "aliases": [
+     "CVE-2026-45409",
+     "GHSA-65pc-fj4g-8rjx",
+     "PYSEC-2026-215"
+    ],
+    "summary": "Internationalized Domain Names in Applications (IDNA): Specially crafted inputs to idna.encode() can bypass CVE-2024-3651 fix",
+    "max_cvss": "6.9",
+    "fixed_versions": [
+     "3.15"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 32.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-65pc-fj4g-8rjx#0",
+      "score": 0.893,
+      "text": "GHSA-65pc-fj4g-8rjx (CVE-2026-45409)\npackage: idna\nsummary: Internationalized Domain Names in Applications (IDNA): Specially crafted inputs to idna.encode() can bypass CVE-2024-3651 fix\naffected: >=0, <3.15",
+      "vuln_id": "GHSA-65pc-fj4g-8rjx"
+     },
+     {
+      "id": "GHSA-65pc-fj4g-8rjx#1",
+      "score": 0.787,
+      "text": "GHSA-65pc-fj4g-8rjx (idna) details:\nThis is the same issue as CVE-2024-3651, however the original remediation in 2024 was not a complete fix. Payloads such as `\"\\u0660\" * N` or `\"\\u30fb\" * N + \"\\u6f22\"` utilize the `valid_contexto` function prior to length rejection, and for high values of `N` will take a long time to process.\n\n### Impact\nA specially crafted argument to the `idna.encode()` function could consume significant resources. This may lead to a denial-of-service.\n\n### Patches\nStarting in version 3.14, the function rejects long inputs as soon as practicable prior to any further processing to minimize resource consumption. In version 3.15, this approach was extended to lesser used alternate functions (i.e. per-label conversions and codec support).",
+      "vuln_id": "GHSA-65pc-fj4g-8rjx"
+     },
+     {
+      "id": "GHSA-65pc-fj4g-8rjx#2",
+      "score": 0.778,
+      "text": "GHSA-65pc-fj4g-8rjx (idna) details:\n### Workarounds\nDomain names cannot exceed 253 characters in length, if this length limit is enforced prior to passing the domain to the `idna.encode()` function it should no longer consume significant resources. This is triggered by arbitrarily large inputs that would not occur in normal usage, but may be passed to the library assuming there is no preliminary input validation by the higher-level application.",
+      "vuln_id": "GHSA-65pc-fj4g-8rjx"
+     },
+     {
+      "id": "GHSA-jjg7-2v4v-x38h#0",
+      "score": 0.861,
+      "text": "GHSA-jjg7-2v4v-x38h (CVE-2024-3651)\npackage: idna\nsummary: Internationalized Domain Names in Applications (IDNA) vulnerable to denial of service from specially crafted inputs to idna.encode\naffected: >=0, <3.7",
+      "vuln_id": "GHSA-jjg7-2v4v-x38h"
+     },
+     {
+      "id": "GHSA-jjg7-2v4v-x38h#1",
+      "score": 0.791,
+      "text": "GHSA-jjg7-2v4v-x38h (idna) details:\n### Impact\nA specially crafted argument to the `idna.encode()` function could consume significant resources. This may lead to a denial-of-service.\n\n### Patches\nThe function has been refined to reject such strings without the associated resource consumption in version 3.7.\n\n### Workarounds\nDomain names cannot exceed 253 characters in length, if this length limit is enforced prior to passing the domain to the `idna.encode()` function it should no longer consume significant resources. This is triggered by arbitrarily large inputs that would not occur in normal usage, but may be passed to the library assuming there is no preliminary input validation by the higher-level application.",
+      "vuln_id": "GHSA-jjg7-2v4v-x38h"
+     }
+    ],
+    "symbols": [
+     "idna.encode",
+     "valid_contexto",
+     "encode"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 62.1,
+   "output": {
+    "package": "idna",
+    "import_names": [
+     "idna"
+    ],
+    "symbols": [
+     "idna.encode",
+     "valid_contexto",
+     "encode"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "idna: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['idna.encode', 'valid_contexto', 'encode']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/schemas/challenges.py:module",
+      "score": 0.655,
+      "text": "# CTFd/schemas/challenges.py (module level)\nfrom marshmallow import validate\nfrom marshmallow.exceptions import ValidationError\nfrom marshmallow_sqlalchemy import field_for\nfrom CTFd.models import Challenges, ma\nclass ChallengeRequirementsValidator(validate.Validator):\n    default_message = \"Error parsing challenge requirements\"\nclass ChallengeSchema(ma.ModelSchema):\n    class Meta:\n        model = Challenges\n        include_fk = True\n        dump_only = (\"id\",)\n    name = field_for(\n        Challenges,\n        \"name\",\n        validate=[\n            validate.Length(\n                min=0,\n                max=80,\n                error=\"Challenge could not be saved. Challenge name too long\",\n            )\n        ],\n    )\n    category = field_for(\n        Challenges,\n        \"category\",\n        validate=[\n            validate.Length(\n                min=0,\n                max=80,\n                error=\"Challenge could not be saved. Challenge category too long\",\n            )\n        ],\n    )\n    description = field_for(\n        Challenges,\n        \"description\",\n        allow_none=True,\n        validate=[\n            validate.Length(\n                min=0,\n                max=65535,\n                error=\"Challenge could not be saved. Challenge description too long\",\n            )\n        ],\n    )\n    requirements = field_for(\n        Challenges, \"requirements\", validate=[ChallengeRequirementsValidator()],\n    )",
+      "file": "CTFd/schemas/challenges.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:14",
+      "score": 0.642,
+      "text": "# CTFd/utils/validators/__init__.py:14-17  is_safe_url\ndef is_safe_url(target):\n    ref_url = urlparse(request.host_url)\n    test_url = urlparse(urljoin(request.host_url, target))\n    return test_url.scheme in (\"http\", \"https\") and ref_url.netloc == test_url.netloc",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 14,
+      "qualname": "is_safe_url"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/challenges.py:512",
+      "score": 0.638,
+      "text": "# CTFd/api/v1/challenges.py:512-525  Challenge.patch\n    def patch(self, challenge_id):\n        data = request.get_json()\n\n        # Load data through schema for validation but not for insertion\n        schema = ChallengeSchema()\n        response = schema.load(data)\n        if response.errors:\n            return {\"success\": False, \"errors\": response.errors}, 400\n\n        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()\n        challenge_class = get_chal_class(challenge.type)\n        challenge = challenge_class.update(challenge, request)\n        response = challenge_class.read(challenge)\n        return {\"success\": True, \"data\": response}",
+      "file": "CTFd/api/v1/challenges.py",
+      "start": 512,
+      "qualname": "Challenge.patch"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/helpers/request.py:15",
+      "score": 0.636,
+      "text": "# CTFd/api/v1/helpers/request.py:15-60  validate_args\ndef validate_args(spec, location):\n    \"\"\"\n    A rough implementation of webargs using pydantic schemas. You can pass a\n    pydantic schema as spec or create it on the fly as follows:\n\n    @validate_args({\"name\": (str, None), \"id\": (int, None)}, location=\"query\")\n    \"\"\"\n    if isinstance(spec, dict):\n        spec = create_model(\"\", **spec)\n\n    schema = spec.schema()\n    props = schema.get(\"properties\", {})\n    required = schema.get(\"required\", [])\n\n    for k in props:\n        if k in required:\n            props[k][\"required\"] = True\n        props[k][\"in\"] = location\n\n    def decorator(func):\n        # Inject parameters information into the Flask-Restx apidoc attribute.\n        # Not really a good solution. See https://github.com/CTFd/CTFd/issues/1504\n        apidoc = getattr(func, \"__apidoc__\", {\"params\": {}})\n        apidoc[\"params\"].update(props)\n        func.__apidoc__ = apidoc\n\n        @wraps(func)\n        def wrapper(*args, **kwargs):\n            data = ARG_LOCATIONS[location]()\n            try:\n                # Try to load data according to pydantic spec\n                loaded = spec(**data).dict(exclude_unset=True)\n            except ValidationError as e:\n                # Handle reporting errors when invalid\n                resp = {}\n                errors = e.errors()\n                for err in errors:\n                    loc = err[\"loc\"][0]\n                    msg = err[\"msg\"]\n                    resp[loc] = msg\n                return {\"success\": False, \"errors\": resp}, 400\n            return func(*args, loaded, **kwargs)\n\n        return wrapper\n\n    return decorator",
+      "file": "CTFd/api/v1/helpers/request.py",
+      "start": 15,
+      "qualname": "validate_args"
+     },
+     {
+      "id": "ctfd:CTFd/models/__init__.py:792",
+      "score": 0.633,
+      "text": "# CTFd/models/__init__.py:792-793  Submissions.__repr__\n    def __repr__(self):\n        return f\"<Submission id={self.id}, challenge_id={self.challenge_id}, ip={self.ip}, provided={self.provided}>\"",
+      "file": "CTFd/models/__init__.py",
+      "start": 792,
+      "qualname": "Submissions.__repr__"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "idna.encode",
+     "valid_contexto",
+     "encode"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2072,
+   "tokens_out": 45,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"idna.encode\", \"valid_contexto\", \"encode\"]}",
+     "in": 2072,
+     "out": 45,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2005,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2005,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4077,
+  "tokens_out": 81,
+  "cost_usd_est": 0.0,
+  "seconds": 0.13
+ },
+ "created": "2026-11-10T00:06:16+00:00",
+ "code_version": "a3e1ef4"
+}

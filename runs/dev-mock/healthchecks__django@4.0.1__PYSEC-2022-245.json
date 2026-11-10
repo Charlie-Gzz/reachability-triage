@@ -1,0 +1,438 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-245",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-36359",
+   "GHSA-8x94-hmjh-97hq",
+   "PYSEC-2022-245"
+  ],
+  "cves": [
+   "CVE-2022-36359"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-245",
+  "first_fixed_above_installed": "4.0.7",
+  "fixed_versions": [
+   "3.2.15",
+   "4.0.7"
+  ],
+  "max_cvss": null,
+  "package": "django",
+  "published": "2022-08-03T14:15:00Z",
+  "summary": "An issue was discovered in the HTTP FileResponse class in Django 3.2 before 3.2.15 and 4.0 before 4.0.7. An application is vulnerable to a reflected file download (RFD) attack that sets the Content-Di",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "PYSEC-2022-245"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "FileResponse"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/accounts/admin.py:1",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:2",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "FileResponse"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-245",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "PYSEC-2022-245",
+    "aliases": [
+     "CVE-2022-36359",
+     "GHSA-8x94-hmjh-97hq",
+     "PYSEC-2022-245"
+    ],
+    "summary": "An issue was discovered in the HTTP FileResponse class in Django 3.2 before 3.2.15 and 4.0 before 4.0.7. An application is vulnerable to a reflected file download (RFD) attack that sets the Content-Di",
+    "max_cvss": null,
+    "fixed_versions": [
+     "3.2.15",
+     "4.0.7"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 38.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-8x94-hmjh-97hq#1",
+      "score": 0.898,
+      "text": "GHSA-8x94-hmjh-97hq (django) details:\nAn issue was discovered in the HTTP FileResponse class in Django 3.2 before 3.2.15 and 4.0 before 4.0.7. An application is vulnerable to a reflected file download (RFD) attack that sets the Content-Disposition header of a FileResponse when the filename is derived from user-supplied input.",
+      "vuln_id": "GHSA-8x94-hmjh-97hq"
+     },
+     {
+      "id": "GHSA-8x94-hmjh-97hq#0",
+      "score": 0.807,
+      "text": "GHSA-8x94-hmjh-97hq (CVE-2022-36359)\npackage: django\nsummary: Django vulnerable to Reflected File Download attack\naffected: >=0, <3.2.15; >=4.0, <4.0.7",
+      "vuln_id": "GHSA-8x94-hmjh-97hq"
+     },
+     {
+      "id": "GHSA-vjjp-9r83-22rc#1",
+      "score": 0.787,
+      "text": "GHSA-vjjp-9r83-22rc (django) details:\nDirectory traversal vulnerability in Django 1.4.x before 1.4.7, 1.5.x before 1.5.3, and 1.6.x before 1.6 beta 3 allows remote attackers to read arbitrary files via a file path in the ALLOWED_INCLUDE_ROOTS setting followed by a `..` (dot dot) in a ssi template tag.",
+      "vuln_id": "GHSA-vjjp-9r83-22rc"
+     },
+     {
+      "id": "GHSA-7g9h-c88w-r7h2#1",
+      "score": 0.779,
+      "text": "GHSA-7g9h-c88w-r7h2 (django) details:\nDirectory traversal vulnerability in Django 1.1.x before 1.1.4 and 1.2.x before 1.2.5 on Windows might allow remote attackers to read or execute files via a / (slash) character in a key in a session cookie, related to session replays.",
+      "vuln_id": "GHSA-7g9h-c88w-r7h2"
+     }
+    ],
+    "symbols": [
+     "FileResponse"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 66.4,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "FileResponse"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols ['FileResponse']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 39.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/front/tests/test_serve_doc.py:module",
+      "score": 0.675,
+      "text": "# hc/front/tests/test_serve_doc.py (module level)\nfrom unittest.mock import patch\nfrom django.test import TestCase\nclass ServeDocTestCase(TestCase):\n    @patch(\"hc.front.views.os.path.exists\")",
+      "file": "hc/front/tests/test_serve_doc.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/api/management/commands/smtpd.py:module",
+      "score": 0.668,
+      "text": "# hc/api/management/commands/smtpd.py (module level)\nimport asyncore\nimport email\nimport email.policy\nimport re\nfrom smtpd import SMTPServer\nfrom django.core.management.base import BaseCommand\nfrom django.db import connections\nfrom hc.api.models import Check\nRE_UUID = re.compile(\n    \"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$\"\n)\nclass Listener(SMTPServer):\nclass Command(BaseCommand):\n    help = \"Listen for ping emails\"",
+      "file": "hc/api/management/commands/smtpd.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/lib/badges.py:module",
+      "score": 0.667,
+      "text": "# hc/lib/badges.py (module level)\nfrom django.conf import settings\nfrom django.core.signing import base64_hmac\nfrom django.template.loader import render_to_string\nfrom django.urls import reverse\nWIDTHS = {\n    \"a\": 7,\n    \"b\": 7,\n    \"c\": 6,\n    \"d\": 7,\n    \"e\": 6,\n    \"f\": 4,\n    \"g\": 7,\n    \"h\": 7,\n    \"i\": 3,\n    \"j\": 3,\n    \"k\": 7,\n    \"l\": 3,\n    \"m\": 10,\n    \"n\": 7,\n    \"o\": 7,\n    \"p\": 7,\n    \"q\": 7,\n    \"r\": 4,\n    \"s\": 6,\n    \"t\": 5,\n    \"u\": 7,\n    \"v\": 7,\n    \"w\": 9,\n    \"x\": 6,\n    \"y\": 7,\n    \"z\": 7,\n    \"0\": 7,\n    \"1\": 6,\n    \"2\": 7,\n    \"3\": 7,\n    \"4\": 7,\n    \"5\": 7,\n    \"6\": 7,\n    \"7\": 7,\n    \"8\": 7,\n    \"9\": 7,\n    \"A\": 8,\n    \"B\": 7,\n    \"C\": 8,\n    \"D\": 8,\n    \"E\": 7,\n    \"F\": 6,\n    \"G\": 9,\n    \"H\": 8,\n    \"I\": 3,\n    \"J\": 4,\n    \"K\": 7,\n    \"L\": 6,\n    \"M\": 10,\n    \"N\": 8,\n    \"O\": 9,\n    \"P\": 6,\n    \"Q\": 9,\n    \"R\": 7,\n    \"S\": 7,",
+      "file": "hc/lib/badges.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/settings.py:module",
+      "score": 0.659,
+      "text": "# hc/settings.py (module level)\n\"\"\"\nDjango settings for healthchecks project.\nFor the full list of settings and their values, see\nhttps://docs.djangoproject.com/en/3.1/ref/settings/\n\"\"\"\nimport os\nBASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\nSECRET_KEY = os.getenv(\"SECRET_KEY\", \"---\")\nMETRICS_KEY = os.getenv(\"METRICS_KEY\")\nDEBUG = envbool(\"DEBUG\", \"True\")\nALLOWED_HOSTS = os.getenv(\"ALLOWED_HOSTS\", \"*\").split(\",\")\nDEFAULT_FROM_EMAIL = os.getenv(\"DEFAULT_FROM_EMAIL\", \"healthchecks@example.org\")\nSUPPORT_EMAIL = os.getenv(\"SUPPORT_EMAIL\")\nUSE_PAYMENTS = envbool(\"USE_PAYMENTS\", \"False\")\nREGISTRATION_OPEN = envbool(\"REGISTRATION_OPEN\", \"True\")\nVERSION = \"\"\nwith open(os.path.join(BASE_DIR, \"CHANGELOG.md\"), encoding=\"utf-8\") as f:\n    for line in f.readlines():\n        if line.startswith(\"## v\"):\n            VERSION = line.split()[1]\n            break\nINSTALLED_APPS = (\n    \"hc.accounts\",\n    \"django.contrib.admin\",\n    \"django.contrib.auth\",\n    \"django.contrib.contenttypes\",\n    \"django.contrib.humanize\",\n    \"django.contrib.sessions\",\n    \"django.contrib.messages\",\n    \"django.contrib.staticfiles\",\n    \"compressor\",\n    \"hc.api\",\n    \"hc.front\",\n    \"hc.payments\",\n)\nMIDDLEWARE = (\n    \"django.middleware.security.SecurityMiddleware\",\n    \"whitenoise.middleware.WhiteNoiseMiddleware\",\n    \"django.contrib.sessions.middleware.SessionMiddleware\",\n    \"django.middleware.common.CommonMiddleware\",\n    \"django.middleware.csrf.CsrfViewMiddleware\",\n    \"django.contrib.auth.middleware.AuthenticationMiddleware\",\n    \"hc.accounts.middleware.CustomHeaderMiddleware\",\n    \"django.contrib.messages.middleware.MessageMiddleware\",\n    \"django.middleware.clickjacking.XFrameOptionsMiddleware\",\n    \"django.middleware.locale.LocaleMiddleware\",\n    \"hc.accounts.middleware.TeamAccessMiddleware\",\n)\nAUTHENTICATION_BACKENDS = (\n    \"hc.accounts.backends.EmailBackend\",\n    \"hc.accounts.backends.ProfileBackend\",\n)\nREMOTE_USER_HEADER = os.getenv(\"REMOTE_USER_HEADER\")\nif REMOTE_USER_HEADER:\n    AUTHENTICATION_BACKENDS = (\"hc.accounts.backends.CustomHeaderBackend\",)\nROOT_URLCONF = \"hc.urls\"\nTEMPLATES = [\n    {\n        \"BACKEND\": \"django.template.backends.django.DjangoTemplates\",\n        \"DIRS\": [os.path.join(BASE_DIR, \"templates\")],",
+      "file": "hc/settings.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/front/tests/test_trello_settings.py:module",
+      "score": 0.658,
+      "text": "# hc/front/tests/test_trello_settings.py (module level)\nfrom unittest.mock import patch\nfrom django.test.utils import override_settings\nfrom hc.test import BaseTestCase\n@override_settings(TRELLO_APP_KEY=\"foo\")\nclass AddTrelloTestCase(BaseTestCase):\n    url = \"/integrations/add_trello/settings/\"\n    @patch(\"hc.front.views.requests.get\")\n    @override_settings(TRELLO_APP_KEY=None)\n    @patch(\"hc.front.views.requests.get\")",
+      "file": "hc/front/tests/test_trello_settings.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "FileResponse"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/accounts/admin.py:1",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:2",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1679,
+   "tokens_out": 93,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/accounts/admin.py:1\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:2\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"FileResponse\"]}",
+     "in": 1679,
+     "out": 93,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1642,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1642,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3321,
+  "tokens_out": 129,
+  "cost_usd_est": 0.0,
+  "seconds": 0.15
+ },
+ "created": "2026-11-10T00:06:11+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,451 @@
+{
+ "finding_id": "ctfd/werkzeug@1.0.1/GHSA-29vq-49wr-vm6x",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-27199",
+   "GHSA-29vq-49wr-vm6x",
+   "PYSEC-2026-2320"
+  ],
+  "cves": [
+   "CVE-2026-27199"
+  ],
+  "cwes": [
+   "CWE-67"
+  ],
+  "direct_dependency": true,
+  "finding_id": "ctfd/werkzeug@1.0.1/GHSA-29vq-49wr-vm6x",
+  "first_fixed_above_installed": "3.1.6",
+  "fixed_versions": [
+   "3.1.6"
+  ],
+  "max_cvss": "6.3",
+  "package": "werkzeug",
+  "published": "2026-02-19T20:32:45Z",
+  "summary": " Werkzeug safe_join() allows Windows special device names",
+  "target": "ctfd",
+  "version": "1.0.1",
+  "vuln_id": "GHSA-29vq-49wr-vm6x"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "safe_join",
+   "send_from_directory"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "CTFd/__init__.py:13",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/__init__.py:14",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/errors.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "safe_join",
+  "send_from_directory"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/werkzeug@1.0.1/GHSA-29vq-49wr-vm6x",
+    "package": "werkzeug",
+    "version": "1.0.1",
+    "vuln_id": "GHSA-29vq-49wr-vm6x",
+    "aliases": [
+     "CVE-2026-27199",
+     "GHSA-29vq-49wr-vm6x",
+     "PYSEC-2026-2320"
+    ],
+    "summary": " Werkzeug safe_join() allows Windows special device names",
+    "max_cvss": "6.3",
+    "fixed_versions": [
+     "3.1.6"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-29vq-49wr-vm6x#0",
+      "score": 0.904,
+      "text": "GHSA-29vq-49wr-vm6x (CVE-2026-27199)\npackage: werkzeug\nsummary:  Werkzeug safe_join() allows Windows special device names\naffected: >=0, <3.1.6",
+      "vuln_id": "GHSA-29vq-49wr-vm6x"
+     },
+     {
+      "id": "GHSA-29vq-49wr-vm6x#1",
+      "score": 0.867,
+      "text": "GHSA-29vq-49wr-vm6x (werkzeug) details:\nWerkzeug's `safe_join` function allows Windows device names as filenames if when preceded by other path segments.\n\nThis was previously reported as https://github.com/pallets/werkzeug/security/advisories/GHSA-hgf8-39gv-g3f2, but the added filtering failed to account for the fact that `safe_join` accepts paths with multiple segments, such as `example/NUL`.\n\n`send_from_directory` uses `safe_join` to safely serve files at user-specified paths under a directory. If the application is running on Windows, and the requested path ends with a special device name, the file will be opened successfully, but reading will hang indefinitely.",
+      "vuln_id": "GHSA-29vq-49wr-vm6x"
+     },
+     {
+      "id": "GHSA-87hc-h4r5-73f7#0",
+      "score": 0.91,
+      "text": "GHSA-87hc-h4r5-73f7 (CVE-2026-21860)\npackage: werkzeug\nsummary:  Werkzeug safe_join() allows Windows special device names with compound extensions\naffected: >=0, <3.1.5",
+      "vuln_id": "GHSA-87hc-h4r5-73f7"
+     },
+     {
+      "id": "GHSA-hgf8-39gv-g3f2#0",
+      "score": 0.901,
+      "text": "GHSA-hgf8-39gv-g3f2 (CVE-2025-66221)\npackage: werkzeug\nsummary: Werkzeug safe_join() allows Windows special device names\naffected: >=0, <3.1.4",
+      "vuln_id": "GHSA-hgf8-39gv-g3f2"
+     }
+    ],
+    "symbols": [
+     "safe_join",
+     "send_from_directory"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 56.1,
+   "output": {
+    "package": "werkzeug",
+    "import_names": [
+     "werkzeug"
+    ],
+    "symbols": [
+     "safe_join",
+     "send_from_directory"
+    ],
+    "imported": true,
+    "import_locations": [
+     "CTFd/__init__.py:13",
+     "CTFd/__init__.py:14",
+     "CTFd/errors.py:3",
+     "CTFd/utils/initialization/__init__.py:8",
+     "CTFd/utils/sessions/__init__.py:6",
+     "CTFd/utils/uploads/uploaders.py:10"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 17,
+    "vulnerable_call_sites": [
+     {
+      "file": "CTFd/__init__.py",
+      "line": 130,
+      "code": "template = safe_join(theme_name, \"templates\", template)",
+      "resolved": "flask.helpers.safe_join",
+      "function": "CTFd:ThemeLoader.get_source",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.models:Awards.__init__",
+       "CTFd:ThemeLoader.__init__",
+       "CTFd:ThemeLoader.get_source"
+      ],
+      "snippet": "  127                  raise jinja2.TemplateNotFound(template)\n  128              template = template[len(self._ADMIN_THEME_PREFIX) :]\n  129          theme_name = self.theme_name or str(utils.get_config(\"ctf_theme\"))\n  130          template = safe_join(theme_name, \"templates\", template)\n  131          return super(ThemeLoader, self).get_source(environment, template)\n  132  \n  133  "
+     },
+     {
+      "file": "CTFd/utils/uploads/uploaders.py",
+      "line": 64,
+      "code": "return send_file(safe_join(self.base_path, filename), as_attachment=True)",
+      "resolved": "flask.helpers.safe_join",
+      "function": "CTFd.utils.uploads.uploaders:FilesystemUploader.download",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.views:files",
+       "CTFd.utils.uploads.uploaders:FilesystemUploader.download"
+      ],
+      "snippet": "   61          return self.store(file_obj, file_path)\n   62  \n   63      def download(self, filename):\n   64          return send_file(safe_join(self.base_path, filename), as_attachment=True)\n   65  \n   66      def delete(self, filename):\n   67          if os.path.exists(os.path.join(self.base_path, filename)):"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/__init__.py:37",
+      "code": "@cached_property",
+      "function": "CTFd:CTFdRequest.path",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:250",
+      "code": "app.wsgi_app = ProxyFix(app.wsgi_app, *proxyfix_args)",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:252",
+      "code": "app.wsgi_app = ProxyFix(",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:8",
+      "code": "isinstance(error, InternalServerError)",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:9",
+      "code": "and error.description == InternalServerError.description",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/initialization/__init__.py:307",
+      "code": "app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {application_root: app})",
+      "function": "CTFd.utils.initialization:init_request_processors",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/sessions/__init__.py:28",
+      "code": "CallbackDict.__init__(self, initial, on_update)",
+      "function": "CTFd.utils.sessions:CachedSession.__init__",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:57",
+      "code": "filename = secure_filename(filename)",
+      "function": "CTFd.utils.uploads.uploaders:FilesystemUploader.upload",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:105",
+      "code": "self._clean_filename, secure_filename(filename).replace(\" \", \"_\")",
+      "function": "CTFd.utils.uploads.uploaders:S3Uploader.upload",
+      "in_test": false
+     }
+    ],
+    "entry_points": 252,
+    "paths": [
+     [
+      "CTFd.models:Awards.__init__",
+      "CTFd:ThemeLoader.__init__",
+      "CTFd:ThemeLoader.get_source"
+     ],
+     [
+      "CTFd.views:files",
+      "CTFd.utils.uploads.uploaders:FilesystemUploader.download"
+     ]
+    ],
+    "summary": "werkzeug: imported in 6 non-test location(s); 17 package call/reference site(s); named vulnerable symbols ['safe_join', 'send_from_directory']; 0 production call site(s) of those symbols (+2 weak name-only), 2 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 28.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:CTFd/utils/uploads/uploaders.py:64",
+      "score": 1.0,
+      "file": "CTFd/utils/uploads/uploaders.py",
+      "start": 64,
+      "qualname": "CTFd.utils.uploads.uploaders:FilesystemUploader.download",
+      "text": "# CTFd/utils/uploads/uploaders.py around line 64\n   61          return self.store(file_obj, file_path)\n   62  \n   63      def download(self, filename):\n   64          return send_file(safe_join(self.base_path, filename), as_attachment=True)\n   65  \n   66      def delete(self, filename):\n   67          if os.path.exists(os.path.join(self.base_path, filename)):"
+     },
+     {
+      "id": "site:CTFd/__init__.py:130",
+      "score": 1.0,
+      "file": "CTFd/__init__.py",
+      "start": 130,
+      "qualname": "CTFd:ThemeLoader.get_source",
+      "text": "# CTFd/__init__.py around line 130\n  127                  raise jinja2.TemplateNotFound(template)\n  128              template = template[len(self._ADMIN_THEME_PREFIX) :]\n  129          theme_name = self.theme_name or str(utils.get_config(\"ctf_theme\"))\n  130          template = safe_join(theme_name, \"templates\", template)\n  131          return super(ThemeLoader, self).get_source(environment, template)\n  132  \n  133  "
+     },
+     {
+      "id": "ctfd:CTFd/utils/security/sanitize.py:module",
+      "score": 0.668,
+      "text": "# CTFd/utils/security/sanitize.py (module level)\nfrom pybluemonday import UGCPolicy\n# Copied from lxml:\n# https://github.com/lxml/lxml/blob/e986a9cb5d54827c59aefa8803bc90954d67221e/src/lxml/html/defs.py#L38\n# fmt: off\nSAFE_ATTRS = (\n    'abbr', 'accept', 'accept-charset', 'accesskey', 'action', 'align',\n    'alt', 'axis', 'border', 'cellpadding', 'cellspacing', 'char', 'charoff',\n    'charset', 'checked', 'cite', 'class', 'clear', 'cols', 'colspan',\n    'color', 'compact', 'coords', 'datetime', 'dir', 'disabled', 'enctype',\n    'for', 'frame', 'headers', 'height', 'href', 'hreflang', 'hspace', 'id',\n    'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'media', 'method',\n    'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt', 'readonly',\n    'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape',\n    'size', 'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title',\n    'type', 'usemap', 'valign', 'value', 'vspace', 'width'\n)\n# fmt: on\nPAGE_STRUCTURE_TAGS = {\n    \"title\": [],\n}\nMETA_TAGS = {\n    \"meta\": [\"name\", \"content\", \"property\"],\n}\nFORM_TAGS = {\n    \"form\": [\"method\", \"action\"],\n    \"button\": [\"name\", \"type\", \"value\", \"disabled\"],\n    \"input\": [\"name\", \"type\", \"value\", \"placeholder\"],\n    \"select\": [\"name\", \"value\", \"placeholder\"],\n    \"option\": [\"value\"],\n    \"textarea\": [\"name\", \"value\", \"placeholder\"],\n    \"label\": [\"for\"],\n}\nANNOYING_TAGS = {\n    \"blink\": [],\n    \"marquee\": [],\n}\nMEDIA_TAGS = {\n    \"audio\": [\"autoplay\", \"controls\", \"crossorigin\", \"loop\", \"muted\", \"preload\", \"src\"],\n    \"video\": [\n        \"autoplay\",\n        \"buffered\",\n        \"controls\",\n        \"crossorigin\",\n        \"loop\",\n        \"muted\",\n        \"playsinline\",\n        \"poster\",\n        \"preload\",\n        \"src\",\n    ],\n    \"source\": [\"src\", \"type\"],\n    \"iframe\": [\"width\", \"height\", \"src\", \"frameborder\", \"allow\", \"allowfullscreen\"],\n}\nSANITIZER = UGCPolicy()\nfor TAGS in (PAGE_STRUCTURE_TAGS, META_TAGS, FORM_TAGS, ANNOYING_TAGS, MEDIA_TAGS):\n    for element in TAGS:\n        SANITIZER.AllowElements(element)\n        SANITIZER.AllowAttrs(*TAGS[element]).OnElements(element)\n# Allow safe attrs copied from lxml\nSANITIZER.AllowAttrs(*SAFE_ATTRS).Globally()",
+      "file": "CTFd/utils/security/sanitize.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/constants/users.py:module",
+      "score": 0.66,
+      "text": "# CTFd/constants/users.py (module level)\nfrom collections import namedtuple\nUserAttrs = namedtuple(\n    \"UserAttrs\",\n    [\n        \"id\",\n        \"oauth_id\",\n        \"name\",\n        \"email\",\n        \"type\",\n        \"secret\",\n        \"website\",\n        \"affiliation\",\n        \"country\",\n        \"bracket\",\n        \"hidden\",\n        \"banned\",\n        \"verified\",\n        \"team_id\",\n        \"created\",\n    ],\n)\nclass _UserAttrsWrapper:\n    @property\n    @property\nUser = _UserAttrsWrapper()",
+      "file": "CTFd/constants/users.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/security/signing.py:module",
+      "score": 0.648,
+      "text": "# CTFd/utils/security/signing.py (module level)\nimport hashlib\nimport hmac as _hmac\nfrom flask import current_app\nfrom itsdangerous import Signer\nfrom itsdangerous.exc import (  # noqa: F401\n    BadSignature,\n    BadTimeSignature,\n    SignatureExpired,\n)\nfrom itsdangerous.url_safe import URLSafeTimedSerializer\nfrom CTFd.utils import string_types",
+      "file": "CTFd/utils/security/signing.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/security/csrf.py:module",
+      "score": 0.645,
+      "text": "# CTFd/utils/security/csrf.py (module level)\nimport os\nfrom CTFd.utils.encoding import hexencode",
+      "file": "CTFd/utils/security/csrf.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/plugins/migrations.py:14",
+      "score": 0.638,
+      "text": "# CTFd/plugins/migrations.py:14-23  current\ndef current(plugin_name=None):\n    if plugin_name is None:\n        # Get the directory name of the plugin if unspecified\n        # Doing it this way doesn't waste the rest of the inspect.stack call\n        frame = inspect.currentframe()\n        caller_info = inspect.getframeinfo(frame.f_back)\n        caller_path = caller_info[0]\n        plugin_name = os.path.basename(os.path.dirname(caller_path))\n\n    return get_config(plugin_name + \"_alembic_version\")",
+      "file": "CTFd/plugins/migrations.py",
+      "start": 14,
+      "qualname": "current"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "safe_join",
+     "send_from_directory"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "CTFd/__init__.py:13",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/__init__.py:14",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/errors.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1856,
+   "tokens_out": 95,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"CTFd/__init__.py:13\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/__init__.py:14\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/errors.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"safe_join\", \"send_from_directory\"]}",
+     "in": 1856,
+     "out": 95,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1816,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1816,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3672,
+  "tokens_out": 131,
+  "cost_usd_est": 0.0,
+  "seconds": 0.12
+ },
+ "created": "2026-11-10T00:06:20+00:00",
+ "code_version": "a3e1ef4"
+}

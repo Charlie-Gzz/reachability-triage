@@ -1,0 +1,443 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/GHSA-8cjm-8mp7-r2xf",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-8404",
+   "GHSA-8cjm-8mp7-r2xf"
+  ],
+  "cves": [
+   "CVE-2026-8404"
+  ],
+  "cwes": [
+   "CWE-178"
+  ],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/GHSA-8cjm-8mp7-r2xf",
+  "first_fixed_above_installed": "5.2.15",
+  "fixed_versions": [
+   "5.2.15",
+   "6.0.6"
+  ],
+  "max_cvss": "3.1",
+  "package": "django",
+  "published": "2026-06-03T15:30:43Z",
+  "summary": "Django: UpdateCacheMiddleware may disclose cached responses due to case-sensitive Cache-Control handling",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "GHSA-8cjm-8mp7-r2xf"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "django.middleware.cache.UpdateCacheMiddleware",
+   "UpdateCacheMiddleware"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/accounts/admin.py:1",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:2",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "django.middleware.cache.UpdateCacheMiddleware",
+  "UpdateCacheMiddleware"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/GHSA-8cjm-8mp7-r2xf",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "GHSA-8cjm-8mp7-r2xf",
+    "aliases": [
+     "CVE-2026-8404",
+     "GHSA-8cjm-8mp7-r2xf"
+    ],
+    "summary": "Django: UpdateCacheMiddleware may disclose cached responses due to case-sensitive Cache-Control handling",
+    "max_cvss": "3.1",
+    "fixed_versions": [
+     "5.2.15",
+     "6.0.6"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 31.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-8cjm-8mp7-r2xf#0",
+      "score": 0.888,
+      "text": "GHSA-8cjm-8mp7-r2xf (CVE-2026-8404)\npackage: django\nsummary: Django: UpdateCacheMiddleware may disclose cached responses due to case-sensitive Cache-Control handling\naffected: >=0, <5.2.15; >=6.0.0, <6.0.6",
+      "vuln_id": "GHSA-8cjm-8mp7-r2xf"
+     },
+     {
+      "id": "GHSA-8cjm-8mp7-r2xf#1",
+      "score": 0.865,
+      "text": "GHSA-8cjm-8mp7-r2xf (django) details:\nAn issue was discovered in Django 5.2 before 5.2.15 and 6.0 before 6.0.6.\n`django.middleware.cache.UpdateCacheMiddleware` in Django does not match `Cache-Control` response directives case-insensitively, which allows remote attackers to read responses that were incorrectly cached because their `Cache-Control` directives used uppercase or mixed-case values.\nEarlier, unsupported Django series (such as 5.0.x, 4.1.x, and 3.2.x) were not evaluated and may also be affected.\nDjango would like to thank Ahmed Badawe for reporting this issue.",
+      "vuln_id": "GHSA-8cjm-8mp7-r2xf"
+     },
+     {
+      "id": "GHSA-qpc8-7fxc-cm4p#1",
+      "score": 0.848,
+      "text": "GHSA-qpc8-7fxc-cm4p (django) details:\nAn issue was discovered in Django 5.2 before 5.2.15 and 6.0 before 6.0.6.\n`django.middleware.cache.UpdateCacheMiddleware` in Django does not add `Authorization` to the `Vary` response header for requests bearing that header without `Cache-Control: public`, which allows remote attackers to read private cached responses via unauthenticated requests to the same URL.\nEarlier, unsupported Django series (such as 5.0.x, 4.1.x, and 3.2.x) were not evaluated and may also be affected.\nDjango would like to thank Shai Berger for reporting this issue.",
+      "vuln_id": "GHSA-qpc8-7fxc-cm4p"
+     },
+     {
+      "id": "GHSA-qpc8-7fxc-cm4p#0",
+      "score": 0.846,
+      "text": "GHSA-qpc8-7fxc-cm4p (CVE-2026-35193)\npackage: django\nsummary: Django: UpdateCacheMiddleware may disclose private cached responses by omitting Authorization from Vary\naffected: >=5.2.0, <5.2.15; >=6.0.0, <6.0.6",
+      "vuln_id": "GHSA-qpc8-7fxc-cm4p"
+     }
+    ],
+    "symbols": [
+     "django.middleware.cache.UpdateCacheMiddleware",
+     "UpdateCacheMiddleware"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 98.3,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "django.middleware.cache.UpdateCacheMiddleware",
+     "UpdateCacheMiddleware"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols ['django.middleware.cache.UpdateCacheMiddleware', 'UpdateCacheMiddleware']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 44.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/settings.py:module",
+      "score": 0.706,
+      "text": "# hc/settings.py (module level)\n\"\"\"\nDjango settings for healthchecks project.\nFor the full list of settings and their values, see\nhttps://docs.djangoproject.com/en/3.1/ref/settings/\n\"\"\"\nimport os\nBASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\nSECRET_KEY = os.getenv(\"SECRET_KEY\", \"---\")\nMETRICS_KEY = os.getenv(\"METRICS_KEY\")\nDEBUG = envbool(\"DEBUG\", \"True\")\nALLOWED_HOSTS = os.getenv(\"ALLOWED_HOSTS\", \"*\").split(\",\")\nDEFAULT_FROM_EMAIL = os.getenv(\"DEFAULT_FROM_EMAIL\", \"healthchecks@example.org\")\nSUPPORT_EMAIL = os.getenv(\"SUPPORT_EMAIL\")\nUSE_PAYMENTS = envbool(\"USE_PAYMENTS\", \"False\")\nREGISTRATION_OPEN = envbool(\"REGISTRATION_OPEN\", \"True\")\nVERSION = \"\"\nwith open(os.path.join(BASE_DIR, \"CHANGELOG.md\"), encoding=\"utf-8\") as f:\n    for line in f.readlines():\n        if line.startswith(\"## v\"):\n            VERSION = line.split()[1]\n            break\nINSTALLED_APPS = (\n    \"hc.accounts\",\n    \"django.contrib.admin\",\n    \"django.contrib.auth\",\n    \"django.contrib.contenttypes\",\n    \"django.contrib.humanize\",\n    \"django.contrib.sessions\",\n    \"django.contrib.messages\",\n    \"django.contrib.staticfiles\",\n    \"compressor\",\n    \"hc.api\",\n    \"hc.front\",\n    \"hc.payments\",\n)\nMIDDLEWARE = (\n    \"django.middleware.security.SecurityMiddleware\",\n    \"whitenoise.middleware.WhiteNoiseMiddleware\",\n    \"django.contrib.sessions.middleware.SessionMiddleware\",\n    \"django.middleware.common.CommonMiddleware\",\n    \"django.middleware.csrf.CsrfViewMiddleware\",\n    \"django.contrib.auth.middleware.AuthenticationMiddleware\",\n    \"hc.accounts.middleware.CustomHeaderMiddleware\",\n    \"django.contrib.messages.middleware.MessageMiddleware\",\n    \"django.middleware.clickjacking.XFrameOptionsMiddleware\",\n    \"django.middleware.locale.LocaleMiddleware\",\n    \"hc.accounts.middleware.TeamAccessMiddleware\",\n)\nAUTHENTICATION_BACKENDS = (\n    \"hc.accounts.backends.EmailBackend\",\n    \"hc.accounts.backends.ProfileBackend\",\n)\nREMOTE_USER_HEADER = os.getenv(\"REMOTE_USER_HEADER\")\nif REMOTE_USER_HEADER:\n    AUTHENTICATION_BACKENDS = (\"hc.accounts.backends.CustomHeaderBackend\",)\nROOT_URLCONF = \"hc.urls\"\nTEMPLATES = [\n    {\n        \"BACKEND\": \"django.template.backends.django.DjangoTemplates\",\n        \"DIRS\": [os.path.join(BASE_DIR, \"templates\")],",
+      "file": "hc/settings.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/payments/tests/test_update_subscription.py:module",
+      "score": 0.7,
+      "text": "# hc/payments/tests/test_update_subscription.py (module level)\nfrom unittest.mock import patch\nfrom hc.payments.models import Subscription\nfrom hc.test import BaseTestCase\nclass UpdateSubscriptionTestCase(BaseTestCase):\n    @patch(\"hc.payments.models.braintree\")\n    @patch(\"hc.payments.models.braintree\")\n    @patch(\"hc.payments.models.braintree\")\n    @patch(\"hc.payments.models.braintree\")\n    @patch(\"hc.payments.models.braintree\")\n    @patch(\"hc.payments.models.braintree\")\n    @patch(\"hc.payments.models.braintree\")\n    @patch(\"hc.payments.models.braintree\")\n    @patch(\"hc.payments.models.braintree\")",
+      "file": "hc/payments/tests/test_update_subscription.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/api/tests/test_notify_signal.py:module",
+      "score": 0.699,
+      "text": "# hc/api/tests/test_notify_signal.py (module level)\n# coding: utf-8\nfrom datetime import timedelta as td\nimport json\nfrom unittest.mock import patch\nfrom django.utils.timezone import now\nfrom django.test.utils import override_settings\nfrom hc.api.models import Channel, Check, Notification, TokenBucket\nfrom hc.test import BaseTestCase\n@override_settings(SIGNAL_CLI_ENABLED=True)\nclass NotifySignalTestCase(BaseTestCase):\n    @patch(\"hc.api.transports.dbus\")\n    @patch(\"hc.api.transports.dbus\")\n    @patch(\"hc.api.transports.dbus\")\n    @patch(\"hc.api.transports.dbus\")\n    @override_settings(SECRET_KEY=\"test-secret\")\n    @patch(\"hc.api.transports.dbus\")\n    @patch(\"hc.api.transports.dbus\")\n    @patch(\"hc.api.transports.dbus\")\n    @patch(\"hc.api.transports.dbus\")",
+      "file": "hc/api/tests/test_notify_signal.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/api/tests/test_notify.py:module",
+      "score": 0.698,
+      "text": "# hc/api/tests/test_notify.py (module level)\n# coding: utf-8\nfrom datetime import timedelta as td\nimport json\nfrom unittest.mock import patch\nfrom django.core import mail\nfrom django.utils.timezone import now\nfrom hc.api.models import Channel, Check, Notification\nfrom hc.test import BaseTestCase\nfrom django.test.utils import override_settings\nclass NotifyTestCase(BaseTestCase):\n    @patch(\"hc.api.transports.requests.request\")\n    @patch(\"hc.api.transports.requests.request\")\n    @patch(\"hc.api.transports.requests.request\")\n    @patch(\"hc.api.transports.requests.request\")\n    @patch(\"hc.api.transports.requests.request\")\n    @patch(\"hc.api.transports.requests.request\")\n    @patch(\"hc.api.transports.requests.request\")\n    @patch(\"hc.api.transports.requests.request\")\n    @patch(\"hc.api.transports.os.system\")\n    @override_settings(SHELL_ENABLED=True)\n    @patch(\"hc.api.transports.os.system\")\n    @override_settings(SHELL_ENABLED=True)\n    @patch(\"hc.api.transports.os.system\")\n    @override_settings(SHELL_ENABLED=True)\n    @patch(\"hc.api.transports.os.system\")\n    @override_settings(SHELL_ENABLED=False)",
+      "file": "hc/api/tests/test_notify.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/front/tests/test_edit_signal.py:module",
+      "score": 0.696,
+      "text": "# hc/front/tests/test_edit_signal.py (module level)\nimport json\nfrom django.test.utils import override_settings\nfrom hc.api.models import Channel, Check\nfrom hc.test import BaseTestCase\n@override_settings(SIGNAL_CLI_ENABLED=True)\nclass EditSignalTestCase(BaseTestCase):\n    @override_settings(SIGNAL_CLI_ENABLED=False)",
+      "file": "hc/front/tests/test_edit_signal.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "django.middleware.cache.UpdateCacheMiddleware",
+     "UpdateCacheMiddleware"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/accounts/admin.py:1",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:2",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2008,
+   "tokens_out": 107,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/accounts/admin.py:1\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:2\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"django.middleware.cache.UpdateCacheMiddleware\", \"UpdateCacheMiddleware\"]}",
+     "in": 2008,
+     "out": 107,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1971,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1971,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3979,
+  "tokens_out": 143,
+  "cost_usd_est": 0.0,
+  "seconds": 0.18
+ },
+ "created": "2026-11-10T00:06:08+00:00",
+ "code_version": "a3e1ef4"
+}

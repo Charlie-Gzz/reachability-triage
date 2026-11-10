@@ -1,0 +1,332 @@
+{
+ "finding_id": "mealie/python-multipart@0.0.6/GHSA-2jv5-9r88-3w3p",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-24762",
+   "GHSA-2jv5-9r88-3w3p",
+   "PYSEC-2026-1850"
+  ],
+  "cves": [
+   "CVE-2024-24762"
+  ],
+  "cwes": [
+   "CWE-400"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/python-multipart@0.0.6/GHSA-2jv5-9r88-3w3p",
+  "first_fixed_above_installed": "0.0.7",
+  "fixed_versions": [
+   "0.0.7"
+  ],
+  "max_cvss": "7.5",
+  "package": "python-multipart",
+  "published": "2024-02-12T17:28:12Z",
+  "summary": "python-multipart vulnerable to Content-Type Header ReDoS",
+  "target": "mealie",
+  "version": "0.0.6",
+  "vuln_id": "GHSA-2jv5-9r88-3w3p"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "RegEx",
+   "FastApi",
+   "ProtectAI",
+   "BaseModel",
+   "submit_json"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "RegEx",
+  "FastApi",
+  "ProtectAI",
+  "BaseModel",
+  "submit_json"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/python-multipart@0.0.6/GHSA-2jv5-9r88-3w3p",
+    "package": "python-multipart",
+    "version": "0.0.6",
+    "vuln_id": "GHSA-2jv5-9r88-3w3p",
+    "aliases": [
+     "CVE-2024-24762",
+     "GHSA-2jv5-9r88-3w3p",
+     "PYSEC-2026-1850"
+    ],
+    "summary": "python-multipart vulnerable to Content-Type Header ReDoS",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "0.0.7"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-2jv5-9r88-3w3p#0",
+      "score": 0.905,
+      "text": "GHSA-2jv5-9r88-3w3p (CVE-2024-24762)\npackage: python-multipart\nsummary: python-multipart vulnerable to Content-Type Header ReDoS\naffected: >=0, <0.0.7",
+      "vuln_id": "GHSA-2jv5-9r88-3w3p"
+     },
+     {
+      "id": "GHSA-2jv5-9r88-3w3p#1",
+      "score": 0.83,
+      "text": "GHSA-2jv5-9r88-3w3p (python-multipart) details:\n### Summary\n\nWhen using form data, `python-multipart` uses a Regular Expression to parse the HTTP `Content-Type` header, including options.\n\nAn attacker could send a custom-made `Content-Type` option that is very difficult for the RegEx to process, consuming CPU resources and stalling indefinitely (minutes or more) while holding the main event loop. This means that process can't handle any more requests.\n\nThis can create a ReDoS (Regular expression Denial of Service): https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS\n\nThis only applies when the app uses form data, parsed with `python-multipart`.\n\n### Details\n\nA regular HTTP `Content-Type` header could look like:\n\n```\nContent-Type: text/html; charset=utf-8\n```",
+      "vuln_id": "GHSA-2jv5-9r88-3w3p"
+     },
+     {
+      "id": "GHSA-2jv5-9r88-3w3p#6",
+      "score": 0.763,
+      "text": "GHSA-2jv5-9r88-3w3p (python-multipart) details:\nYou'll see the server locks up, is unable to serve anymore requests and one CPU core is pegged to 100%\n\nYou can even start uvicorn with multiple workers with the --workers 4 argument and as long as you send (workers + 1) requests you'll completely DoS the FastApi server.\n\nIf you try submitting Json to the /submit_json endpoint with the malicious Content-Type header you'll see it isn't vulnerable. So this only affects FastAPI when it parses Form data.\n\nCheers\n\n#### Impact\n\nAn attacker is able to cause a DoS on a FastApi server via a malicious Content-Type header if it parses Form data.\n\n#### Occurrences\n\n[params.py L586](https://github.com/tiangolo/fastapi/blob/d74b3b25659b42233a669f032529880de8bd6c2d/fastapi/params.py#L586)\n\n</details>",
+      "vuln_id": "GHSA-2jv5-9r88-3w3p"
+     },
+     {
+      "id": "GHSA-2jv5-9r88-3w3p#4",
+      "score": 0.746,
+      "text": "GHSA-2jv5-9r88-3w3p (python-multipart) details:\nThis was originally reported to FastAPI as an email to security@tiangolo.com, sent via https://huntr.com/, the original reporter is Marcello, https://github.com/byt3bl33d3r\n\n<details>\n<summary>Original report to FastAPI</summary>\n\nHey Tiangolo!\n\nMy name's Marcello and I work on the ProtectAI/Huntr Threat Research team, a few months ago we got a report (from @nicecatch2000) of a ReDoS affecting another very popular Python web framework. After some internal research, I found that FastAPI is vulnerable to the same ReDoS under certain conditions (only when it parses Form data not JSON).\n\nHere are the details: I'm using the latest version of FastAPI (0.109.0) and the following code:\n\n```Python\nfrom typing import Annotated\nfrom fastapi.responses import HTMLResponse\nfrom fastapi import FastAPI,Form\nfrom pydantic import BaseModel\n\nclass Item(BaseModel):\n    username: str\n\napp = FastAPI()",
+      "vuln_id": "GHSA-2jv5-9r88-3w3p"
+     },
+     {
+      "id": "GHSA-pp6c-gr5w-3c5g#1",
+      "score": 0.815,
+      "text": "GHSA-pp6c-gr5w-3c5g (python-multipart) details:\n### Summary\n\n`python-multipart` has a denial of service vulnerability in multipart part header parsing. When parsing `multipart/form-data`, `MultipartParser` previously had no limit on the number of part headers or the size of an individual part header. An attacker could send a request with either many repeated headers without terminating the header block or a single very large header value, causing excessive CPU work before request rejection or completion.\n\n### Impact\n\nApplications that parse attacker-controlled `multipart/form-data` with affected versions of `python-multipart` can experience CPU exhaustion. ASGI applications using Starlette, FastAPI, or other frameworks that invoke `python-multipart` may have worker or event-loop delays while processing malicious upload requests.\n\n### Details",
+      "vuln_id": "GHSA-pp6c-gr5w-3c5g"
+     },
+     {
+      "id": "GHSA-mj87-hwqh-73pj#1",
+      "score": 0.804,
+      "text": "GHSA-mj87-hwqh-73pj (python-multipart) details:\n### Summary\n\nA denial of service vulnerability exists when parsing crafted `multipart/form-data` requests with large preamble or epilogue sections.\n\n### Details\n\nTwo inefficient multipart parsing paths could be abused with attacker-controlled input.\n\nBefore the first multipart boundary, the parser handled leading CR and LF bytes inefficiently while searching for the start of the first part. After the closing boundary, the parser continued processing trailing epilogue data instead of discarding it immediately. As a result, parsing time could grow with the size of crafted data placed before the first boundary or after the closing boundary.\n\n### Impact",
+      "vuln_id": "GHSA-mj87-hwqh-73pj"
+     }
+    ],
+    "symbols": [
+     "RegEx",
+     "FastApi",
+     "ProtectAI",
+     "BaseModel",
+     "submit_json"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 47.2,
+   "output": {
+    "package": "python-multipart",
+    "import_names": [
+     "multipart"
+    ],
+    "symbols": [
+     "RegEx",
+     "FastApi",
+     "ProtectAI",
+     "BaseModel",
+     "submit_json"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "python-multipart: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['RegEx', 'FastApi', 'ProtectAI', 'BaseModel', 'submit_json']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 34.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/routes/spa/__init__.py:74",
+      "score": 0.732,
+      "text": "# mealie/routes/spa/__init__.py:74-76  inject_recipe_json\ndef inject_recipe_json(contents: str, schema: dict) -> str:\n    schema_as_html_tag = f\"\"\"<script type=\"application/ld+json\">{json.dumps(jsonable_encoder(schema))}</script>\"\"\"\n    return contents.replace(\"</head>\", schema_as_html_tag + \"\\n</head>\", 1)",
+      "file": "mealie/routes/spa/__init__.py",
+      "start": 74,
+      "qualname": "inject_recipe_json"
+     },
+     {
+      "id": "mealie:mealie/routes/media/__init__.py:module",
+      "score": 0.712,
+      "text": "# mealie/routes/media/__init__.py (module level)\nfrom fastapi import APIRouter, HTTPException\nfrom fastapi.responses import FileResponse\nfrom mealie.core.config import get_app_dirs\nfrom . import media_recipe, media_user\nmedia_router = APIRouter(prefix=\"/api/media\", tags=[\"Recipe: Images and Assets\"])\nmedia_router.include_router(media_recipe.router)\nmedia_router.include_router(media_user.router)\n@media_router.get(\"/docker/validate.txt\", response_class=FileResponse)",
+      "file": "mealie/routes/media/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:178",
+      "score": 0.704,
+      "text": "# mealie/core/dependencies/dependencies.py:178-205  validate_recipe_token\ndef validate_recipe_token(token: str | None = None) -> str:\n    \"\"\"\n    Args:\n        token (Optional[str], optional): _description_. Defaults to None.\n\n    Raises:\n        HTTPException: 400 Bad Request when no token or the recipe doesn't exist\n        HTTPException: 401 JWTError when token is invalid\n\n    Returns:\n        str: token data\n    \"\"\"\n    if not token:\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    try:\n        payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])\n        slug: str | None = payload.get(\"slug\")\n    except JWTError as e:\n        raise HTTPException(\n            status_code=status.HTTP_401_UNAUTHORIZED,\n            detail=\"could not validate file token\",\n        ) from e\n\n    if slug is None:\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    return slug",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 178,
+      "qualname": "validate_recipe_token"
+     },
+     {
+      "id": "mealie:mealie/routes/parser/ingredient_parser.py:module",
+      "score": 0.703,
+      "text": "# mealie/routes/parser/ingredient_parser.py (module level)\nfrom fastapi import APIRouter\nfrom mealie.routes._base import BaseUserController, controller\nfrom mealie.schema.recipe import ParsedIngredient\nfrom mealie.schema.recipe.recipe_ingredient import IngredientRequest, IngredientsRequest\nfrom mealie.services.parser_services import get_parser\nrouter = APIRouter(prefix=\"/parser\")\n@controller(router)\nclass IngredientParserController(BaseUserController):\n    @router.post(\"/ingredients\", response_model=list[ParsedIngredient])\n    @router.post(\"/ingredient\", response_model=ParsedIngredient)",
+      "file": "mealie/routes/parser/ingredient_parser.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:118",
+      "score": 0.698,
+      "text": "# mealie/services/recipe/recipe_data_service.py:118-167  RecipeDataService.scrape_image\n    async def scrape_image(self, image_url) -> None:\n        self.logger.info(f\"Image URL: {image_url}\")\n\n        if not self._validate_image_url(image_url):\n            self.logger.error(f\"Invalid image URL: {image_url}\")\n            raise InvalidDomainError(f\"Invalid domain: {image_url}\")\n\n        if isinstance(image_url, str):  # Handles String Types\n            pass\n\n        elif isinstance(image_url, list):  # Handles List Types\n            # Multiple images have been defined in the schema - usually different resolutions\n            # Typically would be in smallest->biggest order, but can't be certain so test each.\n            # 'Google will pick the best image to display in Search results based on the aspect ratio and resolution.'\n            image_url, _ = await largest_content_len(image_url)\n\n        elif isinstance(image_url, dict):  # Handles Dictionary Types\n            for key in image_url:\n                if key == \"url\":\n                    image_url = image_url.get(\"url\")\n\n        ext = image_url.split(\".\")[-1]\n\n        if ext not in img.IMAGE_EXTENSIONS:\n            ext = \"jpg\"  # Guess the extension\n\n        file_name = f\"{str(self.recipe_id)}.{ext}\"\n        file_path = Recipe.directory_from_id(self.recipe_id).joinpath(\"images\", file_name)\n\n        async with AsyncClient() as client:\n            try:\n                r = await client.get(image_url, headers={\"User-Agent\": _FIREFOX_UA})\n            except Exception:\n                self.logger.exception(\"Fatal Image Request Exception\")\n                return None\n\n            if r.status_code != 200:\n                # TODO: Probably should throw an exception in this case as well, but before these changes\n                # we were returning None if it failed anyways.\n                return None\n\n            content_type = r.headers.get(\"content-type\", \"\")\n\n            if \"image\" not in content_type:\n                self.logger.error(f\"Content-Type: {content_type} is not an image\")\n                raise NotAnImageError(f\"Content-Type {content_type} is not an image\")\n\n            self.logger.debug(f\"File Name Suffix {file_path.suffix}\")\n            self.write_image(r.read(), file_path.suffix)\n            file_path.unlink(missing_ok=True)",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 118,
+      "qualname": "RecipeDataService.scrape_image"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "RegEx",
+     "FastApi",
+     "ProtectAI",
+     "BaseModel",
+     "submit_json"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2467,
+   "tokens_out": 50,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"RegEx\", \"FastApi\", \"ProtectAI\", \"BaseModel\", \"submit_json\"]}",
+     "in": 2467,
+     "out": 50,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2400,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2400,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4867,
+  "tokens_out": 86,
+  "cost_usd_est": 0.0,
+  "seconds": 0.12
+ },
+ "created": "2026-11-10T00:06:28+00:00",
+ "code_version": "a3e1ef4"
+}

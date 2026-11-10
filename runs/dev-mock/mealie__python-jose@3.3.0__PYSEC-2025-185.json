@@ -1,0 +1,366 @@
+{
+ "finding_id": "mealie/python-jose@3.3.0/PYSEC-2025-185",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-29370",
+   "GHSA-h4pw-wxh7-4vjj",
+   "PYSEC-2025-185"
+  ],
+  "cves": [
+   "CVE-2024-29370"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "mealie/python-jose@3.3.0/PYSEC-2025-185",
+  "first_fixed_above_installed": null,
+  "fixed_versions": [],
+  "max_cvss": "5.3",
+  "package": "python-jose",
+  "published": "2025-12-17T16:16:04.457Z",
+  "summary": "In python-jose 3.3.0 (specifically jwe.decrypt), a vulnerability allows an attacker to cause a Denial-of-Service (DoS) condition by crafting a malicious JSON Web Encryption (JWE) token with an excepti",
+  "target": "mealie",
+  "version": "3.3.0",
+  "vuln_id": "PYSEC-2025-185"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/core/dependencies/dependencies.py:10",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/core/security/security.py:5",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/python-jose@3.3.0/PYSEC-2025-185",
+    "package": "python-jose",
+    "version": "3.3.0",
+    "vuln_id": "PYSEC-2025-185",
+    "aliases": [
+     "CVE-2024-29370",
+     "GHSA-h4pw-wxh7-4vjj",
+     "PYSEC-2025-185"
+    ],
+    "summary": "In python-jose 3.3.0 (specifically jwe.decrypt), a vulnerability allows an attacker to cause a Denial-of-Service (DoS) condition by crafting a malicious JSON Web Encryption (JWE) token with an excepti",
+    "max_cvss": "5.3",
+    "fixed_versions": [],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 34.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "PYSEC-2025-185#1",
+      "score": 0.943,
+      "text": "PYSEC-2025-185 (python-jose) details:\nIn python-jose 3.3.0 (specifically jwe.decrypt), a vulnerability allows an attacker to cause a Denial-of-Service (DoS) condition by crafting a malicious JSON Web Encryption (JWE) token with an exceptionally high compression ratio. When this token is processed by the server, it results in significant memory allocation and processing time during decompression.",
+      "vuln_id": "PYSEC-2025-185"
+     },
+     {
+      "id": "PYSEC-2025-185#0",
+      "score": 0.731,
+      "text": "PYSEC-2025-185 (CVE-2024-29370, GHSA-h4pw-wxh7-4vjj)\npackage: python-jose\nsummary: \naffected: >=0, <3.3.0",
+      "vuln_id": "PYSEC-2025-185"
+     },
+     {
+      "id": "GHSA-cjwg-qfpm-7377#1",
+      "score": 0.868,
+      "text": "GHSA-cjwg-qfpm-7377 (python-jose) details:\npython-jose through 3.3.0 allows attackers to cause a denial of service (resource consumption) during a decode via a crafted JSON Web Encryption (JWE) token with a high compression ratio, aka a \"JWT bomb.\" This is similar to CVE-2024-21319.",
+      "vuln_id": "GHSA-cjwg-qfpm-7377"
+     },
+     {
+      "id": "GHSA-cjwg-qfpm-7377#0",
+      "score": 0.83,
+      "text": "GHSA-cjwg-qfpm-7377 (CVE-2024-33664)\npackage: python-jose\nsummary: python-jose denial of service via compressed JWE content\naffected: >=0, <3.4.0",
+      "vuln_id": "GHSA-cjwg-qfpm-7377"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 9.4,
+   "output": {
+    "package": "python-jose",
+    "import_names": [
+     "jose"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "mealie/core/dependencies/dependencies.py:10",
+     "mealie/core/security/security.py:5"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 22,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/core/dependencies/dependencies.py:40",
+      "code": "payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])",
+      "function": "mealie.core.dependencies.dependencies:is_logged_in",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/dependencies/dependencies.py:93",
+      "code": "payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])",
+      "function": "mealie.core.dependencies.dependencies:get_current_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/dependencies/dependencies.py:104",
+      "code": "except JWTError as e:",
+      "function": "mealie.core.dependencies.dependencies:get_current_user",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/dependencies/dependencies.py:127",
+      "code": "decoded_token = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])",
+      "function": "mealie.core.dependencies.dependencies:get_integration_id",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/dependencies/dependencies.py:130",
+      "code": "except JWTError as e:",
+      "function": "mealie.core.dependencies.dependencies:get_integration_id",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/dependencies/dependencies.py:164",
+      "code": "payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])",
+      "function": "mealie.core.dependencies.dependencies:validate_file_token",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/dependencies/dependencies.py:166",
+      "code": "except JWTError as e:",
+      "function": "mealie.core.dependencies.dependencies:validate_file_token",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/dependencies/dependencies.py:194",
+      "code": "payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])",
+      "function": "mealie.core.dependencies.dependencies:validate_recipe_token",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/dependencies/dependencies.py:196",
+      "code": "except JWTError as e:",
+      "function": "mealie.core.dependencies.dependencies:validate_recipe_token",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/security/security.py:34",
+      "code": "return jwt.encode(to_encode, settings.SECRET, algorithm=ALGORITHM)",
+      "function": "mealie.core.security.security:create_access_token",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "python-jose: imported in 2 non-test location(s); 22 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 38.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/core/security/security.py:module",
+      "score": 0.664,
+      "text": "# mealie/core/security/security.py (module level)\nimport secrets\nfrom datetime import datetime, timedelta, timezone\nfrom pathlib import Path\nfrom jose import jwt\nfrom mealie.core import root_logger\nfrom mealie.core.config import get_app_settings\nfrom mealie.core.security import ldap\nfrom mealie.core.security.hasher import get_hasher\nfrom mealie.db.models.users.users import AuthMethod\nfrom mealie.repos.all_repositories import get_repositories\nfrom mealie.schema.user import PrivateUser\nfrom mealie.services.user_services.user_service import UserService\nALGORITHM = \"HS256\"\nlogger = root_logger.get_logger(\"security\")\nclass UserLockedOut(Exception):\n    ...",
+      "file": "mealie/core/security/security.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/brute/process.py:module",
+      "score": 0.655,
+      "text": "# mealie/services/parser_services/brute/process.py (module level)\nimport string\nimport unicodedata\nfrom pydantic import BaseModel\nfrom .._helpers import check_char, move_parens_to_end\nclass BruteParsedIngredient(BaseModel):\n    food: str = \"\"\n    note: str = \"\"\n    amount: float = 1.0\n    unit: str = \"\"\n    class Config:\n        anystr_strip_whitespace = True",
+      "file": "mealie/services/parser_services/brute/process.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:151",
+      "score": 0.654,
+      "text": "# mealie/core/dependencies/dependencies.py:151-175  validate_file_token\ndef validate_file_token(token: str | None = None) -> Path:\n    \"\"\"\n    Args:\n        token (Optional[str], optional): _description_. Defaults to None.\n\n    Raises:\n        HTTPException: 400 Bad Request when no token or the file doesn't exist\n        HTTPException: 401 Unauthorized when the token is invalid\n    \"\"\"\n    if not token:\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    try:\n        payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])\n        file_path = Path(payload.get(\"file\"))\n    except JWTError as e:\n        raise HTTPException(\n            status_code=status.HTTP_401_UNAUTHORIZED,\n            detail=\"could not validate file token\",\n        ) from e\n\n    if not file_path.exists():\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    return file_path",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 151,
+      "qualname": "validate_file_token"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:119",
+      "score": 0.647,
+      "text": "# mealie/core/dependencies/dependencies.py:119-131  get_integration_id\nasync def get_integration_id(token: str = Depends(oauth2_scheme)) -> str:\n    credentials_exception = HTTPException(\n        status_code=status.HTTP_401_UNAUTHORIZED,\n        detail=\"Could not validate credentials\",\n        headers={\"WWW-Authenticate\": \"Bearer\"},\n    )\n\n    try:\n        decoded_token = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])\n        return decoded_token.get(\"integration_id\", DEFAULT_INTEGRATION_ID)\n\n    except JWTError as e:\n        raise credentials_exception from e",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 119,
+      "qualname": "get_integration_id"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:178",
+      "score": 0.643,
+      "text": "# mealie/core/dependencies/dependencies.py:178-205  validate_recipe_token\ndef validate_recipe_token(token: str | None = None) -> str:\n    \"\"\"\n    Args:\n        token (Optional[str], optional): _description_. Defaults to None.\n\n    Raises:\n        HTTPException: 400 Bad Request when no token or the recipe doesn't exist\n        HTTPException: 401 JWTError when token is invalid\n\n    Returns:\n        str: token data\n    \"\"\"\n    if not token:\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    try:\n        payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])\n        slug: str | None = payload.get(\"slug\")\n    except JWTError as e:\n        raise HTTPException(\n            status_code=status.HTTP_401_UNAUTHORIZED,\n            detail=\"could not validate file token\",\n        ) from e\n\n    if slug is None:\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    return slug",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 178,
+      "qualname": "validate_recipe_token"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/core/dependencies/dependencies.py:10",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/core/security/security.py:5",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1585,
+   "tokens_out": 78,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/core/dependencies/dependencies.py:10\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/core/security/security.py:5\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 1585,
+     "out": 78,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 1545,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1545,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3130,
+  "tokens_out": 113,
+  "cost_usd_est": 0.0,
+  "seconds": 0.09
+ },
+ "created": "2026-11-10T00:06:28+00:00",
+ "code_version": "a3e1ef4"
+}

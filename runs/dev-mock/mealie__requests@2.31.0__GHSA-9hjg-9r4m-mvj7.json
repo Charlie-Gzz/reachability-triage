@@ -1,0 +1,362 @@
+{
+ "finding_id": "mealie/requests@2.31.0/GHSA-9hjg-9r4m-mvj7",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-47081",
+   "GHSA-9hjg-9r4m-mvj7",
+   "PYSEC-2026-1872"
+  ],
+  "cves": [
+   "CVE-2024-47081"
+  ],
+  "cwes": [
+   "CWE-522"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/requests@2.31.0/GHSA-9hjg-9r4m-mvj7",
+  "first_fixed_above_installed": "2.32.4",
+  "fixed_versions": [
+   "2.32.4"
+  ],
+  "max_cvss": "5.3",
+  "package": "requests",
+  "published": "2025-06-09T19:06:08Z",
+  "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+  "target": "mealie",
+  "version": "2.31.0",
+  "vuln_id": "GHSA-9hjg-9r4m-mvj7"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "trust_env"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/core/release_checker.py:4",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/scripts/healthcheck.py:4",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "mealie/scripts/install_model.py:1",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "trust_env"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/requests@2.31.0/GHSA-9hjg-9r4m-mvj7",
+    "package": "requests",
+    "version": "2.31.0",
+    "vuln_id": "GHSA-9hjg-9r4m-mvj7",
+    "aliases": [
+     "CVE-2024-47081",
+     "GHSA-9hjg-9r4m-mvj7",
+     "PYSEC-2026-1872"
+    ],
+    "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+    "max_cvss": "5.3",
+    "fixed_versions": [
+     "2.32.4"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-9hjg-9r4m-mvj7#0",
+      "score": 0.85,
+      "text": "GHSA-9hjg-9r4m-mvj7 (CVE-2024-47081)\npackage: requests\nsummary: Requests vulnerable to .netrc credentials leak via malicious URLs\naffected: >=0, <2.32.4",
+      "vuln_id": "GHSA-9hjg-9r4m-mvj7"
+     },
+     {
+      "id": "GHSA-9hjg-9r4m-mvj7#1",
+      "score": 0.846,
+      "text": "GHSA-9hjg-9r4m-mvj7 (requests) details:\n### Impact\n\nDue to a URL parsing issue, Requests releases prior to 2.32.4 may leak .netrc credentials to third parties for specific maliciously-crafted URLs.\n\n### Workarounds\nFor older versions of Requests, use of the .netrc file can be disabled with `trust_env=False` on your Requests Session ([docs](https://requests.readthedocs.io/en/latest/api/#requests.Session.trust_env)).",
+      "vuln_id": "GHSA-9hjg-9r4m-mvj7"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#1",
+      "score": 0.774,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\n### Impact\n\nSince Requests v2.3.0, Requests has been vulnerable to potentially leaking `Proxy-Authorization` headers to destination servers, specifically during redirects to an HTTPS origin. This is a product of how `rebuild_proxies` is used to recompute and [reattach the `Proxy-Authorization` header](https://github.com/psf/requests/blob/f2629e9e3c7ce3c3c8c025bcd8db551101cbc773/requests/sessions.py#L319-L328) to requests when redirected. Note this behavior has _only_ been observed to affect proxied requests when credentials are supplied in the URL user information component (e.g. `https://username:password@proxy:8080`).\n\n**Current vulnerable behavior(s):**\n\n1. HTTP \u2192 HTTPS: **leak**\n2. HTTPS \u2192 HTTP: **no leak**\n3. HTTPS \u2192 HTTPS: **leak**\n4. HTTP \u2192 HTTP: **no leak**",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-gc5v-m9x4-r6x2#1",
+      "score": 0.768,
+      "text": "GHSA-gc5v-m9x4-r6x2 (requests) details:\n### Impact\nThe `requests.utils.extract_zipped_paths()` utility function uses a predictable filename when extracting files from zip archives into the system temporary directory. If the target file already exists, it is reused without validation. A local attacker with write access to the temp directory could pre-create a malicious file that would be loaded in place of the legitimate one.\n\n### Affected usages\n**Standard usage of the Requests library is not affected by this vulnerability.** Only applications that call `extract_zipped_paths()` directly are impacted.\n\n### Remediation\nUpgrade to at least Requests 2.33.0, where the library now extracts files to a non-deterministic location.\n\nIf developers are unable to upgrade, they can set `TMPDIR` in their environment to a directory with restricted write access.",
+      "vuln_id": "GHSA-gc5v-m9x4-r6x2"
+     }
+    ],
+    "symbols": [
+     "trust_env"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 18.4,
+   "output": {
+    "package": "requests",
+    "import_names": [
+     "requests"
+    ],
+    "symbols": [
+     "trust_env"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/core/release_checker.py:4",
+     "mealie/scripts/healthcheck.py:4",
+     "mealie/scripts/install_model.py:1",
+     "mealie/services/event_bus_service/publisher.py:4"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 14,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/core/release_checker.py:19",
+      "code": "response = requests.get(url)",
+      "function": "mealie.core.release_checker:get_latest_github_release",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/release_checker.py:43",
+      "code": "except requests.RequestException:",
+      "function": "mealie.core.release_checker:get_latest_version",
+      "in_test": false
+     },
+     {
+      "location": "mealie/scripts/healthcheck.py:15",
+      "code": "r = requests.get(url)",
+      "function": "mealie.scripts.healthcheck:main",
+      "in_test": false
+     },
+     {
+      "location": "mealie/scripts/install_model.py:13",
+      "code": "r = requests.get(MODEL_URL, stream=True, allow_redirects=True)",
+      "function": "mealie.scripts.install_model:main",
+      "in_test": false
+     },
+     {
+      "location": "mealie/services/event_bus_service/publisher.py:48",
+      "code": "r = requests.post(url, json=event_payload, timeout=15)",
+      "function": "mealie.services.event_bus_service.publisher:WebhookPublisher.publish",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "requests: imported in 4 non-test location(s); 14 package call/reference site(s); named vulnerable symbols ['trust_env']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/core/security/security.py:90",
+      "score": 0.686,
+      "text": "# mealie/core/security/security.py:90-92  url_safe_token\ndef url_safe_token() -> str:\n    \"\"\"Generates a cryptographic token without embedded data. Used for password reset tokens and invitation tokens\"\"\"\n    return secrets.token_urlsafe(24)",
+      "file": "mealie/core/security/security.py",
+      "start": 90,
+      "qualname": "url_safe_token"
+     },
+     {
+      "id": "mealie:mealie/routes/_base/controller.py:178",
+      "score": 0.668,
+      "text": "# mealie/routes/_base/controller.py:178-192  _update_cbv_route_endpoint_signature\ndef _update_cbv_route_endpoint_signature(cls: type[Any], route: Route | WebSocketRoute) -> None:\n    \"\"\"\n    Fixes the endpoint signature for a cbv route to ensure FastAPI performs dependency injection properly.\n    \"\"\"\n    old_endpoint = route.endpoint\n    old_signature = inspect.signature(old_endpoint)\n    old_parameters: list[inspect.Parameter] = list(old_signature.parameters.values())\n    old_first_parameter = old_parameters[0]\n    new_first_parameter = old_first_parameter.replace(default=Depends(cls))\n    new_parameters = [new_first_parameter] + [\n        parameter.replace(kind=inspect.Parameter.KEYWORD_ONLY) for parameter in old_parameters[1:]\n    ]\n\n    new_signature = old_signature.replace(parameters=new_parameters)\n    route.endpoint.__signature__ = new_signature",
+      "file": "mealie/routes/_base/controller.py",
+      "start": 178,
+      "qualname": "_update_cbv_route_endpoint_signature"
+     },
+     {
+      "id": "mealie:mealie/routes/auth/auth.py:26",
+      "score": 0.658,
+      "text": "# mealie/routes/auth/auth.py:26-42  CustomOAuth2Form.__init__\n    def __init__(\n        self,\n        grant_type: str = Form(None, pattern=\"password\"),\n        username: str = Form(...),\n        password: str = Form(...),\n        remember_me: bool = Form(False),\n        scope: str = Form(\"\"),\n        client_id: str | None = Form(None),\n        client_secret: str | None = Form(None),\n    ):\n        self.grant_type = grant_type\n        self.username = username\n        self.password = password\n        self.remember_me = remember_me\n        self.scopes = scope.split()\n        self.client_id = client_id\n        self.client_secret = client_secret",
+      "file": "mealie/routes/auth/auth.py",
+      "start": 26,
+      "qualname": "CustomOAuth2Form.__init__"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:105",
+      "score": 0.658,
+      "text": "# mealie/services/recipe/recipe_data_service.py:105-116  RecipeDataService._validate_image_url\n    def _validate_image_url(url: str) -> bool:\n        # sourcery skip: invert-any-all, use-any\n        \"\"\"\n        Validates that the URL is of an allowed source and restricts certain sources to prevent\n        malicious images from being downloaded.\n        \"\"\"\n        invalid_domains = {\"127.0.0.1\", \"localhost\"}\n        for domain in invalid_domains:\n            if domain in url:\n                return False\n\n        return True",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 105,
+      "qualname": "RecipeDataService._validate_image_url"
+     },
+     {
+      "id": "mealie:mealie/core/security/hasher.py:26",
+      "score": 0.652,
+      "text": "# mealie/core/security/hasher.py:26-27  PasslibHasher.__init__\n    def __init__(self) -> None:\n        self.ctx = CryptContext(schemes=[\"bcrypt\"], deprecated=\"auto\")",
+      "file": "mealie/core/security/hasher.py",
+      "start": 26,
+      "qualname": "PasslibHasher.__init__"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "trust_env"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/core/release_checker.py:4",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/scripts/healthcheck.py:4",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "mealie/scripts/install_model.py:1",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1662,
+   "tokens_out": 100,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/core/release_checker.py:4\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/scripts/healthcheck.py:4\", \"explanation\": \"static evidence\"}, {\"location\": \"mealie/scripts/install_model.py:1\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"trust_env\"]}",
+     "in": 1662,
+     "out": 100,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1632,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1632,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3294,
+  "tokens_out": 136,
+  "cost_usd_est": 0.0,
+  "seconds": 0.08
+ },
+ "created": "2026-11-10T00:06:30+00:00",
+ "code_version": "a3e1ef4"
+}

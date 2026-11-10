@@ -1,0 +1,339 @@
+{
+ "finding_id": "ctfd/mako@1.1.3/PYSEC-2026-2617",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-44307",
+   "GHSA-2h4p-vjrc-8xpq",
+   "PYSEC-2026-2617"
+  ],
+  "cves": [
+   "CVE-2026-44307"
+  ],
+  "cwes": [],
+  "direct_dependency": false,
+  "finding_id": "ctfd/mako@1.1.3/PYSEC-2026-2617",
+  "first_fixed_above_installed": "1.3.12",
+  "fixed_versions": [
+   "1.3.12"
+  ],
+  "max_cvss": "8.7",
+  "package": "mako",
+  "published": "2026-07-13T15:15:39.881159Z",
+  "summary": "Mako vulnerable to path traversal via backslash URI on Windows in TemplateLookup",
+  "target": "ctfd",
+  "version": "1.1.3",
+  "vuln_id": "PYSEC-2026-2617"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "TemplateLookup.get_template",
+   "get_template",
+   "posixpath.normpath",
+   "posixpath",
+   "posixpath.join"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "TemplateLookup.get_template",
+  "get_template",
+  "posixpath.normpath",
+  "posixpath",
+  "posixpath.join",
+  "os.path.isfile",
+  "os.path",
+  "Template.__init__"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/mako@1.1.3/PYSEC-2026-2617",
+    "package": "mako",
+    "version": "1.1.3",
+    "vuln_id": "PYSEC-2026-2617",
+    "aliases": [
+     "CVE-2026-44307",
+     "GHSA-2h4p-vjrc-8xpq",
+     "PYSEC-2026-2617"
+    ],
+    "summary": "Mako vulnerable to path traversal via backslash URI on Windows in TemplateLookup",
+    "max_cvss": "8.7",
+    "fixed_versions": [
+     "1.3.12"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 34.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-2h4p-vjrc-8xpq#0",
+      "score": 0.915,
+      "text": "GHSA-2h4p-vjrc-8xpq (CVE-2026-44307)\npackage: mako\nsummary: Mako vulnerable to path traversal via backslash URI on Windows in TemplateLookup\naffected: >=0, <1.3.12",
+      "vuln_id": "GHSA-2h4p-vjrc-8xpq"
+     },
+     {
+      "id": "GHSA-2h4p-vjrc-8xpq#3",
+      "score": 0.847,
+      "text": "GHSA-2h4p-vjrc-8xpq (mako) details:\n- `mako/lookup.py`: `TemplateLookup.get_template()` uses `posixpath.normpath`/`posixpath.join` for path construction but `os.path.isfile()` for existence check\n- `mako/template.py`: `Template.__init__()` URI validation uses `os.path.normpath()` which on Windows resolves backslash traversal to a form that passes the `startswith(\"..\")` guard\n\n## Impact\n\nIf an application passes user-controlled template names or include paths to `TemplateLookup.get_template()`, an attacker on Windows may be able to load and disclose readable files outside the configured template directory. The primary impact is local file disclosure. If the targeted file contains Mako/Python template syntax, it may also be parsed and executed as a template.\n\n## Remediation",
+      "vuln_id": "GHSA-2h4p-vjrc-8xpq"
+     },
+     {
+      "id": "GHSA-2h4p-vjrc-8xpq#1",
+      "score": 0.824,
+      "text": "GHSA-2h4p-vjrc-8xpq (mako) details:\n## Summary\n\nOn Windows, a URI using backslash traversal (e.g. `\\..\\..\\ secret.txt`) bypasses the directory traversal check in `Template.__init__` and the `posixpath`-based normalization in `TemplateLookup.get_template()`, allowing reads of files outside the configured template directory.\n\n## Details\n\nThe root cause is a mismatch between `posixpath` (used for URI normalization in `get_template()`) and `os.path` (used for file access via `os.path.isfile()` and validation via `os.path.normpath()` in `Template.__init__`). On Windows, `os.path` is `ntpath`, which treats `\\` as a path separator, while `posixpath` treats it as a literal character.\n\nThe vulnerability chain:",
+      "vuln_id": "GHSA-2h4p-vjrc-8xpq"
+     },
+     {
+      "id": "GHSA-2h4p-vjrc-8xpq#4",
+      "score": 0.806,
+      "text": "GHSA-2h4p-vjrc-8xpq (mako) details:\nThe fix should normalize backslashes to forward slashes early in the URI processing pipeline, before any path operations, to ensure consistent behavior across platforms.",
+      "vuln_id": "GHSA-2h4p-vjrc-8xpq"
+     },
+     {
+      "id": "GHSA-v92g-xgxw-vvmm#0",
+      "score": 0.851,
+      "text": "GHSA-v92g-xgxw-vvmm (CVE-2026-41205)\npackage: mako\nsummary: Mako: Path traversal via double-slash URI prefix in TemplateLookup\naffected: >=0, <1.3.11",
+      "vuln_id": "GHSA-v92g-xgxw-vvmm"
+     },
+     {
+      "id": "GHSA-v92g-xgxw-vvmm#1",
+      "score": 0.835,
+      "text": "GHSA-v92g-xgxw-vvmm (mako) details:\n### Summary\n\n`TemplateLookup.get_template()` is vulnerable to path traversal when a URI starts with `//` (e.g., `//../../../secret.txt`). The root cause is an inconsistency between two slash-stripping implementations:\n\n- `Template.__init__` strips **one** leading `/` using `if`/slice\n- `TemplateLookup.get_template()` strips **all** leading `/` using `re.sub(r\"^\\/+\", \"\")`\n\nWhen a URI like `//../../../../etc/passwd` is passed:\n1. `get_template()` strips all `/` \u2192 `../../../../etc/passwd` \u2192 file found via `posixpath.join(dir_, u)`\n2. `Template.__init__` strips one `/` \u2192 `/../../../../etc/passwd` \u2192 `normpath` \u2192 `/etc/passwd`\n3. `/etc/passwd`.startswith(`..`) \u2192 `False` \u2192 **check bypassed**\n\n### Impact\n\nArbitrary file read: any file readable by the process can be returned as rendered template content when an application passes untrusted input directly to `TemplateLookup.get_template()`.",
+      "vuln_id": "GHSA-v92g-xgxw-vvmm"
+     }
+    ],
+    "symbols": [
+     "TemplateLookup.get_template",
+     "get_template",
+     "posixpath.normpath",
+     "posixpath",
+     "posixpath.join",
+     "os.path.isfile",
+     "os.path",
+     "Template.__init__"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 110.2,
+   "output": {
+    "package": "mako",
+    "import_names": [
+     "mako"
+    ],
+    "symbols": [
+     "TemplateLookup.get_template",
+     "get_template",
+     "posixpath.normpath",
+     "posixpath",
+     "posixpath.join",
+     "os.path.isfile",
+     "os.path",
+     "Template.__init__"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "mako: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['TemplateLookup.get_template', 'get_template', 'posixpath.normpath', 'posixpath', 'posixpath.join', 'os.path.isfile', 'os.path', 'Template.__init__']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 37.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/challenges.py:23",
+      "score": 0.653,
+      "text": "# CTFd/challenges.py:23-45  listing\ndef listing():\n    if (\n        Configs.challenge_visibility == ChallengeVisibilityTypes.PUBLIC\n        and authed() is False\n    ):\n        pass\n    else:\n        if is_teams_mode() and get_current_team() is None:\n            return redirect(url_for(\"teams.private\", next=request.full_path))\n\n    infos = get_infos()\n    errors = get_errors()\n\n    if ctf_started() is False:\n        errors.append(f\"{Configs.ctf_name} has not started yet\")\n\n    if ctf_paused() is True:\n        infos.append(f\"{Configs.ctf_name} is paused\")\n\n    if ctf_ended() is True:\n        infos.append(f\"{Configs.ctf_name} has ended\")\n\n    return render_template(\"challenges.html\", infos=infos, errors=errors)",
+      "file": "CTFd/challenges.py",
+      "start": 23,
+      "qualname": "listing"
+     },
+     {
+      "id": "ctfd:CTFd/utils/security/sanitize.py:module",
+      "score": 0.65,
+      "text": "# CTFd/utils/security/sanitize.py (module level)\nfrom pybluemonday import UGCPolicy\n# Copied from lxml:\n# https://github.com/lxml/lxml/blob/e986a9cb5d54827c59aefa8803bc90954d67221e/src/lxml/html/defs.py#L38\n# fmt: off\nSAFE_ATTRS = (\n    'abbr', 'accept', 'accept-charset', 'accesskey', 'action', 'align',\n    'alt', 'axis', 'border', 'cellpadding', 'cellspacing', 'char', 'charoff',\n    'charset', 'checked', 'cite', 'class', 'clear', 'cols', 'colspan',\n    'color', 'compact', 'coords', 'datetime', 'dir', 'disabled', 'enctype',\n    'for', 'frame', 'headers', 'height', 'href', 'hreflang', 'hspace', 'id',\n    'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'media', 'method',\n    'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt', 'readonly',\n    'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape',\n    'size', 'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title',\n    'type', 'usemap', 'valign', 'value', 'vspace', 'width'\n)\n# fmt: on\nPAGE_STRUCTURE_TAGS = {\n    \"title\": [],\n}\nMETA_TAGS = {\n    \"meta\": [\"name\", \"content\", \"property\"],\n}\nFORM_TAGS = {\n    \"form\": [\"method\", \"action\"],\n    \"button\": [\"name\", \"type\", \"value\", \"disabled\"],\n    \"input\": [\"name\", \"type\", \"value\", \"placeholder\"],\n    \"select\": [\"name\", \"value\", \"placeholder\"],\n    \"option\": [\"value\"],\n    \"textarea\": [\"name\", \"value\", \"placeholder\"],\n    \"label\": [\"for\"],\n}\nANNOYING_TAGS = {\n    \"blink\": [],\n    \"marquee\": [],\n}\nMEDIA_TAGS = {\n    \"audio\": [\"autoplay\", \"controls\", \"crossorigin\", \"loop\", \"muted\", \"preload\", \"src\"],\n    \"video\": [\n        \"autoplay\",\n        \"buffered\",\n        \"controls\",\n        \"crossorigin\",\n        \"loop\",\n        \"muted\",\n        \"playsinline\",\n        \"poster\",\n        \"preload\",\n        \"src\",\n    ],\n    \"source\": [\"src\", \"type\"],\n    \"iframe\": [\"width\", \"height\", \"src\", \"frameborder\", \"allow\", \"allowfullscreen\"],\n}\nSANITIZER = UGCPolicy()\nfor TAGS in (PAGE_STRUCTURE_TAGS, META_TAGS, FORM_TAGS, ANNOYING_TAGS, MEDIA_TAGS):\n    for element in TAGS:\n        SANITIZER.AllowElements(element)\n        SANITIZER.AllowAttrs(*TAGS[element]).OnElements(element)\n# Allow safe attrs copied from lxml\nSANITIZER.AllowAttrs(*SAFE_ATTRS).Globally()",
+      "file": "CTFd/utils/security/sanitize.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/constants/plugins.py:10",
+      "score": 0.65,
+      "text": "# CTFd/constants/plugins.py:10-23  _PluginWrapper.scripts\n    def scripts(self):\n        application_root = current_app.config.get(\"APPLICATION_ROOT\")\n        subdir = application_root != \"/\"\n        scripts = []\n        for script in get_registered_scripts():\n            if script.startswith(\"http\"):\n                scripts.append(f'<script defer src=\"{script}\"></script>')\n            elif subdir:\n                scripts.append(\n                    f'<script defer src=\"{application_root}/{script}\"></script>'\n                )\n            else:\n                scripts.append(f'<script defer src=\"{script}\"></script>')\n        return markup(\"\\n\".join(scripts))",
+      "file": "CTFd/constants/plugins.py",
+      "start": 10,
+      "qualname": "_PluginWrapper.scripts"
+     },
+     {
+      "id": "ctfd:CTFd/__init__.py:38",
+      "score": 0.647,
+      "text": "# CTFd/__init__.py:38-46  CTFdRequest.path\n    def path(self):\n        \"\"\"\n        Hijack the original Flask request path because it does not account for subdirectory deployments in an intuitive\n        manner. We append script_root so that the path always points to the full path as seen in the browser.\n        e.g. /subdirectory/path/route vs /path/route\n\n        :return: string\n        \"\"\"\n        return self.script_root + super(CTFdRequest, self).path",
+      "file": "CTFd/__init__.py",
+      "start": 38,
+      "qualname": "CTFdRequest.path"
+     },
+     {
+      "id": "ctfd:CTFd/views.py:363",
+      "score": 0.645,
+      "text": "# CTFd/views.py:363-371  tos\ndef tos():\n    tos_url = get_config(\"tos_url\")\n    tos_text = get_config(\"tos_text\")\n    if tos_url:\n        return redirect(tos_url)\n    elif tos_text:\n        return render_template(\"page.html\", content=build_markdown(tos_text))\n    else:\n        abort(404)",
+      "file": "CTFd/views.py",
+      "start": 363,
+      "qualname": "tos"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "TemplateLookup.get_template",
+     "get_template",
+     "posixpath.normpath",
+     "posixpath",
+     "posixpath.join"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2128,
+   "tokens_out": 59,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"TemplateLookup.get_template\", \"get_template\", \"posixpath.normpath\", \"posixpath\", \"posixpath.join\"]}",
+     "in": 2128,
+     "out": 59,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2060,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2060,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4188,
+  "tokens_out": 95,
+  "cost_usd_est": 0.0,
+  "seconds": 0.19
+ },
+ "created": "2026-11-10T00:06:17+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,448 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-213",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-34265",
+   "GHSA-p64x-8rxx-wf6q",
+   "PYSEC-2022-213"
+  ],
+  "cves": [
+   "CVE-2022-34265"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-213",
+  "first_fixed_above_installed": "4.0.6",
+  "fixed_versions": [
+   "3.2.14",
+   "4.0.6"
+  ],
+  "max_cvss": null,
+  "package": "django",
+  "published": "2022-07-04T16:15:00Z",
+  "summary": "An issue was discovered in Django 3.2 before 3.2.14 and 4.0 before 4.0.6. The Trunc() and Extract() database functions are subject to SQL injection if untrusted data is used as a kind/lookup_name valu",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "PYSEC-2022-213"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "Trunc",
+   "Extract",
+   "lookup_name"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/accounts/admin.py:1",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:2",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "Trunc",
+  "Extract",
+  "lookup_name"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-213",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "PYSEC-2022-213",
+    "aliases": [
+     "CVE-2022-34265",
+     "GHSA-p64x-8rxx-wf6q",
+     "PYSEC-2022-213"
+    ],
+    "summary": "An issue was discovered in Django 3.2 before 3.2.14 and 4.0 before 4.0.6. The Trunc() and Extract() database functions are subject to SQL injection if untrusted data is used as a kind/lookup_name valu",
+    "max_cvss": null,
+    "fixed_versions": [
+     "3.2.14",
+     "4.0.6"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 42.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-p64x-8rxx-wf6q#1",
+      "score": 0.906,
+      "text": "GHSA-p64x-8rxx-wf6q (django) details:\nAn issue was discovered in Django 3.2 before 3.2.14 and 4.0 before 4.0.6. The `Trunc()` and `Extract()` database functions are subject to SQL injection if untrusted data is used as a kind/lookup_name value. Applications that constrain the lookup name and kind choice to a known safe list are unaffected.",
+      "vuln_id": "GHSA-p64x-8rxx-wf6q"
+     },
+     {
+      "id": "GHSA-p64x-8rxx-wf6q#0",
+      "score": 0.881,
+      "text": "GHSA-p64x-8rxx-wf6q (CVE-2022-34265)\npackage: django\nsummary: Django `Trunc()` and `Extract()` database functions vulnerable to SQL Injection\naffected: >=3.2a1, <3.2.14; >=4.0a1, <4.0.6",
+      "vuln_id": "GHSA-p64x-8rxx-wf6q"
+     },
+     {
+      "id": "GHSA-3gh2-xw74-jmcw#1",
+      "score": 0.785,
+      "text": "GHSA-3gh2-xw74-jmcw (django) details:\nDjango 1.11 before 1.11.29, 2.2 before 2.2.11, and 3.0 before 3.0.4 allows SQL Injection if untrusted data is used as a tolerance parameter in GIS functions and aggregates on Oracle. By passing a suitably crafted tolerance to GIS functions and aggregates on Oracle, it was possible to break escaping and inject malicious SQL.",
+      "vuln_id": "GHSA-3gh2-xw74-jmcw"
+     },
+     {
+      "id": "GHSA-h8gc-pgj2-vjm3#1",
+      "score": 0.766,
+      "text": "GHSA-h8gc-pgj2-vjm3 (django) details:\nIn Django 3.2 before 3.2.22, 4.1 before 4.1.12, and 4.2 before 4.2.6, the django.utils.text.Truncator chars() and words() methods (when used with html=True) are subject to a potential DoS (denial of service) attack via certain inputs with very long, potentially malformed HTML text. The chars() and words() methods are used to implement the truncatechars_html and truncatewords_html template filters, which are thus also vulnerable. NOTE: this issue exists because of an incomplete fix for CVE-2019-14232.",
+      "vuln_id": "GHSA-h8gc-pgj2-vjm3"
+     }
+    ],
+    "symbols": [
+     "Trunc",
+     "Extract",
+     "lookup_name"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 101.9,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "Trunc",
+     "Extract",
+     "lookup_name"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols ['Trunc', 'Extract', 'lookup_name']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 44.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/api/admin.py:108",
+      "score": 0.691,
+      "text": "# hc/api/admin.py:108-109  KindListFilter.lookups\n    def lookups(self, request, model_admin):\n        return zip(self.kinds, self.kinds)",
+      "file": "hc/api/admin.py",
+      "start": 108,
+      "qualname": "KindListFilter.lookups"
+     },
+     {
+      "id": "healthchecks:hc/api/admin.py:80",
+      "score": 0.683,
+      "text": "# hc/api/admin.py:80-81  SchemeListFilter.lookups\n    def lookups(self, request, model_admin):\n        return ((\"http\", \"HTTP\"), (\"https\", \"HTTPS\"), (\"email\", \"Email\"))",
+      "file": "hc/api/admin.py",
+      "start": 80,
+      "qualname": "SchemeListFilter.lookups"
+     },
+     {
+      "id": "healthchecks:hc/accounts/admin.py:40",
+      "score": 0.683,
+      "text": "# hc/accounts/admin.py:40-41  Fieldset.tuple\n    def tuple(cls):\n        return (cls.name, {\"fields\": cls.fields})",
+      "file": "hc/accounts/admin.py",
+      "start": 40,
+      "qualname": "Fieldset.tuple"
+     },
+     {
+      "id": "healthchecks:hc/payments/admin.py:module",
+      "score": 0.682,
+      "text": "# hc/payments/admin.py (module level)\nfrom django.contrib import admin\nfrom django.urls import reverse\nfrom django.utils.safestring import mark_safe\nfrom hc.accounts.models import Profile\nfrom hc.payments.models import Subscription\n@admin.register(Subscription)\nclass SubsAdmin(admin.ModelAdmin):\n    readonly_fields = (\"email\",)\n    search_fields = (\n        \"customer_id\",\n        \"payment_method_token\",\n        \"subscription_id\",\n        \"user__email\",\n    )\n    list_display = (\n        \"id\",\n        \"email\",\n        \"customer_id\",\n        \"address_id\",\n        \"payment_method_token\",\n        \"subscription_id\",\n        \"plan_id\",\n        \"plan_name\",\n        \"profile\",\n    )\n    list_filter = (\"plan_id\",)\n    raw_id_fields = (\"user\",)\n    actions = (\"cancel\",)\n    @mark_safe",
+      "file": "hc/payments/admin.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/api/views.py:77",
+      "score": 0.679,
+      "text": "# hc/api/views.py:77-92  _lookup\ndef _lookup(project, spec):\n    unique_fields = spec.get(\"unique\", [])\n    if unique_fields:\n        existing_checks = Check.objects.filter(project=project)\n        if \"name\" in unique_fields:\n            existing_checks = existing_checks.filter(name=spec.get(\"name\"))\n        if \"tags\" in unique_fields:\n            existing_checks = existing_checks.filter(tags=spec.get(\"tags\"))\n        if \"timeout\" in unique_fields:\n            timeout = td(seconds=spec[\"timeout\"])\n            existing_checks = existing_checks.filter(timeout=timeout)\n        if \"grace\" in unique_fields:\n            grace = td(seconds=spec[\"grace\"])\n            existing_checks = existing_checks.filter(grace=grace)\n\n        return existing_checks.first()",
+      "file": "hc/api/views.py",
+      "start": 77,
+      "qualname": "_lookup"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 1.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "Trunc",
+     "Extract",
+     "lookup_name"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/accounts/admin.py:1",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:2",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1407,
+   "tokens_out": 98,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/accounts/admin.py:1\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:2\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"Trunc\", \"Extract\", \"lookup_name\"]}",
+     "in": 1407,
+     "out": 98,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1370,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1370,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2777,
+  "tokens_out": 134,
+  "cost_usd_est": 0.0,
+  "seconds": 0.19
+ },
+ "created": "2026-11-10T00:06:11+00:00",
+ "code_version": "a3e1ef4"
+}

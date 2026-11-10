@@ -35,6 +35,7 @@ class Target:
     system_packages: list[str] = field(default_factory=list)
     app_dirs: list[str] = field(default_factory=list)   # first-party source dirs (code index + static analysis)
     test_dirs: list[str] = field(default_factory=list)
+    template_dirs: list[str] = field(default_factory=list)
 
     @property
     def checkout(self) -> Path:

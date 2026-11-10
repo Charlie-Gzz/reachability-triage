@@ -1,0 +1,300 @@
+{
+ "finding_id": "mealie/gunicorn@21.2.0/GHSA-hc5x-x2vx-497g",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-6827",
+   "GHSA-hc5x-x2vx-497g",
+   "PYSEC-2026-1433"
+  ],
+  "cves": [
+   "CVE-2024-6827"
+  ],
+  "cwes": [
+   "CWE-444"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/gunicorn@21.2.0/GHSA-hc5x-x2vx-497g",
+  "first_fixed_above_installed": "22.0.0",
+  "fixed_versions": [
+   "22.0.0"
+  ],
+  "max_cvss": "7.5",
+  "package": "gunicorn",
+  "published": "2025-03-20T12:32:45Z",
+  "summary": "Gunicorn HTTP Request/Response Smuggling vulnerability",
+  "target": "mealie",
+  "version": "21.2.0",
+  "vuln_id": "GHSA-hc5x-x2vx-497g"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "TE.CL"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "TE.CL"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/gunicorn@21.2.0/GHSA-hc5x-x2vx-497g",
+    "package": "gunicorn",
+    "version": "21.2.0",
+    "vuln_id": "GHSA-hc5x-x2vx-497g",
+    "aliases": [
+     "CVE-2024-6827",
+     "GHSA-hc5x-x2vx-497g",
+     "PYSEC-2026-1433"
+    ],
+    "summary": "Gunicorn HTTP Request/Response Smuggling vulnerability",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "22.0.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 26.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-hc5x-x2vx-497g#0",
+      "score": 0.856,
+      "text": "GHSA-hc5x-x2vx-497g (CVE-2024-6827)\npackage: gunicorn\nsummary: Gunicorn HTTP Request/Response Smuggling vulnerability\naffected: >=0, <22.0.0",
+      "vuln_id": "GHSA-hc5x-x2vx-497g"
+     },
+     {
+      "id": "GHSA-hc5x-x2vx-497g#1",
+      "score": 0.811,
+      "text": "GHSA-hc5x-x2vx-497g (gunicorn) details:\nGunicorn version 21.2.0 does not properly validate the value of the 'Transfer-Encoding' header as specified in the RFC standards, which leads to the default fallback method of 'Content-Length,' making it vulnerable to TE.CL request smuggling. This vulnerability can lead to cache poisoning, data exposure, session manipulation, SSRF, XSS, DoS, data integrity compromise, security bypass, information leakage, and business logic abuse.",
+      "vuln_id": "GHSA-hc5x-x2vx-497g"
+     },
+     {
+      "id": "GHSA-w3h3-4rj7-4ph4#0",
+      "score": 0.833,
+      "text": "GHSA-w3h3-4rj7-4ph4 (CVE-2024-1135)\npackage: gunicorn\nsummary: Request smuggling leading to endpoint restriction bypass in Gunicorn\naffected: >=0, <22.0.0",
+      "vuln_id": "GHSA-w3h3-4rj7-4ph4"
+     },
+     {
+      "id": "GHSA-w3h3-4rj7-4ph4#1",
+      "score": 0.828,
+      "text": "GHSA-w3h3-4rj7-4ph4 (gunicorn) details:\nGunicorn fails to properly validate Transfer-Encoding headers, leading to HTTP Request Smuggling (HRS) vulnerabilities. By crafting requests with conflicting Transfer-Encoding headers, attackers can bypass security restrictions and access restricted endpoints. This issue is due to Gunicorn's handling of Transfer-Encoding headers, where it incorrectly processes requests with multiple, conflicting Transfer-Encoding headers, treating them as chunked regardless of the final encoding specified. This vulnerability has been shown to allow access to endpoints restricted by gunicorn. This issue has been addressed in version 22.0.0.\n\nTo be affected users must have a network path which does not filter out invalid requests. These users are advised to block access to restricted endpoints via a firewall or other mechanism if they are unable to update.",
+      "vuln_id": "GHSA-w3h3-4rj7-4ph4"
+     }
+    ],
+    "symbols": [
+     "TE.CL"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 17.7,
+   "output": {
+    "package": "gunicorn",
+    "import_names": [
+     "gunicorn"
+    ],
+    "symbols": [
+     "TE.CL"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "gunicorn: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['TE.CL']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/routes/spa/__init__.py:29",
+      "score": 0.696,
+      "text": "# mealie/routes/spa/__init__.py:29-38  SPAStaticFiles.get_response\n    async def get_response(self, path: str, scope):\n        try:\n            return await super().get_response(path, scope)\n        except HTTPException as ex:\n            if ex.status_code == 404:\n                return await super().get_response(\"index.html\", scope)\n            else:\n                raise ex\n        except Exception as e:\n            raise e",
+      "file": "mealie/routes/spa/__init__.py",
+      "start": 29,
+      "qualname": "SPAStaticFiles.get_response"
+     },
+     {
+      "id": "mealie:mealie/routes/spa/__init__.py:153",
+      "score": 0.677,
+      "text": "# mealie/routes/spa/__init__.py:153-154  response_404\ndef response_404():\n    return Response(__contents, media_type=\"text/html\", status_code=404)",
+      "file": "mealie/routes/spa/__init__.py",
+      "start": 153,
+      "qualname": "response_404"
+     },
+     {
+      "id": "mealie:mealie/services/scraper/scraper_strategies.py:27",
+      "score": 0.677,
+      "text": "# mealie/services/scraper/scraper_strategies.py:27-70  safe_scrape_html\nasync def safe_scrape_html(url: str) -> str:\n    \"\"\"\n    Scrapes the html from a url but will cancel the request\n    if the request takes longer than 15 seconds. This is used to mitigate\n    DDOS attacks from users providing a url with arbitrary large content.\n    \"\"\"\n    async with AsyncClient() as client:\n        html_bytes = b\"\"\n        async with client.stream(\"GET\", url, timeout=SCRAPER_TIMEOUT, headers={\"User-Agent\": _FIREFOX_UA}) as resp:\n            start_time = time.time()\n\n            async for chunk in resp.aiter_bytes(chunk_size=1024):\n                html_bytes += chunk\n\n                if time.time() - start_time > SCRAPER_TIMEOUT:\n                    raise ForceTimeoutException()\n\n        # =====================================\n        # Copied from requests text property\n\n        # Try charset from content-type\n        content = None\n        encoding = resp.encoding\n\n        if not html_bytes:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if encoding is None:\n            encoding = resp.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(html_bytes, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(html_bytes, errors=\"replace\")\n\n        return content",
+      "file": "mealie/services/scraper/scraper_strategies.py",
+      "start": 27,
+      "qualname": "safe_scrape_html"
+     },
+     {
+      "id": "mealie:mealie/routes/_base/routers.py:30",
+      "score": 0.655,
+      "text": "# mealie/routes/_base/routers.py:30-45  MealieCrudRoute.get_route_handler\n    def get_route_handler(self) -> Callable:\n        original_route_handler = super().get_route_handler()\n\n        async def custom_route_handler(request: Request) -> Response:\n            with contextlib.suppress(JSONDecodeError):\n                response = await original_route_handler(request)\n                response_body = json.loads(response.body)\n                if isinstance(response_body, dict):\n                    if last_modified := response_body.get(\"updateAt\"):\n                        response.headers[\"last-modified\"] = last_modified\n\n                        # Force no-cache for all responses to prevent browser from caching API calls\n                        response.headers[\"Cache-Control\"] = \"no-cache, no-store, must-revalidate\"\n            return response\n\n        return custom_route_handler",
+      "file": "mealie/routes/_base/routers.py",
+      "start": 30,
+      "qualname": "MealieCrudRoute.get_route_handler"
+     },
+     {
+      "id": "mealie:mealie/routes/_base/mixins.py:101",
+      "score": 0.652,
+      "text": "# mealie/routes/_base/mixins.py:101-115  HttpRepo.patch_one\n    def patch_one(self, data: U, item_id: int | str | UUID4) -> R:\n        item = self.repo.get_one(item_id)\n\n        if not item:\n            raise HTTPException(\n                status.HTTP_404_NOT_FOUND,\n                detail=ErrorResponse.respond(message=\"Not found.\"),\n            )\n\n        try:\n            item = self.repo.patch(item_id, data.dict(exclude_unset=True, exclude_defaults=True))\n        except Exception as ex:\n            self.handle_exception(ex)\n\n        return item",
+      "file": "mealie/routes/_base/mixins.py",
+      "start": 101,
+      "qualname": "HttpRepo.patch_one"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "TE.CL"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1738,
+   "tokens_out": 37,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"TE.CL\"]}",
+     "in": 1738,
+     "out": 37,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1670,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1670,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3408,
+  "tokens_out": 73,
+  "cost_usd_est": 0.0,
+  "seconds": 0.08
+ },
+ "created": "2026-11-10T00:06:23+00:00",
+ "code_version": "a3e1ef4"
+}

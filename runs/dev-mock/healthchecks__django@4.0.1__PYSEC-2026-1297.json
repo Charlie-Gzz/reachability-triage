@@ -1,0 +1,445 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/PYSEC-2026-1297",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-45231",
+   "GHSA-rrqc-c2jx-6jgv",
+   "PYSEC-2026-1297"
+  ],
+  "cves": [
+   "CVE-2024-45231"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/PYSEC-2026-1297",
+  "first_fixed_above_installed": "4.2.16",
+  "fixed_versions": [
+   "4.2.16",
+   "5.0.9",
+   "5.1.1"
+  ],
+  "max_cvss": "6.3",
+  "package": "django",
+  "published": "2026-07-07T14:34:42.697597Z",
+  "summary": "Django allows enumeration of user e-mail addresses",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "PYSEC-2026-1297"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "django.contrib.auth.forms.PasswordResetForm",
+   "PasswordResetForm"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/accounts/admin.py:1",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:2",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "django.contrib.auth.forms.PasswordResetForm",
+  "PasswordResetForm"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/PYSEC-2026-1297",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "PYSEC-2026-1297",
+    "aliases": [
+     "CVE-2024-45231",
+     "GHSA-rrqc-c2jx-6jgv",
+     "PYSEC-2026-1297"
+    ],
+    "summary": "Django allows enumeration of user e-mail addresses",
+    "max_cvss": "6.3",
+    "fixed_versions": [
+     "4.2.16",
+     "5.0.9",
+     "5.1.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-rrqc-c2jx-6jgv#0",
+      "score": 0.855,
+      "text": "GHSA-rrqc-c2jx-6jgv (CVE-2024-45231)\npackage: django\nsummary: Django allows enumeration of user e-mail addresses\naffected: >=0, <4.2.16; >=5.0, <5.0.9; >=5.1, <5.1.1",
+      "vuln_id": "GHSA-rrqc-c2jx-6jgv"
+     },
+     {
+      "id": "GHSA-rrqc-c2jx-6jgv#1",
+      "score": 0.773,
+      "text": "GHSA-rrqc-c2jx-6jgv (django) details:\nAn issue was discovered in Django v5.1.1, v5.0.9, and v4.2.16. The django.contrib.auth.forms.PasswordResetForm class, when used in a view implementing password reset flows, allows remote attackers to enumerate user e-mail addresses by sending password reset requests and observing the outcome (only when e-mail sending is consistently failing).",
+      "vuln_id": "GHSA-rrqc-c2jx-6jgv"
+     },
+     {
+      "id": "GHSA-fp6p-5xvw-m74f#0",
+      "score": 0.836,
+      "text": "GHSA-fp6p-5xvw-m74f (CVE-2016-2513)\npackage: django\nsummary: Django User Enumeration Vulnerability\naffected: >=0, <1.8.10; >=1.9, <1.9.3",
+      "vuln_id": "GHSA-fp6p-5xvw-m74f"
+     },
+     {
+      "id": "GHSA-x7q2-wr7g-xqmf#0",
+      "score": 0.834,
+      "text": "GHSA-x7q2-wr7g-xqmf (CVE-2024-39329)\npackage: django\nsummary: Django vulnerable to user enumeration attack\naffected: >=4.2, <4.2.14; >=5.0, <5.0.7",
+      "vuln_id": "GHSA-x7q2-wr7g-xqmf"
+     }
+    ],
+    "symbols": [
+     "django.contrib.auth.forms.PasswordResetForm",
+     "PasswordResetForm"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 85.7,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "django.contrib.auth.forms.PasswordResetForm",
+     "PasswordResetForm"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols ['django.contrib.auth.forms.PasswordResetForm', 'PasswordResetForm']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 35.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/accounts/forms.py:module",
+      "score": 0.732,
+      "text": "# hc/accounts/forms.py (module level)\nimport base64\nimport binascii\nfrom datetime import timedelta as td\nfrom django import forms\nfrom django.core.exceptions import ValidationError\nfrom django.contrib.auth import authenticate\nfrom django.contrib.auth.models import User\nfrom hc.accounts.models import REPORT_CHOICES, Member\nfrom hc.api.models import TokenBucket\nfrom hc.lib.tz import all_timezones\nclass LowercaseEmailField(forms.EmailField):\nclass Base64Field(forms.CharField):\nclass SignupForm(forms.Form):\n    # Call it \"identity\" instead of \"email\"\n    # to avoid some of the dumber bots\n    identity = LowercaseEmailField(\n        error_messages={\"required\": \"Please enter your email address.\"}\n    )\n    tz = forms.CharField(required=False)\n        # Otherwise, return None, and *don't* throw a validation exception:\n        # If user's browser reports a timezone we don't recognize, we\n        # should ignore the timezone but still save the rest of the form.\nclass EmailLoginForm(forms.Form):\n    # Call it \"identity\" instead of \"email\"\n    # to avoid some of the dumber bots\n    identity = LowercaseEmailField()\nclass PasswordLoginForm(forms.Form):\n    email = LowercaseEmailField()\n    password = forms.CharField()\nclass ReportSettingsForm(forms.Form):\n    reports = forms.ChoiceField(choices=REPORT_CHOICES)\n    nag_period = forms.IntegerField(min_value=0, max_value=86400)\n    tz = forms.CharField()\n        # Otherwise, return None, and *don't* throw a validation exception:\n        # If user's browser reports a timezone we don't recognize, we\n        # should ignore the timezone but still save the rest of the form.\nclass SetPasswordForm(forms.Form):\n    password = forms.CharField(min_length=8)\nclass ChangeEmailForm(forms.Form):\n    error_css_class = \"has-error\"\n    email = LowercaseEmailField()\nclass InviteTeamMemberForm(forms.Form):\n    email = LowercaseEmailField(max_length=254)\n    role = forms.ChoiceField(choices=Member.Role.choices)\nclass RemoveTeamMemberForm(forms.Form):\n    email = LowercaseEmailField()\nclass ProjectNameForm(forms.Form):\n    name = forms.CharField(max_length=60)\nclass TransferForm(forms.Form):\n    email = LowercaseEmailField()\nclass AddWebAuthnForm(forms.Form):\n    name = forms.CharField(max_length=100)\n    client_data_json = Base64Field()\n    attestation_object = Base64Field()\nclass WebAuthnForm(forms.Form):\n    credential_id = Base64Field()\n    client_data_json = Base64Field()\n    authenticator_data = Base64Field()\n    signature = Base64Field()\nclass TotpForm(forms.Form):",
+      "file": "hc/accounts/forms.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/api/admin.py:80",
+      "score": 0.731,
+      "text": "# hc/api/admin.py:80-81  SchemeListFilter.lookups\n    def lookups(self, request, model_admin):\n        return ((\"http\", \"HTTP\"), (\"https\", \"HTTPS\"), (\"email\", \"Email\"))",
+      "file": "hc/api/admin.py",
+      "start": 80,
+      "qualname": "SchemeListFilter.lookups"
+     },
+     {
+      "id": "healthchecks:hc/api/models.py:956",
+      "score": 0.73,
+      "text": "# hc/api/models.py:956-961  TokenBucket.authorize_login_password\n    def authorize_login_password(email):\n        salted_encoded = (email + settings.SECRET_KEY).encode()\n        value = \"pw-%s\" % hashlib.sha1(salted_encoded).hexdigest()\n\n        # 20 password attempts per day\n        return TokenBucket.authorize(value, 20, 3600 * 24)",
+      "file": "hc/api/models.py",
+      "start": 956,
+      "qualname": "TokenBucket.authorize_login_password"
+     },
+     {
+      "id": "healthchecks:hc/accounts/models.py:87",
+      "score": 0.73,
+      "text": "# hc/accounts/models.py:87-88  Profile.__str__\n    def __str__(self):\n        return \"Profile for %s\" % self.user.email",
+      "file": "hc/accounts/models.py",
+      "start": 87,
+      "qualname": "Profile.__str__"
+     },
+     {
+      "id": "healthchecks:hc/accounts/forms.py:83",
+      "score": 0.729,
+      "text": "# hc/accounts/forms.py:83-95  PasswordLoginForm.clean\n    def clean(self):\n        username = self.cleaned_data.get(\"email\")\n        password = self.cleaned_data.get(\"password\")\n\n        if username and password:\n            if not TokenBucket.authorize_login_password(username):\n                raise forms.ValidationError(\"Too many attempts, please try later.\")\n\n            self.user = authenticate(username=username, password=password)\n            if self.user is None or not self.user.is_active:\n                raise forms.ValidationError(\"Incorrect email or password.\")\n\n        return self.cleaned_data",
+      "file": "hc/accounts/forms.py",
+      "start": 83,
+      "qualname": "PasswordLoginForm.clean"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "django.contrib.auth.forms.PasswordResetForm",
+     "PasswordResetForm"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/accounts/admin.py:1",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:2",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1420,
+   "tokens_out": 106,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/accounts/admin.py:1\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:2\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"django.contrib.auth.forms.PasswordResetForm\", \"PasswordResetForm\"]}",
+     "in": 1420,
+     "out": 106,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1383,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1383,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2803,
+  "tokens_out": 142,
+  "cost_usd_est": 0.0,
+  "seconds": 0.16
+ },
+ "created": "2026-11-10T00:06:12+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,6 @@
+# Development: deterministic mock LLM, full graph.
+provider: {provider: mock}
+retrieval: true
+reflection: true
+store: chroma
+max_retries: 1

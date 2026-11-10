@@ -1,0 +1,430 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/PYSEC-2023-13",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-24580",
+   "GHSA-2hrw-hx67-34x6",
+   "PYSEC-2023-13"
+  ],
+  "cves": [
+   "CVE-2023-24580"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/PYSEC-2023-13",
+  "first_fixed_above_installed": "4.0.10",
+  "fixed_versions": [
+   "3.2.18",
+   "4.0.10",
+   "4.1.7"
+  ],
+  "max_cvss": null,
+  "package": "django",
+  "published": "2023-02-15T01:15:00Z",
+  "summary": "An issue was discovered in the Multipart Request Parser in Django 3.2 before 3.2.18, 4.0 before 4.0.10, and 4.1 before 4.1.7. Passing certain inputs (e.g., an excessive number of parts) to multipart f",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "PYSEC-2023-13"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/accounts/admin.py:1",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:2",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/accounts/admin.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/PYSEC-2023-13",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "PYSEC-2023-13",
+    "aliases": [
+     "CVE-2023-24580",
+     "GHSA-2hrw-hx67-34x6",
+     "PYSEC-2023-13"
+    ],
+    "summary": "An issue was discovered in the Multipart Request Parser in Django 3.2 before 3.2.18, 4.0 before 4.0.10, and 4.1 before 4.1.7. Passing certain inputs (e.g., an excessive number of parts) to multipart f",
+    "max_cvss": null,
+    "fixed_versions": [
+     "3.2.18",
+     "4.0.10",
+     "4.1.7"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 41.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-2hrw-hx67-34x6#1",
+      "score": 0.829,
+      "text": "GHSA-2hrw-hx67-34x6 (django) details:\nAn issue was discovered in the Multipart Request Parser in Django 3.2 before 3.2.18, 4.0 before 4.0.10, and 4.1 before 4.1.7. Passing certain inputs (e.g., an excessive number of parts) to multipart forms could result in too many open files or memory exhaustion, and provided a potential vector for a denial-of-service attack.",
+      "vuln_id": "GHSA-2hrw-hx67-34x6"
+     },
+     {
+      "id": "GHSA-2hrw-hx67-34x6#0",
+      "score": 0.669,
+      "text": "GHSA-2hrw-hx67-34x6 (CVE-2023-24580)\npackage: django\nsummary: Resource exhaustion in Django\naffected: >=3.2a1, <3.2.18; >=4.0a1, <4.0.10; >=4.1a1, <4.1.7",
+      "vuln_id": "GHSA-2hrw-hx67-34x6"
+     },
+     {
+      "id": "GHSA-5mf9-h53q-7mhq#1",
+      "score": 0.807,
+      "text": "GHSA-5mf9-h53q-7mhq (django) details:\nAn issue was discovered in 6.0 before 6.0.4, 5.2 before 5.2.13, and 4.2 before 4.2.30. `MultiPartParser` allows remote attackers to degrade performance by submitting multipart uploads with `Content-Transfer-Encoding: base64` including excessive whitespace.\n\nEarlier, unsupported Django series (such as 5.0.x, 4.1.x, and 3.2.x) were not evaluated and may also be affected.\nDjango would like to thank Seokchan Yoon for reporting this issue.",
+      "vuln_id": "GHSA-5mf9-h53q-7mhq"
+     },
+     {
+      "id": "GHSA-5mf9-h53q-7mhq#0",
+      "score": 0.791,
+      "text": "GHSA-5mf9-h53q-7mhq (CVE-2026-33033)\npackage: django\nsummary: Django has potential DoS via MultiPartParser through crafted multipart uploads\naffected: >=4.2, <4.2.30; >=5.2, <5.2.13; >=6.0, <6.0.4",
+      "vuln_id": "GHSA-5mf9-h53q-7mhq"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 48.9,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 42.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/payments/forms.py:module",
+      "score": 0.682,
+      "text": "# hc/payments/forms.py (module level)\nfrom django import forms\nfrom hc.accounts.forms import LowercaseEmailField\nclass InvoiceEmailingForm(forms.Form):\n    send_invoices = forms.IntegerField(min_value=0, max_value=2)\n    invoice_email = LowercaseEmailField(required=False)",
+      "file": "hc/payments/forms.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/front/templatetags/hc_extras.py:module",
+      "score": 0.671,
+      "text": "# hc/front/templatetags/hc_extras.py (module level)\nimport re\nfrom django import template\nfrom django.conf import settings\nfrom django.templatetags.static import static\nfrom django.utils.html import escape\nfrom django.utils.safestring import mark_safe\nfrom django.utils.timezone import now\nfrom hc.lib.date import format_duration, format_approx_duration, format_hms\nregister = template.Library()\n@register.filter\n@register.filter\n@register.filter\n@register.simple_tag\n@register.simple_tag\n@register.filter\n@register.simple_tag\n@register.simple_tag\n@register.simple_tag\n@register.simple_tag\n@register.filter\n@register.filter\n@register.filter\n@register.filter\n@register.filter\n@register.filter\n@register.simple_tag\n@register.filter\nFORMATTED_PING_ENDPOINT = (\n    f\"\"\"<span class=\"base hidden-md\">{settings.PING_ENDPOINT}</span>\"\"\"\n)\n@register.filter\n@register.filter",
+      "file": "hc/front/templatetags/hc_extras.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/payments/views.py:181",
+      "score": 0.67,
+      "text": "# hc/payments/views.py:181-184  payment_method\ndef payment_method(request):\n    sub = get_object_or_404(Subscription, user=request.user)\n    ctx = {\"sub\": sub, \"pm\": sub.payment_method}\n    return render(request, \"payments/payment_method.html\", ctx)",
+      "file": "hc/payments/views.py",
+      "start": 181,
+      "qualname": "payment_method"
+     },
+     {
+      "id": "healthchecks:hc/lib/emails.py:module",
+      "score": 0.67,
+      "text": "# hc/lib/emails.py (module level)\nfrom smtplib import SMTPServerDisconnected, SMTPDataError\nfrom threading import Thread\nimport time\nfrom django.conf import settings\nfrom django.core.mail import EmailMultiAlternatives\nfrom django.template.loader import render_to_string as render\nclass EmailThread(Thread):\n    MAX_TRIES = 3",
+      "file": "hc/lib/emails.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/front/forms.py:module",
+      "score": 0.667,
+      "text": "# hc/front/forms.py (module level)\nfrom datetime import timedelta as td\nimport json\nimport re\nfrom urllib.parse import quote, urlencode\nfrom django import forms\nfrom django.forms import URLField\nfrom django.conf import settings\nfrom django.core.exceptions import ValidationError\nfrom hc.front.validators import (\n    CronExpressionValidator,\n    TimezoneValidator,\n    WebhookValidator,\n)\nimport requests\nclass HeadersField(forms.Field):\n    message = \"\"\"Use \"Header-Name: value\" pairs, one per line.\"\"\"\nclass NameTagsForm(forms.Form):\n    name = forms.CharField(max_length=100, required=False)\n    tags = forms.CharField(max_length=500, required=False)\n    desc = forms.CharField(required=False)\nclass FilteringRulesForm(forms.Form):\n    filter_by_subject = forms.ChoiceField(choices=((\"no\", \"no\"), (\"yes\", \"yes\")))\n    subject = forms.CharField(required=False, max_length=200)\n    subject_fail = forms.CharField(required=False, max_length=200)\n    methods = forms.ChoiceField(required=False, choices=((\"\", \"Any\"), (\"POST\", \"POST\")))\n    manual_resume = forms.BooleanField(required=False)\nclass TimeoutForm(forms.Form):\n    timeout = forms.IntegerField(min_value=60, max_value=31536000)\n    grace = forms.IntegerField(min_value=60, max_value=31536000)\nclass CronForm(forms.Form):\n    schedule = forms.CharField(max_length=100, validators=[CronExpressionValidator()])\n    tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])\n    grace = forms.IntegerField(min_value=1, max_value=43200)\nclass AddOpsgenieForm(forms.Form):\n    error_css_class = \"has-error\"\n    region = forms.ChoiceField(initial=\"us\", choices=((\"us\", \"US\"), (\"eu\", \"EU\")))\n    key = forms.CharField(max_length=40)\nPRIO_CHOICES = [\n    (\"-2\", \"Lowest Priority\"),\n    (\"-1\", \"Low Priority\"),\n    (\"0\", \"Normal Priority\"),\n    (\"1\", \"High Priority\"),\n    (\"2\", \"Emergency Priority\"),\n]\nclass AddPushoverForm(forms.Form):\n    error_css_class = \"has-error\"\n    pushover_user_key = forms.CharField()\n    prio = forms.ChoiceField(initial=\"0\", choices=PRIO_CHOICES)\n    prio_up = forms.ChoiceField(initial=\"0\", choices=PRIO_CHOICES)\nclass EmailForm(forms.Form):\n    error_css_class = \"has-error\"\n    value = forms.EmailField(max_length=100)\n    down = forms.BooleanField(required=False, initial=True)\n    up = forms.BooleanField(required=False, initial=True)\nclass AddUrlForm(forms.Form):\n    error_css_class = \"has-error\"\n    value = forms.URLField(max_length=1000, validators=[WebhookValidator()])\nMETHODS = (\"GET\", \"POST\", \"PUT\")\nclass WebhookForm(forms.Form):\n    error_css_class = \"has-error\"",
+      "file": "hc/front/forms.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/accounts/admin.py:1",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:2",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/accounts/admin.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1653,
+   "tokens_out": 88,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/accounts/admin.py:1\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:2\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/accounts/admin.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": []}",
+     "in": 1653,
+     "out": 88,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 1615,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"uncertain\", \"confidence\": 0.4, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1615,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3268,
+  "tokens_out": 123,
+  "cost_usd_est": 0.0,
+  "seconds": 0.14
+ },
+ "created": "2026-11-10T00:06:12+00:00",
+ "code_version": "a3e1ef4"
+}

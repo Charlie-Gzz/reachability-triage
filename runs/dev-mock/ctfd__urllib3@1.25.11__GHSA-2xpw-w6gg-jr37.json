@@ -1,0 +1,341 @@
+{
+ "finding_id": "ctfd/urllib3@1.25.11/GHSA-2xpw-w6gg-jr37",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-66471",
+   "GHSA-2xpw-w6gg-jr37",
+   "PYSEC-2026-1994"
+  ],
+  "cves": [
+   "CVE-2025-66471"
+  ],
+  "cwes": [
+   "CWE-409"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/urllib3@1.25.11/GHSA-2xpw-w6gg-jr37",
+  "first_fixed_above_installed": "2.6.0",
+  "fixed_versions": [
+   "2.6.0"
+  ],
+  "max_cvss": "8.9",
+  "package": "urllib3",
+  "published": "2025-12-05T18:15:54Z",
+  "summary": "urllib3 streaming API improperly handles highly compressed data",
+  "target": "ctfd",
+  "version": "1.25.11",
+  "vuln_id": "GHSA-2xpw-w6gg-jr37"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "urllib3.HTTPResponse",
+   "stream",
+   "read",
+   "gzip",
+   "deflate"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "urllib3.HTTPResponse",
+  "stream",
+  "read",
+  "gzip",
+  "deflate",
+  "zstd",
+  "read1",
+  "read_chunked"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/urllib3@1.25.11/GHSA-2xpw-w6gg-jr37",
+    "package": "urllib3",
+    "version": "1.25.11",
+    "vuln_id": "GHSA-2xpw-w6gg-jr37",
+    "aliases": [
+     "CVE-2025-66471",
+     "GHSA-2xpw-w6gg-jr37",
+     "PYSEC-2026-1994"
+    ],
+    "summary": "urllib3 streaming API improperly handles highly compressed data",
+    "max_cvss": "8.9",
+    "fixed_versions": [
+     "2.6.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 28.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#0",
+      "score": 0.896,
+      "text": "GHSA-2xpw-w6gg-jr37 (CVE-2025-66471)\npackage: urllib3\nsummary: urllib3 streaming API improperly handles highly compressed data\naffected: >=1.0, <2.6.0",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#1",
+      "score": 0.824,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\n### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.5.0/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nWhen streaming a compressed response, urllib3 can perform decoding or decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). The library must read compressed data from the network and decompress it until the requested chunk size is met. Any resulting decompressed data that exceeds the requested amount is held in an internal buffer for the next read operation.",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#2",
+      "score": 0.812,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\nThe decompression logic could cause urllib3 to fully decode a small amount of highly compressed data in a single operation. This can result in excessive resource consumption (high CPU usage and massive memory allocation for the decompressed data; CWE-409) on the client side, even if the application only requested a small chunk of data.\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier to stream large compressed responses or content from untrusted sources.\n\n`stream()`, `read(amt=256)`, `read1(amt=256)`, `read_chunked(amt=256)`, `readinto(b)` are examples of `urllib3.HTTPResponse` method calls using the affected logic unless decoding is disabled explicitly.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library avoids decompressing data that exceeds the requested amount.",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#3",
+      "score": 0.737,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\nIf your environment contains a package facilitating the Brotli encoding, upgrade to at least Brotli 1.2.0 or brotlicffi 1.2.0.0 too. These versions are enforced by the `urllib3[brotli]` extra in the patched versions of urllib3.\n\n### Credits\n\nThe issue was reported by @Cycloctane.\nSupplemental information was provided by @stamparm during a security audit performed by [7ASecurity](https://7asecurity.com/) and facilitated by [OSTIF](https://ostif.org/).",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-mf9v-mfxr-j63j#1",
+      "score": 0.828,
+      "text": "GHSA-mf9v-mfxr-j63j (urllib3) details:\n### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.7.0/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nurllib3 can perform decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). When using the streaming API since version 2.6.0, the library decompresses only the necessary bytes, enabling partial content consumption.",
+      "vuln_id": "GHSA-mf9v-mfxr-j63j"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#1",
+      "score": 0.824,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\n### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.6.2/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nurllib3 can perform decoding or decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). When using the streaming API, the library decompresses only the necessary bytes, enabling partial content consumption.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     }
+    ],
+    "symbols": [
+     "urllib3.HTTPResponse",
+     "stream",
+     "read",
+     "gzip",
+     "deflate",
+     "zstd",
+     "read1",
+     "read_chunked"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 99.6,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "urllib3.HTTPResponse",
+     "stream",
+     "read",
+     "gzip",
+     "deflate",
+     "zstd",
+     "read1",
+     "read_chunked"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 252,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['urllib3.HTTPResponse', 'stream', 'read', 'gzip', 'deflate', 'zstd', 'read1', 'read_chunked']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 29.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/encoding/__init__.py:39",
+      "score": 0.671,
+      "text": "# CTFd/utils/encoding/__init__.py:39-48  base64decode\ndef base64decode(s):\n    if isinstance(s, string_types):\n        s = s.encode(\"utf-8\")\n\n    decoded = base64.urlsafe_b64decode(s.ljust(len(s) + len(s) % 4, b\"=\"))\n    try:\n        decoded = decoded.decode(\"utf-8\")\n    except UnicodeDecodeError:\n        pass\n    return decoded",
+      "file": "CTFd/utils/encoding/__init__.py",
+      "start": 39,
+      "qualname": "base64decode"
+     },
+     {
+      "id": "ctfd:CTFd/utils/exports/freeze.py:6",
+      "score": 0.664,
+      "text": "# CTFd/utils/exports/freeze.py:6-12  freeze_export\ndef freeze_export(result, fileobj):\n    try:\n        query = result\n        serializer = JSONSerializer(query, fileobj)\n        serializer.serialize()\n    except (OperationalError, ProgrammingError) as e:\n        raise OperationalError(\"Invalid query: %s\" % e)",
+      "file": "CTFd/utils/exports/freeze.py",
+      "start": 6,
+      "qualname": "freeze_export"
+     },
+     {
+      "id": "ctfd:CTFd/utils/exports/__init__.py:84",
+      "score": 0.66,
+      "text": "# CTFd/utils/exports/__init__.py:84-358  import_ctf\ndef import_ctf(backup, erase=True):\n    if not zipfile.is_zipfile(backup):\n        raise zipfile.BadZipfile\n\n    backup = zipfile.ZipFile(backup)\n\n    members = backup.namelist()\n    max_content_length = get_app_config(\"MAX_CONTENT_LENGTH\")\n    for f in members:\n        if f.startswith(\"/\") or \"..\" in f:\n            # Abort on malicious zip files\n            raise zipfile.BadZipfile\n        info = backup.getinfo(f)\n        if max_content_length:\n            if info.file_size > max_content_length:\n                raise zipfile.LargeZipFile\n\n    # Get list of directories in zipfile\n    member_dirs = [os.path.split(m)[0] for m in members if \"/\" in m]\n    if \"db\" not in member_dirs:\n        raise Exception(\n            'CTFd couldn\\'t find the \"db\" folder in this backup. '\n            \"The backup may be malformed or corrupted and the import process cannot continue.\"\n        )\n\n    try:\n        alembic_version = json.loads(backup.open(\"db/alembic_version.json\").read())\n        alembic_version = alembic_version[\"results\"][0][\"version_num\"]\n    except Exception:\n        raise Exception(\n            \"Could not determine appropriate database version. This backup cannot be automatically imported.\"\n        )\n\n    # Check if the alembic version is from CTFd 1.x\n    if alembic_version in (\n        \"1ec4a28fe0ff\",\n        \"2539d8b5082e\",\n        \"7e9efd084c5a\",\n        \"87733981ca0e\",\n        \"a4e30c94c360\",\n        \"c12d2a1b0926\",\n        \"c7225db614c1\",\n        \"cb3cfcc47e2f\",\n        \"cbf5620f8e15\",\n        \"d5a224bf5862\",\n        \"d6514ec92738\",\n        \"dab615389702\",\n        \"e62fd69bd417\",\n    ):\n        raise Exception(\n            \"The version of CTFd that this backup is from is too old to be automatically imported.\"\n        )\n\n    sqlite = get_app_config(\"SQLALCHEMY_DATABASE_URI\").startswith(\"sqlite\")\n    postgres = get_app_config(\"SQLALCHEMY_DATABASE_URI\").startswith(\"postgres\")\n    mysql = get_app_config(\"SQLALCHEMY_DATABASE_URI\").startswith(\"mysql\")\n\n    if erase:\n        # Clear out existing connections to release any locks\n        db.session.close()",
+      "file": "CTFd/utils/exports/__init__.py",
+      "start": 84,
+      "qualname": "import_ctf"
+     },
+     {
+      "id": "ctfd:CTFd/utils/uploads/uploaders.py:117",
+      "score": 0.654,
+      "text": "# CTFd/utils/uploads/uploaders.py:117-130  S3Uploader.download\n    def download(self, filename):\n        key = filename\n        filename = filename.split(\"/\").pop()\n        url = self.s3.generate_presigned_url(\n            \"get_object\",\n            Params={\n                \"Bucket\": self.bucket,\n                \"Key\": key,\n                \"ResponseContentDisposition\": \"attachment; filename={}\".format(\n                    filename\n                ),\n            },\n        )\n        return redirect(url)",
+      "file": "CTFd/utils/uploads/uploaders.py",
+      "start": 117,
+      "qualname": "S3Uploader.download"
+     },
+     {
+      "id": "ctfd:CTFd/utils/uploads/uploaders.py:83",
+      "score": 0.647,
+      "text": "# CTFd/utils/uploads/uploaders.py:83-93  S3Uploader._get_s3_connection\n    def _get_s3_connection(self):\n        access_key = get_app_config(\"AWS_ACCESS_KEY_ID\")\n        secret_key = get_app_config(\"AWS_SECRET_ACCESS_KEY\")\n        endpoint = get_app_config(\"AWS_S3_ENDPOINT_URL\")\n        client = boto3.client(\n            \"s3\",\n            aws_access_key_id=access_key,\n            aws_secret_access_key=secret_key,\n            endpoint_url=endpoint,\n        )\n        return client",
+      "file": "CTFd/utils/uploads/uploaders.py",
+      "start": 83,
+      "qualname": "S3Uploader._get_s3_connection"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "urllib3.HTTPResponse",
+     "stream",
+     "read",
+     "gzip",
+     "deflate"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2102,
+   "tokens_out": 50,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"urllib3.HTTPResponse\", \"stream\", \"read\", \"gzip\", \"deflate\"]}",
+     "in": 2102,
+     "out": 50,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2035,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2035,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4137,
+  "tokens_out": 86,
+  "cost_usd_est": 0.0,
+  "seconds": 0.16
+ },
+ "created": "2026-11-10T00:06:19+00:00",
+ "code_version": "a3e1ef4"
+}

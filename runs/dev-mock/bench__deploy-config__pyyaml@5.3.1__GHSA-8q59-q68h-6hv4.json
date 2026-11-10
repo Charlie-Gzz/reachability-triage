@@ -1,0 +1,331 @@
+{
+ "finding_id": "bench/deploy-config/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+ "config": "dev-mock",
+ "dataset": "bench",
+ "split": "dev",
+ "target": "bench/deploy-config",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2020-14343",
+   "GHSA-8q59-q68h-6hv4",
+   "PYSEC-2021-142"
+  ],
+  "cves": [
+   "CVE-2020-14343"
+  ],
+  "cwes": [
+   "CWE-20"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/deploy-config/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+  "first_fixed_above_installed": "5.4",
+  "fixed_versions": [
+   "5.4"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "pyyaml",
+  "published": "2021-03-25T21:26:26Z",
+  "split": "dev",
+  "summary": "Improper Input Validation in PyYAML",
+  "target": "bench/deploy-config",
+  "version": "5.3.1",
+  "vuln_id": "GHSA-8q59-q68h-6hv4"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "FullLoader",
+   "full_load"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "deployctl/settings.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "FullLoader",
+  "full_load"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/deploy-config/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+    "package": "pyyaml",
+    "version": "5.3.1",
+    "vuln_id": "GHSA-8q59-q68h-6hv4",
+    "aliases": [
+     "CVE-2020-14343",
+     "GHSA-8q59-q68h-6hv4",
+     "PYSEC-2021-142"
+    ],
+    "summary": "Improper Input Validation in PyYAML",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "5.4"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 26.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-8q59-q68h-6hv4#1",
+      "score": 0.855,
+      "text": "GHSA-8q59-q68h-6hv4 (pyyaml) details:\nA vulnerability was discovered in the PyYAML library in versions before 5.4, where it is susceptible to arbitrary code execution when it processes untrusted YAML files through the full_load method or with the FullLoader loader. Applications that use the library to process untrusted input may be vulnerable to this flaw. This flaw allows an attacker to execute arbitrary code on the system by abusing the python/object/new constructor. This flaw is due to an incomplete fix for CVE-2020-1747.",
+      "vuln_id": "GHSA-8q59-q68h-6hv4"
+     },
+     {
+      "id": "GHSA-8q59-q68h-6hv4#0",
+      "score": 0.851,
+      "text": "GHSA-8q59-q68h-6hv4 (CVE-2020-14343)\npackage: pyyaml\nsummary: Improper Input Validation in PyYAML\naffected: >=0, <5.4",
+      "vuln_id": "GHSA-8q59-q68h-6hv4"
+     },
+     {
+      "id": "GHSA-6757-jp84-gxfx#0",
+      "score": 0.834,
+      "text": "GHSA-6757-jp84-gxfx (CVE-2020-1747)\npackage: pyyaml\nsummary: Improper Input Validation in PyYAML\naffected: >=5.1b7, <5.3.1",
+      "vuln_id": "GHSA-6757-jp84-gxfx"
+     },
+     {
+      "id": "GHSA-6757-jp84-gxfx#1",
+      "score": 0.828,
+      "text": "GHSA-6757-jp84-gxfx (pyyaml) details:\nA vulnerability was discovered in the PyYAML library in versions before 5.3.1, where it is susceptible to arbitrary code execution when it processes untrusted YAML files through the full_load method or with the FullLoader loader. Applications that use the library to process untrusted input may be vulnerable to this flaw. An attacker could use this flaw to execute arbitrary code on the system by abusing the python/object/new constructor.",
+      "vuln_id": "GHSA-6757-jp84-gxfx"
+     }
+    ],
+    "symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.5,
+   "output": {
+    "package": "pyyaml",
+    "import_names": [
+     "yaml"
+    ],
+    "symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "imported": true,
+    "import_locations": [
+     "deployctl/settings.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "deployctl/settings.py:11",
+      "code": "return yaml.safe_load(f) or {}",
+      "function": "deployctl.settings:load_settings",
+      "in_test": false
+     },
+     {
+      "location": "deployctl/settings.py:16",
+      "code": "path.write_text(yaml.safe_dump(settings, sort_keys=True))",
+      "function": "deployctl.settings:write_settings",
+      "in_test": false
+     }
+    ],
+    "entry_points": 1,
+    "paths": [],
+    "summary": "pyyaml: imported in 1 non-test location(s); 6 package call/reference site(s); named vulnerable symbols ['FullLoader', 'full_load']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 26.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "bench/deploy-config:deployctl/settings.py:8",
+      "score": 0.63,
+      "text": "# deployctl/settings.py:8-11  load_settings\ndef load_settings(env: str) -> dict:\n    path = CONFIG_DIR / f\"{env}.yaml\"\n    with path.open() as f:\n        return yaml.safe_load(f) or {}",
+      "file": "deployctl/settings.py",
+      "start": 8,
+      "qualname": "load_settings"
+     },
+     {
+      "id": "bench/deploy-config:deployctl/cli.py:module",
+      "score": 0.591,
+      "text": "# deployctl/cli.py (module level)\nimport argparse\nfrom deployctl.settings import load_settings, write_settings\nif __name__ == \"__main__\":\n    main()",
+      "file": "deployctl/cli.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/deploy-config:deployctl/settings.py:module",
+      "score": 0.57,
+      "text": "# deployctl/settings.py (module level)\nfrom pathlib import Path\nimport yaml\nCONFIG_DIR = Path(\"environments\")",
+      "file": "deployctl/settings.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/deploy-config:deployctl/cli.py:6",
+      "score": 0.559,
+      "text": "# deployctl/cli.py:6-15  main\ndef main(argv=None):\n    p = argparse.ArgumentParser(prog=\"deployctl\")\n    p.add_argument(\"env\")\n    p.add_argument(\"--set\", nargs=2, action=\"append\", default=[])\n    args = p.parse_args(argv)\n    settings = load_settings(args.env)\n    for key, value in args.set:\n        settings[key] = value\n    write_settings(args.env, settings)\n    print(f\"{args.env}: {len(settings)} keys\")",
+      "file": "deployctl/cli.py",
+      "start": 6,
+      "qualname": "main"
+     },
+     {
+      "id": "bench/deploy-config:deployctl/settings.py:14",
+      "score": 0.553,
+      "text": "# deployctl/settings.py:14-16  write_settings\ndef write_settings(env: str, settings: dict) -> None:\n    path = CONFIG_DIR / f\"{env}.yaml\"\n    path.write_text(yaml.safe_dump(settings, sort_keys=True))",
+      "file": "deployctl/settings.py",
+      "start": 14,
+      "qualname": "write_settings"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "deployctl/settings.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1025,
+   "tokens_out": 59,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"deployctl/settings.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"FullLoader\", \"full_load\"]}",
+     "in": 1025,
+     "out": 59,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 967,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 967,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 1992,
+  "tokens_out": 95,
+  "cost_usd_est": 0.0,
+  "seconds": 0.06
+ },
+ "created": "2026-11-10T00:06:33+00:00",
+ "code_version": "a3e1ef4"
+}

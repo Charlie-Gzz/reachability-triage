@@ -1,0 +1,287 @@
+{
+ "finding_id": "mealie/pyrdfa3@3.5.3/PYSEC-2026-910",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-4396",
+   "GHSA-894q-wpg5-mf2h",
+   "PYSEC-2026-910"
+  ],
+  "cves": [
+   "CVE-2022-4396"
+  ],
+  "cwes": [],
+  "direct_dependency": false,
+  "finding_id": "mealie/pyrdfa3@3.5.3/PYSEC-2026-910",
+  "first_fixed_above_installed": "3.6.2",
+  "fixed_versions": [
+   "3.6.2"
+  ],
+  "max_cvss": "5.4",
+  "package": "pyrdfa3",
+  "published": "2026-07-07T10:17:25.449599Z",
+  "summary": "pyRdfa3 Cross-site Scripting vulnerability",
+  "target": "mealie",
+  "version": "3.5.3",
+  "vuln_id": "PYSEC-2026-910"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "_get_option"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "_get_option"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pyrdfa3@3.5.3/PYSEC-2026-910",
+    "package": "pyrdfa3",
+    "version": "3.5.3",
+    "vuln_id": "PYSEC-2026-910",
+    "aliases": [
+     "CVE-2022-4396",
+     "GHSA-894q-wpg5-mf2h",
+     "PYSEC-2026-910"
+    ],
+    "summary": "pyRdfa3 Cross-site Scripting vulnerability",
+    "max_cvss": "5.4",
+    "fixed_versions": [
+     "3.6.2"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-894q-wpg5-mf2h#0",
+      "score": 0.866,
+      "text": "GHSA-894q-wpg5-mf2h (CVE-2022-4396)\npackage: pyrdfa3\nsummary: pyRdfa3 Cross-site Scripting vulnerability\naffected: >=0, <3.6.2",
+      "vuln_id": "GHSA-894q-wpg5-mf2h"
+     },
+     {
+      "id": "GHSA-894q-wpg5-mf2h#1",
+      "score": 0.847,
+      "text": "GHSA-894q-wpg5-mf2h (pyrdfa3) details:\nA vulnerability was found in RDFlib pyrdfa3 and classified as problematic. This issue affects the function `_get_option` of the file `pyRdfa/__init__.py`. The manipulation leads to cross site scripting. The attack may be initiated remotely. The name of the patch is ffd1d62dd50d5f4190013b39cedcdfbd81f3ce3e. It is recommended to apply a patch to fix this issue. The identifier VDB-215249 was assigned to this vulnerability.",
+      "vuln_id": "GHSA-894q-wpg5-mf2h"
+     }
+    ],
+    "symbols": [
+     "_get_option"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 18.9,
+   "output": {
+    "package": "pyrdfa3",
+    "import_names": [
+     "pyRdfa",
+     "pyRdfaExtras"
+    ],
+    "symbols": [
+     "_get_option"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pyrdfa3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['_get_option']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 29.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/routes/users/_helpers.py:module",
+      "score": 0.645,
+      "text": "# mealie/routes/users/_helpers.py (module level)\nfrom fastapi import HTTPException, status\nfrom pydantic import UUID4\nfrom mealie.schema.user.user import PrivateUser",
+      "file": "mealie/routes/users/_helpers.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/assets/users/__init__.py:module",
+      "score": 0.644,
+      "text": "# mealie/assets/users/__init__.py (module level)\nfrom pathlib import Path\nCWD = Path(__file__).parent\nimg_random_1 = CWD / \"random_1.webp\"\nimg_random_2 = CWD / \"random_2.webp\"\nimg_random_3 = CWD / \"random_3.webp\"",
+      "file": "mealie/assets/users/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/utils.py:module",
+      "score": 0.643,
+      "text": "# mealie/services/parser_services/crfpp/utils.py (module level)\nimport re\nfrom statistics import mean\nfrom . import tokenizer\n# HACK: fix this",
+      "file": "mealie/services/parser_services/crfpp/utils.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:134",
+      "score": 0.643,
+      "text": "# mealie/core/dependencies/dependencies.py:134-137  get_admin_user\nasync def get_admin_user(current_user: PrivateUser = Depends(get_current_user)) -> PrivateUser:\n    if not current_user.admin:\n        raise HTTPException(status.HTTP_403_FORBIDDEN)\n    return current_user",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 134,
+      "qualname": "get_admin_user"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:module",
+      "score": 0.641,
+      "text": "# mealie/services/recipe/recipe_data_service.py (module level)\nimport asyncio\nimport shutil\nfrom pathlib import Path\nfrom httpx import AsyncClient, Response\nfrom pydantic import UUID4\nfrom mealie.pkgs import img\nfrom mealie.schema.recipe.recipe import Recipe\nfrom mealie.services._base_service import BaseService\n_FIREFOX_UA = \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0\"\nclass NotAnImageError(Exception):\n    pass\nclass InvalidDomainError(Exception):\n    pass\nclass RecipeDataService(BaseService):\n    minifier: img.ABCMinifier\n    @staticmethod",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "_get_option"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 931,
+   "tokens_out": 38,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"_get_option\"]}",
+     "in": 931,
+     "out": 38,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 864,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 864,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 1795,
+  "tokens_out": 74,
+  "cost_usd_est": 0.0,
+  "seconds": 0.08
+ },
+ "created": "2026-11-10T00:06:28+00:00",
+ "code_version": "a3e1ef4"
+}

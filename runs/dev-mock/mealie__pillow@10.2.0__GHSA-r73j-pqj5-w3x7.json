@@ -1,0 +1,337 @@
+{
+ "finding_id": "mealie/pillow@10.2.0/GHSA-r73j-pqj5-w3x7",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-42310",
+   "GHSA-r73j-pqj5-w3x7",
+   "PYSEC-2026-2874"
+  ],
+  "cves": [
+   "CVE-2026-42310"
+  ],
+  "cwes": [
+   "CWE-835"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/pillow@10.2.0/GHSA-r73j-pqj5-w3x7",
+  "first_fixed_above_installed": "12.2.0",
+  "fixed_versions": [
+   "12.2.0"
+  ],
+  "max_cvss": "5.5",
+  "package": "pillow",
+  "published": "2026-05-04T20:19:30Z",
+  "summary": "Pillow has a PDF Parsing Trailer Infinite Loop (DoS)",
+  "target": "mealie",
+  "version": "10.2.0",
+  "vuln_id": "GHSA-r73j-pqj5-w3x7"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "PdfParser"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "mealie/pkgs/img/minify.py:6",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "PdfParser"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pillow@10.2.0/GHSA-r73j-pqj5-w3x7",
+    "package": "pillow",
+    "version": "10.2.0",
+    "vuln_id": "GHSA-r73j-pqj5-w3x7",
+    "aliases": [
+     "CVE-2026-42310",
+     "GHSA-r73j-pqj5-w3x7",
+     "PYSEC-2026-2874"
+    ],
+    "summary": "Pillow has a PDF Parsing Trailer Infinite Loop (DoS)",
+    "max_cvss": "5.5",
+    "fixed_versions": [
+     "12.2.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-r73j-pqj5-w3x7#0",
+      "score": 0.893,
+      "text": "GHSA-r73j-pqj5-w3x7 (CVE-2026-42310)\npackage: pillow\nsummary: Pillow has a PDF Parsing Trailer Infinite Loop (DoS)\naffected: >=4.2.0, <12.2.0",
+      "vuln_id": "GHSA-r73j-pqj5-w3x7"
+     },
+     {
+      "id": "GHSA-r73j-pqj5-w3x7#1",
+      "score": 0.831,
+      "text": "GHSA-r73j-pqj5-w3x7 (pillow) details:\n### Impact\nAn attacker can supply a malicious PDF that causes the process to hang indefinitely, consuming 100% CPU and making the application unresponsive.\n\n### Patches\nPatched version: 12.2.0.\n\nPdfParser (introduced in Pillow 4.2.0) follows Prev pointers in PDF trailers to read cross-reference sections. If a\ntrailer's Prev pointer references an offset that has already been processed \u2014 either pointing to itself or forming a\nlonger cycle \u2014 the parser enters an infinite loop. Pillow now tracks previously processed trailer offsets and raises an\nerror if a cycle is detected.\n\n### Workarounds\nUse any version but the affected versions: >= 4.2.0, < 12.2.0\n\n### Resources\n - Fix: https://github.com/python-pillow/Pillow/pull/9519",
+      "vuln_id": "GHSA-r73j-pqj5-w3x7"
+     },
+     {
+      "id": "GHSA-5gm3-px64-rw72#1",
+      "score": 0.812,
+      "text": "GHSA-5gm3-px64-rw72 (pillow) details:\nThere is a DoS vulnerability in Pillow before 6.2.2 caused by FpxImagePlugin.py calling the range function on an unvalidated 32-bit integer if the number of bands is large. On Windows running 32-bit Python, this results in an OverflowError or MemoryError due to the 2 GB limit. However, on Linux running 64-bit Python this results in the process being terminated by the OOM killer.",
+      "vuln_id": "GHSA-5gm3-px64-rw72"
+     },
+     {
+      "id": "GHSA-9hx2-hgq2-2g4f#1",
+      "score": 0.809,
+      "text": "GHSA-9hx2-hgq2-2g4f (pillow) details:\nAn issue was discovered in Pillow before 8.1.1. The PDF parser allows a regular expression DoS (ReDoS) attack via a crafted PDF file because of a catastrophic backtracking regex.",
+      "vuln_id": "GHSA-9hx2-hgq2-2g4f"
+     }
+    ],
+    "symbols": [
+     "PdfParser"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 17.2,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [
+     "PdfParser"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/pkgs/img/minify.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 10,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "code": "img = Image.open(image)",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false
+     }
+    ],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pillow: imported in 1 non-test location(s); 10 package call/reference site(s); named vulnerable symbols ['PdfParser']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 28.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:module",
+      "score": 0.659,
+      "text": "# mealie/pkgs/img/minify.py (module level)\nfrom abc import ABC, abstractmethod\nfrom dataclasses import dataclass\nfrom logging import Logger\nfrom pathlib import Path\nfrom PIL import Image\nWEBP = \".webp\"\nFORMAT = \"WEBP\"\nIMAGE_EXTENSIONS = {\".jpg\", \".jpeg\", \".png\", \".webp\"}\n@dataclass\nclass MinifierOptions:\n    original: bool = True\n    miniature: bool = True\n    tiny: bool = True\nclass ABCMinifier(ABC):\n    @abstractmethod\nclass PillowMinifier(ABCMinifier):\n    @staticmethod\n    @staticmethod",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:87",
+      "score": 0.656,
+      "text": "# mealie/pkgs/img/minify.py:87-127  PillowMinifier.minify\n    def minify(self, image_file: Path, force=True):\n        if not image_file.exists():\n            raise FileNotFoundError(f\"{image_file.name} does not exist\")\n\n        org_dest = image_file.parent.joinpath(\"original.webp\")\n        min_dest = image_file.parent.joinpath(\"min-original.webp\")\n        tiny_dest = image_file.parent.joinpath(\"tiny-original.webp\")\n\n        if not force and min_dest.exists() and tiny_dest.exists() and org_dest.exists():\n            self._logger.info(f\"{image_file.name} already minified\")\n            return\n\n        success = False\n\n        if self._opts.original:\n            if not force and org_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, org_dest, quality=70)\n                success = True\n\n        if self._opts.miniature:\n            if not force and min_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, min_dest, quality=70)\n                self._logger.info(f\"{image_file.name} minified\")\n                success = True\n\n        if self._opts.tiny:\n            if not force and tiny_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                img = Image.open(image_file)\n                tiny_image = PillowMinifier.crop_center(img)\n                tiny_image.save(tiny_dest, FORMAT, quality=70)\n                self._logger.info(\"Tiny image saved\")\n                success = True\n\n        if self._purge and success:\n            self.purge(image_file)",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 87,
+      "qualname": "PillowMinifier.minify"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:63",
+      "score": 0.639,
+      "text": "# mealie/pkgs/img/minify.py:63-73  PillowMinifier.to_webp\n    def to_webp(image_file: Path, dest: Path | None = None, quality: int = 100) -> Path:\n        \"\"\"\n        Converts an image to the webp format in-place. The original image is not\n        removed By default, the quality is set to 100.\n        \"\"\"\n        img = Image.open(image_file)\n\n        dest = dest or image_file.with_suffix(WEBP)\n        img.save(dest, FORMAT, quality=quality)\n\n        return dest",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 63,
+      "qualname": "PillowMinifier.to_webp"
+     },
+     {
+      "id": "mealie:mealie/services/scraper/scraped_extras.py:module",
+      "score": 0.634,
+      "text": "# mealie/services/scraper/scraped_extras.py (module level)\nfrom dataclasses import dataclass\nfrom pydantic import UUID4\nfrom slugify import slugify\nfrom mealie.repos.repository_factory import AllRepositories\nfrom mealie.schema.recipe import TagOut\nfrom mealie.schema.recipe.recipe_category import TagSave\nclass NoContextException(Exception):\n    pass\n@dataclass(slots=True)\nclass ScraperContext:\n    user_id: UUID4\n    group_id: UUID4\n    repos: AllRepositories\nclass ScrapedExtras:",
+      "file": "mealie/services/scraper/scraped_extras.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/scraper/scraper_strategies.py:248",
+      "score": 0.633,
+      "text": "# mealie/services/scraper/scraper_strategies.py:248-259  RecipeScraperOpenGraph.parse\n    async def parse(self):\n        \"\"\"\n        Parse a recipe from a given url.\n        \"\"\"\n        html = await self.get_html(self.url)\n\n        og_data = self.get_recipe_fields(html)\n\n        if og_data is None:\n            return None\n\n        return Recipe(**og_data), ScrapedExtras()",
+      "file": "mealie/services/scraper/scraper_strategies.py",
+      "start": 248,
+      "qualname": "RecipeScraperOpenGraph.parse"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "PdfParser"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:6",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1669,
+   "tokens_out": 56,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"mealie/pkgs/img/minify.py:6\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"PdfParser\"]}",
+     "in": 1669,
+     "out": 56,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1612,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1612,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3281,
+  "tokens_out": 92,
+  "cost_usd_est": 0.0,
+  "seconds": 0.08
+ },
+ "created": "2026-11-10T00:06:26+00:00",
+ "code_version": "a3e1ef4"
+}

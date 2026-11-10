@@ -1,0 +1,341 @@
+{
+ "finding_id": "mealie/urllib3@1.26.14/GHSA-2xpw-w6gg-jr37",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-66471",
+   "GHSA-2xpw-w6gg-jr37",
+   "PYSEC-2026-1994"
+  ],
+  "cves": [
+   "CVE-2025-66471"
+  ],
+  "cwes": [
+   "CWE-409"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/urllib3@1.26.14/GHSA-2xpw-w6gg-jr37",
+  "first_fixed_above_installed": "2.6.0",
+  "fixed_versions": [
+   "2.6.0"
+  ],
+  "max_cvss": "8.9",
+  "package": "urllib3",
+  "published": "2025-12-05T18:15:54Z",
+  "summary": "urllib3 streaming API improperly handles highly compressed data",
+  "target": "mealie",
+  "version": "1.26.14",
+  "vuln_id": "GHSA-2xpw-w6gg-jr37"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "urllib3.HTTPResponse",
+   "stream",
+   "read",
+   "gzip",
+   "deflate"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "urllib3.HTTPResponse",
+  "stream",
+  "read",
+  "gzip",
+  "deflate",
+  "zstd",
+  "read1",
+  "read_chunked"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/urllib3@1.26.14/GHSA-2xpw-w6gg-jr37",
+    "package": "urllib3",
+    "version": "1.26.14",
+    "vuln_id": "GHSA-2xpw-w6gg-jr37",
+    "aliases": [
+     "CVE-2025-66471",
+     "GHSA-2xpw-w6gg-jr37",
+     "PYSEC-2026-1994"
+    ],
+    "summary": "urllib3 streaming API improperly handles highly compressed data",
+    "max_cvss": "8.9",
+    "fixed_versions": [
+     "2.6.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#0",
+      "score": 0.896,
+      "text": "GHSA-2xpw-w6gg-jr37 (CVE-2025-66471)\npackage: urllib3\nsummary: urllib3 streaming API improperly handles highly compressed data\naffected: >=1.0, <2.6.0",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#1",
+      "score": 0.824,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\n### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.5.0/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nWhen streaming a compressed response, urllib3 can perform decoding or decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). The library must read compressed data from the network and decompress it until the requested chunk size is met. Any resulting decompressed data that exceeds the requested amount is held in an internal buffer for the next read operation.",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#2",
+      "score": 0.812,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\nThe decompression logic could cause urllib3 to fully decode a small amount of highly compressed data in a single operation. This can result in excessive resource consumption (high CPU usage and massive memory allocation for the decompressed data; CWE-409) on the client side, even if the application only requested a small chunk of data.\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier to stream large compressed responses or content from untrusted sources.\n\n`stream()`, `read(amt=256)`, `read1(amt=256)`, `read_chunked(amt=256)`, `readinto(b)` are examples of `urllib3.HTTPResponse` method calls using the affected logic unless decoding is disabled explicitly.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library avoids decompressing data that exceeds the requested amount.",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#3",
+      "score": 0.737,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\nIf your environment contains a package facilitating the Brotli encoding, upgrade to at least Brotli 1.2.0 or brotlicffi 1.2.0.0 too. These versions are enforced by the `urllib3[brotli]` extra in the patched versions of urllib3.\n\n### Credits\n\nThe issue was reported by @Cycloctane.\nSupplemental information was provided by @stamparm during a security audit performed by [7ASecurity](https://7asecurity.com/) and facilitated by [OSTIF](https://ostif.org/).",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-mf9v-mfxr-j63j#1",
+      "score": 0.828,
+      "text": "GHSA-mf9v-mfxr-j63j (urllib3) details:\n### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.7.0/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nurllib3 can perform decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). When using the streaming API since version 2.6.0, the library decompresses only the necessary bytes, enabling partial content consumption.",
+      "vuln_id": "GHSA-mf9v-mfxr-j63j"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#1",
+      "score": 0.824,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\n### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.6.2/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nurllib3 can perform decoding or decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). When using the streaming API, the library decompresses only the necessary bytes, enabling partial content consumption.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     }
+    ],
+    "symbols": [
+     "urllib3.HTTPResponse",
+     "stream",
+     "read",
+     "gzip",
+     "deflate",
+     "zstd",
+     "read1",
+     "read_chunked"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 68.4,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "urllib3.HTTPResponse",
+     "stream",
+     "read",
+     "gzip",
+     "deflate",
+     "zstd",
+     "read1",
+     "read_chunked"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['urllib3.HTTPResponse', 'stream', 'read', 'gzip', 'deflate', 'zstd', 'read1', 'read_chunked']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 32.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/services/scraper/scraper_strategies.py:27",
+      "score": 0.669,
+      "text": "# mealie/services/scraper/scraper_strategies.py:27-70  safe_scrape_html\nasync def safe_scrape_html(url: str) -> str:\n    \"\"\"\n    Scrapes the html from a url but will cancel the request\n    if the request takes longer than 15 seconds. This is used to mitigate\n    DDOS attacks from users providing a url with arbitrary large content.\n    \"\"\"\n    async with AsyncClient() as client:\n        html_bytes = b\"\"\n        async with client.stream(\"GET\", url, timeout=SCRAPER_TIMEOUT, headers={\"User-Agent\": _FIREFOX_UA}) as resp:\n            start_time = time.time()\n\n            async for chunk in resp.aiter_bytes(chunk_size=1024):\n                html_bytes += chunk\n\n                if time.time() - start_time > SCRAPER_TIMEOUT:\n                    raise ForceTimeoutException()\n\n        # =====================================\n        # Copied from requests text property\n\n        # Try charset from content-type\n        content = None\n        encoding = resp.encoding\n\n        if not html_bytes:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if encoding is None:\n            encoding = resp.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(html_bytes, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(html_bytes, errors=\"replace\")\n\n        return content",
+      "file": "mealie/services/scraper/scraper_strategies.py",
+      "start": 27,
+      "qualname": "safe_scrape_html"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:28",
+      "score": 0.668,
+      "text": "# mealie/services/recipe/recipe_data_service.py:28-44  largest_content_len\nasync def largest_content_len(urls: list[str]) -> tuple[str, int]:\n    largest_url = \"\"\n    largest_len = 0\n\n    async def do(client: AsyncClient, url: str) -> Response:\n        return await client.head(url, headers={\"User-Agent\": _FIREFOX_UA})\n\n    async with AsyncClient() as client:\n        tasks = [do(client, url) for url in urls]\n        responses: list[Response] = await gather_with_concurrency(10, *tasks, ignore_exceptions=True)\n        for response in responses:\n            len_int = int(response.headers.get(\"Content-Length\", 0))\n            if len_int > largest_len:\n                largest_url = str(response.url)\n                largest_len = len_int\n\n    return largest_url, largest_len",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 28,
+      "qualname": "largest_content_len"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:208",
+      "score": 0.662,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:208-218  RecipeController.test_parse_recipe_url\n    async def test_parse_recipe_url(self, url: ScrapeRecipeTest):\n        # Debugger should produce the same result as the scraper sees before cleaning\n        try:\n            if scraped_data := await RecipeScraperPackage(url.url).scrape_url():\n                return scraped_data.schema.data\n        except ForceTimeoutException as e:\n            raise HTTPException(\n                status_code=408, detail=ErrorResponse.respond(message=\"Recipe Scraping Timed Out\")\n            ) from e\n\n        return \"recipe_scrapers was unable to scrape this URL\"",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 208,
+      "qualname": "RecipeController.test_parse_recipe_url"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:118",
+      "score": 0.661,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:118-133  RecipeExportController.get_recipe_as_zip\n    def get_recipe_as_zip(self, slug: str, token: str, temp_path=Depends(temporary_zip_path)):\n        \"\"\"Get a Recipe and It's Original Image as a Zip File\"\"\"\n        slug = validate_recipe_token(token)\n\n        if slug != slug:\n            raise HTTPException(status_code=400, detail=\"Invalid Slug\")\n\n        recipe: Recipe = self.mixins.get_one(slug)\n        image_asset = recipe.image_dir.joinpath(RecipeImageTypes.original.value)\n        with ZipFile(temp_path, \"w\") as myzip:\n            myzip.writestr(f\"{slug}.json\", recipe.json())\n\n            if image_asset.is_file():\n                myzip.write(image_asset, arcname=image_asset.name)\n\n        return FileResponse(temp_path, filename=f\"{slug}.zip\")",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 118,
+      "qualname": "RecipeExportController.get_recipe_as_zip"
+     },
+     {
+      "id": "mealie:mealie/schema/response/responses.py:37",
+      "score": 0.659,
+      "text": "# mealie/schema/response/responses.py:37-42  FileTokenResponse.respond\n    def respond(cls, token: str) -> dict:\n        \"\"\"\n        This method is an helper to create an object and convert to a dictionary\n        in the same call, for use while providing details to a HTTPException\n        \"\"\"\n        return cls(file_token=token).dict()",
+      "file": "mealie/schema/response/responses.py",
+      "start": 37,
+      "qualname": "FileTokenResponse.respond"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "urllib3.HTTPResponse",
+     "stream",
+     "read",
+     "gzip",
+     "deflate"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2336,
+   "tokens_out": 50,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"urllib3.HTTPResponse\", \"stream\", \"read\", \"gzip\", \"deflate\"]}",
+     "in": 2336,
+     "out": 50,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2268,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2268,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4604,
+  "tokens_out": 86,
+  "cost_usd_est": 0.0,
+  "seconds": 0.13
+ },
+ "created": "2026-11-10T00:06:32+00:00",
+ "code_version": "a3e1ef4"
+}

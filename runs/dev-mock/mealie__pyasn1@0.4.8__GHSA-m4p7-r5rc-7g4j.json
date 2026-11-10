@@ -1,0 +1,335 @@
+{
+ "finding_id": "mealie/pyasn1@0.4.8/GHSA-m4p7-r5rc-7g4j",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-59884",
+   "GHSA-m4p7-r5rc-7g4j",
+   "PYSEC-2026-3455"
+  ],
+  "cves": [
+   "CVE-2026-59884"
+  ],
+  "cwes": [
+   "CWE-400"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/pyasn1@0.4.8/GHSA-m4p7-r5rc-7g4j",
+  "first_fixed_above_installed": "0.6.4",
+  "fixed_versions": [
+   "0.6.4"
+  ],
+  "max_cvss": "7.5",
+  "package": "pyasn1",
+  "published": "2026-07-21T19:10:11Z",
+  "summary": "pyasn1 BER/CER/DER decoder denial of service via unbounded long-form tag IDs",
+  "target": "mealie",
+  "version": "0.4.8",
+  "vuln_id": "GHSA-m4p7-r5rc-7g4j"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "pyasn1.codec.ber.decoder",
+   "pyasn1.codec.cer.decoder",
+   "pyasn1.codec.der.decoder",
+   "pyasn1.type.tag",
+   "pyasn1.codec.native"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "pyasn1.codec.ber.decoder",
+  "pyasn1.codec.cer.decoder",
+  "pyasn1.codec.der.decoder",
+  "pyasn1.type.tag",
+  "pyasn1.codec.native",
+  "decode",
+  "StreamingDecoder",
+  "Tag"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pyasn1@0.4.8/GHSA-m4p7-r5rc-7g4j",
+    "package": "pyasn1",
+    "version": "0.4.8",
+    "vuln_id": "GHSA-m4p7-r5rc-7g4j",
+    "aliases": [
+     "CVE-2026-59884",
+     "GHSA-m4p7-r5rc-7g4j",
+     "PYSEC-2026-3455"
+    ],
+    "summary": "pyasn1 BER/CER/DER decoder denial of service via unbounded long-form tag IDs",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "0.6.4"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 35.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-m4p7-r5rc-7g4j#0",
+      "score": 0.883,
+      "text": "GHSA-m4p7-r5rc-7g4j (CVE-2026-59884)\npackage: pyasn1\nsummary: pyasn1 BER/CER/DER decoder denial of service via unbounded long-form tag IDs\naffected: >=0, <0.6.4",
+      "vuln_id": "GHSA-m4p7-r5rc-7g4j"
+     },
+     {
+      "id": "GHSA-m4p7-r5rc-7g4j#2",
+      "score": 0.851,
+      "text": "GHSA-m4p7-r5rc-7g4j (pyasn1) details:\n### Affected components\n- `pyasn1.codec.ber.decoder` \u2014 `decode()` and `StreamingDecoder`\n- `pyasn1.codec.cer.decoder` and `pyasn1.codec.der.decoder`, which inherit\n  the same tag parsing\n- `pyasn1.type.tag` \u2014 `Tag`/`TagSet` reprs could raise `ValueError` when\n  rendering oversized tag IDs (reachable through decoder error paths)\n\nThe encoders and the `pyasn1.codec.native` codec are not affected.\n\n### Patches\nFixed in 0.6.4. Long-form tag IDs are now limited to 20 octets (140-bit tag IDs, matching the existing OID arc limit); oversized tags are rejected with `PyAsn1Error`. Tag ID rendering in reprs and error messages was additionally hardened against the interpreter's integer-to-string conversion limit.\n\n### Workarounds\nBound the size of untrusted input passed to `decode()` before calling it.",
+      "vuln_id": "GHSA-m4p7-r5rc-7g4j"
+     },
+     {
+      "id": "GHSA-m4p7-r5rc-7g4j#1",
+      "score": 0.821,
+      "text": "GHSA-m4p7-r5rc-7g4j (pyasn1) details:\n### Impact\nThe BER decoder (shared by the CER and DER codecs) parses long-form tags by accumulating continuation octets in a loop with no upper bound on the size of the tag ID. A crafted input can force the decoder to build an arbitrarily large integer, with CPU cost growing quadratically in input size \u2014 a ~1 MB input consumes over a minute of CPU. On Python 3.11+, the oversized tag ID can also trigger an unhandled `ValueError` (integer string conversion limit) while the decoder formats error messages, violating the documented `PyAsn1Error` contract and potentially bypassing caller error handling.\n\nAny application decoding untrusted BER/CER/DER input is affected.",
+      "vuln_id": "GHSA-m4p7-r5rc-7g4j"
+     },
+     {
+      "id": "GHSA-jr27-m4p2-rc6r#1",
+      "score": 0.838,
+      "text": "GHSA-jr27-m4p2-rc6r (pyasn1) details:\n### Summary\nThe `pyasn1` library is vulnerable to a Denial of Service (DoS) attack caused by uncontrolled recursion when decoding ASN.1 data with deeply nested structures. An attacker can supply a crafted payload containing nested `SEQUENCE` (`0x30`) or `SET` (`0x31`) tags with Indefinite Length (`0x80`) markers. This forces the decoder to recursively call itself until the Python interpreter crashes with a `RecursionError` or consumes all available memory (OOM), crashing the host application.",
+      "vuln_id": "GHSA-jr27-m4p2-rc6r"
+     },
+     {
+      "id": "GHSA-jr27-m4p2-rc6r#0",
+      "score": 0.828,
+      "text": "GHSA-jr27-m4p2-rc6r (CVE-2026-30922)\npackage: pyasn1\nsummary: Denial of Service in pyasn1 via Unbounded Recursion\naffected: >=0, <0.6.3",
+      "vuln_id": "GHSA-jr27-m4p2-rc6r"
+     }
+    ],
+    "symbols": [
+     "pyasn1.codec.ber.decoder",
+     "pyasn1.codec.cer.decoder",
+     "pyasn1.codec.der.decoder",
+     "pyasn1.type.tag",
+     "pyasn1.codec.native",
+     "decode",
+     "StreamingDecoder",
+     "Tag"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 71.2,
+   "output": {
+    "package": "pyasn1",
+    "import_names": [
+     "pyasn1"
+    ],
+    "symbols": [
+     "pyasn1.codec.ber.decoder",
+     "pyasn1.codec.cer.decoder",
+     "pyasn1.codec.der.decoder",
+     "pyasn1.type.tag",
+     "pyasn1.codec.native",
+     "decode",
+     "StreamingDecoder",
+     "Tag"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pyasn1: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['pyasn1.codec.ber.decoder', 'pyasn1.codec.cer.decoder', 'pyasn1.codec.der.decoder', 'pyasn1.type.tag', 'pyasn1.codec.native', 'decode', 'StreamingDecoder', 'Tag']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 45.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/routes/_base/base_controllers.py:34",
+      "score": 0.661,
+      "text": "# mealie/routes/_base/base_controllers.py:34-35  _BaseController.t\n    def t(self):\n        return self.translator.t if self.translator else local_provider().t",
+      "file": "mealie/routes/_base/base_controllers.py",
+      "start": 34,
+      "qualname": "_BaseController.t"
+     },
+     {
+      "id": "mealie:mealie/services/urls/url_constructors.py:24",
+      "score": 0.643,
+      "text": "# mealie/services/urls/url_constructors.py:24-26  tag_url\ndef tag_url(tag_slug: str, base_url: str | None) -> str:\n    base = _base_or(base_url)\n    return f\"{base}/recipes/tags/{tag_slug}\"",
+      "file": "mealie/services/urls/url_constructors.py",
+      "start": 24,
+      "qualname": "tag_url"
+     },
+     {
+      "id": "mealie:mealie/routes/organizers/controller_tags.py:110",
+      "score": 0.639,
+      "text": "# mealie/routes/organizers/controller_tags.py:110-111  TagController.get_one_by_slug\n    async def get_one_by_slug(self, tag_slug: str):\n        return self.repo.get_one(tag_slug, \"slug\", override_schema=RecipeTagResponse)",
+      "file": "mealie/routes/organizers/controller_tags.py",
+      "start": 110,
+      "qualname": "TagController.get_one_by_slug"
+     },
+     {
+      "id": "mealie:mealie/routes/_base/controller.py:module",
+      "score": 0.637,
+      "text": "# mealie/routes/_base/controller.py (module level)\n\"\"\"\nThis file contains code taken from fastapi-utils project. The code is licensed under the MIT license.\nSee their repository for details -> https://github.com/dmontagu/fastapi-utils\n\"\"\"\nimport inspect\nfrom collections.abc import Callable\nfrom typing import Any, TypeVar, cast, get_type_hints\nfrom fastapi import APIRouter, Depends\nfrom fastapi.routing import APIRoute\nfrom pydantic.typing import is_classvar\nfrom starlette.routing import Route, WebSocketRoute\nT = TypeVar(\"T\")\nCBV_CLASS_KEY = \"__cbv_class__\"\nINCLUDE_INIT_PARAMS_KEY = \"__include_init_params__\"\nRETURN_TYPES_FUNC_KEY = \"__return_types_func__\"",
+      "file": "mealie/routes/_base/controller.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/schema/recipe/recipe.py:219",
+      "score": 0.636,
+      "text": "# mealie/schema/recipe/recipe.py:219-222  Recipe.validate_tags\n    def validate_tags(cats: list[Any]):  # type: ignore\n        if isinstance(cats, list) and cats and isinstance(cats[0], str):\n            return [RecipeTag(id=uuid4(), name=c, slug=slugify(c)) for c in cats]\n        return cats",
+      "file": "mealie/schema/recipe/recipe.py",
+      "start": 219,
+      "qualname": "Recipe.validate_tags"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "pyasn1.codec.ber.decoder",
+     "pyasn1.codec.cer.decoder",
+     "pyasn1.codec.der.decoder",
+     "pyasn1.type.tag",
+     "pyasn1.codec.native"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1465,
+   "tokens_out": 66,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"pyasn1.codec.ber.decoder\", \"pyasn1.codec.cer.decoder\", \"pyasn1.codec.der.decoder\", \"pyasn1.type.tag\", \"pyasn1.codec.native\"]}",
+     "in": 1465,
+     "out": 66,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1397,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1397,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2862,
+  "tokens_out": 102,
+  "cost_usd_est": 0.0,
+  "seconds": 0.16
+ },
+ "created": "2026-11-10T00:06:27+00:00",
+ "code_version": "a3e1ef4"
+}

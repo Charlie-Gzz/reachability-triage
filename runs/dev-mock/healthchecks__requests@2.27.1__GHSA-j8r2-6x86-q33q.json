@@ -1,0 +1,511 @@
+{
+ "finding_id": "healthchecks/requests@2.27.1/GHSA-j8r2-6x86-q33q",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-32681",
+   "GHSA-j8r2-6x86-q33q",
+   "PYSEC-2023-74"
+  ],
+  "cves": [
+   "CVE-2023-32681"
+  ],
+  "cwes": [
+   "CWE-200"
+  ],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/requests@2.27.1/GHSA-j8r2-6x86-q33q",
+  "first_fixed_above_installed": "2.31.0",
+  "fixed_versions": [
+   "2.31.0",
+   "74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5"
+  ],
+  "max_cvss": "6.1",
+  "package": "requests",
+  "published": "2023-05-22T20:36:32Z",
+  "summary": "Unintended leak of Proxy-Authorization header in requests",
+  "target": "healthchecks",
+  "version": "2.27.1",
+  "vuln_id": "GHSA-j8r2-6x86-q33q"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "requests.get",
+   "rebuild_proxies",
+   "proxy_manager_for",
+   "proxy_headers",
+   "allow_redirects"
+  ],
+  "reasoning": "mock: 2 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/front/views.py:1875",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/front/views.py:2043",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/api/management/commands/settelegramwebhook.py:5",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "requests.get",
+  "rebuild_proxies",
+  "proxy_manager_for",
+  "proxy_headers",
+  "allow_redirects",
+  "ProxyManager"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/requests@2.27.1/GHSA-j8r2-6x86-q33q",
+    "package": "requests",
+    "version": "2.27.1",
+    "vuln_id": "GHSA-j8r2-6x86-q33q",
+    "aliases": [
+     "CVE-2023-32681",
+     "GHSA-j8r2-6x86-q33q",
+     "PYSEC-2023-74"
+    ],
+    "summary": "Unintended leak of Proxy-Authorization header in requests",
+    "max_cvss": "6.1",
+    "fixed_versions": [
+     "2.31.0",
+     "74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-j8r2-6x86-q33q#1",
+      "score": 0.853,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\n### Impact\n\nSince Requests v2.3.0, Requests has been vulnerable to potentially leaking `Proxy-Authorization` headers to destination servers, specifically during redirects to an HTTPS origin. This is a product of how `rebuild_proxies` is used to recompute and [reattach the `Proxy-Authorization` header](https://github.com/psf/requests/blob/f2629e9e3c7ce3c3c8c025bcd8db551101cbc773/requests/sessions.py#L319-L328) to requests when redirected. Note this behavior has _only_ been observed to affect proxied requests when credentials are supplied in the URL user information component (e.g. `https://username:password@proxy:8080`).\n\n**Current vulnerable behavior(s):**\n\n1. HTTP \u2192 HTTPS: **leak**\n2. HTTPS \u2192 HTTP: **no leak**\n3. HTTPS \u2192 HTTPS: **leak**\n4. HTTP \u2192 HTTP: **no leak**",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#0",
+      "score": 0.829,
+      "text": "GHSA-j8r2-6x86-q33q (CVE-2023-32681)\npackage: requests\nsummary: Unintended leak of Proxy-Authorization header in requests\naffected: >=2.3.0, <2.31.0",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#3",
+      "score": 0.77,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\nThe reason this currently works for HTTPS connections in Requests is the `Proxy-Authorization` header is also handled by urllib3 with our usage of the ProxyManager in adapters.py with [`proxy_manager_for`](https://github.com/psf/requests/blob/f2629e9e3c7ce3c3c8c025bcd8db551101cbc773/requests/adapters.py#L199-L235). This will compute the required proxy headers in `proxy_headers` and pass them to the Proxy Manager, avoiding attaching them directly to the Request object. This will be our preferred option going forward for default usage.\n\n### Patches\nStarting in Requests v2.31.0, Requests will no longer attach this header to redirects with an HTTPS destination. This should have no negative impacts on the default behavior of the library as the proxy credentials are already properly being handled by urllib3's ProxyManager.",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#4",
+      "score": 0.769,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\nFor users with custom adapters, this _may_ be potentially breaking if you were already working around this behavior. The previous functionality of `rebuild_proxies` doesn't make sense in any case, so we would encourage any users impacted to migrate any handling of Proxy-Authorization directly into their custom adapter.\n\n### Workarounds\nFor users who are not able to update Requests immediately, there is one potential workaround.\n\nYou may disable redirects by setting `allow_redirects` to `False` on all calls through Requests top-level APIs. Note that if you're currently relying on redirect behaviors, you will need to capture the 3xx response codes and ensure a new request is made to the redirect destination.\n```\nimport requests\nr = requests.get('http://github.com/', allow_redirects=False)\n```\n\n### Credits\n\nThis vulnerability was discovered and disclosed by the following individuals.",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-cfj3-7x9c-4p3h#0",
+      "score": 0.753,
+      "text": "GHSA-cfj3-7x9c-4p3h (CVE-2014-1829)\npackage: requests\nsummary: Exposure of Sensitive Information to an Unauthorized Actor in Requests\naffected: >=0, <2.3.0",
+      "vuln_id": "GHSA-cfj3-7x9c-4p3h"
+     },
+     {
+      "id": "GHSA-gc5v-m9x4-r6x2#0",
+      "score": 0.753,
+      "text": "GHSA-gc5v-m9x4-r6x2 (CVE-2026-25645)\npackage: requests\nsummary: Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function\naffected: >=0, <2.33.0",
+      "vuln_id": "GHSA-gc5v-m9x4-r6x2"
+     }
+    ],
+    "symbols": [
+     "requests.get",
+     "rebuild_proxies",
+     "proxy_manager_for",
+     "proxy_headers",
+     "allow_redirects",
+     "ProxyManager"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 139.9,
+   "output": {
+    "package": "requests",
+    "import_names": [
+     "requests"
+    ],
+    "symbols": [
+     "requests.get",
+     "rebuild_proxies",
+     "proxy_manager_for",
+     "proxy_headers",
+     "allow_redirects",
+     "ProxyManager"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/api/management/commands/settelegramwebhook.py:5",
+     "hc/api/transports.py:9",
+     "hc/front/forms.py:15",
+     "hc/front/views.py:53"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 39,
+    "vulnerable_call_sites": [
+     {
+      "file": "hc/front/views.py",
+      "line": 1875,
+      "code": "boards = requests.get(url).json()",
+      "resolved": "requests.get.json",
+      "function": "hc.front.views:trello_settings",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.front.views:trello_settings"
+      ],
+      "snippet": " 1872          }\n 1873      )\n 1874  \n 1875      boards = requests.get(url).json()\n 1876      num_lists = sum(len(board[\"lists\"]) for board in boards)\n 1877  \n 1878      ctx = {\"token\": token, \"boards\": boards, \"num_lists\": num_lists}"
+     },
+     {
+      "file": "hc/front/views.py",
+      "line": 2043,
+      "code": "result = requests.get(",
+      "resolved": "requests.get",
+      "function": "hc.front.views:add_linenotify_complete",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "hc.front.views:add_linenotify_complete"
+      ],
+      "snippet": " 2040  \n 2041      # Fetch notification target's name, will use it as channel name:\n 2042      token = doc[\"access_token\"]\n 2043      result = requests.get(\n 2044          \"https://notify-api.line.me/api/status\",\n 2045          headers={\"Authorization\": \"Bearer %s\" % token},\n 2046      )"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/api/management/commands/settelegramwebhook.py:23",
+      "code": "r = requests.post(url, json=form)",
+      "function": "hc.api.management.commands.settelegramwebhook:Command.handle",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:187",
+      "code": "r = requests.request(method, url, **options)",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:191",
+      "code": "except requests.exceptions.Timeout:",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:194",
+      "code": "except requests.exceptions.ConnectionError:",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/forms.py:269",
+      "code": "r = requests.post(url, {})",
+      "function": "hc.front.forms:AddMatrixForm.clean_alias",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1238",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_slack_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1323",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_pushbullet_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1383",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_discord_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1875",
+      "code": "boards = requests.get(url).json()",
+      "function": "hc.front.views:trello_settings",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:2025",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_linenotify_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:2043",
+      "code": "result = requests.get(",
+      "function": "hc.front.views:add_linenotify_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/tests/test_notify_slack.py:71",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_slack:NotifySlackTestCase.test_it_handles_timeout",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:48",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_handle_timeouts",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:69",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=ConnectionError)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_handle_connection_errors",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:106",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_dont_retry_when_sending_test_notifications",
+      "in_test": true
+     }
+    ],
+    "entry_points": 339,
+    "paths": [
+     [
+      "hc.front.views:trello_settings"
+     ],
+     [
+      "hc.front.views:add_linenotify_complete"
+     ]
+    ],
+    "summary": "requests: imported in 4 non-test location(s) and 2 test location(s); 39 package call/reference site(s); named vulnerable symbols ['requests.get', 'rebuild_proxies', 'proxy_manager_for', 'proxy_headers', 'allow_redirects', 'ProxyManager']; 2 production call site(s) of those symbols, 2 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 35.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:hc/front/views.py:2043",
+      "score": 1.0,
+      "file": "hc/front/views.py",
+      "start": 2043,
+      "qualname": "hc.front.views:add_linenotify_complete",
+      "text": "# hc/front/views.py around line 2043\n 2040  \n 2041      # Fetch notification target's name, will use it as channel name:\n 2042      token = doc[\"access_token\"]\n 2043      result = requests.get(\n 2044          \"https://notify-api.line.me/api/status\",\n 2045          headers={\"Authorization\": \"Bearer %s\" % token},\n 2046      )"
+     },
+     {
+      "id": "site:hc/front/views.py:1875",
+      "score": 1.0,
+      "file": "hc/front/views.py",
+      "start": 1875,
+      "qualname": "hc.front.views:trello_settings",
+      "text": "# hc/front/views.py around line 1875\n 1872          }\n 1873      )\n 1874  \n 1875      boards = requests.get(url).json()\n 1876      num_lists = sum(len(board[\"lists\"]) for board in boards)\n 1877  \n 1878      ctx = {\"token\": token, \"boards\": boards, \"num_lists\": num_lists}"
+     },
+     {
+      "id": "healthchecks:hc/api/transports.py:178",
+      "score": 0.709,
+      "text": "# hc/api/transports.py:178-195  HttpTransport._request\n    def _request(cls, method, url, **kwargs) -> None:\n        options = dict(kwargs)\n        options[\"timeout\"] = 10\n        if \"headers\" not in options:\n            options[\"headers\"] = {}\n        if \"User-Agent\" not in options[\"headers\"]:\n            options[\"headers\"][\"User-Agent\"] = \"healthchecks.io\"\n\n        try:\n            r = requests.request(method, url, **options)\n            if r.status_code not in (200, 201, 202, 204):\n                cls.raise_for_response(r)\n\n        except requests.exceptions.Timeout:\n            # Well, we tried\n            raise TransportError(\"Connection timed out\")\n        except requests.exceptions.ConnectionError:\n            raise TransportError(\"Connection failed\")",
+      "file": "hc/api/transports.py",
+      "start": 178,
+      "qualname": "HttpTransport._request"
+     },
+     {
+      "id": "healthchecks:hc/api/decorators.py:38",
+      "score": 0.689,
+      "text": "# hc/api/decorators.py:38-61  authorize_read\ndef authorize_read(f):\n    @wraps(f)\n    def wrapper(request, *args, **kwds):\n        if \"HTTP_X_API_KEY\" in request.META:\n            api_key = request.META[\"HTTP_X_API_KEY\"]\n        elif hasattr(request, \"json\"):\n            api_key = str(request.json.get(\"api_key\", \"\"))\n        else:\n            api_key = \"\"\n\n        if len(api_key) != 32:\n            return error(\"missing api key\", 401)\n\n        write_key_match = Q(api_key=api_key)\n        read_key_match = Q(api_key_readonly=api_key)\n        try:\n            request.project = Project.objects.get(write_key_match | read_key_match)\n        except Project.DoesNotExist:\n            return error(\"wrong api key\", 401)\n\n        request.readonly = api_key == request.project.api_key_readonly\n        return f(request, *args, **kwds)\n\n    return wrapper",
+      "file": "hc/api/decorators.py",
+      "start": 38,
+      "qualname": "authorize_read"
+     },
+     {
+      "id": "healthchecks:hc/api/decorators.py:14",
+      "score": 0.687,
+      "text": "# hc/api/decorators.py:14-35  authorize\ndef authorize(f):\n    @wraps(f)\n    def wrapper(request, *args, **kwds):\n        if \"HTTP_X_API_KEY\" in request.META:\n            api_key = request.META[\"HTTP_X_API_KEY\"]\n        elif hasattr(request, \"json\"):\n            api_key = str(request.json.get(\"api_key\", \"\"))\n        else:\n            api_key = \"\"\n\n        if len(api_key) != 32:\n            return error(\"missing api key\", 401)\n\n        try:\n            request.project = Project.objects.get(api_key=api_key)\n        except Project.DoesNotExist:\n            return error(\"wrong api key\", 401)\n\n        request.readonly = False\n        return f(request, *args, **kwds)\n\n    return wrapper",
+      "file": "hc/api/decorators.py",
+      "start": 14,
+      "qualname": "authorize"
+     },
+     {
+      "id": "healthchecks:hc/api/tests/test_notify_webhook.py:312",
+      "score": 0.685,
+      "text": "# hc/api/tests/test_notify_webhook.py:312-329  NotifyWebhookTestCase.test_webhooks_support_variables_in_headers\n    def test_webhooks_support_variables_in_headers(self, mock_request):\n        definition = {\n            \"method_down\": \"GET\",\n            \"url_down\": \"http://foo.com\",\n            \"body_down\": \"\",\n            \"headers_down\": {\"X-Message\": \"$NAME is DOWN\"},\n        }\n\n        self._setup_data(json.dumps(definition))\n        self.check.name = \"Foo\"\n        self.check.save()\n\n        self.channel.notify(self.check)\n\n        headers = {\"User-Agent\": \"healthchecks.io\", \"X-Message\": \"Foo is DOWN\"}\n        mock_request.assert_called_with(\n            \"get\", \"http://foo.com\", headers=headers, timeout=10\n        )",
+      "file": "hc/api/tests/test_notify_webhook.py",
+      "start": 312,
+      "qualname": "NotifyWebhookTestCase.test_webhooks_support_variables_in_headers"
+     },
+     {
+      "id": "healthchecks:hc/api/tests/test_notify_webhook.py:278",
+      "score": 0.684,
+      "text": "# hc/api/tests/test_notify_webhook.py:278-292  NotifyWebhookTestCase.test_webhooks_handle_get_headers\n    def test_webhooks_handle_get_headers(self, mock_request):\n        definition = {\n            \"method_down\": \"GET\",\n            \"url_down\": \"http://foo.com\",\n            \"body_down\": \"\",\n            \"headers_down\": {\"Content-Type\": \"application/json\"},\n        }\n\n        self._setup_data(json.dumps(definition))\n        self.channel.notify(self.check)\n\n        headers = {\"User-Agent\": \"healthchecks.io\", \"Content-Type\": \"application/json\"}\n        mock_request.assert_called_with(\n            \"get\", \"http://foo.com\", headers=headers, timeout=10\n        )",
+      "file": "hc/api/tests/test_notify_webhook.py",
+      "start": 278,
+      "qualname": "NotifyWebhookTestCase.test_webhooks_handle_get_headers"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "requests.get",
+     "rebuild_proxies",
+     "proxy_manager_for",
+     "proxy_headers",
+     "allow_redirects"
+    ],
+    "reasoning": "mock: 2 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/front/views.py:1875",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/front/views.py:2043",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/api/management/commands/settelegramwebhook.py:5",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2459,
+   "tokens_out": 118,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 2 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/front/views.py:1875\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/front/views.py:2043\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/api/management/commands/settelegramwebhook.py:5\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"requests.get\", \"rebuild_proxies\", \"proxy_manager_for\", \"proxy_headers\", \"allow_redirects\"]}",
+     "in": 2459,
+     "out": 118,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.3,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 2428,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2428,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4887,
+  "tokens_out": 153,
+  "cost_usd_est": 0.0,
+  "seconds": 0.21
+ },
+ "created": "2026-11-10T00:06:13+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,346 @@
+{
+ "finding_id": "mealie/python-multipart@0.0.6/GHSA-vffw-93wf-4j4q",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-53537",
+   "GHSA-vffw-93wf-4j4q",
+   "PYSEC-2026-3041"
+  ],
+  "cves": [
+   "CVE-2026-53537"
+  ],
+  "cwes": [
+   "CWE-20",
+   "CWE-436"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/python-multipart@0.0.6/GHSA-vffw-93wf-4j4q",
+  "first_fixed_above_installed": "0.0.30",
+  "fixed_versions": [
+   "0.0.30"
+  ],
+  "max_cvss": "3.7",
+  "package": "python-multipart",
+  "published": "2026-06-15T20:20:51Z",
+  "summary": "python-multipart: Content-Disposition parameter smuggling via RFC 2231/5987 extended parameters",
+  "target": "mealie",
+  "version": "0.0.6",
+  "vuln_id": "GHSA-vffw-93wf-4j4q"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "name",
+   "filename",
+   "comment",
+   "parse_options_header",
+   "email.message.Message"
+  ],
+  "reasoning": "mock: 2 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "name",
+  "filename",
+  "comment",
+  "parse_options_header",
+  "email.message.Message"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/python-multipart@0.0.6/GHSA-vffw-93wf-4j4q",
+    "package": "python-multipart",
+    "version": "0.0.6",
+    "vuln_id": "GHSA-vffw-93wf-4j4q",
+    "aliases": [
+     "CVE-2026-53537",
+     "GHSA-vffw-93wf-4j4q",
+     "PYSEC-2026-3041"
+    ],
+    "summary": "python-multipart: Content-Disposition parameter smuggling via RFC 2231/5987 extended parameters",
+    "max_cvss": "3.7",
+    "fixed_versions": [
+     "0.0.30"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-vffw-93wf-4j4q#0",
+      "score": 0.882,
+      "text": "GHSA-vffw-93wf-4j4q (CVE-2026-53537)\npackage: python-multipart\nsummary: python-multipart: Content-Disposition parameter smuggling via RFC 2231/5987 extended parameters\naffected: >=0, <0.0.30",
+      "vuln_id": "GHSA-vffw-93wf-4j4q"
+     },
+     {
+      "id": "GHSA-vffw-93wf-4j4q#5",
+      "score": 0.787,
+      "text": "GHSA-vffw-93wf-4j4q (python-multipart) details:\nUpgrade to `python-multipart` `0.0.30` or later, which ignores RFC 2231/5987 extended parameters (`name*`, `filename*`, and their continuations) so the plain `name`/`filename` parameter remains authoritative. RFC 7578 \u00a74.2 forbids `filename*` for `multipart/form-data`; `name*` and the continuation forms are dropped for the same reason, since they are not valid `multipart/form-data` parameters either.",
+      "vuln_id": "GHSA-vffw-93wf-4j4q"
+     },
+     {
+      "id": "GHSA-vffw-93wf-4j4q#2",
+      "score": 0.787,
+      "text": "GHSA-vffw-93wf-4j4q (python-multipart) details:\nComponents that follow RFC 7578, or that do not implement RFC 2231/5987 decoding for `multipart/form-data` (WAFs, proxies, gateways), may interpret such a header differently. An attacker can exploit that difference to smuggle a different field name or filename past an upstream inspector to the backend.\n\n### Details\n\nGiven both a plain and an extended parameter, the extended value won. For example:\n\n```\nContent-Disposition: form-data; name=\"comment\"; name*=utf-8''role\n```\n\nAn inspector following RFC 7578 sees the field `comment`, while the returned value was `name=role`. The same applies to filenames:\n\n```\nContent-Disposition: form-data; name=\"upload\"; filename=\"safe.txt\"; filename*=utf-8''evil.php\n```",
+      "vuln_id": "GHSA-vffw-93wf-4j4q"
+     },
+     {
+      "id": "GHSA-vffw-93wf-4j4q#1",
+      "score": 0.786,
+      "text": "GHSA-vffw-93wf-4j4q (python-multipart) details:\n### Summary\n\n`parse_options_header` parsed `Content-Disposition` (and `Content-Type`) headers with [`email.message.Message`](https://docs.python.org/3/library/email.compat32-message.html#email.message.Message), which transparently applies [RFC 2231](https://datatracker.ietf.org/doc/html/rfc2231)/[5987](https://datatracker.ietf.org/doc/html/rfc5987) decoding. The extended parameter syntax (`filename*=charset'lang'value`, `name*=...`, and the `filename*0`/`filename*1` continuation form) is decoded and surfaced under the bare `filename`/`name` key, and overrides the plain parameter when both are present. [RFC 7578 \u00a74.2](https://datatracker.ietf.org/doc/html/rfc7578#section-4.2) explicitly forbids the `filename*` form in `multipart/form-data`.",
+      "vuln_id": "GHSA-vffw-93wf-4j4q"
+     },
+     {
+      "id": "GHSA-mj87-hwqh-73pj#1",
+      "score": 0.82,
+      "text": "GHSA-mj87-hwqh-73pj (python-multipart) details:\n### Summary\n\nA denial of service vulnerability exists when parsing crafted `multipart/form-data` requests with large preamble or epilogue sections.\n\n### Details\n\nTwo inefficient multipart parsing paths could be abused with attacker-controlled input.\n\nBefore the first multipart boundary, the parser handled leading CR and LF bytes inefficiently while searching for the start of the first part. After the closing boundary, the parser continued processing trailing epilogue data instead of discarding it immediately. As a result, parsing time could grow with the size of crafted data placed before the first boundary or after the closing boundary.\n\n### Impact",
+      "vuln_id": "GHSA-mj87-hwqh-73pj"
+     },
+     {
+      "id": "GHSA-2jv5-9r88-3w3p#0",
+      "score": 0.82,
+      "text": "GHSA-2jv5-9r88-3w3p (CVE-2024-24762)\npackage: python-multipart\nsummary: python-multipart vulnerable to Content-Type Header ReDoS\naffected: >=0, <0.0.7",
+      "vuln_id": "GHSA-2jv5-9r88-3w3p"
+     }
+    ],
+    "symbols": [
+     "name",
+     "filename",
+     "comment",
+     "parse_options_header",
+     "email.message.Message"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 52.9,
+   "output": {
+    "package": "python-multipart",
+    "import_names": [
+     "multipart"
+    ],
+    "symbols": [
+     "name",
+     "filename",
+     "comment",
+     "parse_options_header",
+     "email.message.Message"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [
+     {
+      "location": "mealie/schema/recipe/recipe_timeline_events.py:18",
+      "value": "comment",
+      "symbol": "comment",
+      "in_test": false
+     },
+     {
+      "location": "mealie/schema/static/recipe_keys.py:40",
+      "value": "comment",
+      "symbol": "comment",
+      "in_test": false
+     }
+    ],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "python-multipart: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['name', 'filename', 'comment', 'parse_options_header', 'email.message.Message']; 0 production call site(s) of those symbols, 0 with a path from an entry point; 2 config/string reference(s)"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 38.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/utils.py:134",
+      "score": 0.691,
+      "text": "# mealie/services/parser_services/crfpp/utils.py:134-252  import_data\ndef import_data(lines):\n    \"\"\"\n    This thing takes the output of CRF++ and turns it into an actual\n    data structure.\n    \"\"\"\n    data = [{}]\n    display = [[]]\n    prevTag = None\n\n    confidence_all = [{}]\n\n    #\n    # iterate lines in the data file, which looks like:\n    #\n    #   # 0.511035\n    #   1/2       I1  L12  NoCAP  X  B-QTY/0.982850\n    #   teaspoon  I2  L12  NoCAP  X  B-UNIT/0.982200\n    #   fresh     I3  L12  NoCAP  X  B-COMMENT/0.716364\n    #   thyme     I4  L12  NoCAP  X  B-NAME/0.816803\n    #   leaves    I5  L12  NoCAP  X  I-NAME/0.960524\n    #   ,         I6  L12  NoCAP  X  B-COMMENT/0.772231\n    #   finely    I7  L12  NoCAP  X  I-COMMENT/0.825956\n    #   chopped   I8  L12  NoCAP  X  I-COMMENT/0.893379\n    #\n    #   # 0.505999\n    #   Black   I1  L8  YesCAP  X  B-NAME/0.765461\n    #   pepper  I2  L8  NoCAP   X  I-NAME/0.756614\n    #   ,       I3  L8  NoCAP   X  OTHER/0.798040\n    #   to      I4  L8  NoCAP   X  B-COMMENT/0.683089\n    #   taste   I5  L8  NoCAP   X  I-COMMENT/0.848617\n    #\n    # i.e. the output of crf_test -v 1\n    #\n    for line in lines:\n        # blank line starts a new ingredient\n        if line in (\"\", \"\\n\"):\n            data.append({})\n            display.append([])\n            prevTag = None\n\n            confidence_all.append({})\n\n        # ignore comments\n        elif line[0] == \"#\":\n            pass\n\n        # otherwise it's a token\n        # e.g.: potato \\t I2 \\t L5 \\t NoCAP \\t B-NAME/0.978253\n        else:\n            columns = re.split(\"\\t\", line.strip())\n            token = columns[0].strip()\n\n            # unclump fractions\n            token = unclump(token)\n\n            # turn B-NAME/123 back into \"name\"\n            tag, confidence = re.split(r\"/\", columns[-1], maxsplit=1)\n            tag = re.sub(r\"^[BI]\\-\", \"\", tag).lower()  # noqa: W605 - invalid dscape sequence\n\n            # ====================",
+      "file": "mealie/services/parser_services/crfpp/utils.py",
+      "start": 134,
+      "qualname": "import_data"
+     },
+     {
+      "id": "mealie:mealie/services/email/email_senders.py:34",
+      "score": 0.691,
+      "text": "# mealie/services/email/email_senders.py:34-55  Message.send\n    def send(self, to: str, smtp: EmailOptions) -> SMTPResponse:\n        msg = message.EmailMessage()\n        msg[\"Subject\"] = self.subject\n        msg[\"From\"] = f\"{self.mail_from_name} <{self.mail_from_address}>\"\n        msg[\"To\"] = to\n        msg.add_alternative(self.html, subtype=\"html\")\n\n        if smtp.ssl:\n            with smtplib.SMTP_SSL(smtp.host, smtp.port) as server:\n                if smtp.username and smtp.password:\n                    server.login(smtp.username, smtp.password)\n\n                errors = server.send_message(msg)\n        else:\n            with smtplib.SMTP(smtp.host, smtp.port) as server:\n                if smtp.tls:\n                    server.starttls()\n                if smtp.username and smtp.password:\n                    server.login(smtp.username, smtp.password)\n                errors = server.send_message(msg)\n\n        return SMTPResponse(errors == {}, \"Message Sent\", errors=errors)",
+      "file": "mealie/services/email/email_senders.py",
+      "start": 34,
+      "qualname": "Message.send"
+     },
+     {
+      "id": "mealie:mealie/core/settings/settings.py:module",
+      "score": 0.682,
+      "text": "# mealie/core/settings/settings.py (module level)\nimport secrets\nfrom pathlib import Path\nfrom pydantic import BaseSettings, NoneStr, validator\nfrom mealie.core.settings.themes import Theme\nfrom .db_providers import AbstractDBProvider, db_provider_factory\nclass AppSettings(BaseSettings):\n    theme: Theme = Theme()\n    PRODUCTION: bool\n    BASE_URL: str = \"http://localhost:8080\"\n    \"\"\"trailing slashes are trimmed (ex. `http://localhost:8080/` becomes ``http://localhost:8080`)\"\"\"\n    STATIC_FILES: str = \"\"\n    \"\"\"path to static files directory (ex. `mealie/dist`)\"\"\"\n    IS_DEMO: bool = False\n    API_PORT: int = 9000\n    API_DOCS: bool = True\n    TOKEN_TIME: int = 48\n    \"\"\"time in hours\"\"\"\n    SECRET: str\n    LOG_LEVEL: str = \"INFO\"\n    \"\"\"corresponds to standard Python log levels\"\"\"\n    GIT_COMMIT_HASH: str = \"unknown\"\n    ALLOW_SIGNUP: bool = True\n    # ===============================================\n    # Security Configuration\n    SECURITY_MAX_LOGIN_ATTEMPTS: int = 5\n    SECURITY_USER_LOCKOUT_TIME: int = 24\n    \"time in hours\"\n    @validator(\"BASE_URL\")\n    @property\n    @property\n    # ===============================================\n    # Database Configuration\n    DB_ENGINE: str = \"sqlite\"  # Options: 'sqlite', 'postgres'\n    DB_PROVIDER: AbstractDBProvider | None = None\n    @property\n    @property\n    DEFAULT_GROUP: str = \"Home\"\n    _DEFAULT_EMAIL: str = \"changeme@example.com\"\n    \"\"\"\n    This is the default email used for the first user created in the database. This is only used if no users\n    exist in the database. it should no longer be set by end users.\n    \"\"\"\n    _DEFAULT_PASSWORD: str = \"MyPassword\"\n    \"\"\"\n    This is the default password used for the first user created in the database. This is only used if no users\n    exist in the database. it should no longer be set by end users.\n    \"\"\"\n    # ===============================================\n    # Email Configuration\n    SMTP_HOST: str | None\n    SMTP_PORT: str | None = \"587\"\n    SMTP_FROM_NAME: str | None = \"Mealie\"\n    SMTP_FROM_EMAIL: str | None\n    SMTP_USER: str | None\n    SMTP_PASSWORD: str | None\n    SMTP_AUTH_STRATEGY: str | None = \"TLS\"  # Options: 'TLS', 'SSL', 'NONE'\n    @property\n    @staticmethod\n    # ===============================================\n    # LDAP Configuration",
+      "file": "mealie/core/settings/settings.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/assets/users/__init__.py:module",
+      "score": 0.679,
+      "text": "# mealie/assets/users/__init__.py (module level)\nfrom pathlib import Path\nCWD = Path(__file__).parent\nimg_random_1 = CWD / \"random_1.webp\"\nimg_random_2 = CWD / \"random_2.webp\"\nimg_random_3 = CWD / \"random_3.webp\"",
+      "file": "mealie/assets/users/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/email/__init__.py:module",
+      "score": 0.67,
+      "text": "# mealie/services/email/__init__.py (module level)\nfrom .email_service import EmailService, EmailTemplate\n__all__ = [\n    \"EmailService\",\n    \"EmailTemplate\",\n]",
+      "file": "mealie/services/email/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "name",
+     "filename",
+     "comment",
+     "parse_options_header",
+     "email.message.Message"
+    ],
+    "reasoning": "mock: 2 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 2382,
+   "tokens_out": 53,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 2 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"name\", \"filename\", \"comment\", \"parse_options_header\", \"email.message.Message\"]}",
+     "in": 2382,
+     "out": 53,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.5,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 2313,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2313,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4695,
+  "tokens_out": 88,
+  "cost_usd_est": 0.0,
+  "seconds": 0.13
+ },
+ "created": "2026-11-10T00:06:30+00:00",
+ "code_version": "a3e1ef4"
+}

@@ -1,0 +1,6 @@
+# Development: mock LLM, no retrieval (works before the index exists).
+provider: {provider: mock}
+retrieval: false
+reflection: true
+store: chroma
+max_retries: 1

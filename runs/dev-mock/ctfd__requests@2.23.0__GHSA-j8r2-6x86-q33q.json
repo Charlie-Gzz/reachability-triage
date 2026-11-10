@@ -1,0 +1,464 @@
+{
+ "finding_id": "ctfd/requests@2.23.0/GHSA-j8r2-6x86-q33q",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-32681",
+   "GHSA-j8r2-6x86-q33q",
+   "PYSEC-2023-74"
+  ],
+  "cves": [
+   "CVE-2023-32681"
+  ],
+  "cwes": [
+   "CWE-200"
+  ],
+  "direct_dependency": true,
+  "finding_id": "ctfd/requests@2.23.0/GHSA-j8r2-6x86-q33q",
+  "first_fixed_above_installed": "2.31.0",
+  "fixed_versions": [
+   "2.31.0",
+   "74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5"
+  ],
+  "max_cvss": "6.1",
+  "package": "requests",
+  "published": "2023-05-22T20:36:32Z",
+  "summary": "Unintended leak of Proxy-Authorization header in requests",
+  "target": "ctfd",
+  "version": "2.23.0",
+  "vuln_id": "GHSA-j8r2-6x86-q33q"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.8,
+  "vulnerable_symbols": [
+   "requests.get",
+   "rebuild_proxies",
+   "proxy_manager_for",
+   "proxy_headers",
+   "allow_redirects"
+  ],
+  "reasoning": "mock: 2 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "CTFd/auth.py:489",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/utils/updates/__init__.py:55",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "CTFd/auth.py:3",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.8
+ },
+ "symbols": [
+  "requests.get",
+  "rebuild_proxies",
+  "proxy_manager_for",
+  "proxy_headers",
+  "allow_redirects",
+  "ProxyManager"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/requests@2.23.0/GHSA-j8r2-6x86-q33q",
+    "package": "requests",
+    "version": "2.23.0",
+    "vuln_id": "GHSA-j8r2-6x86-q33q",
+    "aliases": [
+     "CVE-2023-32681",
+     "GHSA-j8r2-6x86-q33q",
+     "PYSEC-2023-74"
+    ],
+    "summary": "Unintended leak of Proxy-Authorization header in requests",
+    "max_cvss": "6.1",
+    "fixed_versions": [
+     "2.31.0",
+     "74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-j8r2-6x86-q33q#1",
+      "score": 0.853,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\n### Impact\n\nSince Requests v2.3.0, Requests has been vulnerable to potentially leaking `Proxy-Authorization` headers to destination servers, specifically during redirects to an HTTPS origin. This is a product of how `rebuild_proxies` is used to recompute and [reattach the `Proxy-Authorization` header](https://github.com/psf/requests/blob/f2629e9e3c7ce3c3c8c025bcd8db551101cbc773/requests/sessions.py#L319-L328) to requests when redirected. Note this behavior has _only_ been observed to affect proxied requests when credentials are supplied in the URL user information component (e.g. `https://username:password@proxy:8080`).\n\n**Current vulnerable behavior(s):**\n\n1. HTTP \u2192 HTTPS: **leak**\n2. HTTPS \u2192 HTTP: **no leak**\n3. HTTPS \u2192 HTTPS: **leak**\n4. HTTP \u2192 HTTP: **no leak**",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#0",
+      "score": 0.829,
+      "text": "GHSA-j8r2-6x86-q33q (CVE-2023-32681)\npackage: requests\nsummary: Unintended leak of Proxy-Authorization header in requests\naffected: >=2.3.0, <2.31.0",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#3",
+      "score": 0.77,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\nThe reason this currently works for HTTPS connections in Requests is the `Proxy-Authorization` header is also handled by urllib3 with our usage of the ProxyManager in adapters.py with [`proxy_manager_for`](https://github.com/psf/requests/blob/f2629e9e3c7ce3c3c8c025bcd8db551101cbc773/requests/adapters.py#L199-L235). This will compute the required proxy headers in `proxy_headers` and pass them to the Proxy Manager, avoiding attaching them directly to the Request object. This will be our preferred option going forward for default usage.\n\n### Patches\nStarting in Requests v2.31.0, Requests will no longer attach this header to redirects with an HTTPS destination. This should have no negative impacts on the default behavior of the library as the proxy credentials are already properly being handled by urllib3's ProxyManager.",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#4",
+      "score": 0.769,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\nFor users with custom adapters, this _may_ be potentially breaking if you were already working around this behavior. The previous functionality of `rebuild_proxies` doesn't make sense in any case, so we would encourage any users impacted to migrate any handling of Proxy-Authorization directly into their custom adapter.\n\n### Workarounds\nFor users who are not able to update Requests immediately, there is one potential workaround.\n\nYou may disable redirects by setting `allow_redirects` to `False` on all calls through Requests top-level APIs. Note that if you're currently relying on redirect behaviors, you will need to capture the 3xx response codes and ensure a new request is made to the redirect destination.\n```\nimport requests\nr = requests.get('http://github.com/', allow_redirects=False)\n```\n\n### Credits\n\nThis vulnerability was discovered and disclosed by the following individuals.",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-cfj3-7x9c-4p3h#0",
+      "score": 0.753,
+      "text": "GHSA-cfj3-7x9c-4p3h (CVE-2014-1829)\npackage: requests\nsummary: Exposure of Sensitive Information to an Unauthorized Actor in Requests\naffected: >=0, <2.3.0",
+      "vuln_id": "GHSA-cfj3-7x9c-4p3h"
+     },
+     {
+      "id": "GHSA-gc5v-m9x4-r6x2#0",
+      "score": 0.753,
+      "text": "GHSA-gc5v-m9x4-r6x2 (CVE-2026-25645)\npackage: requests\nsummary: Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function\naffected: >=0, <2.33.0",
+      "vuln_id": "GHSA-gc5v-m9x4-r6x2"
+     }
+    ],
+    "symbols": [
+     "requests.get",
+     "rebuild_proxies",
+     "proxy_manager_for",
+     "proxy_headers",
+     "allow_redirects",
+     "ProxyManager"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 79.8,
+   "output": {
+    "package": "requests",
+    "import_names": [
+     "requests"
+    ],
+    "symbols": [
+     "requests.get",
+     "rebuild_proxies",
+     "proxy_manager_for",
+     "proxy_headers",
+     "allow_redirects",
+     "ProxyManager"
+    ],
+    "imported": true,
+    "import_locations": [
+     "CTFd/auth.py:3",
+     "CTFd/utils/email/mailgun.py:3",
+     "CTFd/utils/updates/__init__.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 24,
+    "vulnerable_call_sites": [
+     {
+      "file": "CTFd/auth.py",
+      "line": 489,
+      "code": "api_data = requests.get(url=user_url, headers=headers).json()",
+      "resolved": "requests.get.json",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.auth:oauth_redirect"
+      ],
+      "snippet": "  486                  \"Authorization\": \"Bearer \" + str(token),\n  487                  \"Content-type\": \"application/json\",\n  488              }\n  489              api_data = requests.get(url=user_url, headers=headers).json()\n  490  \n  491              user_id = api_data[\"id\"]\n  492              user_name = api_data[\"name\"]"
+     },
+     {
+      "file": "CTFd/utils/updates/__init__.py",
+      "line": 55,
+      "code": "check = requests.get(",
+      "resolved": "requests.get.json",
+      "function": "CTFd.utils.updates:update_check",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "CTFd.admin.statistics:statistics",
+       "CTFd.utils.updates:update_check"
+      ],
+      "snippet": "   52                  \"upload_provider\": get_app_config(\"UPLOAD_PROVIDER\"),\n   53                  \"channel\": app.CHANNEL,\n   54              }\n   55              check = requests.get(\n   56                  \"https://versioning.ctfd.io/check\", params=params, timeout=3\n   57              ).json()\n   58          except requests.exceptions.RequestException:"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/auth.py:475",
+      "code": "token_request = requests.post(url, data=data, headers=headers)",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/auth.py:477",
+      "code": "if token_request.status_code == requests.codes.ok:",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/auth.py:489",
+      "code": "api_data = requests.get(url=user_url, headers=headers).json()",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/email/mailgun.py:18",
+      "code": "r = requests.post(",
+      "function": "CTFd.utils.email.mailgun:sendmail",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/email/mailgun.py:29",
+      "code": "except requests.RequestException as e:",
+      "function": "CTFd.utils.email.mailgun:sendmail",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:55",
+      "code": "check = requests.get(",
+      "function": "CTFd.utils.updates:update_check",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:58",
+      "code": "except requests.exceptions.RequestException:",
+      "function": "CTFd.utils.updates:update_check",
+      "in_test": false
+     }
+    ],
+    "entry_points": 252,
+    "paths": [
+     [
+      "CTFd.auth:oauth_redirect"
+     ],
+     [
+      "CTFd.admin.statistics:statistics",
+      "CTFd.utils.updates:update_check"
+     ]
+    ],
+    "summary": "requests: imported in 3 non-test location(s); 24 package call/reference site(s); named vulnerable symbols ['requests.get', 'rebuild_proxies', 'proxy_manager_for', 'proxy_headers', 'allow_redirects', 'ProxyManager']; 2 production call site(s) of those symbols, 2 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 27.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:CTFd/utils/updates/__init__.py:55",
+      "score": 1.0,
+      "file": "CTFd/utils/updates/__init__.py",
+      "start": 55,
+      "qualname": "CTFd.utils.updates:update_check",
+      "text": "# CTFd/utils/updates/__init__.py around line 55\n   52                  \"upload_provider\": get_app_config(\"UPLOAD_PROVIDER\"),\n   53                  \"channel\": app.CHANNEL,\n   54              }\n   55              check = requests.get(\n   56                  \"https://versioning.ctfd.io/check\", params=params, timeout=3\n   57              ).json()\n   58          except requests.exceptions.RequestException:"
+     },
+     {
+      "id": "site:CTFd/auth.py:489",
+      "score": 1.0,
+      "file": "CTFd/auth.py",
+      "start": 489,
+      "qualname": "CTFd.auth:oauth_redirect",
+      "text": "# CTFd/auth.py around line 489\n  486                  \"Authorization\": \"Bearer \" + str(token),\n  487                  \"Content-type\": \"application/json\",\n  488              }\n  489              api_data = requests.get(url=user_url, headers=headers).json()\n  490  \n  491              user_id = api_data[\"id\"]\n  492              user_name = api_data[\"name\"]"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/helpers/request.py:module",
+      "score": 0.682,
+      "text": "# CTFd/api/v1/helpers/request.py (module level)\nfrom functools import wraps\nfrom flask import request\nfrom pydantic import ValidationError, create_model\nARG_LOCATIONS = {\n    \"query\": lambda: request.args,\n    \"json\": lambda: request.get_json(),\n    \"form\": lambda: request.form,\n    \"headers\": lambda: request.headers,\n    \"cookies\": lambda: request.cookies,\n}",
+      "file": "CTFd/api/v1/helpers/request.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/auth.py:449",
+      "score": 0.673,
+      "text": "# CTFd/auth.py:449-566  oauth_redirect\ndef oauth_redirect():\n    oauth_code = request.args.get(\"code\")\n    state = request.args.get(\"state\")\n    if session[\"nonce\"] != state:\n        log(\"logins\", \"[{date}] {ip} - OAuth State validation mismatch\")\n        error_for(endpoint=\"auth.login\", message=\"OAuth State validation mismatch.\")\n        return redirect(url_for(\"auth.login\"))\n\n    if oauth_code:\n        url = (\n            get_app_config(\"OAUTH_TOKEN_ENDPOINT\")\n            or get_config(\"oauth_token_endpoint\")\n            or \"https://auth.majorleaguecyber.org/oauth/token\"\n        )\n\n        client_id = get_app_config(\"OAUTH_CLIENT_ID\") or get_config(\"oauth_client_id\")\n        client_secret = get_app_config(\"OAUTH_CLIENT_SECRET\") or get_config(\n            \"oauth_client_secret\"\n        )\n        headers = {\"content-type\": \"application/x-www-form-urlencoded\"}\n        data = {\n            \"code\": oauth_code,\n            \"client_id\": client_id,\n            \"client_secret\": client_secret,\n            \"grant_type\": \"authorization_code\",\n        }\n        token_request = requests.post(url, data=data, headers=headers)\n\n        if token_request.status_code == requests.codes.ok:\n            token = token_request.json()[\"access_token\"]\n            user_url = (\n                get_app_config(\"OAUTH_API_ENDPOINT\")\n                or get_config(\"oauth_api_endpoint\")\n                or \"https://api.majorleaguecyber.org/user\"\n            )\n\n            headers = {\n                \"Authorization\": \"Bearer \" + str(token),\n                \"Content-type\": \"application/json\",\n            }\n            api_data = requests.get(url=user_url, headers=headers).json()\n\n            user_id = api_data[\"id\"]\n            user_name = api_data[\"name\"]\n            user_email = api_data[\"email\"]\n\n            user = Users.query.filter_by(email=user_email).first()\n            if user is None:\n                # Check if we are allowing registration before creating users\n                if registration_visible() or mlc_registration():\n                    user = Users(\n                        name=user_name,\n                        email=user_email,\n                        oauth_id=user_id,\n                        verified=True,\n                    )\n                    db.session.add(user)\n                    db.session.commit()\n                else:\n                    log(\"logins\", \"[{date}] {ip} - Public registration via MLC blocked\")",
+      "file": "CTFd/auth.py",
+      "start": 449,
+      "qualname": "oauth_redirect"
+     },
+     {
+      "id": "ctfd:CTFd/utils/user/__init__.py:145",
+      "score": 0.671,
+      "text": "# CTFd/utils/user/__init__.py:145-167  get_ip\ndef get_ip(req=None):\n    \"\"\" Returns the IP address of the currently in scope request. The approach is to define a list of trusted proxies\n     (in this case the local network), and only trust the most recently defined untrusted IP address.\n     Taken from http://stackoverflow.com/a/22936947/4285524 but the generator there makes no sense.\n     The trusted_proxies regexes is taken from Ruby on Rails.\n\n     This has issues if the clients are also on the local network so you can remove proxies from config.py.\n\n     CTFd does not use IP address for anything besides cursory tracking of teams and it is ill-advised to do much\n     more than that if you do not know what you're doing.\n    \"\"\"\n    if req is None:\n        req = request\n    trusted_proxies = app.config[\"TRUSTED_PROXIES\"]\n    combined = \"(\" + \")|(\".join(trusted_proxies) + \")\"\n    route = req.access_route + [req.remote_addr]\n    for addr in reversed(route):\n        if not re.match(combined, addr):  # IP is not trusted but we trust the proxies\n            remote_addr = addr\n            break\n    else:\n        remote_addr = req.remote_addr\n    return remote_addr",
+      "file": "CTFd/utils/user/__init__.py",
+      "start": 145,
+      "qualname": "get_ip"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/hints.py:65",
+      "score": 0.671,
+      "text": "# CTFd/api/v1/hints.py:65-76  HintList.get\n    def get(self, query_args):\n        q = query_args.pop(\"q\", None)\n        field = str(query_args.pop(\"field\", None))\n        filters = build_model_filters(model=Hints, query=q, field=field)\n\n        hints = Hints.query.filter_by(**query_args).filter(*filters).all()\n        response = HintSchema(many=True, view=\"locked\").dump(hints)\n\n        if response.errors:\n            return {\"success\": False, \"errors\": response.errors}, 400\n\n        return {\"success\": True, \"data\": response.data}",
+      "file": "CTFd/api/v1/hints.py",
+      "start": 65,
+      "qualname": "HintList.get"
+     },
+     {
+      "id": "ctfd:CTFd/api/v1/config.py:62",
+      "score": 0.666,
+      "text": "# CTFd/api/v1/config.py:62-73  ConfigList.get\n    def get(self, query_args):\n        q = query_args.pop(\"q\", None)\n        field = str(query_args.pop(\"field\", None))\n        filters = build_model_filters(model=Configs, query=q, field=field)\n\n        configs = Configs.query.filter_by(**query_args).filter(*filters).all()\n        schema = ConfigSchema(many=True)\n        response = schema.dump(configs)\n        if response.errors:\n            return {\"success\": False, \"errors\": response.errors}, 400\n\n        return {\"success\": True, \"data\": response.data}",
+      "file": "CTFd/api/v1/config.py",
+      "start": 62,
+      "qualname": "ConfigList.get"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "vulnerable_symbols": [
+     "requests.get",
+     "rebuild_proxies",
+     "proxy_manager_for",
+     "proxy_headers",
+     "allow_redirects"
+    ],
+    "reasoning": "mock: 2 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "CTFd/auth.py:489",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:55",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "CTFd/auth.py:3",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 2603,
+   "tokens_out": 110,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.8, \"reasoning\": \"mock: 2 call sites, imported=True\", \"evidence\": [{\"location\": \"CTFd/auth.py:489\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/utils/updates/__init__.py:55\", \"explanation\": \"static evidence\"}, {\"location\": \"CTFd/auth.py:3\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"requests.get\", \"rebuild_proxies\", \"proxy_manager_for\", \"proxy_headers\", \"allow_redirects\"]}",
+     "in": 2603,
+     "out": 110,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.8
+   },
+   "tokens_in": 2564,
+   "tokens_out": 35,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"reachable\", \"confidence\": 0.8, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 2564,
+     "out": 35,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.8,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 5167,
+  "tokens_out": 145,
+  "cost_usd_est": 0.0,
+  "seconds": 0.14
+ },
+ "created": "2026-11-10T00:06:18+00:00",
+ "code_version": "a3e1ef4"
+}

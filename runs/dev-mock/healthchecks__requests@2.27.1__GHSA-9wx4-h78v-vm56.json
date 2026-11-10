@@ -1,0 +1,427 @@
+{
+ "finding_id": "healthchecks/requests@2.27.1/GHSA-9wx4-h78v-vm56",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-35195",
+   "GHSA-9wx4-h78v-vm56",
+   "PYSEC-2026-1873"
+  ],
+  "cves": [
+   "CVE-2024-35195"
+  ],
+  "cwes": [
+   "CWE-670"
+  ],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/requests@2.27.1/GHSA-9wx4-h78v-vm56",
+  "first_fixed_above_installed": "2.32.0",
+  "fixed_versions": [
+   "2.32.0"
+  ],
+  "max_cvss": "5.6",
+  "package": "requests",
+  "published": "2024-05-20T20:15:00Z",
+  "summary": "Requests `Session` object does not verify requests after making first request with verify=False",
+  "target": "healthchecks",
+  "version": "2.27.1",
+  "vuln_id": "GHSA-9wx4-h78v-vm56"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "vulnerable_symbols": [
+   "requests.Session",
+   "Session"
+  ],
+  "reasoning": "mock: 0 call sites, imported=True",
+  "evidence": [
+   {
+    "location": "hc/api/management/commands/settelegramwebhook.py:5",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/api/transports.py:9",
+    "explanation": "static evidence"
+   },
+   {
+    "location": "hc/front/forms.py:15",
+    "explanation": "static evidence"
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "requests.Session",
+  "Session"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/requests@2.27.1/GHSA-9wx4-h78v-vm56",
+    "package": "requests",
+    "version": "2.27.1",
+    "vuln_id": "GHSA-9wx4-h78v-vm56",
+    "aliases": [
+     "CVE-2024-35195",
+     "GHSA-9wx4-h78v-vm56",
+     "PYSEC-2026-1873"
+    ],
+    "summary": "Requests `Session` object does not verify requests after making first request with verify=False",
+    "max_cvss": "5.6",
+    "fixed_versions": [
+     "2.32.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-9wx4-h78v-vm56#0",
+      "score": 0.854,
+      "text": "GHSA-9wx4-h78v-vm56 (CVE-2024-35195)\npackage: requests\nsummary: Requests `Session` object does not verify requests after making first request with verify=False\naffected: >=0, <2.32.0",
+      "vuln_id": "GHSA-9wx4-h78v-vm56"
+     },
+     {
+      "id": "GHSA-9wx4-h78v-vm56#1",
+      "score": 0.809,
+      "text": "GHSA-9wx4-h78v-vm56 (requests) details:\nWhen using a `requests.Session`, if the first request to a given origin is made with `verify=False`, TLS certificate verification may remain disabled for all subsequent requests to that origin, even if `verify=True` is explicitly specified later.\n\nThis occurs because the underlying connection is reused from the session's connection pool, causing the initial TLS verification setting to persist for the lifetime of the pooled connection. As a result, applications may unintentionally send requests without certificate verification, leading to potential man-in-the-middle attacks and compromised confidentiality or integrity.\n\nThis behavior affects versions of `requests` prior to 2.32.0.",
+      "vuln_id": "GHSA-9wx4-h78v-vm56"
+     },
+     {
+      "id": "GHSA-j8r2-6x86-q33q#1",
+      "score": 0.767,
+      "text": "GHSA-j8r2-6x86-q33q (requests) details:\n### Impact\n\nSince Requests v2.3.0, Requests has been vulnerable to potentially leaking `Proxy-Authorization` headers to destination servers, specifically during redirects to an HTTPS origin. This is a product of how `rebuild_proxies` is used to recompute and [reattach the `Proxy-Authorization` header](https://github.com/psf/requests/blob/f2629e9e3c7ce3c3c8c025bcd8db551101cbc773/requests/sessions.py#L319-L328) to requests when redirected. Note this behavior has _only_ been observed to affect proxied requests when credentials are supplied in the URL user information component (e.g. `https://username:password@proxy:8080`).\n\n**Current vulnerable behavior(s):**\n\n1. HTTP \u2192 HTTPS: **leak**\n2. HTTPS \u2192 HTTP: **no leak**\n3. HTTPS \u2192 HTTPS: **leak**\n4. HTTP \u2192 HTTP: **no leak**",
+      "vuln_id": "GHSA-j8r2-6x86-q33q"
+     },
+     {
+      "id": "GHSA-pg2w-x9wp-vw92#1",
+      "score": 0.747,
+      "text": "GHSA-pg2w-x9wp-vw92 (requests) details:\nThe `resolve_redirects` function in sessions.py in requests 2.1.0 through 2.5.3 allows remote attackers to conduct session fixation attacks via a cookie without a host value in a redirect.",
+      "vuln_id": "GHSA-pg2w-x9wp-vw92"
+     }
+    ],
+    "symbols": [
+     "requests.Session",
+     "Session"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 82.3,
+   "output": {
+    "package": "requests",
+    "import_names": [
+     "requests"
+    ],
+    "symbols": [
+     "requests.Session",
+     "Session"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/api/management/commands/settelegramwebhook.py:5",
+     "hc/api/transports.py:9",
+     "hc/front/forms.py:15",
+     "hc/front/views.py:53"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 39,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/api/management/commands/settelegramwebhook.py:23",
+      "code": "r = requests.post(url, json=form)",
+      "function": "hc.api.management.commands.settelegramwebhook:Command.handle",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:187",
+      "code": "r = requests.request(method, url, **options)",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:191",
+      "code": "except requests.exceptions.Timeout:",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:194",
+      "code": "except requests.exceptions.ConnectionError:",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/forms.py:269",
+      "code": "r = requests.post(url, {})",
+      "function": "hc.front.forms:AddMatrixForm.clean_alias",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1238",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_slack_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1323",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_pushbullet_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1383",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_discord_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1875",
+      "code": "boards = requests.get(url).json()",
+      "function": "hc.front.views:trello_settings",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:2025",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_linenotify_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:2043",
+      "code": "result = requests.get(",
+      "function": "hc.front.views:add_linenotify_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/tests/test_notify_slack.py:71",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_slack:NotifySlackTestCase.test_it_handles_timeout",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:48",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_handle_timeouts",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:69",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=ConnectionError)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_handle_connection_errors",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:106",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_dont_retry_when_sending_test_notifications",
+      "in_test": true
+     }
+    ],
+    "entry_points": 339,
+    "paths": [],
+    "summary": "requests: imported in 4 non-test location(s) and 2 test location(s); 39 package call/reference site(s); named vulnerable symbols ['requests.Session', 'Session']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 37.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/api/views.py:224",
+      "score": 0.727,
+      "text": "# hc/api/views.py:224-228  checks\ndef checks(request):\n    if request.method == \"POST\":\n        return create_check(request)\n\n    return get_checks(request)",
+      "file": "hc/api/views.py",
+      "start": 224,
+      "qualname": "checks"
+     },
+     {
+      "id": "healthchecks:hc/api/views.py:204",
+      "score": 0.726,
+      "text": "# hc/api/views.py:204-219  create_check\ndef create_check(request):\n    created = False\n    check = _lookup(request.project, request.json)\n    if check is None:\n        if request.project.num_checks_available() <= 0:\n            return HttpResponseForbidden()\n\n        check = Check(project=request.project)\n        created = True\n\n    try:\n        _update(check, request.json)\n    except BadChannelException as e:\n        return JsonResponse({\"error\": e.message}, status=400)\n\n    return JsonResponse(check.to_dict(), status=201 if created else 200)",
+      "file": "hc/api/views.py",
+      "start": 204,
+      "qualname": "create_check"
+     },
+     {
+      "id": "healthchecks:hc/front/tests/test_my_checks.py:41",
+      "score": 0.724,
+      "text": "# hc/front/tests/test_my_checks.py:41-46  MyChecksTestCase.test_it_updates_session\n    def test_it_updates_session(self):\n        self.client.login(username=\"alice@example.org\", password=\"password\")\n        r = self.client.get(self.url)\n        self.assertEqual(r.status_code, 200)\n\n        self.assertEqual(self.client.session[\"last_project_id\"], self.project.id)",
+      "file": "hc/front/tests/test_my_checks.py",
+      "start": 41,
+      "qualname": "MyChecksTestCase.test_it_updates_session"
+     },
+     {
+      "id": "healthchecks:hc/accounts/tests/test_login_webauthn.py:94",
+      "score": 0.716,
+      "text": "# hc/accounts/tests/test_login_webauthn.py:94-111  LoginWebAuthnTestCase.test_it_redirects_after_login\n    def test_it_redirects_after_login(self, mock_check_credential):\n        mock_check_credential.return_value = True\n\n        session = self.client.session\n        session[\"state\"] = \"dummy-state\"\n        session.save()\n\n        payload = {\n            \"name\": \"My New Key\",\n            \"credential_id\": \"e30=\",\n            \"client_data_json\": \"e30=\",\n            \"authenticator_data\": \"e30=\",\n            \"signature\": \"e30=\",\n        }\n\n        url = self.url + \"?next=\" + self.channels_url\n        r = self.client.post(url, payload)\n        self.assertRedirects(r, self.channels_url)",
+      "file": "hc/accounts/tests/test_login_webauthn.py",
+      "start": 94,
+      "qualname": "LoginWebAuthnTestCase.test_it_redirects_after_login"
+     },
+     {
+      "id": "healthchecks:hc/accounts/tests/test_sudo_mode.py:42",
+      "score": 0.712,
+      "text": "# hc/accounts/tests/test_sudo_mode.py:42-53  SudoModeTestCase.test_it_rejects_incorrect_code\n    def test_it_rejects_incorrect_code(self):\n        self.client.login(username=\"alice@example.org\", password=\"password\")\n\n        session = self.client.session\n        session[\"sudo_code\"] = TimestampSigner().sign(\"123456\")\n        session.save()\n\n        r = self.client.post(self.url, {\"sudo_code\": \"000000\"})\n        self.assertContains(r, \"Not a valid code.\")\n\n        # sudo mode should *not* be active\n        self.assertNotIn(\"sudo\", self.client.session)",
+      "file": "hc/accounts/tests/test_sudo_mode.py",
+      "start": 42,
+      "qualname": "SudoModeTestCase.test_it_rejects_incorrect_code"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "vulnerable_symbols": [
+     "requests.Session",
+     "Session"
+    ],
+    "reasoning": "mock: 0 call sites, imported=True",
+    "evidence": [
+     {
+      "location": "hc/api/management/commands/settelegramwebhook.py:5",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/api/transports.py:9",
+      "explanation": "static evidence"
+     },
+     {
+      "location": "hc/front/forms.py:15",
+      "explanation": "static evidence"
+     }
+    ]
+   },
+   "tokens_in": 1566,
+   "tokens_out": 103,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.6, \"reasoning\": \"mock: 0 call sites, imported=True\", \"evidence\": [{\"location\": \"hc/api/management/commands/settelegramwebhook.py:5\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/api/transports.py:9\", \"explanation\": \"static evidence\"}, {\"location\": \"hc/front/forms.py:15\", \"explanation\": \"static evidence\"}], \"vulnerable_symbols\": [\"requests.Session\", \"Session\"]}",
+     "in": 1566,
+     "out": 103,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 1535,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.6, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1535,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3101,
+  "tokens_out": 139,
+  "cost_usd_est": 0.0,
+  "seconds": 0.16
+ },
+ "created": "2026-11-10T00:06:13+00:00",
+ "code_version": "a3e1ef4"
+}

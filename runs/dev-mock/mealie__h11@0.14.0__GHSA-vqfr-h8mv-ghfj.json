@@ -1,0 +1,300 @@
+{
+ "finding_id": "mealie/h11@0.14.0/GHSA-vqfr-h8mv-ghfj",
+ "config": "dev-mock",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "mock",
+ "model": "",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-43859",
+   "GHSA-vqfr-h8mv-ghfj",
+   "PYSEC-2026-348"
+  ],
+  "cves": [
+   "CVE-2025-43859"
+  ],
+  "cwes": [
+   "CWE-444"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/h11@0.14.0/GHSA-vqfr-h8mv-ghfj",
+  "first_fixed_above_installed": "0.16.0",
+  "fixed_versions": [
+   "0.16.0"
+  ],
+  "max_cvss": "9.1",
+  "package": "h11",
+  "published": "2025-04-24T16:07:56Z",
+  "summary": "h11 accepts some malformed Chunked-Encoding bodies",
+  "target": "mealie",
+  "version": "0.14.0",
+  "vuln_id": "GHSA-vqfr-h8mv-ghfj"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "length"
+  ],
+  "reasoning": "mock: 0 call sites, imported=False",
+  "evidence": []
+ },
+ "reflection": {
+  "critique": "mock: evidence is consistent with the verdict",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "length"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/h11@0.14.0/GHSA-vqfr-h8mv-ghfj",
+    "package": "h11",
+    "version": "0.14.0",
+    "vuln_id": "GHSA-vqfr-h8mv-ghfj",
+    "aliases": [
+     "CVE-2025-43859",
+     "GHSA-vqfr-h8mv-ghfj",
+     "PYSEC-2026-348"
+    ],
+    "summary": "h11 accepts some malformed Chunked-Encoding bodies",
+    "max_cvss": "9.1",
+    "fixed_versions": [
+     "0.16.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 28.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-vqfr-h8mv-ghfj#0",
+      "score": 0.854,
+      "text": "GHSA-vqfr-h8mv-ghfj (CVE-2025-43859)\npackage: h11\nsummary: h11 accepts some malformed Chunked-Encoding bodies\naffected: >=0, <0.16.0",
+      "vuln_id": "GHSA-vqfr-h8mv-ghfj"
+     },
+     {
+      "id": "GHSA-vqfr-h8mv-ghfj#1",
+      "score": 0.82,
+      "text": "GHSA-vqfr-h8mv-ghfj (h11) details:\n### Impact\n\nA leniency in h11's parsing of line terminators in chunked-coding message bodies can lead to request smuggling vulnerabilities under certain conditions.\n\n### Details\n\nHTTP/1.1 Chunked-Encoding bodies are formatted as a sequence of \"chunks\", each of which consists of:\n\n- chunk length\n- `\\r\\n`\n- `length` bytes of content\n- `\\r\\n`\n\nIn versions of h11 up to 0.14.0, h11 instead parsed them as:\n\n- chunk length\n- `\\r\\n`\n- `length` bytes of content\n- any two bytes\n\ni.e. it did not validate that the trailing `\\r\\n` bytes were correct, and if you put 2 bytes of garbage there it would be accepted, instead of correctly rejecting the body as malformed.\n\nBy itself this is harmless. However, suppose you have a proxy or reverse-proxy that tries to analyze HTTP requests, and your proxy has a _different_ bug in parsing Chunked-Encoding, acting as if the format is:",
+      "vuln_id": "GHSA-vqfr-h8mv-ghfj"
+     },
+     {
+      "id": "GHSA-vqfr-h8mv-ghfj#2",
+      "score": 0.71,
+      "text": "GHSA-vqfr-h8mv-ghfj (h11) details:\n- chunk length\n- `\\r\\n`\n- `length` bytes of content\n- more bytes of content, as many as it takes until you find a `\\r\\n`\n\nFor example, [pound](https://github.com/graygnuorg/pound/pull/43) had this bug -- it can happen if an implementer uses a generic \"read until end of line\" helper to consumes the trailing `\\r\\n`.\n\nIn this case, h11 and your proxy may both accept the same stream of bytes, but interpret them differently. For example, consider the following HTTP request(s) (assume all line breaks are `\\r\\n`):\n\n```\nGET /one HTTP/1.1\nHost: localhost\nTransfer-Encoding: chunked\n\n5\nAAAAAXX2\n45\n0\n\nGET /two HTTP/1.1\nHost: localhost\nTransfer-Encoding: chunked\n\n0\n```",
+      "vuln_id": "GHSA-vqfr-h8mv-ghfj"
+     },
+     {
+      "id": "GHSA-vqfr-h8mv-ghfj#4",
+      "score": 0.701,
+      "text": "GHSA-vqfr-h8mv-ghfj (h11) details:\n...it will consider the first request to be complete and valid, and send both on to the h11-based web server over the same socket. The server will then see the two concatenated requests, and interpret them as _one_ request to `/one` whose body includes `/two`'s session key, potentially allowing one user to steal another's credentials.\n\n### Patches\n\nFixed in h11 0.15.0.\n\n### Workarounds\n\nSince exploitation requires the combination of buggy h11 with a buggy (reverse) proxy, fixing either component is sufficient to mitigate this issue.\n\n### Credits\n\nReported by Jeppe Bonde Weikop on 2025-01-09.",
+      "vuln_id": "GHSA-vqfr-h8mv-ghfj"
+     }
+    ],
+    "symbols": [
+     "length"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 19.6,
+   "output": {
+    "package": "h11",
+    "import_names": [
+     "h11"
+    ],
+    "symbols": [
+     "length"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "entry_points": 244,
+    "paths": [],
+    "summary": "h11: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['length']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 29.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/core/security/hasher.py:module",
+      "score": 0.684,
+      "text": "# mealie/core/security/hasher.py (module level)\nfrom functools import lru_cache\nfrom typing import Protocol\nfrom passlib.context import CryptContext\nfrom mealie.core.config import get_app_settings\nclass Hasher(Protocol):\nclass FakeHasher:\nclass PasslibHasher:\n@lru_cache(maxsize=1)",
+      "file": "mealie/core/security/hasher.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/db/models/_model_base.py:14",
+      "score": 0.678,
+      "text": "# mealie/db/models/_model_base.py:14-15  SqlAlchemyBase.normalize\n    def normalize(cls, val: str) -> str:\n        return unidecode(val).lower().strip()",
+      "file": "mealie/db/models/_model_base.py",
+      "start": 14,
+      "qualname": "SqlAlchemyBase.normalize"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/utils.py:78",
+      "score": 0.664,
+      "text": "# mealie/services/parser_services/crfpp/utils.py:78-86  lengthGroup\ndef lengthGroup(actualLength):\n    \"\"\"\n    Buckets the length of the ingredient into 6 buckets.\n    \"\"\"\n    for n in [4, 8, 12, 16, 20]:\n        if actualLength < n:\n            return str(n)\n\n    return \"X\"",
+      "file": "mealie/services/parser_services/crfpp/utils.py",
+      "start": 78,
+      "qualname": "lengthGroup"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/pre_processor.py:module",
+      "score": 0.658,
+      "text": "# mealie/services/parser_services/crfpp/pre_processor.py (module level)\nimport re\nimport unicodedata\nreplace_abbreviations = {\n    \"cup\": \" cup \",\n    \"g\": \" gram \",\n    \"kg\": \" kilogram \",\n    \"lb\": \" pound \",\n    \"ml\": \" milliliter \",\n    \"oz\": \" ounce \",\n    \"pint\": \" pint \",\n    \"qt\": \" quart \",\n    \"tbsp\": \" tablespoon \",\n    \"tbs\": \" tablespoon \",  # Order Matters!, 'tsb' must come after 'tbsp' in case of duplicate matches\n    \"tsp\": \" teaspoon \",\n}",
+      "file": "mealie/services/parser_services/crfpp/pre_processor.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/tokenizer.py:4",
+      "score": 0.656,
+      "text": "# mealie/services/parser_services/crfpp/tokenizer.py:4-13  clumpFractions\ndef clumpFractions(s):\n    \"\"\"\n    Replaces the whitespace between the integer and fractional part of a quantity\n    with a dollar sign, so it's interpreted as a single token. The rest of the\n    string is left alone.\n        clumpFractions(\"aaa 1 2/3 bbb\")\n        # => \"aaa 1$2/3 bbb\"\n    \"\"\"\n\n    return re.sub(r\"(\\d+)\\s+(\\d)/(\\d)\", r\"\\1$\\2/\\3\", s)",
+      "file": "mealie/services/parser_services/crfpp/tokenizer.py",
+      "start": 4,
+      "qualname": "clumpFractions"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 0.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "length"
+    ],
+    "reasoning": "mock: 0 call sites, imported=False",
+    "evidence": []
+   },
+   "tokens_in": 1433,
+   "tokens_out": 37,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.85, \"reasoning\": \"mock: 0 call sites, imported=False\", \"evidence\": [], \"vulnerable_symbols\": [\"length\"]}",
+     "in": 1433,
+     "out": 37,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 0.4,
+   "output": {
+    "critique": "mock: evidence is consistent with the verdict",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1365,
+   "tokens_out": 36,
+   "llm_calls": 1,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"agrees\": true, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85, \"critique\": \"mock: evidence is consistent with the verdict\", \"retry\": false}",
+     "in": 1365,
+     "out": 36,
+     "s": 0.0,
+     "model": "mock"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 2798,
+  "tokens_out": 73,
+  "cost_usd_est": 0.0,
+  "seconds": 0.08
+ },
+ "created": "2026-11-10T00:06:23+00:00",
+ "code_version": "a3e1ef4"
+}
