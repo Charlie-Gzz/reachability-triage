@@ -11,6 +11,7 @@ import shutil
 import sys
 
 from ..config import ASSETS, EVAL, RUNS, SITE
+from ..eval.metrics import resolved_model
 
 CONFIGS = ["full", "no-retrieval", "no-reflection", "local"]
 
@@ -39,6 +40,7 @@ def _trim(rec: dict) -> dict:
             if "raw" in a:
                 a["raw"] = a["raw"][:2500]
     rec["finding"].pop("published", None)
+    rec["model"] = resolved_model(rec) or rec.get("model")
     return rec
 
 

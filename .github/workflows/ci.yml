@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      # The unit tests never import torch (embeddings are only used by `rt` RAG commands), so skip the
+      # multi-GB CUDA wheels that sentence-transformers would pull in on Linux.
+      - name: Install (locked, without torch/CUDA)
+        run: >-
+          uv sync --locked
+          --no-install-package torch --no-install-package triton
+          --no-install-package cuda-bindings --no-install-package cuda-pathfinder --no-install-package cuda-toolkit
+          --no-install-package nvidia-cublas --no-install-package nvidia-cuda-cccl --no-install-package nvidia-cuda-cupti
+          --no-install-package nvidia-cuda-nvrtc --no-install-package nvidia-cuda-runtime --no-install-package nvidia-cudnn-cu13
+          --no-install-package nvidia-cufft --no-install-package nvidia-cufile --no-install-package nvidia-cusolver
+          --no-install-package nvidia-cusparse --no-install-package nvidia-cusparselt-cu13 --no-install-package nvidia-nccl-cu13
+          --no-install-package nvidia-nvjitlink --no-install-package nvidia-nvshmem-cu13 --no-install-package nvidia-nvtx
+      - name: Lint
+        run: uv run --no-sync ruff check .
+      - name: Unit tests
+        run: uv run --no-sync pytest -q

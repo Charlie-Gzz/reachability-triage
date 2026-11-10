@@ -43,12 +43,11 @@ Expected remaining cost: ~48 real × 2.3 + 140 ablation × 2.2 + ~50 remediation
    `uv run rt showcase` (cached stages are skipped; local runs bench test + 20 real findings).
 4. Charlie: review the 50 real labels: `uv run rt review` (keys C/R/N/U, ←/→, J = next pending).
 5. `uv run rt refresh` (eval + assets + site), then look at every chart/screenshot again.
-6. Write `docs/DEMO_SCRIPT.md`, `docs/SLIDES_OUTLINE.md`, `docs/PORTFOLIO_CARD.md`, `README.md`, `docs/HANDOFF.md`;
-   add `.github/workflows/ci.yml` (ruff + pytest) and a Pages workflow with `workflow_dispatch` only (do not enable Pages).
-7. Unit tests for the new code: static analysis on bench cases, symbol extraction, metrics/bootstrap, remediation
-   `_regressions`, provider JSON retry (mock). Currently only the 7 Phase 0 tests exist.
-8. Small polish noted in the audit: case page header shows the config alias "sonnet" (should show the resolved
-   model from the step attempts); featured cases need a remediation "full fix" once one exists.
+6. Write `docs/DEMO_SCRIPT.md`, `docs/SLIDES_OUTLINE.md`, `docs/PORTFOLIO_CARD.md`, `README.md`, `docs/HANDOFF.md`
+   (needs final numbers). ~~CI + manual Pages workflow~~ done 2026-11-10 (`.github/workflows/`; Pages not enabled).
+7. ~~Unit tests for the new code~~ done 2026-11-10: 39 tests (`test_static`, `test_metrics`, `test_providers`).
+8. Polish: ~~case page header shows the config alias~~ done (shows resolved model); featured cases need a
+   remediation "full fix" once one exists.
 
 ## Commands cheat-sheet
 
@@ -81,3 +80,5 @@ uv run rt review          # label review page (http://127.0.0.1:8765)
 - 2026-11-09: session paused by Charlie; audit, commit.
 - 2026-11-09: private GitHub repo created and pushed.
 - 2026-11-09: `comments-hub` label corrected with Charlie's approval (see DECISIONS).
+- 2026-11-10: unit tests (7 -> 39), CI (ruff + pytest, skips torch/CUDA wheels), manual-only Pages workflow,
+  case header shows the resolved model. No Claude eval calls spent; eval still to resume.

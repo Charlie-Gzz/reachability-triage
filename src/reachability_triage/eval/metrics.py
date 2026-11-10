@@ -138,6 +138,11 @@ def remediation_summary(config: str = "full") -> dict | None:
             "fixed_ids": [r["finding_id"] for r in recs if r["status"] == "fixed"]}
 
 
+def resolved_model(rec: dict) -> str | None:
+    """The model that actually answered (e.g. claude-sonnet-...), not the config alias ("sonnet")."""
+    return next((a["model"] for s in rec["steps"] for a in s.get("attempts") or [] if a.get("model")), None)
+
+
 def _pct(v):
     return "n/a" if v is None else f"{100 * v:.0f}%"
 
@@ -156,9 +161,7 @@ def run_eval(quiet: bool = False) -> dict:
             continue
         results["configs"][c] = {d: m for d in DATASETS if (m := evaluate(recs, gt, d))}
         results["configs"][c]["provider"] = recs[0]["provider"]
-        resolved = next((a.get("model") for r in recs for s in r["steps"] for a in s.get("attempts", []) or []
-                         if a.get("model")), None)
-        results["configs"][c]["model"] = resolved or recs[0]["model"]
+        results["configs"][c]["model"] = next(filter(None, map(resolved_model, recs)), None) or recs[0]["model"]
     results["remediation"] = remediation_summary()
     rp = EVAL / "results" / "retrieval.json"
     results["retrieval"] = json.loads(rp.read_text(encoding="utf-8")) if rp.exists() else None
