@@ -1,0 +1,344 @@
+{
+ "finding_id": "ctfd/gevent@20.9.0/GHSA-x7m3-jprg-wc5g",
+ "config": "full",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-41419",
+   "GHSA-x7m3-jprg-wc5g"
+  ],
+  "cves": [
+   "CVE-2023-41419"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "ctfd/gevent@20.9.0/GHSA-x7m3-jprg-wc5g",
+  "first_fixed_above_installed": "23.9.0",
+  "fixed_versions": [
+   "23.9.0"
+  ],
+  "max_cvss": "9.8",
+  "package": "gevent",
+  "published": "2023-09-25T12:30:44Z",
+  "summary": "Gevent allows remote attacker to escalate privileges",
+  "target": "ctfd",
+  "version": "20.9.0",
+  "vuln_id": "GHSA-x7m3-jprg-wc5g"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.62,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.72,
+  "vulnerable_symbols": [
+   "gevent.pywsgi.WSGIServer"
+  ],
+  "reasoning": "CVE-2023-41419 is specific to gevent's WSGIServer (pywsgi) component, where a crafted request could trigger a privilege-escalation issue in that HTTP server implementation. The only first-party usage of gevent in this codebase is in CTFd/utils/events/__init__.py, which imports and uses `Timeout` and `spawn` for a server-sent-events queue/polling mechanism \u2014 it does not import, instantiate, or configure `gevent.pywsgi.WSGIServer` or monkey-patch WSGI serving. The static scan found zero production call sites of any vulnerable symbol and no entry point reaching WSGIServer-related code. Without evidence that the app runs its WSGI server via gevent's pywsgi (e.g., a gunicorn `-k gevent` worker class or explicit WSGIServer instantiation), the vulnerable component is not exercised by this application's code as shown. This verdict could change if deployment configuration (not in the retrieved evidence) runs the app under gevent's WSGIServer.",
+  "evidence": [
+   {
+    "location": "CTFd/utils/events/__init__.py:5",
+    "explanation": "Only `Timeout` and `spawn` are imported from gevent, not `pywsgi.WSGIServer`."
+   },
+   {
+    "location": "CTFd/utils/events/__init__.py:62,65,102,113,116",
+    "explanation": "All gevent usage is Timeout context managers and spawn() for greenlet-based SSE queue handling, unrelated to the WSGIServer HTTP parsing path the advisory describes."
+   },
+   {
+    "location": "advisory",
+    "explanation": "CVE-2023-41419 specifically names the WSGIServer component as the vulnerable surface, which is absent from the scanned application code."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that CTFd's own documented/standard deployment (gunicorn with `-k gevent` worker class, or a Procfile invoking gevent workers) would pull in gevent's WSGI/HTTP handling stack regardless of what first-party app code imports \u2014 the advisory's 'crafted script to the WSGIServer component' could then be reachable at the deployment layer even though CTFd's own source never calls `gevent.pywsgi.WSGIServer` directly. This is a real gap: the static evidence is AST-only over Python/template files and would miss a Procfile, Dockerfile, or gunicorn.conf.py specifying a gevent worker class. However, the verdict does not ignore this \u2014 it explicitly calls out that the conclusion could change if deployment configuration runs the app under gevent's WSGIServer, and no such deployment evidence was retrieved or provided in this evidence set. Given the actual evidence presented (only Timeout/spawn usage for SSE, zero WSGIServer references across a reasonably thorough 142-file/87-template scan), the verdict's conclusion is the best-supported one available, even if a residual deployment-level unknown remains.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.62
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/gevent@20.9.0/GHSA-x7m3-jprg-wc5g",
+    "package": "gevent",
+    "version": "20.9.0",
+    "vuln_id": "GHSA-x7m3-jprg-wc5g",
+    "aliases": [
+     "CVE-2023-41419",
+     "GHSA-x7m3-jprg-wc5g"
+    ],
+    "summary": "Gevent allows remote attacker to escalate privileges",
+    "max_cvss": "9.8",
+    "fixed_versions": [
+     "23.9.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 23.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-x7m3-jprg-wc5g#0",
+      "score": 0.85,
+      "text": "GHSA-x7m3-jprg-wc5g (CVE-2023-41419)\npackage: gevent\nsummary: Gevent allows remote attacker to escalate privileges\naffected: >=0, <23.9.0",
+      "vuln_id": "GHSA-x7m3-jprg-wc5g"
+     },
+     {
+      "id": "GHSA-x7m3-jprg-wc5g#1",
+      "score": 0.838,
+      "text": "GHSA-x7m3-jprg-wc5g (gevent) details:\nAn issue in Gevent before version 23.9.0 allows a remote attacker to escalate privileges via a crafted script to the WSGIServer component.",
+      "vuln_id": "GHSA-x7m3-jprg-wc5g"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 35.3,
+   "output": {
+    "package": "gevent",
+    "import_names": [
+     "gevent"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "CTFd/utils/events/__init__.py:5"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 8,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/utils/events/__init__.py:62",
+      "code": "with Timeout(5):",
+      "function": "CTFd.utils.events:EventManager.subscribe",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/events/__init__.py:65",
+      "code": "except Timeout:",
+      "function": "CTFd.utils.events:EventManager.subscribe",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/events/__init__.py:102",
+      "code": "spawn(_listen)",
+      "function": "CTFd.utils.events:RedisEventManager.listen",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/events/__init__.py:113",
+      "code": "with Timeout(5):",
+      "function": "CTFd.utils.events:RedisEventManager.subscribe",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/events/__init__.py:116",
+      "code": "except Timeout:",
+      "function": "CTFd.utils.events:RedisEventManager.subscribe",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "gevent: imported in 1 non-test location(s); 8 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 26.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/events/__init__.py:module",
+      "score": 0.614,
+      "text": "# CTFd/utils/events/__init__.py (module level)\nimport json\nfrom collections import defaultdict\nfrom queue import Queue\nfrom gevent import Timeout, spawn\nfrom tenacity import retry, wait_exponential\nfrom CTFd.cache import cache\nfrom CTFd.utils import string_types\nclass ServerSentEvent(object):\nclass EventManager(object):\nclass RedisEventManager(EventManager):",
+      "file": "CTFd/utils/events/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/events/__init__.py:104",
+      "score": 0.589,
+      "text": "# CTFd/utils/events/__init__.py:104-120  RedisEventManager.subscribe\n    def subscribe(self, channel=\"ctf\"):\n        q = defaultdict(Queue)\n        self.clients[id(q)] = q\n        try:\n            # Immediately yield a ping event to force Response headers to be set\n            # or else some reverse proxies will incorrectly buffer SSE\n            yield ServerSentEvent(data=\"\", type=\"ping\")\n            while True:\n                try:\n                    with Timeout(5):\n                        message = q[channel].get()\n                        yield ServerSentEvent(**message)\n                except Timeout:\n                    yield ServerSentEvent(data=\"\", type=\"ping\")\n        finally:\n            del self.clients[id(q)]\n            del q",
+      "file": "CTFd/utils/events/__init__.py",
+      "start": 104,
+      "qualname": "RedisEventManager.subscribe"
+     },
+     {
+      "id": "ctfd:CTFd/utils/events/__init__.py:73",
+      "score": 0.582,
+      "text": "# CTFd/utils/events/__init__.py:73-76  RedisEventManager.__init__\n    def __init__(self):\n        super(EventManager, self).__init__()\n        self.client = cache.cache._write_client\n        self.clients = {}",
+      "file": "CTFd/utils/events/__init__.py",
+      "start": 73,
+      "qualname": "RedisEventManager.__init__"
+     },
+     {
+      "id": "ctfd:CTFd/utils/events/__init__.py:53",
+      "score": 0.575,
+      "text": "# CTFd/utils/events/__init__.py:53-69  EventManager.subscribe\n    def subscribe(self, channel=\"ctf\"):\n        q = defaultdict(Queue)\n        self.clients[id(q)] = q\n        try:\n            # Immediately yield a ping event to force Response headers to be set\n            # or else some reverse proxies will incorrectly buffer SSE\n            yield ServerSentEvent(data=\"\", type=\"ping\")\n            while True:\n                try:\n                    with Timeout(5):\n                        message = q[channel].get()\n                        yield ServerSentEvent(**message)\n                except Timeout:\n                    yield ServerSentEvent(data=\"\", type=\"ping\")\n        finally:\n            del self.clients[id(q)]\n            del q",
+      "file": "CTFd/utils/events/__init__.py",
+      "start": 53,
+      "qualname": "EventManager.subscribe"
+     },
+     {
+      "id": "ctfd:CTFd/utils/helpers/__init__.py:14",
+      "score": 0.569,
+      "text": "# CTFd/utils/helpers/__init__.py:14-15  info_for\ndef info_for(endpoint, message):\n    flash(message=message, category=endpoint + \".infos\")",
+      "file": "CTFd/utils/helpers/__init__.py",
+      "start": 14,
+      "qualname": "info_for"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 14336.7,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.72,
+    "vulnerable_symbols": [
+     "gevent.pywsgi.WSGIServer"
+    ],
+    "reasoning": "CVE-2023-41419 is specific to gevent's WSGIServer (pywsgi) component, where a crafted request could trigger a privilege-escalation issue in that HTTP server implementation. The only first-party usage of gevent in this codebase is in CTFd/utils/events/__init__.py, which imports and uses `Timeout` and `spawn` for a server-sent-events queue/polling mechanism \u2014 it does not import, instantiate, or configure `gevent.pywsgi.WSGIServer` or monkey-patch WSGI serving. The static scan found zero production call sites of any vulnerable symbol and no entry point reaching WSGIServer-related code. Without evidence that the app runs its WSGI server via gevent's pywsgi (e.g., a gunicorn `-k gevent` worker class or explicit WSGIServer instantiation), the vulnerable component is not exercised by this application's code as shown. This verdict could change if deployment configuration (not in the retrieved evidence) runs the app under gevent's WSGIServer.",
+    "evidence": [
+     {
+      "location": "CTFd/utils/events/__init__.py:5",
+      "explanation": "Only `Timeout` and `spawn` are imported from gevent, not `pywsgi.WSGIServer`."
+     },
+     {
+      "location": "CTFd/utils/events/__init__.py:62,65,102,113,116",
+      "explanation": "All gevent usage is Timeout context managers and spawn() for greenlet-based SSE queue handling, unrelated to the WSGIServer HTTP parsing path the advisory describes."
+     },
+     {
+      "location": "advisory",
+      "explanation": "CVE-2023-41419 specifically names the WSGIServer component as the vulnerable surface, which is absent from the scanned application code."
+     }
+    ]
+   },
+   "tokens_in": 3096,
+   "tokens_out": 1177,
+   "llm_calls": 1,
+   "llm_seconds": 14.33,
+   "cost_usd_est": 0.026943,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.72,\"vulnerable_symbols\":[\"gevent.pywsgi.WSGIServer\"],\"reasoning\":\"CVE-2023-41419 is specific to gevent's WSGIServer (pywsgi) component, where a crafted request could trigger a privilege-escalation issue in that HTTP server implementation. The only first-party usage of gevent in this codebase is in CTFd/utils/events/__init__.py, which imports and uses `Timeout` and `spawn` for a server-sent-events queue/polling mechanism \u2014 it does not import, instantiate, or configure `gevent.pywsgi.WSGIServer` or monkey-patch WSGI serving. The static scan found zero production call sites of any vulnerable symbol and no entry point reaching WSGIServer-related code. Without evidence that the app runs its WSGI server via gevent's pywsgi (e.g., a gunicorn `-k gevent` worker class or explicit WSGIServer instantiation), the vulnerable component is not exercised by this application's code as shown. This verdict could change if deployment configuration (not in the retrieved evidence) runs the app under gevent's WSGIServer.\",\"evidence\":[{\"location\":\"CTFd/utils/events/__init__.py:5\",\"explanation\":\"Only `Timeout` and `spawn` are imported from gevent, not `pywsgi.WSGIServer`.\"},{\"location\":\"CTFd/utils/events/__init__.py:62,65,102,113,116\",\"explanation\":\"All gevent usage is Timeout context managers and spawn() for greenlet-based SSE queue handling, unrelated to the WSGIServer HTTP parsing path the advisory describes.\"},{\"location\":\"advisory\",\"explanation\":\"CVE-2023-41419 specifically names the WSGIServer component as the vulnerable surface, which is absent from the scanned application code.\"}]}",
+     "in": 3096,
+     "out": 1177,
+     "s": 14.33,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 22176.4,
+   "output": {
+    "critique": "The strongest counter-argument is that CTFd's own documented/standard deployment (gunicorn with `-k gevent` worker class, or a Procfile invoking gevent workers) would pull in gevent's WSGI/HTTP handling stack regardless of what first-party app code imports \u2014 the advisory's 'crafted script to the WSGIServer component' could then be reachable at the deployment layer even though CTFd's own source never calls `gevent.pywsgi.WSGIServer` directly. This is a real gap: the static evidence is AST-only over Python/template files and would miss a Procfile, Dockerfile, or gunicorn.conf.py specifying a gevent worker class. However, the verdict does not ignore this \u2014 it explicitly calls out that the conclusion could change if deployment configuration runs the app under gevent's WSGIServer, and no such deployment evidence was retrieved or provided in this evidence set. Given the actual evidence presented (only Timeout/spawn usage for SSE, zero WSGIServer references across a reasonably thorough 142-file/87-template scan), the verdict's conclusion is the best-supported one available, even if a residual deployment-level unknown remains.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.62
+   },
+   "tokens_in": 3096,
+   "tokens_out": 1833,
+   "llm_calls": 1,
+   "llm_seconds": 22.17,
+   "cost_usd_est": 0.036783,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\": \"The strongest counter-argument is that CTFd's own documented/standard deployment (gunicorn with `-k gevent` worker class, or a Procfile invoking gevent workers) would pull in gevent's WSGI/HTTP handling stack regardless of what first-party app code imports \u2014 the advisory's 'crafted script to the WSGIServer component' could then be reachable at the deployment layer even though CTFd's own source never calls `gevent.pywsgi.WSGIServer` directly. This is a real gap: the static evidence is AST-only over Python/template files and would miss a Procfile, Dockerfile, or gunicorn.conf.py specifying a gevent worker class. However, the verdict does not ignore this \u2014 it explicitly calls out that the conclusion could change if deployment configuration runs the app under gevent's WSGIServer, and no such deployment evidence was retrieved or provided in this evidence set. Given the actual evidence presented (only Timeout/spawn usage for SSE, zero WSGIServer references across a reasonably thorough 142-file/87-template scan), the verdict's conclusion is the best-supported one available, even if a residual deployment-level unknown remains.\", \"agrees\": true, \"retry\": false, \"final_verdict\": \"not_reachable\", \"confidence\": 0.62}",
+     "in": 3096,
+     "out": 1833,
+     "s": 22.17,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.62,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 6192,
+  "tokens_out": 3010,
+  "cost_usd_est": 0.063726,
+  "seconds": 36.6
+ },
+ "created": "2026-11-10T15:30:27+00:00",
+ "code_version": "f26e69b"
+}

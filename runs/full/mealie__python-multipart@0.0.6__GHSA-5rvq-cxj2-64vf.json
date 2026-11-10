@@ -1,0 +1,381 @@
+{
+ "finding_id": "mealie/python-multipart@0.0.6/GHSA-5rvq-cxj2-64vf",
+ "config": "full",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-53539",
+   "GHSA-5rvq-cxj2-64vf",
+   "PYSEC-2026-3036"
+  ],
+  "cves": [
+   "CVE-2026-53539"
+  ],
+  "cwes": [
+   "CWE-400",
+   "CWE-407"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/python-multipart@0.0.6/GHSA-5rvq-cxj2-64vf",
+  "first_fixed_above_installed": "0.0.30",
+  "fixed_versions": [
+   "0.0.30"
+  ],
+  "max_cvss": "7.5",
+  "package": "python-multipart",
+  "published": "2026-06-15T20:24:09Z",
+  "summary": "python-multipart: Quadratic-time querystring parsing with semicolon separators causes CPU denial of service",
+  "target": "mealie",
+  "version": "0.0.6",
+  "vuln_id": "GHSA-5rvq-cxj2-64vf"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.35,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.35,
+  "vulnerable_symbols": [
+   "QuerystringParser",
+   "FormParser",
+   "create_form_parser",
+   "parse_form",
+   "request.form"
+  ],
+  "reasoning": "The vulnerable code path is python-multipart's QuerystringParser, which Starlette/FastAPI invoke internally whenever a request body with Content-Type application/x-www-form-urlencoded is parsed (e.g. via request.form() or any route parameter typed with FastAPI's Form()/OAuth2PasswordRequestForm, which is a very common pattern for login/token endpoints). The static AST search found zero direct source references to QuerystringParser, FormParser, parse_form, or the literal string 'form' across 322 first-party files, which is decent negative evidence, but this kind of search is name/literal based and would miss the idiomatic FastAPI pattern where a route simply declares a parameter as fastapi.Form(...) or Depends(OAuth2PasswordRequestForm) \u2014 the actual call to request.form() -> FormParser -> QuerystringParser happens inside Starlette's request-parsing machinery, triggered implicitly by the parameter's type annotation rather than by an explicit 'request.form' call site in application code. Mealie is a real web app with authentication, and OAuth2-password-flow login endpoints conventionally use exactly this Form-based mechanism, which the given symbol list (case-sensitive 'form', not 'Form') may not have captured. Because the advisory describes a framework-internal reachable path (Starlette/FastAPI using python-multipart for any urlencoded form body) and the evidence doesn't conclusively rule out a Form()-typed endpoint such as a login/token route, I can't positively confirm the feature is unused, nor can I confirm it is actively exercised from the evidence shown. This matches the 'uncertain' case: the vulnerable behavior sits inside a framework dependency chain (FastAPI/Starlette -> python-multipart) that the app relies on, and no endpoint signatures were shown to settle whether a Form()-typed/url-encoded endpoint exists.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "States QuerystringParser is reachable via FormParser/create_form_parser/parse_form and via Starlette/FastAPI's request.form() for application/x-www-form-urlencoded bodies."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 import sites, 0 call sites of QuerystringParser/FormParser/parse_form/request.form/'form' across 322 first-party files \u2014 but the search is name/literal based and may miss FastAPI's Form()/OAuth2PasswordRequestForm parameter-annotation pattern, which invokes the vulnerable parser without any literal 'request.form' or 'form' token in source."
+   },
+   {
+    "location": "mealie/services/parser_services/*",
+    "explanation": "The only retrieved application code resembling 'parsing' is ingredient-string parsing (brute/process.py, ingredient_parser.py) and a query-filter string parser (query_filter.py) \u2014 none of these touch HTTP form bodies or python-multipart; they are unrelated name matches."
+   },
+   {
+    "location": "no route/endpoint code shown",
+    "explanation": "No FastAPI route signatures (e.g. a /auth/token or login endpoint using Form(...) or OAuth2PasswordRequestForm) were surfaced in the evidence, so I cannot confirm or rule out a url-encoded-form endpoint that would exercise QuerystringParser."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest attack on this verdict would be to say the all-zero AST evidence is conclusive and the engineer should have called this not_reachable. But that attack fails: python-multipart is a *direct* dependency in this app, not transitive, which itself implies some first-party code path exercises it (otherwise why pin it directly rather than letting Starlette/FastAPI pull it transitively?). More importantly, the vulnerable QuerystringParser is invoked by Starlette's `request.form()`/`await request.form()` any time a route declares a `fastapi.Form(...)` parameter or `Depends(OAuth2PasswordRequestForm)` \u2014 a textbook pattern for JWT/password login endpoints, which this app (a recipe manager with user auth) plausibly has. The cited AST search explicitly only matched the literal 'form' (lowercase) and dotted 'request.form' \u2014 it would not catch `from fastapi import Form`, `Form(...)` as a parameter default, or `OAuth2PasswordRequestForm` (capitalized, no literal 'request.form' token), which is exactly how this vulnerable code path gets triggered in idiomatic FastAPI apps. No route/endpoint files were retrieved to rule this in or out. So the negative evidence is real but has a known, named blind spot that the verdict correctly identifies rather than glosses over. Conversely, there's no positive evidence (no login/auth route code shown) to push this to reachable either. The verdict neither ignored nor misread the evidence \u2014 it explicitly flagged the search's limitation and declined to over-claim in either direction. That is the correct epistemic posture given what was retrieved.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.35
+ },
+ "symbols": [
+  "QuerystringParser",
+  "FormParser",
+  "create_form_parser",
+  "parse_form",
+  "request.form",
+  "data.find",
+  "form",
+  "MiB"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/python-multipart@0.0.6/GHSA-5rvq-cxj2-64vf",
+    "package": "python-multipart",
+    "version": "0.0.6",
+    "vuln_id": "GHSA-5rvq-cxj2-64vf",
+    "aliases": [
+     "CVE-2026-53539",
+     "GHSA-5rvq-cxj2-64vf",
+     "PYSEC-2026-3036"
+    ],
+    "summary": "python-multipart: Quadratic-time querystring parsing with semicolon separators causes CPU denial of service",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "0.0.30"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 31.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-5rvq-cxj2-64vf#0",
+      "score": 0.91,
+      "text": "GHSA-5rvq-cxj2-64vf (CVE-2026-53539)\npackage: python-multipart\nsummary: python-multipart: Quadratic-time querystring parsing with semicolon separators causes CPU denial of service\naffected: >=0, <0.0.30",
+      "vuln_id": "GHSA-5rvq-cxj2-64vf"
+     },
+     {
+      "id": "GHSA-5rvq-cxj2-64vf#1",
+      "score": 0.79,
+      "text": "GHSA-5rvq-cxj2-64vf (python-multipart) details:\n### Summary\n\nWhen parsing `application/x-www-form-urlencoded` bodies, `QuerystringParser` located the field separator with a two step lookup: it first scanned the entire remaining buffer for `&`, and only when no `&` existed anywhere ahead did it fall back to scanning for `;`. For a body that uses `;` as the separator and contains no `&`, every field iteration performed a full failed `&` scan over the entire remaining buffer before locating the nearby `;`. With N semicolon separated fields in a chunk of size B, this yields O(B^2) byte comparisons per chunk.\n\nAn attacker can submit a small crafted body of the form `a;a;a;...` and cause the parser to spend seconds of CPU per request. A handful of concurrent requests can exhaust worker processes.\n\n### Details\n\nIn `python_multipart/multipart.py`, both the `FIELD_NAME` and `FIELD_DATA` states located the next separator like this:",
+      "vuln_id": "GHSA-5rvq-cxj2-64vf"
+     },
+     {
+      "id": "GHSA-5rvq-cxj2-64vf#3",
+      "score": 0.773,
+      "text": "GHSA-5rvq-cxj2-64vf (python-multipart) details:\nThe parser is reachable through the public `QuerystringParser` class and through the high level `FormParser`, `create_form_parser`, and `parse_form` APIs for url encoded bodies. It is also the parser Starlette and FastAPI use for `application/x-www-form-urlencoded` request bodies via `request.form()`.\n\n### Impact\n\nUncontrolled CPU consumption (denial of service). Parsing is synchronous, so a single small crafted form body occupies the handling worker for seconds, blocking any other work on that worker until parsing finishes. Sustained concurrent requests keep workers continuously busy, degrading or denying service.\n\n### Mitigation\n\nUpgrade to `python-multipart` `0.0.30` or later, which treats only `&` as a field separator (per the [WHATWG URL standard](https://url.spec.whatwg.org/#urlencoded-parsing)) using a single bounded scan, making parsing linear in the body length.",
+      "vuln_id": "GHSA-5rvq-cxj2-64vf"
+     },
+     {
+      "id": "GHSA-5rvq-cxj2-64vf#2",
+      "score": 0.766,
+      "text": "GHSA-5rvq-cxj2-64vf (python-multipart) details:\n```python\nsep_pos = data.find(b\"&\", i)\nif sep_pos == -1:\n    sep_pos = data.find(b\";\", i)\n```\n\n`data.find(b\"&\", i)` scans from `i` to the end of the buffer and returns `-1` only when there is no `&` anywhere in the remainder. For a `;` separated body with no `&`, this failed full buffer scan repeats once per field, making parsing quadratic in the body length.\n\nFor example, a 1 MiB url encoded body consisting of `a;` repeated ~500,000 times, submitted with `Content-Type: application/x-www-form-urlencoded`, causes the parser to perform on the order of 10^11 byte comparisons, consuming several seconds of CPU for a single request. Cost scales quadratically with chunk size.",
+      "vuln_id": "GHSA-5rvq-cxj2-64vf"
+     },
+     {
+      "id": "GHSA-mj87-hwqh-73pj#1",
+      "score": 0.856,
+      "text": "GHSA-mj87-hwqh-73pj (python-multipart) details:\n### Summary\n\nA denial of service vulnerability exists when parsing crafted `multipart/form-data` requests with large preamble or epilogue sections.\n\n### Details\n\nTwo inefficient multipart parsing paths could be abused with attacker-controlled input.\n\nBefore the first multipart boundary, the parser handled leading CR and LF bytes inefficiently while searching for the start of the first part. After the closing boundary, the parser continued processing trailing epilogue data instead of discarding it immediately. As a result, parsing time could grow with the size of crafted data placed before the first boundary or after the closing boundary.\n\n### Impact",
+      "vuln_id": "GHSA-mj87-hwqh-73pj"
+     },
+     {
+      "id": "GHSA-pp6c-gr5w-3c5g#1",
+      "score": 0.855,
+      "text": "GHSA-pp6c-gr5w-3c5g (python-multipart) details:\n### Summary\n\n`python-multipart` has a denial of service vulnerability in multipart part header parsing. When parsing `multipart/form-data`, `MultipartParser` previously had no limit on the number of part headers or the size of an individual part header. An attacker could send a request with either many repeated headers without terminating the header block or a single very large header value, causing excessive CPU work before request rejection or completion.\n\n### Impact\n\nApplications that parse attacker-controlled `multipart/form-data` with affected versions of `python-multipart` can experience CPU exhaustion. ASGI applications using Starlette, FastAPI, or other frameworks that invoke `python-multipart` may have worker or event-loop delays while processing malicious upload requests.\n\n### Details",
+      "vuln_id": "GHSA-pp6c-gr5w-3c5g"
+     }
+    ],
+    "symbols": [
+     "QuerystringParser",
+     "FormParser",
+     "create_form_parser",
+     "parse_form",
+     "request.form",
+     "data.find",
+     "form",
+     "MiB"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 63.6,
+   "output": {
+    "package": "python-multipart",
+    "import_names": [
+     "multipart"
+    ],
+    "symbols": [
+     "QuerystringParser",
+     "FormParser",
+     "create_form_parser",
+     "parse_form",
+     "request.form",
+     "data.find",
+     "form",
+     "MiB"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "python-multipart: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['QuerystringParser', 'FormParser', 'create_form_parser', 'parse_form', 'request.form', 'data.find', 'form', 'MiB']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 29.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/services/parser_services/brute/process.py:135",
+      "score": 0.713,
+      "text": "# mealie/services/parser_services/brute/process.py:135-205  parse\ndef parse(ing_str) -> BruteParsedIngredient:\n    amount = 0.0\n    unit = \"\"\n    ingredient = \"\"\n    note = \"\"\n    unit_note = \"\"\n\n    ing_str = move_parens_to_end(ing_str)\n\n    tokens = ing_str.split()\n\n    # Early return if the ingrdient is a single token and therefore has no other properties\n    if len(tokens) == 1:\n        ingredient = tokens[0]\n        # TODO Refactor to expect BFP to be returned instead of Tuple\n        return BruteParsedIngredient(food=ingredient, note=note, amount=amount, unit=unit)\n\n    try:\n        # try to parse first argument as amount\n        amount, unit, unit_note = parse_amount(tokens[0])\n        # only try to parse second argument as amount if there are at least\n        # three arguments if it already has a unit there can't be\n        # a fraction for the amount\n        if len(tokens) > 2:\n            try:\n                if unit != \"\":\n                    # a unit is already found, no need to try the second argument for a fraction\n                    # probably not the best method to do it, but I didn't want to make an if check and paste the exact same thing in the else as already is in the except  # noqa: E501\n                    raise ValueError\n                # try to parse second argument as amount and add that, in case of '2 1/2' or '2 \u00bd'\n                amount += parse_fraction(tokens[1])\n                # assume that units can't end with a comma\n                if len(tokens) > 3 and not tokens[2].endswith(\",\"):\n                    # try to use third argument as unit and everything else as ingredient, use everything as ingredient if it fails  # noqa: E501\n                    try:\n                        ingredient, note = parse_ingredient(tokens[3:])\n                        unit = tokens[2]\n                    except ValueError:\n                        ingredient, note = parse_ingredient(tokens[2:])\n                else:\n                    ingredient, note = parse_ingredient(tokens[2:])\n            except ValueError:\n                # assume that units can't end with a comma\n                if not tokens[1].endswith(\",\"):\n                    # try to use second argument as unit and everything else as ingredient, use everything as ingredient if it fails  # noqa: E501\n                    try:\n                        ingredient, note = parse_ingredient(tokens[2:])\n                        if unit == \"\":\n                            unit = tokens[1]\n                        else:\n                            note = tokens[1]\n                    except ValueError:\n                        ingredient, note = parse_ingredient(tokens[1:])\n                else:\n                    ingredient, note = parse_ingredient(tokens[1:])\n        else:\n            # only two arguments, first one is the amount\n            # which means this is the ingredient\n            ingredient = tokens[1]\n    except ValueError:",
+      "file": "mealie/services/parser_services/brute/process.py",
+      "start": 135,
+      "qualname": "parse"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/ingredient_parser.py:109",
+      "score": 0.713,
+      "text": "# mealie/services/parser_services/ingredient_parser.py:109-110  ABCIngredientParser.parse_one\n    def parse_one(self, ingredient_string: str) -> ParsedIngredient:\n        ...",
+      "file": "mealie/services/parser_services/ingredient_parser.py",
+      "start": 109,
+      "qualname": "ABCIngredientParser.parse_one"
+     },
+     {
+      "id": "mealie:mealie/schema/response/query_filter.py:204",
+      "score": 0.713,
+      "text": "# mealie/schema/response/query_filter.py:204-212  QueryFilter.__init__\n    def __init__(self, filter_string: str) -> None:\n        # parse filter string\n        components = QueryFilter._break_filter_string_into_components(filter_string)\n        base_components = QueryFilter._break_components_into_base_components(components)\n        if base_components.count(QueryFilter.l_group_sep) != base_components.count(QueryFilter.r_group_sep):\n            raise ValueError(\"invalid query string: parenthesis are unbalanced\")\n\n        # parse base components into a filter group\n        self.filter_components = QueryFilter._parse_base_components_into_filter_components(base_components)",
+      "file": "mealie/schema/response/query_filter.py",
+      "start": 204,
+      "qualname": "QueryFilter.__init__"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/ingredient_parser.py:242",
+      "score": 0.709,
+      "text": "# mealie/services/parser_services/ingredient_parser.py:242-247  get_parser\ndef get_parser(parser: RegisteredParser, group_id: UUID4, session: Session) -> ABCIngredientParser:\n    \"\"\"\n    get_parser returns an ingrdeint parser based on the string enum value\n    passed in.\n    \"\"\"\n    return __registrar.get(parser, NLPParser)(group_id, session)",
+      "file": "mealie/services/parser_services/ingredient_parser.py",
+      "start": 242,
+      "qualname": "get_parser"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/brute/__init__.py:module",
+      "score": 0.701,
+      "text": "# mealie/services/parser_services/brute/__init__.py (module level)\nfrom .process import parse\n__all__ = [\n    \"parse\",\n]",
+      "file": "mealie/services/parser_services/brute/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 45883.2,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.35,
+    "vulnerable_symbols": [
+     "QuerystringParser",
+     "FormParser",
+     "create_form_parser",
+     "parse_form",
+     "request.form"
+    ],
+    "reasoning": "The vulnerable code path is python-multipart's QuerystringParser, which Starlette/FastAPI invoke internally whenever a request body with Content-Type application/x-www-form-urlencoded is parsed (e.g. via request.form() or any route parameter typed with FastAPI's Form()/OAuth2PasswordRequestForm, which is a very common pattern for login/token endpoints). The static AST search found zero direct source references to QuerystringParser, FormParser, parse_form, or the literal string 'form' across 322 first-party files, which is decent negative evidence, but this kind of search is name/literal based and would miss the idiomatic FastAPI pattern where a route simply declares a parameter as fastapi.Form(...) or Depends(OAuth2PasswordRequestForm) \u2014 the actual call to request.form() -> FormParser -> QuerystringParser happens inside Starlette's request-parsing machinery, triggered implicitly by the parameter's type annotation rather than by an explicit 'request.form' call site in application code. Mealie is a real web app with authentication, and OAuth2-password-flow login endpoints conventionally use exactly this Form-based mechanism, which the given symbol list (case-sensitive 'form', not 'Form') may not have captured. Because the advisory describes a framework-internal reachable path (Starlette/FastAPI using python-multipart for any urlencoded form body) and the evidence doesn't conclusively rule out a Form()-typed endpoint such as a login/token route, I can't positively confirm the feature is unused, nor can I confirm it is actively exercised from the evidence shown. This matches the 'uncertain' case: the vulnerable behavior sits inside a framework dependency chain (FastAPI/Starlette -> python-multipart) that the app relies on, and no endpoint signatures were shown to settle whether a Form()-typed/url-encoded endpoint exists.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "States QuerystringParser is reachable via FormParser/create_form_parser/parse_form and via Starlette/FastAPI's request.form() for application/x-www-form-urlencoded bodies."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 import sites, 0 call sites of QuerystringParser/FormParser/parse_form/request.form/'form' across 322 first-party files \u2014 but the search is name/literal based and may miss FastAPI's Form()/OAuth2PasswordRequestForm parameter-annotation pattern, which invokes the vulnerable parser without any literal 'request.form' or 'form' token in source."
+     },
+     {
+      "location": "mealie/services/parser_services/*",
+      "explanation": "The only retrieved application code resembling 'parsing' is ingredient-string parsing (brute/process.py, ingredient_parser.py) and a query-filter string parser (query_filter.py) \u2014 none of these touch HTTP form bodies or python-multipart; they are unrelated name matches."
+     },
+     {
+      "location": "no route/endpoint code shown",
+      "explanation": "No FastAPI route signatures (e.g. a /auth/token or login endpoint using Form(...) or OAuth2PasswordRequestForm) were surfaced in the evidence, so I cannot confirm or rule out a url-encoded-form endpoint that would exercise QuerystringParser."
+     }
+    ]
+   },
+   "tokens_in": 4621,
+   "tokens_out": 4202,
+   "llm_calls": 1,
+   "llm_seconds": 45.88,
+   "cost_usd_est": 0.076893,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"uncertain\",\n  \"confidence\": 0.35,\n  \"vulnerable_symbols\": [\"QuerystringParser\", \"FormParser\", \"create_form_parser\", \"parse_form\", \"request.form\"],\n  \"reasoning\": \"The vulnerable code path is python-multipart's QuerystringParser, which Starlette/FastAPI invoke internally whenever a request body with Content-Type application/x-www-form-urlencoded is parsed (e.g. via request.form() or any route parameter typed with FastAPI's Form()/OAuth2PasswordRequestForm, which is a very common pattern for login/token endpoints). The static AST search found zero direct source references to QuerystringParser, FormParser, parse_form, or the literal string 'form' across 322 first-party files, which is decent negative evidence, but this kind of search is name/literal based and would miss the idiomatic FastAPI pattern where a route simply declares a parameter as fastapi.Form(...) or Depends(OAuth2PasswordRequestForm) \u2014 the actual call to request.form() -> FormParser -> QuerystringParser happens inside Starlette's request-parsing machinery, triggered implicitly by the parameter's type annotation rather than by an explicit 'request.form' call site in application code. Mealie is a real web app with authentication, and OAuth2-password-flow login endpoints conventionally use exactly this Form-based mechanism, which the given symbol list (case-sensitive 'form', not 'Form') may not have captured. Because the advisory describes a framework-internal reachable path (Starlette/FastAPI using python-multipart for any urlencoded form body) and the evidence doesn't conclusively rule out a Form()-typed endpoint such as a login/token route, I can't positively confirm the feature is unused, nor can I confirm it is actively exercised from the evidence shown. This matches the 'uncertain' case: the vulnerable behavior sits inside a framework dependency chain (FastAPI/Starlette -> python-multipart) that the app relies on, and no endpoint signatures were shown to settle whether a Form()-typed/url-encoded endpoint exists.\",\n  \"evidence\": [\n    {\"location\": \"advisory\", \"explanation\": \"States QuerystringParser is reachable via FormParser/create_form_parser/parse_form and via Starlette/FastAPI's request.form() for application/x-www-form-urlencoded bodies.\"},\n    {\"location\": \"static evidence summary\", \"explanation\": \"0 import sites, 0 call sites of QuerystringParser/FormParser/parse_form/request.form/'form' across 322 first-party files \u2014 but the search is name/literal based and may miss FastAPI's Form()/OAuth2PasswordRequestForm parameter-annotation pattern, which invokes the vulnerable parser without any literal 'request.form' or 'form' token in source.\"},\n    {\"location\": \"mealie/services/parser_services/*\", \"explanation\": \"The only retrieved application code resembling 'parsing' is ingredient-string parsing (brute/process.py, ingredient_parser.py) and a query-filter string parser (query_filter.py) \u2014 none of these touch HTTP form bodies or python-multipart; they are unrelated name matches.\"},\n    {\"location\": \"no route/endpoint code shown\", \"explanation\": \"No FastAPI route signatures (e.g. a /auth/token or login endpoint using Form(...) or OAuth2PasswordRequestForm) were surfaced in the evidence, so I cannot confirm or rule out a url-encoded-form endpoint that would exercise QuerystringParser.\"}\n  ]\n}\n```",
+     "in": 4621,
+     "out": 4202,
+     "s": 45.88,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 27851.6,
+   "output": {
+    "critique": "The strongest attack on this verdict would be to say the all-zero AST evidence is conclusive and the engineer should have called this not_reachable. But that attack fails: python-multipart is a *direct* dependency in this app, not transitive, which itself implies some first-party code path exercises it (otherwise why pin it directly rather than letting Starlette/FastAPI pull it transitively?). More importantly, the vulnerable QuerystringParser is invoked by Starlette's `request.form()`/`await request.form()` any time a route declares a `fastapi.Form(...)` parameter or `Depends(OAuth2PasswordRequestForm)` \u2014 a textbook pattern for JWT/password login endpoints, which this app (a recipe manager with user auth) plausibly has. The cited AST search explicitly only matched the literal 'form' (lowercase) and dotted 'request.form' \u2014 it would not catch `from fastapi import Form`, `Form(...)` as a parameter default, or `OAuth2PasswordRequestForm` (capitalized, no literal 'request.form' token), which is exactly how this vulnerable code path gets triggered in idiomatic FastAPI apps. No route/endpoint files were retrieved to rule this in or out. So the negative evidence is real but has a known, named blind spot that the verdict correctly identifies rather than glosses over. Conversely, there's no positive evidence (no login/auth route code shown) to push this to reachable either. The verdict neither ignored nor misread the evidence \u2014 it explicitly flagged the search's limitation and declined to over-claim in either direction. That is the correct epistemic posture given what was retrieved.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.35
+   },
+   "tokens_in": 5140,
+   "tokens_out": 2405,
+   "llm_calls": 1,
+   "llm_seconds": 27.83,
+   "cost_usd_est": 0.051495,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest attack on this verdict would be to say the all-zero AST evidence is conclusive and the engineer should have called this not_reachable. But that attack fails: python-multipart is a *direct* dependency in this app, not transitive, which itself implies some first-party code path exercises it (otherwise why pin it directly rather than letting Starlette/FastAPI pull it transitively?). More importantly, the vulnerable QuerystringParser is invoked by Starlette's `request.form()`/`await request.form()` any time a route declares a `fastapi.Form(...)` parameter or `Depends(OAuth2PasswordRequestForm)` \u2014 a textbook pattern for JWT/password login endpoints, which this app (a recipe manager with user auth) plausibly has. The cited AST search explicitly only matched the literal 'form' (lowercase) and dotted 'request.form' \u2014 it would not catch `from fastapi import Form`, `Form(...)` as a parameter default, or `OAuth2PasswordRequestForm` (capitalized, no literal 'request.form' token), which is exactly how this vulnerable code path gets triggered in idiomatic FastAPI apps. No route/endpoint files were retrieved to rule this in or out. So the negative evidence is real but has a known, named blind spot that the verdict correctly identifies rather than glosses over. Conversely, there's no positive evidence (no login/auth route code shown) to push this to reachable either. The verdict neither ignored nor misread the evidence \u2014 it explicitly flagged the search's limitation and declined to over-claim in either direction. That is the correct epistemic posture given what was retrieved.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.35}",
+     "in": 5140,
+     "out": 2405,
+     "s": 27.83,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.35,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 9761,
+  "tokens_out": 6607,
+  "cost_usd_est": 0.128388,
+  "seconds": 73.86
+ },
+ "created": "2026-11-10T15:50:48+00:00",
+ "code_version": "f26e69b"
+}

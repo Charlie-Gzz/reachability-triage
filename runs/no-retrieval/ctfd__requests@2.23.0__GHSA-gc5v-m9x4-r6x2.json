@@ -1,0 +1,394 @@
+{
+ "finding_id": "ctfd/requests@2.23.0/GHSA-gc5v-m9x4-r6x2",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-25645",
+   "GHSA-gc5v-m9x4-r6x2",
+   "PYSEC-2026-2275"
+  ],
+  "cves": [
+   "CVE-2026-25645"
+  ],
+  "cwes": [
+   "CWE-377"
+  ],
+  "direct_dependency": true,
+  "finding_id": "ctfd/requests@2.23.0/GHSA-gc5v-m9x4-r6x2",
+  "first_fixed_above_installed": "2.33.0",
+  "fixed_versions": [
+   "2.33.0"
+  ],
+  "max_cvss": "5.5",
+  "package": "requests",
+  "published": "2026-03-25T16:56:28Z",
+  "summary": "Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function",
+  "target": "ctfd",
+  "version": "2.23.0",
+  "vuln_id": "GHSA-gc5v-m9x4-r6x2"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.6,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.55,
+  "vulnerable_symbols": [
+   "extract_zipped_paths"
+  ],
+  "reasoning": "requests/utils.py executes `DEFAULT_CA_BUNDLE_PATH = extract_zipped_paths(certs.where())` at module import time, so the function runs automatically every time `import requests` executes \u2014 which happens in CTFd/auth.py:3, CTFd/utils/email/mailgun.py:3, and CTFd/utils/updates/__init__.py:6. This means the '0 production call sites' finding is the wrong signal: the AST scan only looks for first-party calls to the symbol and cannot see this internal import-time invocation inside the third-party package, so the function is almost certainly executed on every app startup regardless of application code. However, the CWE-377 insecure-temp-file behavior inside extract_zipped_paths only manifests when the importing module (requests/certifi) is loaded via a zipimporter (e.g. a zipped egg), not a normally extracted wheel/sdist install \u2014 a packaging/deployment detail not present in the static evidence. Since function execution is effectively certain but the vulnerable branch's precondition (zip-based install) is unverified and the evidence cannot confirm or rule it out, this cannot be resolved to a confident reachable or not_reachable verdict.",
+  "evidence": [
+   {
+    "location": "CTFd/auth.py:3",
+    "explanation": "`import requests` triggers requests/utils.py module execution, which calls extract_zipped_paths(certs.where()) as a side effect."
+   },
+   {
+    "location": "CTFd/utils/email/mailgun.py:3",
+    "explanation": "Another import of requests that triggers the same import-time invocation of extract_zipped_paths."
+   },
+   {
+    "location": "CTFd/utils/updates/__init__.py:6",
+    "explanation": "A third import site; all three confirm requests (and thus extract_zipped_paths) is loaded at application startup."
+   },
+   {
+    "location": "advisory",
+    "explanation": "The insecure temp file reuse only occurs when the loader is a zipimporter, a deployment detail not observable in this static AST evidence."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict correctly identifies that extract_zipped_paths() runs automatically at import time via requests/utils.py's module-level DEFAULT_CA_BUNDLE_PATH assignment, which is a real gap in the AST 'first-party call site' methodology \u2014 this part is sound and not refuted by the evidence. However, the verdict somewhat overstates the ambiguity: extract_zipped_paths() first checks `os.path.exists(path)` and returns immediately with no temp-file write if the path exists on disk. certs.where() returns a normal filesystem path to cacert.pem, which is true for virtually every standard installation (pip wheel, sdist, Docker image, venv) \u2014 the vulnerable zip-extraction branch only fires when requests/certifi itself is loaded from a zipimporter (e.g., a zipped egg or frozen/zipped bundle), a packaging style that is rare and effectively obsolete for modern pip/wheel-based deployments. Nothing in the evidence suggests CTFd is distributed or run as a zipped egg. So while the static evidence genuinely cannot rule out an unusual zip-based deployment, the prior probability of that precondition being met is very low, meaning the verdict arguably underweights how unlikely the vulnerable branch is in practice. This nudges toward not_reachable rather than a neutral uncertain, but since deployment packaging truly isn't observable in the given AST evidence, treating it as uncertain rather than confidently not_reachable is defensible and not a clear misread of the evidence presented.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "extract_zipped_paths"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/requests@2.23.0/GHSA-gc5v-m9x4-r6x2",
+    "package": "requests",
+    "version": "2.23.0",
+    "vuln_id": "GHSA-gc5v-m9x4-r6x2",
+    "aliases": [
+     "CVE-2026-25645",
+     "GHSA-gc5v-m9x4-r6x2",
+     "PYSEC-2026-2275"
+    ],
+    "summary": "Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function",
+    "max_cvss": "5.5",
+    "fixed_versions": [
+     "2.33.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.1,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "extract_zipped_paths"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 43.2,
+   "output": {
+    "package": "requests",
+    "import_names": [
+     "requests"
+    ],
+    "symbols": [
+     "extract_zipped_paths"
+    ],
+    "imported": true,
+    "import_locations": [
+     "CTFd/auth.py:3",
+     "CTFd/utils/email/mailgun.py:3",
+     "CTFd/utils/updates/__init__.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 24,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/auth.py:475",
+      "code": "token_request = requests.post(url, data=data, headers=headers)",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/auth.py:477",
+      "code": "if token_request.status_code == requests.codes.ok:",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/auth.py:489",
+      "code": "api_data = requests.get(url=user_url, headers=headers).json()",
+      "function": "CTFd.auth:oauth_redirect",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/email/mailgun.py:18",
+      "code": "r = requests.post(",
+      "function": "CTFd.utils.email.mailgun:sendmail",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/email/mailgun.py:29",
+      "code": "except requests.RequestException as e:",
+      "function": "CTFd.utils.email.mailgun:sendmail",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:55",
+      "code": "check = requests.get(",
+      "function": "CTFd.utils.updates:update_check",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:58",
+      "code": "except requests.exceptions.RequestException:",
+      "function": "CTFd.utils.updates:update_check",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "requests: imported in 3 non-test location(s); 24 package call/reference site(s); named vulnerable symbols ['extract_zipped_paths']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 9086.1,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.92,
+    "vulnerable_symbols": [
+     "extract_zipped_paths"
+    ],
+    "reasoning": "The advisory is specific to the extract_zipped_paths() utility function in requests, which is used internally by requests when locating CA bundles inside zipped (egg) distributions. The application only imports requests in three files and uses it exclusively for standard HTTP calls (requests.post, requests.get, requests.codes, requests.exceptions/RequestException) in OAuth token exchange, Mailgun email sending, and update-check HTTP calls. A full AST scan across 142 first-party Python files and 87 templates found zero references to extract_zipped_paths, and no production call site reaches it directly or transitively from any entry point. Since the vulnerable function is not invoked by the application (and it's not part of the normal request-sending path that would be implicitly triggered), the vulnerable code path is not exercised.",
+    "evidence": [
+     {
+      "location": "CTFd/auth.py:475-489",
+      "explanation": "Uses requests.post/get/codes for OAuth flows, none of which invoke extract_zipped_paths."
+     },
+     {
+      "location": "CTFd/utils/email/mailgun.py:18-29",
+      "explanation": "Uses requests.post and requests.RequestException for sending email via Mailgun API, unrelated to the vulnerable utility."
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:55-58",
+      "explanation": "Uses requests.get and requests.exceptions.RequestException for update checks, unrelated to the vulnerable utility."
+     },
+     {
+      "location": "advisory",
+      "explanation": "0 production call sites of extract_zipped_paths were found across the entire first-party codebase and templates."
+     }
+    ]
+   },
+   "tokens_in": 2288,
+   "tokens_out": 575,
+   "llm_calls": 1,
+   "llm_seconds": 9.08,
+   "cost_usd_est": 0.015489,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.92,\"vulnerable_symbols\":[\"extract_zipped_paths\"],\"reasoning\":\"The advisory is specific to the extract_zipped_paths() utility function in requests, which is used internally by requests when locating CA bundles inside zipped (egg) distributions. The application only imports requests in three files and uses it exclusively for standard HTTP calls (requests.post, requests.get, requests.codes, requests.exceptions/RequestException) in OAuth token exchange, Mailgun email sending, and update-check HTTP calls. A full AST scan across 142 first-party Python files and 87 templates found zero references to extract_zipped_paths, and no production call site reaches it directly or transitively from any entry point. Since the vulnerable function is not invoked by the application (and it's not part of the normal request-sending path that would be implicitly triggered), the vulnerable code path is not exercised.\",\"evidence\":[{\"location\":\"CTFd/auth.py:475-489\",\"explanation\":\"Uses requests.post/get/codes for OAuth flows, none of which invoke extract_zipped_paths.\"},{\"location\":\"CTFd/utils/email/mailgun.py:18-29\",\"explanation\":\"Uses requests.post and requests.RequestException for sending email via Mailgun API, unrelated to the vulnerable utility.\"},{\"location\":\"CTFd/utils/updates/__init__.py:55-58\",\"explanation\":\"Uses requests.get and requests.exceptions.RequestException for update checks, unrelated to the vulnerable utility.\"},{\"location\":\"advisory\",\"explanation\":\"0 production call sites of extract_zipped_paths were found across the entire first-party codebase and templates.\"}]}\n```",
+     "in": 2288,
+     "out": 575,
+     "s": 9.08,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 27008.9,
+   "output": {
+    "critique": "The verdict's core argument is that the AST scan found zero first-party call sites of extract_zipped_paths(), and therefore the function is never invoked. This conflates 'no application code calls it' with 'the code path never executes.' In requests, extract_zipped_paths() is not solely an app-facing utility \u2014 requests/utils.py assigns DEFAULT_CA_BUNDLE_PATH = extract_zipped_paths(certs.where()) at module import time. That means every time CTFd imports requests (which it does in auth.py, mailgun.py, and utils/updates/__init__.py), the vulnerable function is executed automatically as a side effect of import, with zero application-level call sites required. A first-party AST scan cannot see this internal, import-time invocation inside the third-party package itself, so '0 production call sites' is the wrong signal for reachability here. That said, the CWE-377 insecure-temp-file *behavior* inside extract_zipped_paths only materializes when the importer is a zipimporter (i.e., requests/certifi is loaded from a zipped egg rather than a normal extracted wheel install) \u2014 a packaging/deployment detail the static evidence provides no information about. So while the function is almost certainly *invoked* on every app startup, whether the vulnerable insecure-temp-file branch is actually *triggered* depends on how requests/certifi was installed, which this evidence cannot confirm or rule out. The verdict's high-confidence not_reachable is therefore not well-supported: it should at minimum acknowledge that the function executes at import time regardless of app code, leaving the real precondition (zip-based install) unverified.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "uncertain",
+    "confidence": 0.6
+   },
+   "tokens_in": 2223,
+   "tokens_out": 2290,
+   "llm_calls": 1,
+   "llm_seconds": 27.0,
+   "cost_usd_est": 0.041019,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's core argument is that the AST scan found zero first-party call sites of extract_zipped_paths(), and therefore the function is never invoked. This conflates 'no application code calls it' with 'the code path never executes.' In requests, extract_zipped_paths() is not solely an app-facing utility \\u2014 requests/utils.py assigns DEFAULT_CA_BUNDLE_PATH = extract_zipped_paths(certs.where()) at module import time. That means every time CTFd imports requests (which it does in auth.py, mailgun.py, and utils/updates/__init__.py), the vulnerable function is executed automatically as a side effect of import, with zero application-level call sites required. A first-party AST scan cannot see this internal, import-time invocation inside the third-party package itself, so '0 production call sites' is the wrong signal for reachability here. That said, the CWE-377 insecure-temp-file *behavior* inside extract_zipped_paths only materializes when the importer is a zipimporter (i.e., requests/certifi is loaded from a zipped egg rather than a normal extracted wheel install) \\u2014 a packaging/deployment detail the static evidence provides no information about. So while the function is almost certainly *invoked* on every app startup, whether the vulnerable insecure-temp-file branch is actually *triggered* depends on how requests/certifi was installed, which this evidence cannot confirm or rule out. The verdict's high-confidence not_reachable is therefore not well-supported: it should at minimum acknowledge that the function executes at import time regardless of app code, leaving the real precondition (zip-based install) unverified.\",\"agrees\":false,\"retry\":true,\"final_verdict\":\"uncertain\",\"confidence\":0.6}",
+     "in": 2223,
+     "out": 2290,
+     "s": 27.0,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 12679.8,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.55,
+    "vulnerable_symbols": [
+     "extract_zipped_paths"
+    ],
+    "reasoning": "requests/utils.py executes `DEFAULT_CA_BUNDLE_PATH = extract_zipped_paths(certs.where())` at module import time, so the function runs automatically every time `import requests` executes \u2014 which happens in CTFd/auth.py:3, CTFd/utils/email/mailgun.py:3, and CTFd/utils/updates/__init__.py:6. This means the '0 production call sites' finding is the wrong signal: the AST scan only looks for first-party calls to the symbol and cannot see this internal import-time invocation inside the third-party package, so the function is almost certainly executed on every app startup regardless of application code. However, the CWE-377 insecure-temp-file behavior inside extract_zipped_paths only manifests when the importing module (requests/certifi) is loaded via a zipimporter (e.g. a zipped egg), not a normally extracted wheel/sdist install \u2014 a packaging/deployment detail not present in the static evidence. Since function execution is effectively certain but the vulnerable branch's precondition (zip-based install) is unverified and the evidence cannot confirm or rule it out, this cannot be resolved to a confident reachable or not_reachable verdict.",
+    "evidence": [
+     {
+      "location": "CTFd/auth.py:3",
+      "explanation": "`import requests` triggers requests/utils.py module execution, which calls extract_zipped_paths(certs.where()) as a side effect."
+     },
+     {
+      "location": "CTFd/utils/email/mailgun.py:3",
+      "explanation": "Another import of requests that triggers the same import-time invocation of extract_zipped_paths."
+     },
+     {
+      "location": "CTFd/utils/updates/__init__.py:6",
+      "explanation": "A third import site; all three confirm requests (and thus extract_zipped_paths) is loaded at application startup."
+     },
+     {
+      "location": "advisory",
+      "explanation": "The insecure temp file reuse only occurs when the loader is a zipimporter, a deployment detail not observable in this static AST evidence."
+     }
+    ]
+   },
+   "tokens_in": 2842,
+   "tokens_out": 1021,
+   "llm_calls": 1,
+   "llm_seconds": 12.67,
+   "cost_usd_est": 0.023841,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"uncertain\",\"confidence\":0.55,\"vulnerable_symbols\":[\"extract_zipped_paths\"],\"reasoning\":\"requests/utils.py executes `DEFAULT_CA_BUNDLE_PATH = extract_zipped_paths(certs.where())` at module import time, so the function runs automatically every time `import requests` executes \u2014 which happens in CTFd/auth.py:3, CTFd/utils/email/mailgun.py:3, and CTFd/utils/updates/__init__.py:6. This means the '0 production call sites' finding is the wrong signal: the AST scan only looks for first-party calls to the symbol and cannot see this internal import-time invocation inside the third-party package, so the function is almost certainly executed on every app startup regardless of application code. However, the CWE-377 insecure-temp-file behavior inside extract_zipped_paths only manifests when the importing module (requests/certifi) is loaded via a zipimporter (e.g. a zipped egg), not a normally extracted wheel/sdist install \u2014 a packaging/deployment detail not present in the static evidence. Since function execution is effectively certain but the vulnerable branch's precondition (zip-based install) is unverified and the evidence cannot confirm or rule it out, this cannot be resolved to a confident reachable or not_reachable verdict.\",\"evidence\":[{\"location\":\"CTFd/auth.py:3\",\"explanation\":\"`import requests` triggers requests/utils.py module execution, which calls extract_zipped_paths(certs.where()) as a side effect.\"},{\"location\":\"CTFd/utils/email/mailgun.py:3\",\"explanation\":\"Another import of requests that triggers the same import-time invocation of extract_zipped_paths.\"},{\"location\":\"CTFd/utils/updates/__init__.py:6\",\"explanation\":\"A third import site; all three confirm requests (and thus extract_zipped_paths) is loaded at application startup.\"},{\"location\":\"advisory\",\"explanation\":\"The insecure temp file reuse only occurs when the loader is a zipimporter, a deployment detail not observable in this static AST evidence.\"}]}",
+     "in": 2842,
+     "out": 1021,
+     "s": 12.67,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 24833.8,
+   "output": {
+    "critique": "The verdict correctly identifies that extract_zipped_paths() runs automatically at import time via requests/utils.py's module-level DEFAULT_CA_BUNDLE_PATH assignment, which is a real gap in the AST 'first-party call site' methodology \u2014 this part is sound and not refuted by the evidence. However, the verdict somewhat overstates the ambiguity: extract_zipped_paths() first checks `os.path.exists(path)` and returns immediately with no temp-file write if the path exists on disk. certs.where() returns a normal filesystem path to cacert.pem, which is true for virtually every standard installation (pip wheel, sdist, Docker image, venv) \u2014 the vulnerable zip-extraction branch only fires when requests/certifi itself is loaded from a zipimporter (e.g., a zipped egg or frozen/zipped bundle), a packaging style that is rare and effectively obsolete for modern pip/wheel-based deployments. Nothing in the evidence suggests CTFd is distributed or run as a zipped egg. So while the static evidence genuinely cannot rule out an unusual zip-based deployment, the prior probability of that precondition being met is very low, meaning the verdict arguably underweights how unlikely the vulnerable branch is in practice. This nudges toward not_reachable rather than a neutral uncertain, but since deployment packaging truly isn't observable in the given AST evidence, treating it as uncertain rather than confidently not_reachable is defensible and not a clear misread of the evidence presented.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.6
+   },
+   "tokens_in": 2357,
+   "tokens_out": 2063,
+   "llm_calls": 1,
+   "llm_seconds": 24.83,
+   "cost_usd_est": 0.038016,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict correctly identifies that extract_zipped_paths() runs automatically at import time via requests/utils.py's module-level DEFAULT_CA_BUNDLE_PATH assignment, which is a real gap in the AST 'first-party call site' methodology \u2014 this part is sound and not refuted by the evidence. However, the verdict somewhat overstates the ambiguity: extract_zipped_paths() first checks `os.path.exists(path)` and returns immediately with no temp-file write if the path exists on disk. certs.where() returns a normal filesystem path to cacert.pem, which is true for virtually every standard installation (pip wheel, sdist, Docker image, venv) \u2014 the vulnerable zip-extraction branch only fires when requests/certifi itself is loaded from a zipimporter (e.g., a zipped egg or frozen/zipped bundle), a packaging style that is rare and effectively obsolete for modern pip/wheel-based deployments. Nothing in the evidence suggests CTFd is distributed or run as a zipped egg. So while the static evidence genuinely cannot rule out an unusual zip-based deployment, the prior probability of that precondition being met is very low, meaning the verdict arguably underweights how unlikely the vulnerable branch is in practice. This nudges toward not_reachable rather than a neutral uncertain, but since deployment packaging truly isn't observable in the given AST evidence, treating it as uncertain rather than confidently not_reachable is defensible and not a clear misread of the evidence presented.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.6}",
+     "in": 2357,
+     "out": 2063,
+     "s": 24.83,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.6,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 9710,
+  "tokens_out": 5949,
+  "cost_usd_est": 0.118365,
+  "seconds": 73.66
+ },
+ "created": "2026-11-10T16:24:32+00:00",
+ "code_version": "f26e69b"
+}

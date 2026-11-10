@@ -1,0 +1,328 @@
+{
+ "finding_id": "healthchecks/urllib3@1.26.20/GHSA-38jv-5279-wg99",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-21441",
+   "GHSA-38jv-5279-wg99",
+   "PYSEC-2026-1996"
+  ],
+  "cves": [
+   "CVE-2026-21441"
+  ],
+  "cwes": [
+   "CWE-409"
+  ],
+  "direct_dependency": false,
+  "finding_id": "healthchecks/urllib3@1.26.20/GHSA-38jv-5279-wg99",
+  "first_fixed_above_installed": "2.6.3",
+  "fixed_versions": [
+   "2.6.3"
+  ],
+  "max_cvss": "8.9",
+  "package": "urllib3",
+  "published": "2026-01-07T19:18:14Z",
+  "summary": "Decompression-bomb safeguards bypassed when following HTTP redirects (streaming API)",
+  "target": "healthchecks",
+  "version": "1.26.20",
+  "vuln_id": "GHSA-38jv-5279-wg99"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.6,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.55,
+  "vulnerable_symbols": [
+   "HTTPResponse.stream() (urllib3 streaming API)",
+   "redirect-following with automatic decompression (gzip/deflate/br) not re-validated after redirect"
+  ],
+  "reasoning": "The advisory concerns urllib3's streaming API failing to re-apply decompression-bomb size limits after following an HTTP redirect. The provided static evidence only searched for urllib3 by name and found zero direct imports/usages, but urllib3 is listed as a transitive dependency, meaning it is almost certainly pulled in as the transport layer of a higher-level client such as requests, httpx, or boto3/botocore. A name-based search for 'urllib3' symbols cannot detect this wrapper-mediated path, since application code would call requests.get/Session.request (with allow_redirects=True, the default) or httpx equivalents, never referencing urllib3 directly, yet still exercising its HTTPResponse redirect/decompression logic under the hood. No evidence was supplied about whether first-party code uses requests/httpx/boto3 with redirects enabled and streaming or compressed response bodies (e.g. stream=True, iter_content, or large/attacker-influenced response consumption), so the search performed does not positively establish non-use \u2014 it only rules out direct urllib3 references. Per the rule that false 'not_reachable' suppression is the costliest error, and given no evidence rules out the wrapper path identified by the reviewer, this cannot be confidently marked not_reachable, but it also cannot be confirmed reachable without seeing actual requests/httpx call sites and their redirect/streaming configuration. A follow-up search for requests.get/post/Session(...).request/httpx.Client/boto3 HTTP calls, particularly any that fetch URLs from external/untrusted input with redirects enabled and consume response bodies, is needed to resolve this.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "GHSA-38jv-5279-wg99 describes urllib3's HTTPResponse streaming/decompression safeguards being bypassed specifically when redirects are followed, which is urllib3's default/library-level redirect handling used transparently by wrapper HTTP clients."
+   },
+   {
+    "location": "static evidence (urllib3 symbol search)",
+    "explanation": "The search covered only urllib3-named imports/symbols/calls and found none, but by design it cannot detect usage mediated through requests/httpx/boto3, which is the typical way a transitive urllib3 dependency gets exercised."
+   },
+   {
+    "location": "n/a \u2014 missing evidence",
+    "explanation": "No search results were provided for requests.get/post/Session, httpx.Client/get, or boto3 HTTP calls with redirect-following or streaming enabled, which is the evidence needed to confirm or rule out reachability per the reviewer's critique."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter is that the reviewer's own reasoning undermines a clean 'not_reachable' dismissal: urllib3 almost always reaches production code only through requests/httpx/boto3 wrappers, so a name-based grep for 'urllib3' finding zero hits is exactly what you'd expect in a vulnerable app and proves nothing about reachability. The advisory's precondition (streaming API + redirect-following + decompression-bomb limit bypass) requires evidence of HTTP fetches with streaming/decoded bodies and redirects enabled -- none of which was searched for. However, the verdict already explicitly makes this argument and correctly refuses to call it not_reachable for that reason, landing on uncertain rather than prematurely clearing it. One could push back that since the reviewer judges wrapper-mediated urllib3 usage 'almost certain,' an uncertain-leaning-reachable stance might be more honest than pure uncertain, but absent confirmation of the specific precondition combo (redirects + streaming + compressed bodies), outright 'reachable' would overreach. The verdict's self-critique is sound and the requested follow-up (search for requests/httpx/boto3 call sites with redirect/streaming config) is the right next step rather than a flaw to penalize.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.6
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/urllib3@1.26.20/GHSA-38jv-5279-wg99",
+    "package": "urllib3",
+    "version": "1.26.20",
+    "vuln_id": "GHSA-38jv-5279-wg99",
+    "aliases": [
+     "CVE-2026-21441",
+     "GHSA-38jv-5279-wg99",
+     "PYSEC-2026-1996"
+    ],
+    "summary": "Decompression-bomb safeguards bypassed when following HTTP redirects (streaming API)",
+    "max_cvss": "8.9",
+    "fixed_versions": [
+     "2.6.3"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 41.7,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 229,
+     "template_dirs": [
+      "templates"
+     ],
+     "template_files": 199
+    },
+    "entry_points": 339,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 8418.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.9,
+    "vulnerable_symbols": [
+     "urllib3.response.HTTPResponse (decompression during redirect streaming)",
+     "urllib3.PoolManager/urlopen redirect handling"
+    ],
+    "reasoning": "The advisory concerns urllib3's decompression-bomb protection being bypassed when the streaming API follows HTTP redirects, which requires the application to actually import and invoke urllib3 (directly or via a library wrapper) to make requests with redirect-following and decompression enabled. Static AST analysis found zero non-test imports of urllib3 and zero call sites of any urllib3 symbols anywhere in the 229 first-party Python files, meaning urllib3 is present only as a transitive dependency with no first-party code path exercising it. Since there is no entry point, view, task, or other application code that invokes urllib3's request/redirect/streaming functionality, the vulnerable behavior is never triggered by this application. Per the dead-code rule, a package that is never called by production code is not reachable.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Vulnerability requires use of urllib3's streaming/redirect-following request API to be exploitable."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test imports and 0 call sites of urllib3 found across 229 first-party Python files, indicating the package is unused by application code."
+     }
+    ]
+   },
+   "tokens_in": 1944,
+   "tokens_out": 470,
+   "llm_calls": 1,
+   "llm_seconds": 8.41,
+   "cost_usd_est": 0.012882,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.9,\"vulnerable_symbols\":[\"urllib3.response.HTTPResponse (decompression during redirect streaming)\",\"urllib3.PoolManager/urlopen redirect handling\"],\"reasoning\":\"The advisory concerns urllib3's decompression-bomb protection being bypassed when the streaming API follows HTTP redirects, which requires the application to actually import and invoke urllib3 (directly or via a library wrapper) to make requests with redirect-following and decompression enabled. Static AST analysis found zero non-test imports of urllib3 and zero call sites of any urllib3 symbols anywhere in the 229 first-party Python files, meaning urllib3 is present only as a transitive dependency with no first-party code path exercising it. Since there is no entry point, view, task, or other application code that invokes urllib3's request/redirect/streaming functionality, the vulnerable behavior is never triggered by this application. Per the dead-code rule, a package that is never called by production code is not reachable.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"Vulnerability requires use of urllib3's streaming/redirect-following request API to be exploitable.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 non-test imports and 0 call sites of urllib3 found across 229 first-party Python files, indicating the package is unused by application code.\"}]}\n```",
+     "in": 1944,
+     "out": 470,
+     "s": 8.41,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 20259.2,
+   "output": {
+    "critique": "The verdict's dead-code conclusion rests entirely on finding zero direct urllib3 imports/symbol calls in first-party code, but urllib3 is listed as a transitive dependency \u2014 meaning some other package (almost certainly `requests`, which is the dominant Python HTTP client and vendors urllib3 as its transport layer) is pulling it in. The static evidence explicitly searched for urllib3-named symbols only; it says nothing about whether first-party code calls `requests.get/post/Session` (or httpx, boto3, etc.) with redirect-following enabled, which is the classic wrapper path that would transit into urllib3's HTTPResponse streaming/redirect/decompression logic without ever referencing urllib3 by name. Per the review guidance, this is exactly the kind of wrapper-mediated reachability that a literal-symbol search misses, and false suppression here is the costliest error. The evidence as presented does not rule out this path \u2014 it only rules out *direct* usage, which is rarely how urllib3 is consumed in practice. The verdict should have checked for `requests`/`httpx` usage with redirect-following and streaming/decompression before concluding not_reachable.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 1757,
+   "tokens_out": 1678,
+   "llm_calls": 1,
+   "llm_seconds": 20.25,
+   "cost_usd_est": 0.030441,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's dead-code conclusion rests entirely on finding zero direct urllib3 imports/symbol calls in first-party code, but urllib3 is listed as a transitive dependency \u2014 meaning some other package (almost certainly `requests`, which is the dominant Python HTTP client and vendors urllib3 as its transport layer) is pulling it in. The static evidence explicitly searched for urllib3-named symbols only; it says nothing about whether first-party code calls `requests.get/post/Session` (or httpx, boto3, etc.) with redirect-following enabled, which is the classic wrapper path that would transit into urllib3's HTTPResponse streaming/redirect/decompression logic without ever referencing urllib3 by name. Per the review guidance, this is exactly the kind of wrapper-mediated reachability that a literal-symbol search misses, and false suppression here is the costliest error. The evidence as presented does not rule out this path \u2014 it only rules out *direct* usage, which is rarely how urllib3 is consumed in practice. The verdict should have checked for `requests`/`httpx` usage with redirect-following and streaming/decompression before concluding not_reachable.\",\"agrees\":false,\"retry\":true,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 1757,
+     "out": 1678,
+     "s": 20.25,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 19305.8,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.55,
+    "vulnerable_symbols": [
+     "HTTPResponse.stream() (urllib3 streaming API)",
+     "redirect-following with automatic decompression (gzip/deflate/br) not re-validated after redirect"
+    ],
+    "reasoning": "The advisory concerns urllib3's streaming API failing to re-apply decompression-bomb size limits after following an HTTP redirect. The provided static evidence only searched for urllib3 by name and found zero direct imports/usages, but urllib3 is listed as a transitive dependency, meaning it is almost certainly pulled in as the transport layer of a higher-level client such as requests, httpx, or boto3/botocore. A name-based search for 'urllib3' symbols cannot detect this wrapper-mediated path, since application code would call requests.get/Session.request (with allow_redirects=True, the default) or httpx equivalents, never referencing urllib3 directly, yet still exercising its HTTPResponse redirect/decompression logic under the hood. No evidence was supplied about whether first-party code uses requests/httpx/boto3 with redirects enabled and streaming or compressed response bodies (e.g. stream=True, iter_content, or large/attacker-influenced response consumption), so the search performed does not positively establish non-use \u2014 it only rules out direct urllib3 references. Per the rule that false 'not_reachable' suppression is the costliest error, and given no evidence rules out the wrapper path identified by the reviewer, this cannot be confidently marked not_reachable, but it also cannot be confirmed reachable without seeing actual requests/httpx call sites and their redirect/streaming configuration. A follow-up search for requests.get/post/Session(...).request/httpx.Client/boto3 HTTP calls, particularly any that fetch URLs from external/untrusted input with redirects enabled and consume response bodies, is needed to resolve this.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "GHSA-38jv-5279-wg99 describes urllib3's HTTPResponse streaming/decompression safeguards being bypassed specifically when redirects are followed, which is urllib3's default/library-level redirect handling used transparently by wrapper HTTP clients."
+     },
+     {
+      "location": "static evidence (urllib3 symbol search)",
+      "explanation": "The search covered only urllib3-named imports/symbols/calls and found none, but by design it cannot detect usage mediated through requests/httpx/boto3, which is the typical way a transitive urllib3 dependency gets exercised."
+     },
+     {
+      "location": "n/a \u2014 missing evidence",
+      "explanation": "No search results were provided for requests.get/post/Session, httpx.Client/get, or boto3 HTTP calls with redirect-following or streaming enabled, which is the evidence needed to confirm or rule out reachability per the reviewer's critique."
+     }
+    ]
+   },
+   "tokens_in": 2349,
+   "tokens_out": 1492,
+   "llm_calls": 1,
+   "llm_seconds": 19.3,
+   "cost_usd_est": 0.029427,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"uncertain\",\"confidence\":0.55,\"vulnerable_symbols\":[\"HTTPResponse.stream() (urllib3 streaming API)\",\"redirect-following with automatic decompression (gzip/deflate/br) not re-validated after redirect\"],\"reasoning\":\"The advisory concerns urllib3's streaming API failing to re-apply decompression-bomb size limits after following an HTTP redirect. The provided static evidence only searched for urllib3 by name and found zero direct imports/usages, but urllib3 is listed as a transitive dependency, meaning it is almost certainly pulled in as the transport layer of a higher-level client such as requests, httpx, or boto3/botocore. A name-based search for 'urllib3' symbols cannot detect this wrapper-mediated path, since application code would call requests.get/Session.request (with allow_redirects=True, the default) or httpx equivalents, never referencing urllib3 directly, yet still exercising its HTTPResponse redirect/decompression logic under the hood. No evidence was supplied about whether first-party code uses requests/httpx/boto3 with redirects enabled and streaming or compressed response bodies (e.g. stream=True, iter_content, or large/attacker-influenced response consumption), so the search performed does not positively establish non-use \u2014 it only rules out direct urllib3 references. Per the rule that false 'not_reachable' suppression is the costliest error, and given no evidence rules out the wrapper path identified by the reviewer, this cannot be confidently marked not_reachable, but it also cannot be confirmed reachable without seeing actual requests/httpx call sites and their redirect/streaming configuration. A follow-up search for requests.get/post/Session(...).request/httpx.Client/boto3 HTTP calls, particularly any that fetch URLs from external/untrusted input with redirects enabled and consume response bodies, is needed to resolve this.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"GHSA-38jv-5279-wg99 describes urllib3's HTTPResponse streaming/decompression safeguards being bypassed specifically when redirects are followed, which is urllib3's default/library-level redirect handling used transparently by wrapper HTTP clients.\"},{\"location\":\"static evidence (urllib3 symbol search)\",\"explanation\":\"The search covered only urllib3-named imports/symbols/calls and found none, but by design it cannot detect usage mediated through requests/httpx/boto3, which is the typical way a transitive urllib3 dependency gets exercised.\"},{\"location\":\"n/a \u2014 missing evidence\",\"explanation\":\"No search results were provided for requests.get/post/Session, httpx.Client/get, or boto3 HTTP calls with redirect-following or streaming enabled, which is the evidence needed to confirm or rule out reachability per the reviewer's critique.\"}]}",
+     "in": 2349,
+     "out": 1492,
+     "s": 19.3,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 18298.4,
+   "output": {
+    "critique": "The strongest counter is that the reviewer's own reasoning undermines a clean 'not_reachable' dismissal: urllib3 almost always reaches production code only through requests/httpx/boto3 wrappers, so a name-based grep for 'urllib3' finding zero hits is exactly what you'd expect in a vulnerable app and proves nothing about reachability. The advisory's precondition (streaming API + redirect-following + decompression-bomb limit bypass) requires evidence of HTTP fetches with streaming/decoded bodies and redirects enabled -- none of which was searched for. However, the verdict already explicitly makes this argument and correctly refuses to call it not_reachable for that reason, landing on uncertain rather than prematurely clearing it. One could push back that since the reviewer judges wrapper-mediated urllib3 usage 'almost certain,' an uncertain-leaning-reachable stance might be more honest than pure uncertain, but absent confirmation of the specific precondition combo (redirects + streaming + compressed bodies), outright 'reachable' would overreach. The verdict's self-critique is sound and the requested follow-up (search for requests/httpx/boto3 call sites with redirect/streaming config) is the right next step rather than a flaw to penalize.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.6
+   },
+   "tokens_in": 2225,
+   "tokens_out": 1429,
+   "llm_calls": 1,
+   "llm_seconds": 18.3,
+   "cost_usd_est": 0.02811,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter is that the reviewer's own reasoning undermines a clean 'not_reachable' dismissal: urllib3 almost always reaches production code only through requests/httpx/boto3 wrappers, so a name-based grep for 'urllib3' finding zero hits is exactly what you'd expect in a vulnerable app and proves nothing about reachability. The advisory's precondition (streaming API + redirect-following + decompression-bomb limit bypass) requires evidence of HTTP fetches with streaming/decoded bodies and redirects enabled -- none of which was searched for. However, the verdict already explicitly makes this argument and correctly refuses to call it not_reachable for that reason, landing on uncertain rather than prematurely clearing it. One could push back that since the reviewer judges wrapper-mediated urllib3 usage 'almost certain,' an uncertain-leaning-reachable stance might be more honest than pure uncertain, but absent confirmation of the specific precondition combo (redirects + streaming + compressed bodies), outright 'reachable' would overreach. The verdict's self-critique is sound and the requested follow-up (search for requests/httpx/boto3 call sites with redirect/streaming config) is the right next step rather than a flaw to penalize.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.6}",
+     "in": 2225,
+     "out": 1429,
+     "s": 18.3,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.6,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 8275,
+  "tokens_out": 5069,
+  "cost_usd_est": 0.10086,
+  "seconds": 66.33
+ },
+ "created": "2026-11-10T16:14:46+00:00",
+ "code_version": "f26e69b"
+}

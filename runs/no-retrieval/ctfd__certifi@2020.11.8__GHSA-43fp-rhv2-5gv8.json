@@ -1,0 +1,269 @@
+{
+ "finding_id": "ctfd/certifi@2020.11.8/GHSA-43fp-rhv2-5gv8",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-23491",
+   "GHSA-43fp-rhv2-5gv8",
+   "PYSEC-2022-42986"
+  ],
+  "cves": [
+   "CVE-2022-23491"
+  ],
+  "cwes": [
+   "CWE-345"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/certifi@2020.11.8/GHSA-43fp-rhv2-5gv8",
+  "first_fixed_above_installed": "2022.12.7",
+  "fixed_versions": [
+   "2022.12.7",
+   "2022.12.07"
+  ],
+  "max_cvss": "6.8",
+  "package": "certifi",
+  "published": "2022-12-07T23:05:18Z",
+  "summary": "Certifi removing TrustCor root certificate",
+  "target": "ctfd",
+  "version": "2020.11.8",
+  "vuln_id": "GHSA-43fp-rhv2-5gv8"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.55,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.45,
+  "vulnerable_symbols": [
+   "TrustCor (root CA removed from certifi's trust bundle)"
+  ],
+  "reasoning": "This advisory isn't about a callable API being misused; it's about a root CA (TrustCor) that was deemed untrustworthy and removed from certifi's bundled trust store. There's no function named 'TrustCor' for AST matching to find \u2014 the vulnerable artifact is static certificate data loaded implicitly whenever something uses certifi's CA bundle for TLS verification (e.g., requests/urllib3's default SSL context). The static evidence shows certifi is never imported directly by first-party code, consistent with it being a purely transitive dependency pulled in by an HTTP client library (likely requests). Whether this is actually reachable depends on whether the application makes outbound HTTPS connections whose verification relies on certifi's bundle and whether an attacker could present a TrustCor-chained certificate \u2014 information not present in the AST-based evidence (which only searches for named symbols/imports, not outbound network call sites). Given CTFd-style apps commonly perform outbound requests (webhooks, OAuth, update checks, SMTP-over-TLS), reachability is plausible, but there is no concrete call site or entry point shown here, so it cannot be confirmed from this evidence alone.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "The vulnerability concerns certifi's bundled CA data (TrustCor), not a function call, so symbol-based static analysis cannot directly observe its use."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 non-test imports of certifi and 0 call/reference sites indicate no first-party code directly touches certifi, suggesting it's only a transitive dependency of an HTTP client library."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "No search was performed for outbound HTTPS call sites (e.g., requests.get/post) which would be the actual trigger for certifi's trust store being exercised, leaving the real reachability question unanswered by this evidence."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that this advisory is fundamentally different from typical code-reachability vulnerabilities: it concerns static trust-store data that is consulted on every default TLS handshake made via requests/urllib3 (which load certifi's bundle unless a custom CA path is set). Since certifi is almost certainly a transitive dependency of `requests` (common in CTFd-style apps for webhooks, OAuth providers, update-check pings, SMTP-over-TLS), the vulnerable artifact is 'used' the moment any outbound HTTPS call is made with default verification \u2014 no call to a 'TrustCor' symbol is ever required, so the 0-matches AST result is expected and uninformative either way. One could argue the verdict should lean toward 'reachable' rather than 'uncertain,' since CTFd is known to perform outbound HTTPS calls. However, the provided static evidence genuinely did not search for requests.get/post/Session call sites or outbound network entry points, so there's no concrete evidence in hand confirming that outbound TLS verification actually occurs in this codebase versus being dead/unused code paths. The verdict correctly identifies this evidentiary gap rather than overclaiming reachable or not_reachable from a symbol search that was never going to find anything either way. It does not ignore or misread the evidence \u2014 it explains why the evidence is structurally insufficient for this vulnerability class.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.55
+ },
+ "symbols": [
+  "TrustCor"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/certifi@2020.11.8/GHSA-43fp-rhv2-5gv8",
+    "package": "certifi",
+    "version": "2020.11.8",
+    "vuln_id": "GHSA-43fp-rhv2-5gv8",
+    "aliases": [
+     "CVE-2022-23491",
+     "GHSA-43fp-rhv2-5gv8",
+     "PYSEC-2022-42986"
+    ],
+    "summary": "Certifi removing TrustCor root certificate",
+    "max_cvss": "6.8",
+    "fixed_versions": [
+     "2022.12.7",
+     "2022.12.07"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "TrustCor"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 290.5,
+   "output": {
+    "package": "certifi",
+    "import_names": [
+     "certifi"
+    ],
+    "symbols": [
+     "TrustCor"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "certifi: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['TrustCor']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 32637.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.45,
+    "vulnerable_symbols": [
+     "TrustCor (root CA removed from certifi's trust bundle)"
+    ],
+    "reasoning": "This advisory isn't about a callable API being misused; it's about a root CA (TrustCor) that was deemed untrustworthy and removed from certifi's bundled trust store. There's no function named 'TrustCor' for AST matching to find \u2014 the vulnerable artifact is static certificate data loaded implicitly whenever something uses certifi's CA bundle for TLS verification (e.g., requests/urllib3's default SSL context). The static evidence shows certifi is never imported directly by first-party code, consistent with it being a purely transitive dependency pulled in by an HTTP client library (likely requests). Whether this is actually reachable depends on whether the application makes outbound HTTPS connections whose verification relies on certifi's bundle and whether an attacker could present a TrustCor-chained certificate \u2014 information not present in the AST-based evidence (which only searches for named symbols/imports, not outbound network call sites). Given CTFd-style apps commonly perform outbound requests (webhooks, OAuth, update checks, SMTP-over-TLS), reachability is plausible, but there is no concrete call site or entry point shown here, so it cannot be confirmed from this evidence alone.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "The vulnerability concerns certifi's bundled CA data (TrustCor), not a function call, so symbol-based static analysis cannot directly observe its use."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test imports of certifi and 0 call/reference sites indicate no first-party code directly touches certifi, suggesting it's only a transitive dependency of an HTTP client library."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "No search was performed for outbound HTTPS call sites (e.g., requests.get/post) which would be the actual trigger for certifi's trust store being exercised, leaving the real reachability question unanswered by this evidence."
+     }
+    ]
+   },
+   "tokens_in": 1951,
+   "tokens_out": 2657,
+   "llm_calls": 1,
+   "llm_seconds": 32.62,
+   "cost_usd_est": 0.045708,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"uncertain\",\"confidence\":0.45,\"vulnerable_symbols\":[\"TrustCor (root CA removed from certifi's trust bundle)\"],\"reasoning\":\"This advisory isn't about a callable API being misused; it's about a root CA (TrustCor) that was deemed untrustworthy and removed from certifi's bundled trust store. There's no function named 'TrustCor' for AST matching to find \u2014 the vulnerable artifact is static certificate data loaded implicitly whenever something uses certifi's CA bundle for TLS verification (e.g., requests/urllib3's default SSL context). The static evidence shows certifi is never imported directly by first-party code, consistent with it being a purely transitive dependency pulled in by an HTTP client library (likely requests). Whether this is actually reachable depends on whether the application makes outbound HTTPS connections whose verification relies on certifi's bundle and whether an attacker could present a TrustCor-chained certificate \u2014 information not present in the AST-based evidence (which only searches for named symbols/imports, not outbound network call sites). Given CTFd-style apps commonly perform outbound requests (webhooks, OAuth, update checks, SMTP-over-TLS), reachability is plausible, but there is no concrete call site or entry point shown here, so it cannot be confirmed from this evidence alone.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"The vulnerability concerns certifi's bundled CA data (TrustCor), not a function call, so symbol-based static analysis cannot directly observe its use.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 non-test imports of certifi and 0 call/reference sites indicate no first-party code directly touches certifi, suggesting it's only a transitive dependency of an HTTP client library.\"},{\"location\":\"static evidence summary\",\"explanation\":\"No search was performed for outbound HTTPS call sites (e.g., requests.get/post) which would be the actual trigger for certifi's trust store being exercised, leaving the real reachability question unanswered by this evidence.\"}]}",
+     "in": 1951,
+     "out": 2657,
+     "s": 32.62,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 18736.2,
+   "output": {
+    "critique": "The strongest counter-argument is that this advisory is fundamentally different from typical code-reachability vulnerabilities: it concerns static trust-store data that is consulted on every default TLS handshake made via requests/urllib3 (which load certifi's bundle unless a custom CA path is set). Since certifi is almost certainly a transitive dependency of `requests` (common in CTFd-style apps for webhooks, OAuth providers, update-check pings, SMTP-over-TLS), the vulnerable artifact is 'used' the moment any outbound HTTPS call is made with default verification \u2014 no call to a 'TrustCor' symbol is ever required, so the 0-matches AST result is expected and uninformative either way. One could argue the verdict should lean toward 'reachable' rather than 'uncertain,' since CTFd is known to perform outbound HTTPS calls. However, the provided static evidence genuinely did not search for requests.get/post/Session call sites or outbound network entry points, so there's no concrete evidence in hand confirming that outbound TLS verification actually occurs in this codebase versus being dead/unused code paths. The verdict correctly identifies this evidentiary gap rather than overclaiming reachable or not_reachable from a symbol search that was never going to find anything either way. It does not ignore or misread the evidence \u2014 it explains why the evidence is structurally insufficient for this vulnerability class.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 2001,
+   "tokens_out": 1443,
+   "llm_calls": 1,
+   "llm_seconds": 18.72,
+   "cost_usd_est": 0.027648,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument is that this advisory is fundamentally different from typical code-reachability vulnerabilities: it concerns static trust-store data that is consulted on every default TLS handshake made via requests/urllib3 (which load certifi's bundle unless a custom CA path is set). Since certifi is almost certainly a transitive dependency of `requests` (common in CTFd-style apps for webhooks, OAuth providers, update-check pings, SMTP-over-TLS), the vulnerable artifact is 'used' the moment any outbound HTTPS call is made with default verification \u2014 no call to a 'TrustCor' symbol is ever required, so the 0-matches AST result is expected and uninformative either way. One could argue the verdict should lean toward 'reachable' rather than 'uncertain,' since CTFd is known to perform outbound HTTPS calls. However, the provided static evidence genuinely did not search for requests.get/post/Session call sites or outbound network entry points, so there's no concrete evidence in hand confirming that outbound TLS verification actually occurs in this codebase versus being dead/unused code paths. The verdict correctly identifies this evidentiary gap rather than overclaiming reachable or not_reachable from a symbol search that was never going to find anything either way. It does not ignore or misread the evidence \u2014 it explains why the evidence is structurally insufficient for this vulnerability class.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 2001,
+     "out": 1443,
+     "s": 18.72,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.55,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3952,
+  "tokens_out": 4100,
+  "cost_usd_est": 0.073356,
+  "seconds": 51.67
+ },
+ "created": "2026-11-10T16:15:38+00:00",
+ "code_version": "f26e69b"
+}

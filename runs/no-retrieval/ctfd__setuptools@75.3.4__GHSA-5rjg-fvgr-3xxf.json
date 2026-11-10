@@ -1,0 +1,271 @@
+{
+ "finding_id": "ctfd/setuptools@75.3.4/GHSA-5rjg-fvgr-3xxf",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-47273",
+   "GHSA-5rjg-fvgr-3xxf"
+  ],
+  "cves": [
+   "CVE-2025-47273"
+  ],
+  "cwes": [
+   "CWE-22"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/setuptools@75.3.4/GHSA-5rjg-fvgr-3xxf",
+  "first_fixed_above_installed": "78.1.1",
+  "fixed_versions": [
+   "78.1.1"
+  ],
+  "max_cvss": "7.7",
+  "package": "setuptools",
+  "published": "2025-05-19T16:52:43Z",
+  "summary": "setuptools has a path traversal vulnerability in PackageIndex.download that leads to Arbitrary File Write",
+  "target": "ctfd",
+  "version": "75.3.4",
+  "vuln_id": "GHSA-5rjg-fvgr-3xxf"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.92,
+  "vulnerable_symbols": [
+   "PackageIndex.download",
+   "PackageIndex"
+  ],
+  "reasoning": "The CVE affects setuptools' PackageIndex.download method, which performs unsafe path handling when downloading packages. Setuptools is only a transitive build-time dependency here, not something the application imports or calls at runtime. Static AST analysis found zero imports of setuptools and zero references to PackageIndex or its download method anywhere in the 142 first-party Python files or 87 templates. Since the vulnerable class/method is never invoked by application code, there is no runtime path (from any entry point, view, task, or CLI command) that reaches the vulnerable functionality. This matches the not_reachable criteria: the package's vulnerable feature is unused by production code.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "CVE-2025-47273 vulnerability is specifically in PackageIndex.download's path traversal handling, not general setuptools usage."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 imports of setuptools in non-test code and 0 call sites of PackageIndex or PackageIndex.download across all 142 first-party files and 87 templates."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 production call sites with a path from an entry point confirms no route/view/task/CLI command reaches this symbol."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "PackageIndex.download is only reachable through setuptools' own package-fetching machinery (e.g. easy_install, fetch_build_eggs, or direct programmatic use of pkg_resources/setuptools.package_index), which is invoked at build/install time, not via typical application imports, views, or templates. An AST scan of the 142 first-party Python files and 87 templates is the right surface for runtime reachability, and finding zero imports, zero references, and zero entry-point paths is strong, directly relevant evidence \u2014 this isn't a case where the scan missed a wrapper/dispatch/config path, since the vulnerable feature is inherently a setuptools-internal build-time code path that application code would have to explicitly and unusually invoke to trigger. There's no indication CTFd (or whatever this app is) programmatically drives setup.py/easy_install downloads at runtime. The verdict correctly matches the not_reachable criteria: transitive, build-time-only dependency with zero call sites and zero entry-point paths. I don't find a plausible missed path (no setup.py custom command, no CLI wrapper, no admin plugin-installer calling pip/easy_install with attacker-controlled URLs found in evidence).",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "PackageIndex.download",
+  "PackageIndex"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/setuptools@75.3.4/GHSA-5rjg-fvgr-3xxf",
+    "package": "setuptools",
+    "version": "75.3.4",
+    "vuln_id": "GHSA-5rjg-fvgr-3xxf",
+    "aliases": [
+     "CVE-2025-47273",
+     "GHSA-5rjg-fvgr-3xxf"
+    ],
+    "summary": "setuptools has a path traversal vulnerability in PackageIndex.download that leads to Arbitrary File Write",
+    "max_cvss": "7.7",
+    "fixed_versions": [
+     "78.1.1"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.1,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "PackageIndex.download",
+     "PackageIndex"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 43.4,
+   "output": {
+    "package": "setuptools",
+    "import_names": [
+     "pkg_resources",
+     "setuptools"
+    ],
+    "symbols": [
+     "PackageIndex.download",
+     "PackageIndex"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "setuptools: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['PackageIndex.download', 'PackageIndex']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 7081.3,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.92,
+    "vulnerable_symbols": [
+     "PackageIndex.download",
+     "PackageIndex"
+    ],
+    "reasoning": "The CVE affects setuptools' PackageIndex.download method, which performs unsafe path handling when downloading packages. Setuptools is only a transitive build-time dependency here, not something the application imports or calls at runtime. Static AST analysis found zero imports of setuptools and zero references to PackageIndex or its download method anywhere in the 142 first-party Python files or 87 templates. Since the vulnerable class/method is never invoked by application code, there is no runtime path (from any entry point, view, task, or CLI command) that reaches the vulnerable functionality. This matches the not_reachable criteria: the package's vulnerable feature is unused by production code.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "CVE-2025-47273 vulnerability is specifically in PackageIndex.download's path traversal handling, not general setuptools usage."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 imports of setuptools in non-test code and 0 call sites of PackageIndex or PackageIndex.download across all 142 first-party files and 87 templates."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 production call sites with a path from an entry point confirms no route/view/task/CLI command reaches this symbol."
+     }
+    ]
+   },
+   "tokens_in": 1965,
+   "tokens_out": 470,
+   "llm_calls": 1,
+   "llm_seconds": 7.06,
+   "cost_usd_est": 0.012945,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.92,\"vulnerable_symbols\":[\"PackageIndex.download\",\"PackageIndex\"],\"reasoning\":\"The CVE affects setuptools' PackageIndex.download method, which performs unsafe path handling when downloading packages. Setuptools is only a transitive build-time dependency here, not something the application imports or calls at runtime. Static AST analysis found zero imports of setuptools and zero references to PackageIndex or its download method anywhere in the 142 first-party Python files or 87 templates. Since the vulnerable class/method is never invoked by application code, there is no runtime path (from any entry point, view, task, or CLI command) that reaches the vulnerable functionality. This matches the not_reachable criteria: the package's vulnerable feature is unused by production code.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"CVE-2025-47273 vulnerability is specifically in PackageIndex.download's path traversal handling, not general setuptools usage.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 imports of setuptools in non-test code and 0 call sites of PackageIndex or PackageIndex.download across all 142 first-party files and 87 templates.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 production call sites with a path from an entry point confirms no route/view/task/CLI command reaches this symbol.\"}]}\n```",
+     "in": 1965,
+     "out": 470,
+     "s": 7.06,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 7968.3,
+   "output": {
+    "critique": "PackageIndex.download is only reachable through setuptools' own package-fetching machinery (e.g. easy_install, fetch_build_eggs, or direct programmatic use of pkg_resources/setuptools.package_index), which is invoked at build/install time, not via typical application imports, views, or templates. An AST scan of the 142 first-party Python files and 87 templates is the right surface for runtime reachability, and finding zero imports, zero references, and zero entry-point paths is strong, directly relevant evidence \u2014 this isn't a case where the scan missed a wrapper/dispatch/config path, since the vulnerable feature is inherently a setuptools-internal build-time code path that application code would have to explicitly and unusually invoke to trigger. There's no indication CTFd (or whatever this app is) programmatically drives setup.py/easy_install downloads at runtime. The verdict correctly matches the not_reachable criteria: transitive, build-time-only dependency with zero call sites and zero entry-point paths. I don't find a plausible missed path (no setup.py custom command, no CLI wrapper, no admin plugin-installer calling pip/easy_install with attacker-controlled URLs found in evidence).",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1801,
+   "tokens_out": 437,
+   "llm_calls": 1,
+   "llm_seconds": 7.95,
+   "cost_usd_est": 0.011958,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"PackageIndex.download is only reachable through setuptools' own package-fetching machinery (e.g. easy_install, fetch_build_eggs, or direct programmatic use of pkg_resources/setuptools.package_index), which is invoked at build/install time, not via typical application imports, views, or templates. An AST scan of the 142 first-party Python files and 87 templates is the right surface for runtime reachability, and finding zero imports, zero references, and zero entry-point paths is strong, directly relevant evidence \u2014 this isn't a case where the scan missed a wrapper/dispatch/config path, since the vulnerable feature is inherently a setuptools-internal build-time code path that application code would have to explicitly and unusually invoke to trigger. There's no indication CTFd (or whatever this app is) programmatically drives setup.py/easy_install downloads at runtime. The verdict correctly matches the not_reachable criteria: transitive, build-time-only dependency with zero call sites and zero entry-point paths. I don't find a plausible missed path (no setup.py custom command, no CLI wrapper, no admin plugin-installer calling pip/easy_install with attacker-controlled URLs found in evidence).\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.85}",
+     "in": 1801,
+     "out": 437,
+     "s": 7.95,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3766,
+  "tokens_out": 907,
+  "cost_usd_est": 0.024903,
+  "seconds": 15.1
+ },
+ "created": "2026-11-10T16:24:47+00:00",
+ "code_version": "f26e69b"
+}

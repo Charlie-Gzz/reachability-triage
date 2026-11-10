@@ -1,0 +1,266 @@
+{
+ "finding_id": "bench/auth-gateway/pyjwt@1.7.1/GHSA-ffqj-6fqr-9h24",
+ "config": "no-retrieval",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/auth-gateway",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-29217",
+   "GHSA-ffqj-6fqr-9h24",
+   "PYSEC-2022-202"
+  ],
+  "cves": [
+   "CVE-2022-29217"
+  ],
+  "cwes": [
+   "CWE-327"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/auth-gateway/pyjwt@1.7.1/GHSA-ffqj-6fqr-9h24",
+  "first_fixed_above_installed": "2.4.0",
+  "fixed_versions": [
+   "2.4.0",
+   "9c528670c455b8d948aff95ed50e22940d1ad3fc"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+  "package": "pyjwt",
+  "published": "2022-05-24T22:17:27Z",
+  "split": "test",
+  "summary": "Key confusion through non-blocklisted public key formats",
+  "target": "bench/auth-gateway",
+  "version": "1.7.1",
+  "vuln_id": "GHSA-ffqj-6fqr-9h24"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.82,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "jwt.decode"
+  ],
+  "reasoning": "CVE-2022-29217 is a key-confusion issue in PyJWT's decode() when the caller does not strictly restrict the allowed algorithms to match the key type, allowing an attacker-controlled token to specify an HMAC algorithm while the application decodes it using an asymmetric public key as the HMAC secret. The application calls jwt.decode(token, PUBLIC_KEY, algorithms=list(get_default_algorithms())) at gateway/tokens.py:11, passing every registered algorithm (including HMAC algorithms like HS256) alongside an asymmetric PUBLIC_KEY, which is precisely the vulnerable pattern the advisory describes. The token argument is attacker-controlled input to the decode entry point, satisfying the 'outside party can influence' requirement. There is no algorithm allowlist restricting to only RS/ES/PS algorithms, so the confusion attack path is open. This is a direct, first-party call (not test code) reachable from production token-verification logic.",
+  "evidence": [
+   {
+    "location": "gateway/tokens.py:11",
+    "explanation": "jwt.decode is called with a PUBLIC_KEY but algorithms is the full default algorithm list, enabling HMAC/asymmetric key confusion."
+   },
+   {
+    "location": "gateway/tokens.py:3-4",
+    "explanation": "pyjwt is imported directly, confirming this file is the vulnerable package's only usage site in the app."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that the static evidence explicitly reports '0 production call site(s) of those symbols, 0 with a path from an entry point' for the named vulnerable symbols, which seems to undercut the verdict's claim of reachability from production entry points. However, this 0-match result is explained by the fact that the automated symbol search was looking for specific named vulnerable API calls (likely patch-diff symbols) and apparently didn't treat the generic `jwt.decode` call as a match, while the manual 'other use of the package' evidence directly shows the exact vulnerable pattern: jwt.decode(token, PUBLIC_KEY, algorithms=list(get_default_algorithms())). get_default_algorithms() returns the full registered algorithm set including HS256/384/512 alongside HMAC, so pairing it with an asymmetric PUBLIC_KEY is precisely the key-confusion precondition from CVE-2022-29217/GHSA-ffqj-6fqr-9h24 \u2014 not a generic or unrelated usage. The remaining gap is that no evidence explicitly traces an HTTP/entry-point caller invoking this decode function with attacker-supplied tokens, but the module is named gateway/tokens.py and performs JWT verification with a public key \u2014 a function whose entire purpose is to validate externally supplied tokens, making dead-code or test-only usage implausible absent contrary evidence. This gap is a minor evidentiary weakness, not a misreading, and doesn't justify a retry.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.82
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/auth-gateway/pyjwt@1.7.1/GHSA-ffqj-6fqr-9h24",
+    "package": "pyjwt",
+    "version": "1.7.1",
+    "vuln_id": "GHSA-ffqj-6fqr-9h24",
+    "aliases": [
+     "CVE-2022-29217",
+     "GHSA-ffqj-6fqr-9h24",
+     "PYSEC-2022-202"
+    ],
+    "summary": "Key confusion through non-blocklisted public key formats",
+    "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+    "fixed_versions": [
+     "2.4.0",
+     "9c528670c455b8d948aff95ed50e22940d1ad3fc"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.8,
+   "output": {
+    "package": "pyjwt",
+    "import_names": [
+     "jwt"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "gateway/tokens.py:3",
+     "gateway/tokens.py:4"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 5,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "gateway/tokens.py:11",
+      "code": "return jwt.decode(token, PUBLIC_KEY, algorithms=list(get_default_algorithms()))",
+      "function": "gateway.tokens:verify",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 4,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 2,
+    "paths": [],
+    "summary": "pyjwt: imported in 2 non-test location(s); 5 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 10664.2,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "jwt.decode"
+    ],
+    "reasoning": "CVE-2022-29217 is a key-confusion issue in PyJWT's decode() when the caller does not strictly restrict the allowed algorithms to match the key type, allowing an attacker-controlled token to specify an HMAC algorithm while the application decodes it using an asymmetric public key as the HMAC secret. The application calls jwt.decode(token, PUBLIC_KEY, algorithms=list(get_default_algorithms())) at gateway/tokens.py:11, passing every registered algorithm (including HMAC algorithms like HS256) alongside an asymmetric PUBLIC_KEY, which is precisely the vulnerable pattern the advisory describes. The token argument is attacker-controlled input to the decode entry point, satisfying the 'outside party can influence' requirement. There is no algorithm allowlist restricting to only RS/ES/PS algorithms, so the confusion attack path is open. This is a direct, first-party call (not test code) reachable from production token-verification logic.",
+    "evidence": [
+     {
+      "location": "gateway/tokens.py:11",
+      "explanation": "jwt.decode is called with a PUBLIC_KEY but algorithms is the full default algorithm list, enabling HMAC/asymmetric key confusion."
+     },
+     {
+      "location": "gateway/tokens.py:3-4",
+      "explanation": "pyjwt is imported directly, confirming this file is the vulnerable package's only usage site in the app."
+     }
+    ]
+   },
+   "tokens_in": 2047,
+   "tokens_out": 817,
+   "llm_calls": 1,
+   "llm_seconds": 10.66,
+   "cost_usd_est": 0.018396,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"reachable\",\"confidence\":0.85,\"vulnerable_symbols\":[\"jwt.decode\"],\"reasoning\":\"CVE-2022-29217 is a key-confusion issue in PyJWT's decode() when the caller does not strictly restrict the allowed algorithms to match the key type, allowing an attacker-controlled token to specify an HMAC algorithm while the application decodes it using an asymmetric public key as the HMAC secret. The application calls jwt.decode(token, PUBLIC_KEY, algorithms=list(get_default_algorithms())) at gateway/tokens.py:11, passing every registered algorithm (including HMAC algorithms like HS256) alongside an asymmetric PUBLIC_KEY, which is precisely the vulnerable pattern the advisory describes. The token argument is attacker-controlled input to the decode entry point, satisfying the 'outside party can influence' requirement. There is no algorithm allowlist restricting to only RS/ES/PS algorithms, so the confusion attack path is open. This is a direct, first-party call (not test code) reachable from production token-verification logic.\",\"evidence\":[{\"location\":\"gateway/tokens.py:11\",\"explanation\":\"jwt.decode is called with a PUBLIC_KEY but algorithms is the full default algorithm list, enabling HMAC/asymmetric key confusion.\"},{\"location\":\"gateway/tokens.py:3-4\",\"explanation\":\"pyjwt is imported directly, confirming this file is the vulnerable package's only usage site in the app.\"}]}",
+     "in": 2047,
+     "out": 817,
+     "s": 10.66,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 22632.4,
+   "output": {
+    "critique": "The strongest counter-argument is that the static evidence explicitly reports '0 production call site(s) of those symbols, 0 with a path from an entry point' for the named vulnerable symbols, which seems to undercut the verdict's claim of reachability from production entry points. However, this 0-match result is explained by the fact that the automated symbol search was looking for specific named vulnerable API calls (likely patch-diff symbols) and apparently didn't treat the generic `jwt.decode` call as a match, while the manual 'other use of the package' evidence directly shows the exact vulnerable pattern: jwt.decode(token, PUBLIC_KEY, algorithms=list(get_default_algorithms())). get_default_algorithms() returns the full registered algorithm set including HS256/384/512 alongside HMAC, so pairing it with an asymmetric PUBLIC_KEY is precisely the key-confusion precondition from CVE-2022-29217/GHSA-ffqj-6fqr-9h24 \u2014 not a generic or unrelated usage. The remaining gap is that no evidence explicitly traces an HTTP/entry-point caller invoking this decode function with attacker-supplied tokens, but the module is named gateway/tokens.py and performs JWT verification with a public key \u2014 a function whose entire purpose is to validate externally supplied tokens, making dead-code or test-only usage implausible absent contrary evidence. This gap is a minor evidentiary weakness, not a misreading, and doesn't justify a retry.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.82
+   },
+   "tokens_in": 1951,
+   "tokens_out": 2014,
+   "llm_calls": 1,
+   "llm_seconds": 22.62,
+   "cost_usd_est": 0.036063,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument is that the static evidence explicitly reports '0 production call site(s) of those symbols, 0 with a path from an entry point' for the named vulnerable symbols, which seems to undercut the verdict's claim of reachability from production entry points. However, this 0-match result is explained by the fact that the automated symbol search was looking for specific named vulnerable API calls (likely patch-diff symbols) and apparently didn't treat the generic `jwt.decode` call as a match, while the manual 'other use of the package' evidence directly shows the exact vulnerable pattern: jwt.decode(token, PUBLIC_KEY, algorithms=list(get_default_algorithms())). get_default_algorithms() returns the full registered algorithm set including HS256/384/512 alongside HMAC, so pairing it with an asymmetric PUBLIC_KEY is precisely the key-confusion precondition from CVE-2022-29217/GHSA-ffqj-6fqr-9h24 \u2014 not a generic or unrelated usage. The remaining gap is that no evidence explicitly traces an HTTP/entry-point caller invoking this decode function with attacker-supplied tokens, but the module is named gateway/tokens.py and performs JWT verification with a public key \u2014 a function whose entire purpose is to validate externally supplied tokens, making dead-code or test-only usage implausible absent contrary evidence. This gap is a minor evidentiary weakness, not a misreading, and doesn't justify a retry.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"reachable\",\"confidence\":0.82}",
+     "in": 1951,
+     "out": 2014,
+     "s": 22.62,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.82,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3998,
+  "tokens_out": 2831,
+  "cost_usd_est": 0.054459,
+  "seconds": 33.3
+ },
+ "created": "2026-11-10T15:59:58+00:00",
+ "code_version": "f26e69b"
+}

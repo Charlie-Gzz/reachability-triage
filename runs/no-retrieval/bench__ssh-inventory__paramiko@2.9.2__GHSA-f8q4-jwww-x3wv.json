@@ -1,0 +1,281 @@
+{
+ "finding_id": "bench/ssh-inventory/paramiko@2.9.2/GHSA-f8q4-jwww-x3wv",
+ "config": "no-retrieval",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/ssh-inventory",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-24302",
+   "GHSA-f8q4-jwww-x3wv",
+   "PYSEC-2022-166"
+  ],
+  "cves": [
+   "CVE-2022-24302"
+  ],
+  "cwes": [
+   "CWE-362"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/ssh-inventory/paramiko@2.9.2/GHSA-f8q4-jwww-x3wv",
+  "first_fixed_above_installed": "2.9.3",
+  "fixed_versions": [
+   "2.9.3",
+   "2.10.1"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+  "package": "paramiko",
+  "published": "2022-03-19T00:01:03Z",
+  "split": "test",
+  "summary": "Race Condition in Paramiko",
+  "target": "bench/ssh-inventory",
+  "version": "2.9.2",
+  "vuln_id": "GHSA-f8q4-jwww-x3wv"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.55,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [
+   "paramiko.Transport (shared lock state during authentication)",
+   "paramiko.SSHClient.connect"
+  ],
+  "reasoning": "CVE-2022-24302 is a race condition inside paramiko's Transport/SSHClient internals that manifests when a single Transport/SSHClient object is used concurrently from multiple threads during authentication, potentially leaking one session's key material into another's. The app does directly instantiate paramiko.SSHClient() and configure it (inventory/collect.py:7-8), so the vulnerable class is in use, but the static evidence only shows client creation and a host-key policy call -- it does not show whether connect()/auth is invoked from multiple threads against a shared client, which is the precondition the advisory requires. With only 3 files and 6 call sites and no visibility into threading/concurrency usage, the reachability of the actual race condition can't be confirmed or ruled out from this evidence. Because SSHClient is a core, directly-used class (not an unrelated same-named symbol) and the race is in its core auth path rather than an optional feature, this isn't safe to mark not_reachable, but there's no proof of the concurrent-use pattern needed to call it reachable either.",
+  "evidence": [
+   {
+    "location": "inventory/collect.py:1",
+    "explanation": "paramiko is imported directly by application code, not just a transitive dependency."
+   },
+   {
+    "location": "inventory/collect.py:7",
+    "explanation": "Instantiates paramiko.SSHClient(), the class whose underlying Transport contains the racy authentication state."
+   },
+   {
+    "location": "inventory/collect.py:8",
+    "explanation": "Configures host key policy but gives no information about threading/concurrency of subsequent connect/auth calls."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict correctly identifies that CVE-2022-24302 requires concurrent use of a single Transport/SSHClient instance for its race condition to manifest, and that the cited evidence (lines 7-8) only shows a single client being instantiated and configured, not multi-threaded invocation. The strongest counter-argument is that the entire application footprint is tiny -- only 3 first-party Python files, 6 total paramiko call/reference sites, and no mention of threading/asyncio/concurrent.futures symbols anywhere in the AST scan. If the scan is exhaustive over call/attribute references, the absence of any threading primitive near or wrapping the SSHClient usage is itself evidence pointing toward not_reachable, since a 3-file inventory-collection script is far more plausible as a simple sequential tool than as a multi-threaded service reusing one client across threads. This could push the verdict toward not_reachable rather than uncertain. However, the evidence provided doesn't explicitly confirm the AST scan covered threading-related symbols/imports, so the verdict's caution is not unreasonable -- it's a gap in the evidence itself, not a misreading of what was given. The verdict did not ignore or misstate any cited evidence; it accurately described what was shown and what was missing.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.55
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/ssh-inventory/paramiko@2.9.2/GHSA-f8q4-jwww-x3wv",
+    "package": "paramiko",
+    "version": "2.9.2",
+    "vuln_id": "GHSA-f8q4-jwww-x3wv",
+    "aliases": [
+     "CVE-2022-24302",
+     "GHSA-f8q4-jwww-x3wv",
+     "PYSEC-2022-166"
+    ],
+    "summary": "Race Condition in Paramiko",
+    "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+    "fixed_versions": [
+     "2.9.3",
+     "2.10.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 5.0,
+   "output": {
+    "package": "paramiko",
+    "import_names": [
+     "paramiko"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "inventory/collect.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "inventory/collect.py:7",
+      "code": "client = paramiko.SSHClient()",
+      "function": "inventory.collect:collect",
+      "in_test": false
+     },
+     {
+      "location": "inventory/collect.py:8",
+      "code": "client.set_missing_host_key_policy(paramiko.RejectPolicy())",
+      "function": "inventory.collect:collect",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 0,
+    "paths": [],
+    "summary": "paramiko: imported in 1 non-test location(s); 6 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 22609.7,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [
+     "paramiko.Transport (shared lock state during authentication)",
+     "paramiko.SSHClient.connect"
+    ],
+    "reasoning": "CVE-2022-24302 is a race condition inside paramiko's Transport/SSHClient internals that manifests when a single Transport/SSHClient object is used concurrently from multiple threads during authentication, potentially leaking one session's key material into another's. The app does directly instantiate paramiko.SSHClient() and configure it (inventory/collect.py:7-8), so the vulnerable class is in use, but the static evidence only shows client creation and a host-key policy call -- it does not show whether connect()/auth is invoked from multiple threads against a shared client, which is the precondition the advisory requires. With only 3 files and 6 call sites and no visibility into threading/concurrency usage, the reachability of the actual race condition can't be confirmed or ruled out from this evidence. Because SSHClient is a core, directly-used class (not an unrelated same-named symbol) and the race is in its core auth path rather than an optional feature, this isn't safe to mark not_reachable, but there's no proof of the concurrent-use pattern needed to call it reachable either.",
+    "evidence": [
+     {
+      "location": "inventory/collect.py:1",
+      "explanation": "paramiko is imported directly by application code, not just a transitive dependency."
+     },
+     {
+      "location": "inventory/collect.py:7",
+      "explanation": "Instantiates paramiko.SSHClient(), the class whose underlying Transport contains the racy authentication state."
+     },
+     {
+      "location": "inventory/collect.py:8",
+      "explanation": "Configures host key policy but gives no information about threading/concurrency of subsequent connect/auth calls."
+     }
+    ]
+   },
+   "tokens_in": 2026,
+   "tokens_out": 1812,
+   "llm_calls": 1,
+   "llm_seconds": 22.61,
+   "cost_usd_est": 0.033258,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.4, \"vulnerable_symbols\": [\"paramiko.Transport (shared lock state during authentication)\", \"paramiko.SSHClient.connect\"], \"reasoning\": \"CVE-2022-24302 is a race condition inside paramiko's Transport/SSHClient internals that manifests when a single Transport/SSHClient object is used concurrently from multiple threads during authentication, potentially leaking one session's key material into another's. The app does directly instantiate paramiko.SSHClient() and configure it (inventory/collect.py:7-8), so the vulnerable class is in use, but the static evidence only shows client creation and a host-key policy call -- it does not show whether connect()/auth is invoked from multiple threads against a shared client, which is the precondition the advisory requires. With only 3 files and 6 call sites and no visibility into threading/concurrency usage, the reachability of the actual race condition can't be confirmed or ruled out from this evidence. Because SSHClient is a core, directly-used class (not an unrelated same-named symbol) and the race is in its core auth path rather than an optional feature, this isn't safe to mark not_reachable, but there's no proof of the concurrent-use pattern needed to call it reachable either.\", \"evidence\": [{\"location\": \"inventory/collect.py:1\", \"explanation\": \"paramiko is imported directly by application code, not just a transitive dependency.\"}, {\"location\": \"inventory/collect.py:7\", \"explanation\": \"Instantiates paramiko.SSHClient(), the class whose underlying Transport contains the racy authentication state.\"}, {\"location\": \"inventory/collect.py:8\", \"explanation\": \"Configures host key policy but gives no information about threading/concurrency of subsequent connect/auth calls.\"}]}",
+     "in": 2026,
+     "out": 1812,
+     "s": 22.61,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 16217.7,
+   "output": {
+    "critique": "The verdict correctly identifies that CVE-2022-24302 requires concurrent use of a single Transport/SSHClient instance for its race condition to manifest, and that the cited evidence (lines 7-8) only shows a single client being instantiated and configured, not multi-threaded invocation. The strongest counter-argument is that the entire application footprint is tiny -- only 3 first-party Python files, 6 total paramiko call/reference sites, and no mention of threading/asyncio/concurrent.futures symbols anywhere in the AST scan. If the scan is exhaustive over call/attribute references, the absence of any threading primitive near or wrapping the SSHClient usage is itself evidence pointing toward not_reachable, since a 3-file inventory-collection script is far more plausible as a simple sequential tool than as a multi-threaded service reusing one client across threads. This could push the verdict toward not_reachable rather than uncertain. However, the evidence provided doesn't explicitly confirm the AST scan covered threading-related symbols/imports, so the verdict's caution is not unreasonable -- it's a gap in the evidence itself, not a misreading of what was given. The verdict did not ignore or misstate any cited evidence; it accurately described what was shown and what was missing.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 1962,
+   "tokens_out": 1172,
+   "llm_calls": 1,
+   "llm_seconds": 16.22,
+   "cost_usd_est": 0.023466,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict correctly identifies that CVE-2022-24302 requires concurrent use of a single Transport/SSHClient instance for its race condition to manifest, and that the cited evidence (lines 7-8) only shows a single client being instantiated and configured, not multi-threaded invocation. The strongest counter-argument is that the entire application footprint is tiny -- only 3 first-party Python files, 6 total paramiko call/reference sites, and no mention of threading/asyncio/concurrent.futures symbols anywhere in the AST scan. If the scan is exhaustive over call/attribute references, the absence of any threading primitive near or wrapping the SSHClient usage is itself evidence pointing toward not_reachable, since a 3-file inventory-collection script is far more plausible as a simple sequential tool than as a multi-threaded service reusing one client across threads. This could push the verdict toward not_reachable rather than uncertain. However, the evidence provided doesn't explicitly confirm the AST scan covered threading-related symbols/imports, so the verdict's caution is not unreasonable -- it's a gap in the evidence itself, not a misreading of what was given. The verdict did not ignore or misstate any cited evidence; it accurately described what was shown and what was missing.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 1962,
+     "out": 1172,
+     "s": 16.22,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.55,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3988,
+  "tokens_out": 2984,
+  "cost_usd_est": 0.056724,
+  "seconds": 38.84
+ },
+ "created": "2026-11-10T16:03:54+00:00",
+ "code_version": "f26e69b"
+}

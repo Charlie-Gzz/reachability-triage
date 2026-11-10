@@ -1,0 +1,465 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-213",
+ "config": "full",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-34265",
+   "GHSA-p64x-8rxx-wf6q",
+   "PYSEC-2022-213"
+  ],
+  "cves": [
+   "CVE-2022-34265"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-213",
+  "first_fixed_above_installed": "4.0.6",
+  "fixed_versions": [
+   "3.2.14",
+   "4.0.6"
+  ],
+  "max_cvss": null,
+  "package": "django",
+  "published": "2022-07-04T16:15:00Z",
+  "summary": "An issue was discovered in Django 3.2 before 3.2.14 and 4.0 before 4.0.6. The Trunc() and Extract() database functions are subject to SQL injection if untrusted data is used as a kind/lookup_name valu",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "PYSEC-2022-213"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.9,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.88,
+  "vulnerable_symbols": [
+   "Trunc",
+   "Extract",
+   "lookup_name",
+   "kind"
+  ],
+  "reasoning": "The advisory requires the application to construct Django's Trunc() or Extract() database functions with an untrusted 'kind' or 'lookup_name' argument. Static analysis found zero production call sites of Trunc, Extract, or lookup_name anywhere in the 229 first-party Python files or 199 templates, meaning the app never invokes these specific ORM functions at all. The retrieved 'similar' code snippets (admin list filters, _lookup in hc/api/views.py, mark_safe usage) are unrelated name/queryset filtering helpers that do not call Trunc/Extract and do not pass data into their kind/lookup_name parameters. Django itself is used extensively as a framework, but the vulnerable feature is a specific opt-in ORM function that this codebase does not use. Since the only paths that would trigger the vulnerability are absent from the codebase, the vulnerable code path is not exercised.",
+  "evidence": [
+   {
+    "location": "django: 0 production call sites of Trunc/Extract/lookup_name",
+    "explanation": "AST search across all first-party code and templates found no usage of the vulnerable symbols."
+   },
+   {
+    "location": "hc/api/views.py:77-92 _lookup",
+    "explanation": "Uses .filter() with ORM field lookups (name, tags, timeout, grace) but never calls Trunc() or Extract() with attacker-controlled kind/lookup_name."
+   },
+   {
+    "location": "hc/api/admin.py:108-109 KindListFilter.lookups",
+    "explanation": "Name match on 'lookup_name'/'kind' wording is coincidental; this returns static admin filter choices, not a Trunc/Extract lookup_name argument."
+   },
+   {
+    "location": "hc/accounts/admin.py, hc/payments/admin.py",
+    "explanation": "Imports and uses of django.contrib.admin, annotate(Count/F) etc. do not involve Trunc or Extract database functions."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument: static AST search for the literal symbols 'Trunc'/'Extract' could miss dynamic or indirect usage (e.g., Django admin's date_hierarchy, dateformat filters, or third-party libs like django-import-export, Datadog, or healthchecks' own 'Count' trunc via extra() SQL), and annotate(Count(...)) calls in hc/accounts/admin.py could theoretically chain into TruncDate/TruncMonth if list_filter uses a date hierarchy. However, reviewing the evidence: the admin classes use Count/F, not Trunc/Extract; KindListFilter.lookups returns static hardcoded tuples, not user input; _lookup() in api/views.py builds filters from a fixed whitelist of fields (name/tags/timeout/grace), none of which touch Trunc/Extract kind/lookup_name parameters. The scanner's 0/0 call-site count directly addresses the vulnerable symbols, and no cited snippet shows any path where untrusted input reaches a Trunc() or Extract() kind argument. The healthchecks.io codebase (hc.*) is a known open-source app and does not use date-truncation ORM functions in its public-facing views. No wrapper, middleware, or template exercises the vulnerable feature. The verdict's reasoning accurately interprets the evidence rather than ignoring it.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.9
+ },
+ "symbols": [
+  "Trunc",
+  "Extract",
+  "lookup_name"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-213",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "PYSEC-2022-213",
+    "aliases": [
+     "CVE-2022-34265",
+     "GHSA-p64x-8rxx-wf6q",
+     "PYSEC-2022-213"
+    ],
+    "summary": "An issue was discovered in Django 3.2 before 3.2.14 and 4.0 before 4.0.6. The Trunc() and Extract() database functions are subject to SQL injection if untrusted data is used as a kind/lookup_name valu",
+    "max_cvss": null,
+    "fixed_versions": [
+     "3.2.14",
+     "4.0.6"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 159.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-p64x-8rxx-wf6q#1",
+      "score": 0.906,
+      "text": "GHSA-p64x-8rxx-wf6q (django) details:\nAn issue was discovered in Django 3.2 before 3.2.14 and 4.0 before 4.0.6. The `Trunc()` and `Extract()` database functions are subject to SQL injection if untrusted data is used as a kind/lookup_name value. Applications that constrain the lookup name and kind choice to a known safe list are unaffected.",
+      "vuln_id": "GHSA-p64x-8rxx-wf6q"
+     },
+     {
+      "id": "GHSA-p64x-8rxx-wf6q#0",
+      "score": 0.881,
+      "text": "GHSA-p64x-8rxx-wf6q (CVE-2022-34265)\npackage: django\nsummary: Django `Trunc()` and `Extract()` database functions vulnerable to SQL Injection\naffected: >=3.2a1, <3.2.14; >=4.0a1, <4.0.6",
+      "vuln_id": "GHSA-p64x-8rxx-wf6q"
+     },
+     {
+      "id": "GHSA-3gh2-xw74-jmcw#1",
+      "score": 0.785,
+      "text": "GHSA-3gh2-xw74-jmcw (django) details:\nDjango 1.11 before 1.11.29, 2.2 before 2.2.11, and 3.0 before 3.0.4 allows SQL Injection if untrusted data is used as a tolerance parameter in GIS functions and aggregates on Oracle. By passing a suitably crafted tolerance to GIS functions and aggregates on Oracle, it was possible to break escaping and inject malicious SQL.",
+      "vuln_id": "GHSA-3gh2-xw74-jmcw"
+     },
+     {
+      "id": "GHSA-h8gc-pgj2-vjm3#1",
+      "score": 0.766,
+      "text": "GHSA-h8gc-pgj2-vjm3 (django) details:\nIn Django 3.2 before 3.2.22, 4.1 before 4.1.12, and 4.2 before 4.2.6, the django.utils.text.Truncator chars() and words() methods (when used with html=True) are subject to a potential DoS (denial of service) attack via certain inputs with very long, potentially malformed HTML text. The chars() and words() methods are used to implement the truncatechars_html and truncatewords_html template filters, which are thus also vulnerable. NOTE: this issue exists because of an incomplete fix for CVE-2019-14232.",
+      "vuln_id": "GHSA-h8gc-pgj2-vjm3"
+     }
+    ],
+    "symbols": [
+     "Trunc",
+     "Extract",
+     "lookup_name"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2042.1,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "Trunc",
+     "Extract",
+     "lookup_name"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 229,
+     "template_dirs": [
+      "templates"
+     ],
+     "template_files": 199
+    },
+    "entry_points": 339,
+    "paths": [],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols ['Trunc', 'Extract', 'lookup_name']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 166.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/api/admin.py:108",
+      "score": 0.691,
+      "text": "# hc/api/admin.py:108-109  KindListFilter.lookups\n    def lookups(self, request, model_admin):\n        return zip(self.kinds, self.kinds)",
+      "file": "hc/api/admin.py",
+      "start": 108,
+      "qualname": "KindListFilter.lookups"
+     },
+     {
+      "id": "healthchecks:hc/api/admin.py:80",
+      "score": 0.683,
+      "text": "# hc/api/admin.py:80-81  SchemeListFilter.lookups\n    def lookups(self, request, model_admin):\n        return ((\"http\", \"HTTP\"), (\"https\", \"HTTPS\"), (\"email\", \"Email\"))",
+      "file": "hc/api/admin.py",
+      "start": 80,
+      "qualname": "SchemeListFilter.lookups"
+     },
+     {
+      "id": "healthchecks:hc/accounts/admin.py:40",
+      "score": 0.683,
+      "text": "# hc/accounts/admin.py:40-41  Fieldset.tuple\n    def tuple(cls):\n        return (cls.name, {\"fields\": cls.fields})",
+      "file": "hc/accounts/admin.py",
+      "start": 40,
+      "qualname": "Fieldset.tuple"
+     },
+     {
+      "id": "healthchecks:hc/payments/admin.py:module",
+      "score": 0.682,
+      "text": "# hc/payments/admin.py (module level)\nfrom django.contrib import admin\nfrom django.urls import reverse\nfrom django.utils.safestring import mark_safe\nfrom hc.accounts.models import Profile\nfrom hc.payments.models import Subscription\n@admin.register(Subscription)\nclass SubsAdmin(admin.ModelAdmin):\n    readonly_fields = (\"email\",)\n    search_fields = (\n        \"customer_id\",\n        \"payment_method_token\",\n        \"subscription_id\",\n        \"user__email\",\n    )\n    list_display = (\n        \"id\",\n        \"email\",\n        \"customer_id\",\n        \"address_id\",\n        \"payment_method_token\",\n        \"subscription_id\",\n        \"plan_id\",\n        \"plan_name\",\n        \"profile\",\n    )\n    list_filter = (\"plan_id\",)\n    raw_id_fields = (\"user\",)\n    actions = (\"cancel\",)\n    @mark_safe",
+      "file": "hc/payments/admin.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/api/views.py:77",
+      "score": 0.679,
+      "text": "# hc/api/views.py:77-92  _lookup\ndef _lookup(project, spec):\n    unique_fields = spec.get(\"unique\", [])\n    if unique_fields:\n        existing_checks = Check.objects.filter(project=project)\n        if \"name\" in unique_fields:\n            existing_checks = existing_checks.filter(name=spec.get(\"name\"))\n        if \"tags\" in unique_fields:\n            existing_checks = existing_checks.filter(tags=spec.get(\"tags\"))\n        if \"timeout\" in unique_fields:\n            timeout = td(seconds=spec[\"timeout\"])\n            existing_checks = existing_checks.filter(timeout=timeout)\n        if \"grace\" in unique_fields:\n            grace = td(seconds=spec[\"grace\"])\n            existing_checks = existing_checks.filter(grace=grace)\n\n        return existing_checks.first()",
+      "file": "hc/api/views.py",
+      "start": 77,
+      "qualname": "_lookup"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 10183.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "vulnerable_symbols": [
+     "Trunc",
+     "Extract",
+     "lookup_name",
+     "kind"
+    ],
+    "reasoning": "The advisory requires the application to construct Django's Trunc() or Extract() database functions with an untrusted 'kind' or 'lookup_name' argument. Static analysis found zero production call sites of Trunc, Extract, or lookup_name anywhere in the 229 first-party Python files or 199 templates, meaning the app never invokes these specific ORM functions at all. The retrieved 'similar' code snippets (admin list filters, _lookup in hc/api/views.py, mark_safe usage) are unrelated name/queryset filtering helpers that do not call Trunc/Extract and do not pass data into their kind/lookup_name parameters. Django itself is used extensively as a framework, but the vulnerable feature is a specific opt-in ORM function that this codebase does not use. Since the only paths that would trigger the vulnerability are absent from the codebase, the vulnerable code path is not exercised.",
+    "evidence": [
+     {
+      "location": "django: 0 production call sites of Trunc/Extract/lookup_name",
+      "explanation": "AST search across all first-party code and templates found no usage of the vulnerable symbols."
+     },
+     {
+      "location": "hc/api/views.py:77-92 _lookup",
+      "explanation": "Uses .filter() with ORM field lookups (name, tags, timeout, grace) but never calls Trunc() or Extract() with attacker-controlled kind/lookup_name."
+     },
+     {
+      "location": "hc/api/admin.py:108-109 KindListFilter.lookups",
+      "explanation": "Name match on 'lookup_name'/'kind' wording is coincidental; this returns static admin filter choices, not a Trunc/Extract lookup_name argument."
+     },
+     {
+      "location": "hc/accounts/admin.py, hc/payments/admin.py",
+      "explanation": "Imports and uses of django.contrib.admin, annotate(Count/F) etc. do not involve Trunc or Extract database functions."
+     }
+    ]
+   },
+   "tokens_in": 4034,
+   "tokens_out": 688,
+   "llm_calls": 1,
+   "llm_seconds": 10.17,
+   "cost_usd_est": 0.022422,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.88,\"vulnerable_symbols\":[\"Trunc\",\"Extract\",\"lookup_name\",\"kind\"],\"reasoning\":\"The advisory requires the application to construct Django's Trunc() or Extract() database functions with an untrusted 'kind' or 'lookup_name' argument. Static analysis found zero production call sites of Trunc, Extract, or lookup_name anywhere in the 229 first-party Python files or 199 templates, meaning the app never invokes these specific ORM functions at all. The retrieved 'similar' code snippets (admin list filters, _lookup in hc/api/views.py, mark_safe usage) are unrelated name/queryset filtering helpers that do not call Trunc/Extract and do not pass data into their kind/lookup_name parameters. Django itself is used extensively as a framework, but the vulnerable feature is a specific opt-in ORM function that this codebase does not use. Since the only paths that would trigger the vulnerability are absent from the codebase, the vulnerable code path is not exercised.\",\"evidence\":[{\"location\":\"django: 0 production call sites of Trunc/Extract/lookup_name\",\"explanation\":\"AST search across all first-party code and templates found no usage of the vulnerable symbols.\"},{\"location\":\"hc/api/views.py:77-92 _lookup\",\"explanation\":\"Uses .filter() with ORM field lookups (name, tags, timeout, grace) but never calls Trunc() or Extract() with attacker-controlled kind/lookup_name.\"},{\"location\":\"hc/api/admin.py:108-109 KindListFilter.lookups\",\"explanation\":\"Name match on 'lookup_name'/'kind' wording is coincidental; this returns static admin filter choices, not a Trunc/Extract lookup_name argument.\"},{\"location\":\"hc/accounts/admin.py, hc/payments/admin.py\",\"explanation\":\"Imports and uses of django.contrib.admin, annotate(Count/F) etc. do not involve Trunc or Extract database functions.\"}]}\n```",
+     "in": 4034,
+     "out": 688,
+     "s": 10.17,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 8867.9,
+   "output": {
+    "critique": "The strongest counter-argument: static AST search for the literal symbols 'Trunc'/'Extract' could miss dynamic or indirect usage (e.g., Django admin's date_hierarchy, dateformat filters, or third-party libs like django-import-export, Datadog, or healthchecks' own 'Count' trunc via extra() SQL), and annotate(Count(...)) calls in hc/accounts/admin.py could theoretically chain into TruncDate/TruncMonth if list_filter uses a date hierarchy. However, reviewing the evidence: the admin classes use Count/F, not Trunc/Extract; KindListFilter.lookups returns static hardcoded tuples, not user input; _lookup() in api/views.py builds filters from a fixed whitelist of fields (name/tags/timeout/grace), none of which touch Trunc/Extract kind/lookup_name parameters. The scanner's 0/0 call-site count directly addresses the vulnerable symbols, and no cited snippet shows any path where untrusted input reaches a Trunc() or Extract() kind argument. The healthchecks.io codebase (hc.*) is a known open-source app and does not use date-truncation ORM functions in its public-facing views. No wrapper, middleware, or template exercises the vulnerable feature. The verdict's reasoning accurately interprets the evidence rather than ignoring it.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.9
+   },
+   "tokens_in": 4074,
+   "tokens_out": 506,
+   "llm_calls": 1,
+   "llm_seconds": 8.86,
+   "cost_usd_est": 0.019812,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\": \"The strongest counter-argument: static AST search for the literal symbols 'Trunc'/'Extract' could miss dynamic or indirect usage (e.g., Django admin's date_hierarchy, dateformat filters, or third-party libs like django-import-export, Datadog, or healthchecks' own 'Count' trunc via extra() SQL), and annotate(Count(...)) calls in hc/accounts/admin.py could theoretically chain into TruncDate/TruncMonth if list_filter uses a date hierarchy. However, reviewing the evidence: the admin classes use Count/F, not Trunc/Extract; KindListFilter.lookups returns static hardcoded tuples, not user input; _lookup() in api/views.py builds filters from a fixed whitelist of fields (name/tags/timeout/grace), none of which touch Trunc/Extract kind/lookup_name parameters. The scanner's 0/0 call-site count directly addresses the vulnerable symbols, and no cited snippet shows any path where untrusted input reaches a Trunc() or Extract() kind argument. The healthchecks.io codebase (hc.*) is a known open-source app and does not use date-truncation ORM functions in its public-facing views. No wrapper, middleware, or template exercises the vulnerable feature. The verdict's reasoning accurately interprets the evidence rather than ignoring it.\", \"agrees\": true, \"retry\": false, \"final_verdict\": \"not_reachable\", \"confidence\": 0.9}",
+     "in": 4074,
+     "out": 506,
+     "s": 8.86,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.9,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 8108,
+  "tokens_out": 1194,
+  "cost_usd_est": 0.042234,
+  "seconds": 21.43
+ },
+ "created": "2026-11-10T15:19:51+00:00",
+ "code_version": "f26e69b"
+}

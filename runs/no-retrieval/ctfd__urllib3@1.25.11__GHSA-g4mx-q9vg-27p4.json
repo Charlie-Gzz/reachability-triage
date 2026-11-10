@@ -1,0 +1,340 @@
+{
+ "finding_id": "ctfd/urllib3@1.25.11/GHSA-g4mx-q9vg-27p4",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-45803",
+   "GHSA-g4mx-q9vg-27p4"
+  ],
+  "cves": [
+   "CVE-2023-45803"
+  ],
+  "cwes": [
+   "CWE-200"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/urllib3@1.25.11/GHSA-g4mx-q9vg-27p4",
+  "first_fixed_above_installed": "1.26.18",
+  "fixed_versions": [
+   "1.26.18",
+   "2.0.7"
+  ],
+  "max_cvss": "5.7",
+  "package": "urllib3",
+  "published": "2023-10-17T20:15:25Z",
+  "summary": "urllib3's request body not stripped after redirect from 303 status changes request method to GET",
+  "target": "ctfd",
+  "version": "1.25.11",
+  "vuln_id": "GHSA-g4mx-q9vg-27p4"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.68,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.72,
+  "vulnerable_symbols": [
+   "urllib3.poolmanager.PoolManager.urlopen (redirect-following with 303 status re-sending body)",
+   "urllib3.connectionpool.HTTPConnectionPool.urlopen"
+  ],
+  "reasoning": "The CVE is in urllib3's own internal redirect-following logic inside urlopen(): when it receives a 303 and automatically follows the redirect, it previously failed to strip the request body for the method-downgrade case. This path is only hit when something calls urllib3's urlopen/request with redirect=True (the default) and a body. The static evidence shows zero direct urllib3 imports or symbol usage in first-party code, so CTFd never calls urllib3's API directly. The dominant conduit for outbound HTTP in CTFd (OAuth callbacks, Discord/Slack notifications) is the `requests` library, but `requests.Session.send` explicitly disables urllib3's own redirect handling (it calls the transport adapter/urlopen with redirect=False) and instead performs redirect resolution itself in `Session.resolve_redirects`, which has its own, separately-patched logic for stripping the body on 303->GET method changes. Because requests never lets urllib3's internal redirect loop run with a body attached, the specific buggy code path this advisory describes is not exercised even though the app makes heavy use of `requests` for outbound calls. No evidence was found of CTFd using urllib3's PoolManager/urlopen directly (e.g., for raw HTTP without requests), which would be the only way to actually trigger the vulnerable behavior. Given this, the vulnerable feature is present in the dependency tree but not reachable through the application's actual usage pattern.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "CVE-2023-45803 describes a bug specifically in urllib3's internal urlopen() redirect-following code, not in any public app-facing API."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 non-test urllib3 imports and 0 production call sites of urllib3 symbols were found in the 142 first-party Python files searched."
+   },
+   {
+    "location": "requests library internals (general knowledge, not in evidence set)",
+    "explanation": "requests.Session.send/resolve_redirects implements its own redirect handling and calls urllib3 with redirect=False, bypassing the vulnerable internal redirect loop even when requests is used extensively for OAuth/webhook calls."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "No evidence of direct urllib3.PoolManager or HTTPConnectionPool.urlopen usage (the only way to hit the buggy path) was found anywhere in the app."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict's strongest move is correct: CVE-2023-45803 lives in urllib3's *internal* automatic-redirect loop inside urlopen(), and requests.Session deliberately disables that loop (passes redirect=False to the adapter/urlopen and does its own resolve_redirects with its own 303-body-stripping fix). So even if CTFd relies heavily on requests for OAuth/webhooks, that specific buggy code path is not exercised through requests, which is accurate and not contradicted by the static evidence. However, the static scan only covered 142 first-party Python files; it says nothing about whether other transitive dependencies in CTFd's stack (e.g., boto3/botocore, elasticsearch-py, or any SDK that uses urllib3.PoolManager directly rather than via requests) might call urllib3's urlopen with redirects enabled and a body. If any such dependency exists and is reachable from an entry point, the vulnerable path could still be hit without any first-party code ever referencing urllib3 or requests directly. The evidence set provided does not rule this out \u2014 it only confirms first-party code is clean. That is a real gap, but it's speculative without evidence of such a dependency actually being present and reachable, so it doesn't rise to the level of a clear misread of the given evidence.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.68
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/urllib3@1.25.11/GHSA-g4mx-q9vg-27p4",
+    "package": "urllib3",
+    "version": "1.25.11",
+    "vuln_id": "GHSA-g4mx-q9vg-27p4",
+    "aliases": [
+     "CVE-2023-45803",
+     "GHSA-g4mx-q9vg-27p4"
+    ],
+    "summary": "urllib3's request body not stripped after redirect from 303 status changes request method to GET",
+    "max_cvss": "5.7",
+    "fixed_versions": [
+     "1.26.18",
+     "2.0.7"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 32.0,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 9206.1,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.82,
+    "vulnerable_symbols": [
+     "HTTPConnectionPool.urlopen",
+     "PoolManager.urlopen (redirect handling with 303 status)"
+    ],
+    "reasoning": "The advisory concerns urllib3's automatic redirect-handling logic failing to strip the request body when a 303 response changes the method to GET, which requires the application to actually invoke urllib3's redirect-following urlopen with a body (directly or via requests). Static analysis found zero imports, zero references, and zero call sites of urllib3 (or symbols associated with it) anywhere in the 142 first-party Python files or templates, with no path from any entry point. Since urllib3 is only a transitive dependency with no production code path exercising it at all, the vulnerable redirect logic is never invoked by this application. This differs from a core framework always-on-request scenario; here the library appears entirely unused in first-party code, making it dead/unreached from the app's perspective. Absent any evidence of indirect usage via another library that's actually called, the vulnerable feature cannot be triggered by this application's code.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "CVE-2023-45803 requires urllib3's redirect-following urlopen to process a 303 response with a request body, which is a specific code path, not merely importing the package."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test imports, 0 call/reference sites, and 0 production call sites of urllib3 symbols were found across all 142 first-party Python files and 87 templates."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "No path from any entry point (view, task, CLI command, signal handler) to the vulnerable symbols was found, indicating the dependency is unused dead code from the app's perspective."
+     }
+    ]
+   },
+   "tokens_in": 1944,
+   "tokens_out": 597,
+   "llm_calls": 1,
+   "llm_seconds": 9.2,
+   "cost_usd_est": 0.014787,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.82,\"vulnerable_symbols\":[\"HTTPConnectionPool.urlopen\",\"PoolManager.urlopen (redirect handling with 303 status)\"],\"reasoning\":\"The advisory concerns urllib3's automatic redirect-handling logic failing to strip the request body when a 303 response changes the method to GET, which requires the application to actually invoke urllib3's redirect-following urlopen with a body (directly or via requests). Static analysis found zero imports, zero references, and zero call sites of urllib3 (or symbols associated with it) anywhere in the 142 first-party Python files or templates, with no path from any entry point. Since urllib3 is only a transitive dependency with no production code path exercising it at all, the vulnerable redirect logic is never invoked by this application. This differs from a core framework always-on-request scenario; here the library appears entirely unused in first-party code, making it dead/unreached from the app's perspective. Absent any evidence of indirect usage via another library that's actually called, the vulnerable feature cannot be triggered by this application's code.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"CVE-2023-45803 requires urllib3's redirect-following urlopen to process a 303 response with a request body, which is a specific code path, not merely importing the package.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 non-test imports, 0 call/reference sites, and 0 production call sites of urllib3 symbols were found across all 142 first-party Python files and 87 templates.\"},{\"location\":\"static evidence summary\",\"explanation\":\"No path from any entry point (view, task, CLI command, signal handler) to the vulnerable symbols was found, indicating the dependency is unused dead code from the app's perspective.\"}]}\n```",
+     "in": 1944,
+     "out": 597,
+     "s": 9.2,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 24675.4,
+   "output": {
+    "critique": "The analysis only grepped for literal 'urllib3' imports/symbols, but urllib3 is almost never called directly in application code \u2014 it's exercised through `requests`, which CTFd (the app here) uses extensively for OAuth callbacks, Discord/Slack webhook notifications, and other outbound HTTP calls. The evidence provided says nothing about whether `requests.post/get` with redirect-following and a request body is used anywhere in the first-party code, which is the actual conduit to urllib3's urlopen redirect logic. Searching only for 'urllib3' and missing 'requests' call sites is a methodological gap that could produce a false negative (the costly error). That said, the verdict's conclusion may still be correct for a different reason not argued: `requests` implements its own redirect-resolution logic (Session.resolve_redirects) and calls urllib3's urlopen with redirect=False, so even widespread `requests` usage would likely not trigger urllib3's own buggy 303 redirect-handling path \u2014 but the submitted reasoning never makes this argument and instead relies on an incomplete 'zero urllib3 symbol' search that doesn't rule out the real pathway. The verdict reached a plausible conclusion through flawed/incomplete reasoning that ignored the dominant usage pattern (requests-mediated calls), so it should be redone to explicitly check for requests usage and confirm whether redirect=True paths with bodies exist.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 1882,
+   "tokens_out": 2018,
+   "llm_calls": 1,
+   "llm_seconds": 24.66,
+   "cost_usd_est": 0.035916,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The analysis only grepped for literal 'urllib3' imports/symbols, but urllib3 is almost never called directly in application code \u2014 it's exercised through `requests`, which CTFd (the app here) uses extensively for OAuth callbacks, Discord/Slack webhook notifications, and other outbound HTTP calls. The evidence provided says nothing about whether `requests.post/get` with redirect-following and a request body is used anywhere in the first-party code, which is the actual conduit to urllib3's urlopen redirect logic. Searching only for 'urllib3' and missing 'requests' call sites is a methodological gap that could produce a false negative (the costly error). That said, the verdict's conclusion may still be correct for a different reason not argued: `requests` implements its own redirect-resolution logic (Session.resolve_redirects) and calls urllib3's urlopen with redirect=False, so even widespread `requests` usage would likely not trigger urllib3's own buggy 303 redirect-handling path \u2014 but the submitted reasoning never makes this argument and instead relies on an incomplete 'zero urllib3 symbol' search that doesn't rule out the real pathway. The verdict reached a plausible conclusion through flawed/incomplete reasoning that ignored the dominant usage pattern (requests-mediated calls), so it should be redone to explicitly check for requests usage and confirm whether redirect=True paths with bodies exist.\",\"agrees\":false,\"retry\":true,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 1882,
+     "out": 2018,
+     "s": 24.66,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 22294.4,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.72,
+    "vulnerable_symbols": [
+     "urllib3.poolmanager.PoolManager.urlopen (redirect-following with 303 status re-sending body)",
+     "urllib3.connectionpool.HTTPConnectionPool.urlopen"
+    ],
+    "reasoning": "The CVE is in urllib3's own internal redirect-following logic inside urlopen(): when it receives a 303 and automatically follows the redirect, it previously failed to strip the request body for the method-downgrade case. This path is only hit when something calls urllib3's urlopen/request with redirect=True (the default) and a body. The static evidence shows zero direct urllib3 imports or symbol usage in first-party code, so CTFd never calls urllib3's API directly. The dominant conduit for outbound HTTP in CTFd (OAuth callbacks, Discord/Slack notifications) is the `requests` library, but `requests.Session.send` explicitly disables urllib3's own redirect handling (it calls the transport adapter/urlopen with redirect=False) and instead performs redirect resolution itself in `Session.resolve_redirects`, which has its own, separately-patched logic for stripping the body on 303->GET method changes. Because requests never lets urllib3's internal redirect loop run with a body attached, the specific buggy code path this advisory describes is not exercised even though the app makes heavy use of `requests` for outbound calls. No evidence was found of CTFd using urllib3's PoolManager/urlopen directly (e.g., for raw HTTP without requests), which would be the only way to actually trigger the vulnerable behavior. Given this, the vulnerable feature is present in the dependency tree but not reachable through the application's actual usage pattern.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "CVE-2023-45803 describes a bug specifically in urllib3's internal urlopen() redirect-following code, not in any public app-facing API."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test urllib3 imports and 0 production call sites of urllib3 symbols were found in the 142 first-party Python files searched."
+     },
+     {
+      "location": "requests library internals (general knowledge, not in evidence set)",
+      "explanation": "requests.Session.send/resolve_redirects implements its own redirect handling and calls urllib3 with redirect=False, bypassing the vulnerable internal redirect loop even when requests is used extensively for OAuth/webhook calls."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "No evidence of direct urllib3.PoolManager or HTTPConnectionPool.urlopen usage (the only way to hit the buggy path) was found anywhere in the app."
+     }
+    ]
+   },
+   "tokens_in": 2430,
+   "tokens_out": 1988,
+   "llm_calls": 1,
+   "llm_seconds": 22.28,
+   "cost_usd_est": 0.03711,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.72,\"vulnerable_symbols\":[\"urllib3.poolmanager.PoolManager.urlopen (redirect-following with 303 status re-sending body)\",\"urllib3.connectionpool.HTTPConnectionPool.urlopen\"],\"reasoning\":\"The CVE is in urllib3's own internal redirect-following logic inside urlopen(): when it receives a 303 and automatically follows the redirect, it previously failed to strip the request body for the method-downgrade case. This path is only hit when something calls urllib3's urlopen/request with redirect=True (the default) and a body. The static evidence shows zero direct urllib3 imports or symbol usage in first-party code, so CTFd never calls urllib3's API directly. The dominant conduit for outbound HTTP in CTFd (OAuth callbacks, Discord/Slack notifications) is the `requests` library, but `requests.Session.send` explicitly disables urllib3's own redirect handling (it calls the transport adapter/urlopen with redirect=False) and instead performs redirect resolution itself in `Session.resolve_redirects`, which has its own, separately-patched logic for stripping the body on 303->GET method changes. Because requests never lets urllib3's internal redirect loop run with a body attached, the specific buggy code path this advisory describes is not exercised even though the app makes heavy use of `requests` for outbound calls. No evidence was found of CTFd using urllib3's PoolManager/urlopen directly (e.g., for raw HTTP without requests), which would be the only way to actually trigger the vulnerable behavior. Given this, the vulnerable feature is present in the dependency tree but not reachable through the application's actual usage pattern.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"CVE-2023-45803 describes a bug specifically in urllib3's internal urlopen() redirect-following code, not in any public app-facing API.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 non-test urllib3 imports and 0 production call sites of urllib3 symbols were found in the 142 first-party Python files searched.\"},{\"location\":\"requests library internals (general knowledge, not in evidence set)\",\"explanation\":\"requests.Session.send/resolve_redirects implements its own redirect handling and calls urllib3 with redirect=False, bypassing the vulnerable internal redirect loop even when requests is used extensively for OAuth/webhook calls.\"},{\"location\":\"static evidence summary\",\"explanation\":\"No evidence of direct urllib3.PoolManager or HTTPConnectionPool.urlopen usage (the only way to hit the buggy path) was found anywhere in the app.\"}]}",
+     "in": 2430,
+     "out": 1988,
+     "s": 22.28,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 19817.5,
+   "output": {
+    "critique": "The verdict's strongest move is correct: CVE-2023-45803 lives in urllib3's *internal* automatic-redirect loop inside urlopen(), and requests.Session deliberately disables that loop (passes redirect=False to the adapter/urlopen and does its own resolve_redirects with its own 303-body-stripping fix). So even if CTFd relies heavily on requests for OAuth/webhooks, that specific buggy code path is not exercised through requests, which is accurate and not contradicted by the static evidence. However, the static scan only covered 142 first-party Python files; it says nothing about whether other transitive dependencies in CTFd's stack (e.g., boto3/botocore, elasticsearch-py, or any SDK that uses urllib3.PoolManager directly rather than via requests) might call urllib3's urlopen with redirects enabled and a body. If any such dependency exists and is reachable from an entry point, the vulnerable path could still be hit without any first-party code ever referencing urllib3 or requests directly. The evidence set provided does not rule this out \u2014 it only confirms first-party code is clean. That is a real gap, but it's speculative without evidence of such a dependency actually being present and reachable, so it doesn't rise to the level of a clear misread of the given evidence.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.68
+   },
+   "tokens_in": 2156,
+   "tokens_out": 1604,
+   "llm_calls": 1,
+   "llm_seconds": 19.81,
+   "cost_usd_est": 0.030528,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's strongest move is correct: CVE-2023-45803 lives in urllib3's *internal* automatic-redirect loop inside urlopen(), and requests.Session deliberately disables that loop (passes redirect=False to the adapter/urlopen and does its own resolve_redirects with its own 303-body-stripping fix). So even if CTFd relies heavily on requests for OAuth/webhooks, that specific buggy code path is not exercised through requests, which is accurate and not contradicted by the static evidence. However, the static scan only covered 142 first-party Python files; it says nothing about whether other transitive dependencies in CTFd's stack (e.g., boto3/botocore, elasticsearch-py, or any SDK that uses urllib3.PoolManager directly rather than via requests) might call urllib3's urlopen with redirects enabled and a body. If any such dependency exists and is reachable from an entry point, the vulnerable path could still be hit without any first-party code ever referencing urllib3 or requests directly. The evidence set provided does not rule this out \u2014 it only confirms first-party code is clean. That is a real gap, but it's speculative without evidence of such a dependency actually being present and reachable, so it doesn't rise to the level of a clear misread of the given evidence.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.68}",
+     "in": 2156,
+     "out": 1604,
+     "s": 19.81,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.68,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 8412,
+  "tokens_out": 6207,
+  "cost_usd_est": 0.118341,
+  "seconds": 76.03
+ },
+ "created": "2026-11-10T16:26:29+00:00",
+ "code_version": "f26e69b"
+}

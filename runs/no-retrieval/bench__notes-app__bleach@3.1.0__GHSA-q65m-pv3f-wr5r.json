@@ -1,0 +1,339 @@
+{
+ "finding_id": "bench/notes-app/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+ "config": "no-retrieval",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/notes-app",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2020-6802",
+   "GHSA-q65m-pv3f-wr5r",
+   "PYSEC-2020-27"
+  ],
+  "cves": [
+   "CVE-2020-6802"
+  ],
+  "cwes": [
+   "CWE-79"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/notes-app/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+  "first_fixed_above_installed": "3.1.1",
+  "fixed_versions": [
+   "3.1.1"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+  "package": "bleach",
+  "published": "2020-02-24T17:33:44Z",
+  "split": "test",
+  "summary": "XSS in Bleach when noscript and raw tag whitelisted",
+  "target": "bench/notes-app",
+  "version": "3.1.0",
+  "vuln_id": "GHSA-q65m-pv3f-wr5r"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.72,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.3,
+  "vulnerable_symbols": [
+   "bleach.clean (tags allowlist containing 'noscript' or 'style'/'math'/'svg' combined with raw-text-tag quirk)"
+  ],
+  "reasoning": "CVE-2020-6802 is triggered specifically when bleach.clean() is called with an allowlist that includes 'noscript' (or other RCDATA tags like 'script'/'style') alongside permissive settings, allowing injected markup to break out of the tag's raw-text parsing context and execute as HTML/script. The app does call bleach.clean(html, tags=TAGS, attributes=ATTRS, strip=False) at notes/render.py:10, which is a real, reachable call site (clean() is invoked on, presumably, user-supplied note content). However, I could not access or view the actual contents of notes/render.py (or a sibling constants module) in this environment to confirm whether TAGS includes 'noscript' or any other raw-text tag; the provided evidence only shows the call site, not the TAGS/ATTRS definitions. Without seeing the literal list assigned to TAGS, I cannot positively confirm the vulnerable tag is allow-listed (which would make it reachable) or positively confirm it is absent (which would make it not_reachable). Per the stated rules, lacking the specific fact needed to settle the question, but with a confirmed non-dead, actively-used bleach.clean() call on likely user input, this sits at 'uncertain' rather than 'not_reachable' \u2014 the gap is evidentiary, not logical, and should be closed by directly reading the TAGS assignment in the source.",
+  "evidence": [
+   {
+    "location": "notes/render.py:10",
+    "explanation": "Confirmed, non-dead call to bleach.clean() with strip=False and a custom tags allowlist, the exact vulnerable API/pattern per the advisory."
+   },
+   {
+    "location": "notes/render.py:1",
+    "explanation": "bleach is imported here, establishing this is the only production use site in the app."
+   },
+   {
+    "location": "advisory",
+    "explanation": "CVE-2020-6802 requires 'noscript' or similar raw-text tags to be present in the allowlist passed to clean() for the XSS to trigger."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict correctly identifies the real gap: the AST evidence shows a live, reachable bleach.clean(strip=False) call with a custom TAGS allowlist, but does not reveal whether TAGS contains 'noscript' or another RCDATA tag (script, style, title, textarea, xmp, iframe, noembed, noframes), which is the precondition for CVE-2020-6802. The reviewer did not have access to the TAGS definition and explicitly said so rather than guessing. One could argue the verdict should lean toward 'reachable' given that note-rendering apps commonly whitelist basic formatting tags (b, i, a, img) and rarely include noscript/script, which would actually argue for not_reachable in practice -- but that's speculation in the opposite direction, not evidence. Equally, one could argue it should lean not_reachable by default (common tag allowlists for notes apps exploited rarely include noscript), but that's also speculative without seeing TAGS. The verdict's reasoning is internally consistent and does not ignore or misread any cited evidence -- it explicitly flags the one missing fact needed to resolve the question. This is a legitimate 'uncertain' case: the evidence truly cannot decide reachability without the TAGS list contents, and the analyst was transparent about this rather than fabricating a conclusion. No evidence was ignored or misread, so retry is not warranted on those grounds. The correct next step is to fetch/view the actual TAGS constant (same file or a sibling module), but given the current evidence set, 'uncertain' is the defensible, non-speculative call.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.72
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/notes-app/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+    "package": "bleach",
+    "version": "3.1.0",
+    "vuln_id": "GHSA-q65m-pv3f-wr5r",
+    "aliases": [
+     "CVE-2020-6802",
+     "GHSA-q65m-pv3f-wr5r",
+     "PYSEC-2020-27"
+    ],
+    "summary": "XSS in Bleach when noscript and raw tag whitelisted",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+    "fixed_versions": [
+     "3.1.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.3,
+   "output": {
+    "package": "bleach",
+    "import_names": [
+     "bleach"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "notes/render.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "notes/render.py:10",
+      "code": "return bleach.clean(html, tags=TAGS, attributes=ATTRS, strip=False)",
+      "function": "notes.render:render_note",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 2,
+    "paths": [],
+    "summary": "bleach: imported in 1 non-test location(s); 3 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 14074.1,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [
+     "bleach.clean"
+    ],
+    "reasoning": "CVE-2020-6802 affects bleach.clean() specifically when the caller's allowed-tags list includes certain tag combinations (e.g., 'noscript' together with other raw/script-adjacent tags), causing sanitized output to still permit script execution. The application does call bleach.clean() directly on untrusted HTML input in notes/render.py:10, so the vulnerable function is exercised in production code with attacker-influenced input. However, the actual exploitability depends on the contents of the TAGS/ATTRS allowlist passed in, which were not shown in the evidence; if TAGS does not include 'noscript' (or the other triggering tags), this specific CVE would not apply even though clean() itself is used. Without visibility into the TAGS/ATTRS definitions, it cannot be confirmed whether the vulnerable tag combination is actually allowlisted.",
+    "evidence": [
+     {
+      "location": "notes/render.py:10",
+      "explanation": "Calls bleach.clean(html, tags=TAGS, attributes=ATTRS, strip=False), directly invoking the vulnerable sanitization function on HTML content."
+     },
+     {
+      "location": "notes/render.py:1",
+      "explanation": "bleach is imported and used as the sole sanitizer for HTML, so if TAGS permits 'noscript' plus triggering tags, external input reaches the vulnerable path."
+     },
+     {
+      "location": "advisory",
+      "explanation": "The advisory requires a specific tag allowlist (noscript combined with certain raw tags) to trigger the bypass; the TAGS/ATTRS definitions were not provided to confirm or rule this out."
+     }
+    ]
+   },
+   "tokens_in": 1996,
+   "tokens_out": 1104,
+   "llm_calls": 1,
+   "llm_seconds": 14.06,
+   "cost_usd_est": 0.022548,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"uncertain\",\"confidence\":0.4,\"vulnerable_symbols\":[\"bleach.clean\"],\"reasoning\":\"CVE-2020-6802 affects bleach.clean() specifically when the caller's allowed-tags list includes certain tag combinations (e.g., 'noscript' together with other raw/script-adjacent tags), causing sanitized output to still permit script execution. The application does call bleach.clean() directly on untrusted HTML input in notes/render.py:10, so the vulnerable function is exercised in production code with attacker-influenced input. However, the actual exploitability depends on the contents of the TAGS/ATTRS allowlist passed in, which were not shown in the evidence; if TAGS does not include 'noscript' (or the other triggering tags), this specific CVE would not apply even though clean() itself is used. Without visibility into the TAGS/ATTRS definitions, it cannot be confirmed whether the vulnerable tag combination is actually allowlisted.\",\"evidence\":[{\"location\":\"notes/render.py:10\",\"explanation\":\"Calls bleach.clean(html, tags=TAGS, attributes=ATTRS, strip=False), directly invoking the vulnerable sanitization function on HTML content.\"},{\"location\":\"notes/render.py:1\",\"explanation\":\"bleach is imported and used as the sole sanitizer for HTML, so if TAGS permits 'noscript' plus triggering tags, external input reaches the vulnerable path.\"},{\"location\":\"advisory\",\"explanation\":\"The advisory requires a specific tag allowlist (noscript combined with certain raw tags) to trigger the bypass; the TAGS/ATTRS definitions were not provided to confirm or rule this out.\"}]}",
+     "in": 1996,
+     "out": 1104,
+     "s": 14.06,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 17285.4,
+   "output": {
+    "critique": "The verdict's core gap\u2014not knowing whether TAGS includes 'noscript' (the specific trigger for CVE-2020-6802)\u2014is a solvable evidence problem, not an inherent ambiguity. TAGS and ATTRS are presumably defined as constants in the same file (notes/render.py) or a sibling module, since they're passed directly into the bleach.clean() call. The analysis stopped at the call site instead of resolving the actual allowlist values, which is the single fact that would flip this to reachable or not_reachable. Settling for 'uncertain' without attempting to pull the TAGS definition is premature; the static AST tool should be re-run to locate `TAGS = ...` / `ATTRS = ...` assignments (likely in notes/render.py near line 10, or imported from a constants module) before concluding the question is unresolvable. If TAGS is small and standard (e.g., p/b/i/a/ul/li), 'noscript' almost certainly isn't there and the verdict should be not_reachable; if it's a broad custom allowlist, it could be reachable. The current verdict is defensible as an interim state but leaves clearly obtainable evidence ungathered.",
+    "agrees": true,
+    "retry": true,
+    "final_verdict": "uncertain",
+    "confidence": 0.45
+   },
+   "tokens_in": 1949,
+   "tokens_out": 1348,
+   "llm_calls": 1,
+   "llm_seconds": 17.28,
+   "cost_usd_est": 0.026067,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's core gap\u2014not knowing whether TAGS includes 'noscript' (the specific trigger for CVE-2020-6802)\u2014is a solvable evidence problem, not an inherent ambiguity. TAGS and ATTRS are presumably defined as constants in the same file (notes/render.py) or a sibling module, since they're passed directly into the bleach.clean() call. The analysis stopped at the call site instead of resolving the actual allowlist values, which is the single fact that would flip this to reachable or not_reachable. Settling for 'uncertain' without attempting to pull the TAGS definition is premature; the static AST tool should be re-run to locate `TAGS = ...` / `ATTRS = ...` assignments (likely in notes/render.py near line 10, or imported from a constants module) before concluding the question is unresolvable. If TAGS is small and standard (e.g., p/b/i/a/ul/li), 'noscript' almost certainly isn't there and the verdict should be not_reachable; if it's a broad custom allowlist, it could be reachable. The current verdict is defensible as an interim state but leaves clearly obtainable evidence ungathered.\",\"agrees\":true,\"retry\":true,\"final_verdict\":\"uncertain\",\"confidence\":0.45}",
+     "in": 1949,
+     "out": 1348,
+     "s": 17.28,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 12423.9,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.3,
+    "vulnerable_symbols": [
+     "bleach.clean (tags allowlist containing 'noscript' or 'style'/'math'/'svg' combined with raw-text-tag quirk)"
+    ],
+    "reasoning": "CVE-2020-6802 is triggered specifically when bleach.clean() is called with an allowlist that includes 'noscript' (or other RCDATA tags like 'script'/'style') alongside permissive settings, allowing injected markup to break out of the tag's raw-text parsing context and execute as HTML/script. The app does call bleach.clean(html, tags=TAGS, attributes=ATTRS, strip=False) at notes/render.py:10, which is a real, reachable call site (clean() is invoked on, presumably, user-supplied note content). However, I could not access or view the actual contents of notes/render.py (or a sibling constants module) in this environment to confirm whether TAGS includes 'noscript' or any other raw-text tag; the provided evidence only shows the call site, not the TAGS/ATTRS definitions. Without seeing the literal list assigned to TAGS, I cannot positively confirm the vulnerable tag is allow-listed (which would make it reachable) or positively confirm it is absent (which would make it not_reachable). Per the stated rules, lacking the specific fact needed to settle the question, but with a confirmed non-dead, actively-used bleach.clean() call on likely user input, this sits at 'uncertain' rather than 'not_reachable' \u2014 the gap is evidentiary, not logical, and should be closed by directly reading the TAGS assignment in the source.",
+    "evidence": [
+     {
+      "location": "notes/render.py:10",
+      "explanation": "Confirmed, non-dead call to bleach.clean() with strip=False and a custom tags allowlist, the exact vulnerable API/pattern per the advisory."
+     },
+     {
+      "location": "notes/render.py:1",
+      "explanation": "bleach is imported here, establishing this is the only production use site in the app."
+     },
+     {
+      "location": "advisory",
+      "explanation": "CVE-2020-6802 requires 'noscript' or similar raw-text tags to be present in the allowlist passed to clean() for the XSS to trigger."
+     }
+    ]
+   },
+   "tokens_in": 2402,
+   "tokens_out": 866,
+   "llm_calls": 1,
+   "llm_seconds": 12.42,
+   "cost_usd_est": 0.020196,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "I'll inspect `notes/render.py` directly to resolve the `TAGS`/`ATTRS` allowlist values, since that's the deciding fact.\n\n**{\"verdict\": \"uncertain\", \"confidence\": 0.3, \"vulnerable_symbols\": [\"bleach.clean (tags allowlist containing 'noscript' or 'style'/'math'/'svg' combined with raw-text-tag quirk)\"], \"reasoning\": \"CVE-2020-6802 is triggered specifically when bleach.clean() is called with an allowlist that includes 'noscript' (or other RCDATA tags like 'script'/'style') alongside permissive settings, allowing injected markup to break out of the tag's raw-text parsing context and execute as HTML/script. The app does call bleach.clean(html, tags=TAGS, attributes=ATTRS, strip=False) at notes/render.py:10, which is a real, reachable call site (clean() is invoked on, presumably, user-supplied note content). However, I could not access or view the actual contents of notes/render.py (or a sibling constants module) in this environment to confirm whether TAGS includes 'noscript' or any other raw-text tag; the provided evidence only shows the call site, not the TAGS/ATTRS definitions. Without seeing the literal list assigned to TAGS, I cannot positively confirm the vulnerable tag is allow-listed (which would make it reachable) or positively confirm it is absent (which would make it not_reachable). Per the stated rules, lacking the specific fact needed to settle the question, but with a confirmed non-dead, actively-used bleach.clean() call on likely user input, this sits at 'uncertain' rather than 'not_reachable' \u2014 the gap is evidentiary, not logical, and should be closed by directly reading the TAGS assignment in the source.\", \"evidence\": [{\"location\": \"notes/render.py:10\", \"explanation\": \"Confirmed, non-dead call to bleach.clean() with strip=False and a custom tags allowlist, the exact vulnerable API/pattern per the advisory.\"}, {\"location\": \"notes/render.py:1\", \"explanation\": \"bleach is imported here, establishing this is the only production use site in the app.\"}, {\"location\": \"advisory\", \"explanation\": \"CVE-2020-6802 requires 'noscript' or similar raw-text tags to be present in the allowlist passed to clean() for the XSS to trigger.\"}]}",
+     "in": 2402,
+     "out": 866,
+     "s": 12.42,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 9032.2,
+   "output": {
+    "critique": "The verdict correctly identifies the real gap: the AST evidence shows a live, reachable bleach.clean(strip=False) call with a custom TAGS allowlist, but does not reveal whether TAGS contains 'noscript' or another RCDATA tag (script, style, title, textarea, xmp, iframe, noembed, noframes), which is the precondition for CVE-2020-6802. The reviewer did not have access to the TAGS definition and explicitly said so rather than guessing. One could argue the verdict should lean toward 'reachable' given that note-rendering apps commonly whitelist basic formatting tags (b, i, a, img) and rarely include noscript/script, which would actually argue for not_reachable in practice -- but that's speculation in the opposite direction, not evidence. Equally, one could argue it should lean not_reachable by default (common tag allowlists for notes apps exploited rarely include noscript), but that's also speculative without seeing TAGS. The verdict's reasoning is internally consistent and does not ignore or misread any cited evidence -- it explicitly flags the one missing fact needed to resolve the question. This is a legitimate 'uncertain' case: the evidence truly cannot decide reachability without the TAGS list contents, and the analyst was transparent about this rather than fabricating a conclusion. No evidence was ignored or misread, so retry is not warranted on those grounds. The correct next step is to fetch/view the actual TAGS constant (same file or a sibling module), but given the current evidence set, 'uncertain' is the defensible, non-speculative call.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.72
+   },
+   "tokens_in": 2069,
+   "tokens_out": 565,
+   "llm_calls": 1,
+   "llm_seconds": 9.02,
+   "cost_usd_est": 0.014682,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json{\"critique\":\"The verdict correctly identifies the real gap: the AST evidence shows a live, reachable bleach.clean(strip=False) call with a custom TAGS allowlist, but does not reveal whether TAGS contains 'noscript' or another RCDATA tag (script, style, title, textarea, xmp, iframe, noembed, noframes), which is the precondition for CVE-2020-6802. The reviewer did not have access to the TAGS definition and explicitly said so rather than guessing. One could argue the verdict should lean toward 'reachable' given that note-rendering apps commonly whitelist basic formatting tags (b, i, a, img) and rarely include noscript/script, which would actually argue for not_reachable in practice -- but that's speculation in the opposite direction, not evidence. Equally, one could argue it should lean not_reachable by default (common tag allowlists for notes apps exploited rarely include noscript), but that's also speculative without seeing TAGS. The verdict's reasoning is internally consistent and does not ignore or misread any cited evidence -- it explicitly flags the one missing fact needed to resolve the question. This is a legitimate 'uncertain' case: the evidence truly cannot decide reachability without the TAGS list contents, and the analyst was transparent about this rather than fabricating a conclusion. No evidence was ignored or misread, so retry is not warranted on those grounds. The correct next step is to fetch/view the actual TAGS constant (same file or a sibling module), but given the current evidence set, 'uncertain' is the defensible, non-speculative call.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.72}```",
+     "in": 2069,
+     "out": 565,
+     "s": 9.02,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.72,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 8416,
+  "tokens_out": 3883,
+  "cost_usd_est": 0.083493,
+  "seconds": 52.82
+ },
+ "created": "2026-11-10T16:05:02+00:00",
+ "code_version": "f26e69b"
+}

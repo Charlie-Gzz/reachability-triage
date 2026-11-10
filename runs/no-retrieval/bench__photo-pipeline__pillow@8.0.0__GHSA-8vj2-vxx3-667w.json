@@ -1,0 +1,280 @@
+{
+ "finding_id": "bench/photo-pipeline/pillow@8.0.0/GHSA-8vj2-vxx3-667w",
+ "config": "no-retrieval",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/photo-pipeline",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-22817",
+   "GHSA-8vj2-vxx3-667w",
+   "PYSEC-2022-10"
+  ],
+  "cves": [
+   "CVE-2022-22817"
+  ],
+  "cwes": [
+   "CWE-74"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/photo-pipeline/pillow@8.0.0/GHSA-8vj2-vxx3-667w",
+  "first_fixed_above_installed": "9.0.0",
+  "fixed_versions": [
+   "9.0.0",
+   "9.0.1"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "pillow",
+  "published": "2022-01-12T20:07:33Z",
+  "split": "test",
+  "summary": "Arbitrary expression injection in Pillow",
+  "target": "bench/photo-pipeline",
+  "version": "8.0.0",
+  "vuln_id": "GHSA-8vj2-vxx3-667w"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.72,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "PIL.ImageMath.eval"
+  ],
+  "reasoning": "CVE-2022-22817 is specifically about PIL.ImageMath.eval() allowing arbitrary expression/code execution when the formula string is not fully trusted, since eval() parses and executes the formula as a Python-like expression against supplied image operands. The application calls ImageMath.eval(formula, a=img.convert('L')) directly in pipeline/ops/expressions.py:5, which is the exact vulnerable API from the advisory, not an unrelated symbol. The scanner's symbol search missed it only because it didn't match 'ImageMath.eval' as a named pattern, but the evidence block itself shows the call. The module name 'expressions.py' and the generic 'formula' parameter strongly suggest the formula string originates from pipeline input rather than a hard-coded constant, meaning external influence over the expression is plausible. Because this is a direct, non-test call to the precise vulnerable function with a variable formula argument, and nothing in the evidence shows the formula is a fixed/safe string, this should be treated as reachable rather than dismissed.",
+  "evidence": [
+   {
+    "location": "pipeline/ops/expressions.py:5",
+    "explanation": "Direct call to ImageMath.eval(formula, ...) \u2014 the exact API the advisory identifies as vulnerable to expression injection."
+   },
+   {
+    "location": "pipeline/ops/expressions.py:1",
+    "explanation": "ImageMath is imported here, confirming production (non-test) use of the vulnerable module."
+   },
+   {
+    "location": "pipeline/jobs.py:3,9",
+    "explanation": "Pillow is imported and used to open images from raw bytes in the job pipeline, indicating this code path is part of a live processing pipeline, not dead code, making the downstream ImageMath.eval call reachable from an entry point."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter here is that the advisory's precondition\u2014attacker influence over the 'formula' string passed to ImageMath.eval\u2014is never actually demonstrated by the cited evidence. The verdict leans on the file being named 'expressions.py' and the parameter being named 'formula' as 'strongly suggesting' external input, but that's inference from naming, not evidence of a data flow from an entry point to that argument. If 'formula' is actually a small set of hardcoded strings chosen by developers (e.g., fixed tone-curve expressions), eval() is still invoked but there's no injection surface, and the alert would be exploitability-irrelevant even though reachable in a narrow code-path sense. That said, this critique doesn't overturn the verdict: the core reachability question (is PIL.ImageMath.eval actually invoked in live, non-test, non-dead production code reachable from the job pipeline?) is unambiguously yes per the evidence, and that is a meaningful correction of the scanner's symbol search, which spuriously reported zero vulnerable-symbol call sites despite a literal ImageMath.eval() call sitting right there. The verdict's citation of evidence for the call itself is accurate and not misread; only the exploitability narrative about formula's origin is speculative. Given reachability determinations typically concern 'is the vulnerable sink invoked on a live path,' not full proof of attacker-controlled input, reachable remains the defensible call, but confidence should be tempered since the untrusted-input precondition is asserted rather than shown.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.72
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/photo-pipeline/pillow@8.0.0/GHSA-8vj2-vxx3-667w",
+    "package": "pillow",
+    "version": "8.0.0",
+    "vuln_id": "GHSA-8vj2-vxx3-667w",
+    "aliases": [
+     "CVE-2022-22817",
+     "GHSA-8vj2-vxx3-667w",
+     "PYSEC-2022-10"
+    ],
+    "summary": "Arbitrary expression injection in Pillow",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "9.0.0",
+     "9.0.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 4.4,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "pipeline/jobs.py:3",
+     "pipeline/ops/expressions.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "pipeline/jobs.py:9",
+      "code": "img = Image.open(io.BytesIO(raw))",
+      "function": "pipeline.jobs:run_job",
+      "in_test": false
+     },
+     {
+      "location": "pipeline/ops/expressions.py:5",
+      "code": "return ImageMath.eval(formula, a=img.convert(\"L\"))",
+      "function": "pipeline.ops.expressions:apply_expression",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 6,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [],
+    "summary": "pillow: imported in 2 non-test location(s); 6 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 14087.9,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "PIL.ImageMath.eval"
+    ],
+    "reasoning": "CVE-2022-22817 is specifically about PIL.ImageMath.eval() allowing arbitrary expression/code execution when the formula string is not fully trusted, since eval() parses and executes the formula as a Python-like expression against supplied image operands. The application calls ImageMath.eval(formula, a=img.convert('L')) directly in pipeline/ops/expressions.py:5, which is the exact vulnerable API from the advisory, not an unrelated symbol. The scanner's symbol search missed it only because it didn't match 'ImageMath.eval' as a named pattern, but the evidence block itself shows the call. The module name 'expressions.py' and the generic 'formula' parameter strongly suggest the formula string originates from pipeline input rather than a hard-coded constant, meaning external influence over the expression is plausible. Because this is a direct, non-test call to the precise vulnerable function with a variable formula argument, and nothing in the evidence shows the formula is a fixed/safe string, this should be treated as reachable rather than dismissed.",
+    "evidence": [
+     {
+      "location": "pipeline/ops/expressions.py:5",
+      "explanation": "Direct call to ImageMath.eval(formula, ...) \u2014 the exact API the advisory identifies as vulnerable to expression injection."
+     },
+     {
+      "location": "pipeline/ops/expressions.py:1",
+      "explanation": "ImageMath is imported here, confirming production (non-test) use of the vulnerable module."
+     },
+     {
+      "location": "pipeline/jobs.py:3,9",
+      "explanation": "Pillow is imported and used to open images from raw bytes in the job pipeline, indicating this code path is part of a live processing pipeline, not dead code, making the downstream ImageMath.eval call reachable from an entry point."
+     }
+    ]
+   },
+   "tokens_in": 2052,
+   "tokens_out": 1092,
+   "llm_calls": 1,
+   "llm_seconds": 14.08,
+   "cost_usd_est": 0.022536,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"reachable\",\"confidence\":0.85,\"vulnerable_symbols\":[\"PIL.ImageMath.eval\"],\"reasoning\":\"CVE-2022-22817 is specifically about PIL.ImageMath.eval() allowing arbitrary expression/code execution when the formula string is not fully trusted, since eval() parses and executes the formula as a Python-like expression against supplied image operands. The application calls ImageMath.eval(formula, a=img.convert('L')) directly in pipeline/ops/expressions.py:5, which is the exact vulnerable API from the advisory, not an unrelated symbol. The scanner's symbol search missed it only because it didn't match 'ImageMath.eval' as a named pattern, but the evidence block itself shows the call. The module name 'expressions.py' and the generic 'formula' parameter strongly suggest the formula string originates from pipeline input rather than a hard-coded constant, meaning external influence over the expression is plausible. Because this is a direct, non-test call to the precise vulnerable function with a variable formula argument, and nothing in the evidence shows the formula is a fixed/safe string, this should be treated as reachable rather than dismissed.\",\"evidence\":[{\"location\":\"pipeline/ops/expressions.py:5\",\"explanation\":\"Direct call to ImageMath.eval(formula, ...) \u2014 the exact API the advisory identifies as vulnerable to expression injection.\"},{\"location\":\"pipeline/ops/expressions.py:1\",\"explanation\":\"ImageMath is imported here, confirming production (non-test) use of the vulnerable module.\"},{\"location\":\"pipeline/jobs.py:3,9\",\"explanation\":\"Pillow is imported and used to open images from raw bytes in the job pipeline, indicating this code path is part of a live processing pipeline, not dead code, making the downstream ImageMath.eval call reachable from an entry point.\"}]}",
+     "in": 2052,
+     "out": 1092,
+     "s": 14.08,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 30310.2,
+   "output": {
+    "critique": "The strongest counter here is that the advisory's precondition\u2014attacker influence over the 'formula' string passed to ImageMath.eval\u2014is never actually demonstrated by the cited evidence. The verdict leans on the file being named 'expressions.py' and the parameter being named 'formula' as 'strongly suggesting' external input, but that's inference from naming, not evidence of a data flow from an entry point to that argument. If 'formula' is actually a small set of hardcoded strings chosen by developers (e.g., fixed tone-curve expressions), eval() is still invoked but there's no injection surface, and the alert would be exploitability-irrelevant even though reachable in a narrow code-path sense. That said, this critique doesn't overturn the verdict: the core reachability question (is PIL.ImageMath.eval actually invoked in live, non-test, non-dead production code reachable from the job pipeline?) is unambiguously yes per the evidence, and that is a meaningful correction of the scanner's symbol search, which spuriously reported zero vulnerable-symbol call sites despite a literal ImageMath.eval() call sitting right there. The verdict's citation of evidence for the call itself is accurate and not misread; only the exploitability narrative about formula's origin is speculative. Given reachability determinations typically concern 'is the vulnerable sink invoked on a live path,' not full proof of attacker-controlled input, reachable remains the defensible call, but confidence should be tempered since the untrusted-input precondition is asserted rather than shown.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.72
+   },
+   "tokens_in": 2056,
+   "tokens_out": 2511,
+   "llm_calls": 1,
+   "llm_seconds": 30.3,
+   "cost_usd_est": 0.043833,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter here is that the advisory's precondition\u2014attacker influence over the 'formula' string passed to ImageMath.eval\u2014is never actually demonstrated by the cited evidence. The verdict leans on the file being named 'expressions.py' and the parameter being named 'formula' as 'strongly suggesting' external input, but that's inference from naming, not evidence of a data flow from an entry point to that argument. If 'formula' is actually a small set of hardcoded strings chosen by developers (e.g., fixed tone-curve expressions), eval() is still invoked but there's no injection surface, and the alert would be exploitability-irrelevant even though reachable in a narrow code-path sense. That said, this critique doesn't overturn the verdict: the core reachability question (is PIL.ImageMath.eval actually invoked in live, non-test, non-dead production code reachable from the job pipeline?) is unambiguously yes per the evidence, and that is a meaningful correction of the scanner's symbol search, which spuriously reported zero vulnerable-symbol call sites despite a literal ImageMath.eval() call sitting right there. The verdict's citation of evidence for the call itself is accurate and not misread; only the exploitability narrative about formula's origin is speculative. Given reachability determinations typically concern 'is the vulnerable sink invoked on a live path,' not full proof of attacker-controlled input, reachable remains the defensible call, but confidence should be tempered since the untrusted-input precondition is asserted rather than shown.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"reachable\",\"confidence\":0.72}",
+     "in": 2056,
+     "out": 2511,
+     "s": 30.3,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.72,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4108,
+  "tokens_out": 3603,
+  "cost_usd_est": 0.066369,
+  "seconds": 44.41
+ },
+ "created": "2026-11-10T15:58:17+00:00",
+ "code_version": "f26e69b"
+}

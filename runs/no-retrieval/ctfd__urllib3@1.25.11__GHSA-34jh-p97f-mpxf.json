@@ -1,0 +1,263 @@
+{
+ "finding_id": "ctfd/urllib3@1.25.11/GHSA-34jh-p97f-mpxf",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-37891",
+   "GHSA-34jh-p97f-mpxf",
+   "PYSEC-2026-1995"
+  ],
+  "cves": [
+   "CVE-2024-37891"
+  ],
+  "cwes": [
+   "CWE-669"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/urllib3@1.25.11/GHSA-34jh-p97f-mpxf",
+  "first_fixed_above_installed": "1.26.19",
+  "fixed_versions": [
+   "1.26.19",
+   "2.2.2"
+  ],
+  "max_cvss": "4.4",
+  "package": "urllib3",
+  "published": "2024-06-17T21:37:20Z",
+  "summary": "urllib3's Proxy-Authorization request header isn't stripped during cross-origin redirects",
+  "target": "ctfd",
+  "version": "1.25.11",
+  "vuln_id": "GHSA-34jh-p97f-mpxf"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.72,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "Proxy-Authorization header handling during cross-origin redirects (urllib3 connectionpool/poolmanager redirect logic)"
+  ],
+  "reasoning": "The advisory requires the application to configure urllib3 (directly or via requests) with a proxy that sets a Proxy-Authorization header and to follow cross-origin redirects through that proxy. Static analysis shows urllib3 is not imported anywhere in first-party production code, has zero call/reference sites, and none of the vulnerable redirect/proxy symbols appear in the 142 scanned Python files or 87 templates. It is present only as a transitive dependency (likely pulled in by requests or another library) with no evidence the application configures proxy authentication or exercises the affected redirect path. Since there is no first-party code path invoking the vulnerable behavior and no proxy-auth configuration found, the vulnerable feature is unused by this application's production code.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "Vulnerability only manifests when a Proxy-Authorization header is set and urllib3 follows a cross-origin redirect through a configured proxy."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 non-test imports of urllib3, 0 call/reference sites, 0 matches of vulnerable symbols across 142 first-party Python files and 87 templates."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "No production call site with a path from an entry point reaches any urllib3 symbol, let alone the proxy redirect logic."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The static evidence only shows urllib3 isn't imported/called directly in first-party code and templates, but it never confirms whether the app uses the `requests` library (which wraps urllib3 and would exercise the same redirect/header-stripping internals without any direct urllib3 symbol appearing in app code). CTFd is known to make outbound HTTP calls (e.g., webhook/notification integrations, SSRF-prone 'file upload via URL' or OAuth flows) typically via `requests`, which the scan didn't search for. So 'zero urllib3 call sites' doesn't by itself prove the vulnerable redirect-handling code path is unreached \u2014 it only proves the app doesn't call urllib3 *directly*. That said, the advisory's actual precondition is stricter than just 'urllib3 is used': it requires a configured proxy that injects a Proxy-Authorization header and a cross-origin redirect being followed through that proxy. The evidence (and absence of any proxy/Proxy-Authorization/env-based proxy config references) supports that this specific precondition isn't met, independent of whether urllib3 is reached transitively via requests. So while the verdict's framing (import-count-based) is a bit thin and could be seen as ignoring the requests-wrapping possibility, the ultimate precondition-driven conclusion is still likely correct because proxy-auth configuration appears genuinely absent.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.72
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/urllib3@1.25.11/GHSA-34jh-p97f-mpxf",
+    "package": "urllib3",
+    "version": "1.25.11",
+    "vuln_id": "GHSA-34jh-p97f-mpxf",
+    "aliases": [
+     "CVE-2024-37891",
+     "GHSA-34jh-p97f-mpxf",
+     "PYSEC-2026-1995"
+    ],
+    "summary": "urllib3's Proxy-Authorization request header isn't stripped during cross-origin redirects",
+    "max_cvss": "4.4",
+    "fixed_versions": [
+     "1.26.19",
+     "2.2.2"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 29.1,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 7609.1,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "Proxy-Authorization header handling during cross-origin redirects (urllib3 connectionpool/poolmanager redirect logic)"
+    ],
+    "reasoning": "The advisory requires the application to configure urllib3 (directly or via requests) with a proxy that sets a Proxy-Authorization header and to follow cross-origin redirects through that proxy. Static analysis shows urllib3 is not imported anywhere in first-party production code, has zero call/reference sites, and none of the vulnerable redirect/proxy symbols appear in the 142 scanned Python files or 87 templates. It is present only as a transitive dependency (likely pulled in by requests or another library) with no evidence the application configures proxy authentication or exercises the affected redirect path. Since there is no first-party code path invoking the vulnerable behavior and no proxy-auth configuration found, the vulnerable feature is unused by this application's production code.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Vulnerability only manifests when a Proxy-Authorization header is set and urllib3 follows a cross-origin redirect through a configured proxy."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test imports of urllib3, 0 call/reference sites, 0 matches of vulnerable symbols across 142 first-party Python files and 87 templates."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "No production call site with a path from an entry point reaches any urllib3 symbol, let alone the proxy redirect logic."
+     }
+    ]
+   },
+   "tokens_in": 1957,
+   "tokens_out": 536,
+   "llm_calls": 1,
+   "llm_seconds": 7.61,
+   "cost_usd_est": 0.013911,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.85,\"vulnerable_symbols\":[\"Proxy-Authorization header handling during cross-origin redirects (urllib3 connectionpool/poolmanager redirect logic)\"],\"reasoning\":\"The advisory requires the application to configure urllib3 (directly or via requests) with a proxy that sets a Proxy-Authorization header and to follow cross-origin redirects through that proxy. Static analysis shows urllib3 is not imported anywhere in first-party production code, has zero call/reference sites, and none of the vulnerable redirect/proxy symbols appear in the 142 scanned Python files or 87 templates. It is present only as a transitive dependency (likely pulled in by requests or another library) with no evidence the application configures proxy authentication or exercises the affected redirect path. Since there is no first-party code path invoking the vulnerable behavior and no proxy-auth configuration found, the vulnerable feature is unused by this application's production code.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"Vulnerability only manifests when a Proxy-Authorization header is set and urllib3 follows a cross-origin redirect through a configured proxy.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 non-test imports of urllib3, 0 call/reference sites, 0 matches of vulnerable symbols across 142 first-party Python files and 87 templates.\"},{\"location\":\"static evidence summary\",\"explanation\":\"No production call site with a path from an entry point reaches any urllib3 symbol, let alone the proxy redirect logic.\"}]}\n```",
+     "in": 1957,
+     "out": 536,
+     "s": 7.61,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 17663.6,
+   "output": {
+    "critique": "The static evidence only shows urllib3 isn't imported/called directly in first-party code and templates, but it never confirms whether the app uses the `requests` library (which wraps urllib3 and would exercise the same redirect/header-stripping internals without any direct urllib3 symbol appearing in app code). CTFd is known to make outbound HTTP calls (e.g., webhook/notification integrations, SSRF-prone 'file upload via URL' or OAuth flows) typically via `requests`, which the scan didn't search for. So 'zero urllib3 call sites' doesn't by itself prove the vulnerable redirect-handling code path is unreached \u2014 it only proves the app doesn't call urllib3 *directly*. That said, the advisory's actual precondition is stricter than just 'urllib3 is used': it requires a configured proxy that injects a Proxy-Authorization header and a cross-origin redirect being followed through that proxy. The evidence (and absence of any proxy/Proxy-Authorization/env-based proxy config references) supports that this specific precondition isn't met, independent of whether urllib3 is reached transitively via requests. So while the verdict's framing (import-count-based) is a bit thin and could be seen as ignoring the requests-wrapping possibility, the ultimate precondition-driven conclusion is still likely correct because proxy-auth configuration appears genuinely absent.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.72
+   },
+   "tokens_in": 1829,
+   "tokens_out": 1343,
+   "llm_calls": 1,
+   "llm_seconds": 17.66,
+   "cost_usd_est": 0.025632,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The static evidence only shows urllib3 isn't imported/called directly in first-party code and templates, but it never confirms whether the app uses the `requests` library (which wraps urllib3 and would exercise the same redirect/header-stripping internals without any direct urllib3 symbol appearing in app code). CTFd is known to make outbound HTTP calls (e.g., webhook/notification integrations, SSRF-prone 'file upload via URL' or OAuth flows) typically via `requests`, which the scan didn't search for. So 'zero urllib3 call sites' doesn't by itself prove the vulnerable redirect-handling code path is unreached \u2014 it only proves the app doesn't call urllib3 *directly*. That said, the advisory's actual precondition is stricter than just 'urllib3 is used': it requires a configured proxy that injects a Proxy-Authorization header and a cross-origin redirect being followed through that proxy. The evidence (and absence of any proxy/Proxy-Authorization/env-based proxy config references) supports that this specific precondition isn't met, independent of whether urllib3 is reached transitively via requests. So while the verdict's framing (import-count-based) is a bit thin and could be seen as ignoring the requests-wrapping possibility, the ultimate precondition-driven conclusion is still likely correct because proxy-auth configuration appears genuinely absent.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.72}",
+     "in": 1829,
+     "out": 1343,
+     "s": 17.66,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.72,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3786,
+  "tokens_out": 1879,
+  "cost_usd_est": 0.039543,
+  "seconds": 25.31
+ },
+ "created": "2026-11-10T16:25:13+00:00",
+ "code_version": "f26e69b"
+}

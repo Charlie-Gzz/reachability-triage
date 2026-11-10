@@ -1,0 +1,331 @@
+{
+ "finding_id": "mealie/python-multipart@0.0.6/GHSA-59g5-xgcq-4qw3",
+ "config": "full",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-53981",
+   "GHSA-59g5-xgcq-4qw3",
+   "PYSEC-2026-1851"
+  ],
+  "cves": [
+   "CVE-2024-53981"
+  ],
+  "cwes": [
+   "CWE-770"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/python-multipart@0.0.6/GHSA-59g5-xgcq-4qw3",
+  "first_fixed_above_installed": "0.0.18",
+  "fixed_versions": [
+   "0.0.18"
+  ],
+  "max_cvss": "8.7",
+  "package": "python-multipart",
+  "published": "2024-12-02T21:37:04Z",
+  "summary": "Denial of service (DoS) via deformation `multipart/form-data` boundary",
+  "target": "mealie",
+  "version": "0.0.6",
+  "vuln_id": "GHSA-59g5-xgcq-4qw3"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.6,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.75,
+  "vulnerable_symbols": [
+   "MultipartParser (leading CR/LF before first boundary, trailing bytes after last boundary)"
+  ],
+  "reasoning": "python-multipart is not used directly by mealie's own code, but it is the library Starlette/FastAPI use under the hood to parse any multipart/form-data request body (e.g. via Form(...) or UploadFile parameters). Mealie is a FastAPI app with recipe/user image and file-upload endpoints, which means multipart/form-data bodies from external clients are routinely parsed through Starlette -> python-multipart. The static AST scan only looked for direct first-party imports/calls of python-multipart symbols, which is why it found zero matches; that scan method cannot see framework-mediated reachability through Starlette's request.form()/UploadFile machinery. Per the rule for core frameworks, since the app relies on Starlette/FastAPI's multipart handling for file uploads, and the advisory's vulnerable code path (handling of leading/trailing bytes around boundaries) is exercised on every multipart body an attacker can submit to an upload endpoint, this is reachable rather than dead code. No evidence shows mealie disables or avoids multipart parsing, nor that it's confined to tests.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "Vulnerability triggers on any multipart/form-data body containing data before the first boundary or after the last boundary, processed one byte at a time."
+   },
+   {
+    "location": "mealie (FastAPI app, upload endpoints inferred from assets/users module and image minify utility)",
+    "explanation": "Mealie accepts user/recipe image uploads, which are typically submitted as multipart/form-data and parsed via Starlette's UploadFile/Form dependency, which internally calls python-multipart."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 direct first-party imports/calls of python-multipart symbols is expected because mealie never calls the library directly; it is invoked transitively by Starlette, so the static AST scan cannot detect this reachability path."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that none of the retrieved application snippets actually show a FastAPI route using File(...), UploadFile, or Form(...) \u2014 the cited evidence (image minify helper, static asset paths, URL scraper, JWT file-token validator, backup directory validator) is all unrelated to receiving multipart/form-data from a client. The verdict leans on general knowledge that 'Mealie has recipe/user image upload endpoints' rather than on any cited route definition, so the precondition that an attacker-reachable multipart endpoint exists is asserted, not demonstrated by the evidence shown. That said, python-multipart is listed as a *direct* dependency (not transitive) in a FastAPI app \u2014 this package has essentially one purpose (parsing multipart bodies), and FastAPI/Starlette route its File/Form parameters through it. A direct dependency declaration combined with Mealie's well-known image-upload functionality (group/recipe/user images) makes it highly likely some endpoint does accept multipart data even though the retrieval snippets didn't surface the route code. The AST tool's 0-match result is explained correctly: it only checks first-party symbol usage, not framework-mediated calls, so it cannot falsify reachability here. Given a direct multipart-parsing dependency in a web upload app, the DoS-via-malformed-boundary precondition (any client-reachable multipart endpoint) is plausible and the null AST result is not strong counter-evidence. The verdict's inferential leap is defensible but under-evidenced by the specific snippets retrieved \u2014 a stronger version would have surfaced an actual upload route.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.6
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/python-multipart@0.0.6/GHSA-59g5-xgcq-4qw3",
+    "package": "python-multipart",
+    "version": "0.0.6",
+    "vuln_id": "GHSA-59g5-xgcq-4qw3",
+    "aliases": [
+     "CVE-2024-53981",
+     "GHSA-59g5-xgcq-4qw3",
+     "PYSEC-2026-1851"
+    ],
+    "summary": "Denial of service (DoS) via deformation `multipart/form-data` boundary",
+    "max_cvss": "8.7",
+    "fixed_versions": [
+     "0.0.18"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 22.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-59g5-xgcq-4qw3#0",
+      "score": 0.913,
+      "text": "GHSA-59g5-xgcq-4qw3 (CVE-2024-53981)\npackage: python-multipart\nsummary: Denial of service (DoS) via deformation `multipart/form-data` boundary\naffected: >=0, <0.0.18",
+      "vuln_id": "GHSA-59g5-xgcq-4qw3"
+     },
+     {
+      "id": "GHSA-59g5-xgcq-4qw3#1",
+      "score": 0.815,
+      "text": "GHSA-59g5-xgcq-4qw3 (python-multipart) details:\n### Summary\n\nWhen parsing form data, `python-multipart` skips line breaks (CR `\\r` or LF `\\n`) in front of the first boundary and any tailing bytes after the last boundary. This happens one byte at a time and emits a log event each time, which may cause excessive logging for certain inputs.\n\nAn attacker could abuse this by sending a malicious request with lots of data before the first or after the last boundary, causing high CPU load and stalling the processing thread for a significant amount of time. In case of ASGI application, this could stall the event loop and prevent other requests from being processed, resulting in a denial of service (DoS).\n\n### Impact\n\nApplications that use `python-multipart` to parse form data (or use frameworks that do so) are affected.\n\n### Original Report",
+      "vuln_id": "GHSA-59g5-xgcq-4qw3"
+     },
+     {
+      "id": "GHSA-59g5-xgcq-4qw3#2",
+      "score": 0.783,
+      "text": "GHSA-59g5-xgcq-4qw3 (python-multipart) details:\nThis security issue was reported by:\n- GitHub security advisory in Starlette on October 30 by @Startr4ck\n- Email to `python-multipart` maintainer on October 3 by @mnqazi",
+      "vuln_id": "GHSA-59g5-xgcq-4qw3"
+     },
+     {
+      "id": "GHSA-mj87-hwqh-73pj#1",
+      "score": 0.879,
+      "text": "GHSA-mj87-hwqh-73pj (python-multipart) details:\n### Summary\n\nA denial of service vulnerability exists when parsing crafted `multipart/form-data` requests with large preamble or epilogue sections.\n\n### Details\n\nTwo inefficient multipart parsing paths could be abused with attacker-controlled input.\n\nBefore the first multipart boundary, the parser handled leading CR and LF bytes inefficiently while searching for the start of the first part. After the closing boundary, the parser continued processing trailing epilogue data instead of discarding it immediately. As a result, parsing time could grow with the size of crafted data placed before the first boundary or after the closing boundary.\n\n### Impact",
+      "vuln_id": "GHSA-mj87-hwqh-73pj"
+     },
+     {
+      "id": "GHSA-pp6c-gr5w-3c5g#1",
+      "score": 0.857,
+      "text": "GHSA-pp6c-gr5w-3c5g (python-multipart) details:\n### Summary\n\n`python-multipart` has a denial of service vulnerability in multipart part header parsing. When parsing `multipart/form-data`, `MultipartParser` previously had no limit on the number of part headers or the size of an individual part header. An attacker could send a request with either many repeated headers without terminating the header block or a single very large header value, causing excessive CPU work before request rejection or completion.\n\n### Impact\n\nApplications that parse attacker-controlled `multipart/form-data` with affected versions of `python-multipart` can experience CPU exhaustion. ASGI applications using Starlette, FastAPI, or other frameworks that invoke `python-multipart` may have worker or event-loop delays while processing malicious upload requests.\n\n### Details",
+      "vuln_id": "GHSA-pp6c-gr5w-3c5g"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 7.7,
+   "output": {
+    "package": "python-multipart",
+    "import_names": [
+     "multipart"
+    ],
+    "symbols": [],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "python-multipart: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 25.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:19",
+      "score": 0.68,
+      "text": "# mealie/pkgs/img/minify.py:19-27  sizeof_fmt\ndef sizeof_fmt(file_path: Path, decimal_places=2):\n    if not file_path.exists():\n        return \"(File Not Found)\"\n    size: int | float = file_path.stat().st_size\n    for unit in [\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\"]:\n        if size < 1024 or unit == \"PiB\":\n            break\n        size /= 1024\n    return f\"{size:.{decimal_places}f} {unit}\"",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 19,
+      "qualname": "sizeof_fmt"
+     },
+     {
+      "id": "mealie:mealie/assets/users/__init__.py:module",
+      "score": 0.667,
+      "text": "# mealie/assets/users/__init__.py (module level)\nfrom pathlib import Path\nCWD = Path(__file__).parent\nimg_random_1 = CWD / \"random_1.webp\"\nimg_random_2 = CWD / \"random_2.webp\"\nimg_random_3 = CWD / \"random_3.webp\"",
+      "file": "mealie/assets/users/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/scraper/scraper_strategies.py:27",
+      "score": 0.66,
+      "text": "# mealie/services/scraper/scraper_strategies.py:27-70  safe_scrape_html\nasync def safe_scrape_html(url: str) -> str:\n    \"\"\"\n    Scrapes the html from a url but will cancel the request\n    if the request takes longer than 15 seconds. This is used to mitigate\n    DDOS attacks from users providing a url with arbitrary large content.\n    \"\"\"\n    async with AsyncClient() as client:\n        html_bytes = b\"\"\n        async with client.stream(\"GET\", url, timeout=SCRAPER_TIMEOUT, headers={\"User-Agent\": _FIREFOX_UA}) as resp:\n            start_time = time.time()\n\n            async for chunk in resp.aiter_bytes(chunk_size=1024):\n                html_bytes += chunk\n\n                if time.time() - start_time > SCRAPER_TIMEOUT:\n                    raise ForceTimeoutException()\n\n        # =====================================\n        # Copied from requests text property\n\n        # Try charset from content-type\n        content = None\n        encoding = resp.encoding\n\n        if not html_bytes:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if encoding is None:\n            encoding = resp.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(html_bytes, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(html_bytes, errors=\"replace\")\n\n        return content",
+      "file": "mealie/services/scraper/scraper_strategies.py",
+      "start": 27,
+      "qualname": "safe_scrape_html"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:151",
+      "score": 0.659,
+      "text": "# mealie/core/dependencies/dependencies.py:151-175  validate_file_token\ndef validate_file_token(token: str | None = None) -> Path:\n    \"\"\"\n    Args:\n        token (Optional[str], optional): _description_. Defaults to None.\n\n    Raises:\n        HTTPException: 400 Bad Request when no token or the file doesn't exist\n        HTTPException: 401 Unauthorized when the token is invalid\n    \"\"\"\n    if not token:\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    try:\n        payload = jwt.decode(token, settings.SECRET, algorithms=[ALGORITHM])\n        file_path = Path(payload.get(\"file\"))\n    except JWTError as e:\n        raise HTTPException(\n            status_code=status.HTTP_401_UNAUTHORIZED,\n            detail=\"could not validate file token\",\n        ) from e\n\n    if not file_path.exists():\n        raise HTTPException(status.HTTP_400_BAD_REQUEST)\n\n    return file_path",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 151,
+      "qualname": "validate_file_token"
+     },
+     {
+      "id": "mealie:mealie/services/backups_v2/backup_file.py:15",
+      "score": 0.659,
+      "text": "# mealie/services/backups_v2/backup_file.py:15-25  BackupContents.validate\n    def validate(self) -> bool:\n        if not self.base.is_dir():\n            return False\n\n        if not self.data_directory.is_dir():\n            return False\n\n        if not self.tables.is_file():\n            return False\n\n        return True",
+      "file": "mealie/services/backups_v2/backup_file.py",
+      "start": 15,
+      "qualname": "BackupContents.validate"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 14660.6,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.75,
+    "vulnerable_symbols": [
+     "MultipartParser (leading CR/LF before first boundary, trailing bytes after last boundary)"
+    ],
+    "reasoning": "python-multipart is not used directly by mealie's own code, but it is the library Starlette/FastAPI use under the hood to parse any multipart/form-data request body (e.g. via Form(...) or UploadFile parameters). Mealie is a FastAPI app with recipe/user image and file-upload endpoints, which means multipart/form-data bodies from external clients are routinely parsed through Starlette -> python-multipart. The static AST scan only looked for direct first-party imports/calls of python-multipart symbols, which is why it found zero matches; that scan method cannot see framework-mediated reachability through Starlette's request.form()/UploadFile machinery. Per the rule for core frameworks, since the app relies on Starlette/FastAPI's multipart handling for file uploads, and the advisory's vulnerable code path (handling of leading/trailing bytes around boundaries) is exercised on every multipart body an attacker can submit to an upload endpoint, this is reachable rather than dead code. No evidence shows mealie disables or avoids multipart parsing, nor that it's confined to tests.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Vulnerability triggers on any multipart/form-data body containing data before the first boundary or after the last boundary, processed one byte at a time."
+     },
+     {
+      "location": "mealie (FastAPI app, upload endpoints inferred from assets/users module and image minify utility)",
+      "explanation": "Mealie accepts user/recipe image uploads, which are typically submitted as multipart/form-data and parsed via Starlette's UploadFile/Form dependency, which internally calls python-multipart."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 direct first-party imports/calls of python-multipart symbols is expected because mealie never calls the library directly; it is invoked transitively by Starlette, so the static AST scan cannot detect this reachability path."
+     }
+    ]
+   },
+   "tokens_in": 4197,
+   "tokens_out": 1110,
+   "llm_calls": 1,
+   "llm_seconds": 14.64,
+   "cost_usd_est": 0.029241,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"reachable\",\"confidence\":0.75,\"vulnerable_symbols\":[\"MultipartParser (leading CR/LF before first boundary, trailing bytes after last boundary)\"],\"reasoning\":\"python-multipart is not used directly by mealie's own code, but it is the library Starlette/FastAPI use under the hood to parse any multipart/form-data request body (e.g. via Form(...) or UploadFile parameters). Mealie is a FastAPI app with recipe/user image and file-upload endpoints, which means multipart/form-data bodies from external clients are routinely parsed through Starlette -> python-multipart. The static AST scan only looked for direct first-party imports/calls of python-multipart symbols, which is why it found zero matches; that scan method cannot see framework-mediated reachability through Starlette's request.form()/UploadFile machinery. Per the rule for core frameworks, since the app relies on Starlette/FastAPI's multipart handling for file uploads, and the advisory's vulnerable code path (handling of leading/trailing bytes around boundaries) is exercised on every multipart body an attacker can submit to an upload endpoint, this is reachable rather than dead code. No evidence shows mealie disables or avoids multipart parsing, nor that it's confined to tests.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"Vulnerability triggers on any multipart/form-data body containing data before the first boundary or after the last boundary, processed one byte at a time.\"},{\"location\":\"mealie (FastAPI app, upload endpoints inferred from assets/users module and image minify utility)\",\"explanation\":\"Mealie accepts user/recipe image uploads, which are typically submitted as multipart/form-data and parsed via Starlette's UploadFile/Form dependency, which internally calls python-multipart.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 direct first-party imports/calls of python-multipart symbols is expected because mealie never calls the library directly; it is invoked transitively by Starlette, so the static AST scan cannot detect this reachability path.\"}]}",
+     "in": 4197,
+     "out": 1110,
+     "s": 14.64,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 24988.5,
+   "output": {
+    "critique": "The strongest counter-argument is that none of the retrieved application snippets actually show a FastAPI route using File(...), UploadFile, or Form(...) \u2014 the cited evidence (image minify helper, static asset paths, URL scraper, JWT file-token validator, backup directory validator) is all unrelated to receiving multipart/form-data from a client. The verdict leans on general knowledge that 'Mealie has recipe/user image upload endpoints' rather than on any cited route definition, so the precondition that an attacker-reachable multipart endpoint exists is asserted, not demonstrated by the evidence shown. That said, python-multipart is listed as a *direct* dependency (not transitive) in a FastAPI app \u2014 this package has essentially one purpose (parsing multipart bodies), and FastAPI/Starlette route its File/Form parameters through it. A direct dependency declaration combined with Mealie's well-known image-upload functionality (group/recipe/user images) makes it highly likely some endpoint does accept multipart data even though the retrieval snippets didn't surface the route code. The AST tool's 0-match result is explained correctly: it only checks first-party symbol usage, not framework-mediated calls, so it cannot falsify reachability here. Given a direct multipart-parsing dependency in a web upload app, the DoS-via-malformed-boundary precondition (any client-reachable multipart endpoint) is plausible and the null AST result is not strong counter-evidence. The verdict's inferential leap is defensible but under-evidenced by the specific snippets retrieved \u2014 a stronger version would have surfaced an actual upload route.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 4243,
+   "tokens_out": 2069,
+   "llm_calls": 1,
+   "llm_seconds": 24.98,
+   "cost_usd_est": 0.043764,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument is that none of the retrieved application snippets actually show a FastAPI route using File(...), UploadFile, or Form(...) \u2014 the cited evidence (image minify helper, static asset paths, URL scraper, JWT file-token validator, backup directory validator) is all unrelated to receiving multipart/form-data from a client. The verdict leans on general knowledge that 'Mealie has recipe/user image upload endpoints' rather than on any cited route definition, so the precondition that an attacker-reachable multipart endpoint exists is asserted, not demonstrated by the evidence shown. That said, python-multipart is listed as a *direct* dependency (not transitive) in a FastAPI app \u2014 this package has essentially one purpose (parsing multipart bodies), and FastAPI/Starlette route its File/Form parameters through it. A direct dependency declaration combined with Mealie's well-known image-upload functionality (group/recipe/user images) makes it highly likely some endpoint does accept multipart data even though the retrieval snippets didn't surface the route code. The AST tool's 0-match result is explained correctly: it only checks first-party symbol usage, not framework-mediated calls, so it cannot falsify reachability here. Given a direct multipart-parsing dependency in a web upload app, the DoS-via-malformed-boundary precondition (any client-reachable multipart endpoint) is plausible and the null AST result is not strong counter-evidence. The verdict's inferential leap is defensible but under-evidenced by the specific snippets retrieved \u2014 a stronger version would have surfaced an actual upload route.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"reachable\",\"confidence\":0.6}",
+     "in": 4243,
+     "out": 2069,
+     "s": 24.98,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.6,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 8440,
+  "tokens_out": 3179,
+  "cost_usd_est": 0.073005,
+  "seconds": 39.71
+ },
+ "created": "2026-11-10T15:49:34+00:00",
+ "code_version": "f26e69b"
+}

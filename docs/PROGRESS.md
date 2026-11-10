@@ -37,11 +37,13 @@ Expected remaining cost: ~48 real × 2.3 + 140 ablation × 2.2 + ~50 remediation
 ## Next steps, in order
 
 1. ~~Decide QUESTIONS #2~~ done: `comments-hub` relabelled (disclosed in DECISIONS).
-2. **Resume the eval** (unattended, resumable): `uv run rt showcase --skip-local` in a normal terminal.
+2. **Eval running unattended** since 2026-11-10 10:18 via `bash scripts/eval_unattended.sh` (log
+   `.work/eval_unattended.log`; retries every 30 min on usage limits, then local model, then `rt refresh`).
+   If it was killed (e.g. VS Code closed), just rerun the script: everything is cached.
    Order: full real → no-retrieval → no-reflection (bench test + real) → remediation (max 10).
 3. **Local model run:** load it with `lms load qwen2.5-coder-14b-instruct` (LM Studio server is on :1235), then
    `uv run rt showcase` (cached stages are skipped; local runs bench test + 20 real findings).
-4. Charlie: review the 50 real labels: `uv run rt review` (keys C/R/N/U, ←/→, J = next pending).
+4. Charlie: review the 50 real labels (criteria: `docs/LABEL_GUIDE.md`): `uv run rt review` (keys C/R/N/U, ←/→, J = next pending).
 5. `uv run rt refresh` (eval + assets + site), then look at every chart/screenshot again.
 6. Write `docs/DEMO_SCRIPT.md`, `docs/SLIDES_OUTLINE.md`, `docs/PORTFOLIO_CARD.md`, `README.md`, `docs/HANDOFF.md`
    (needs final numbers). ~~CI + manual Pages workflow~~ done 2026-11-10 (`.github/workflows/`; Pages not enabled).
@@ -82,3 +84,5 @@ uv run rt review          # label review page (http://127.0.0.1:8765)
 - 2026-11-09: `comments-hub` label corrected with Charlie's approval (see DECISIONS).
 - 2026-11-10: unit tests (7 -> 39), CI (ruff + pytest, skips torch/CUDA wheels), manual-only Pages workflow,
   case header shows the resolved model. No Claude eval calls spent; eval still to resume.
+- 2026-11-10 11:30: status at ~90% of the session window: `full` done on bench test + real (50), `no-retrieval`
+  bench done, real at 23/50; ledger 300 calls. 0/50 labels reviewed yet. Label criteria written to LABEL_GUIDE.md.

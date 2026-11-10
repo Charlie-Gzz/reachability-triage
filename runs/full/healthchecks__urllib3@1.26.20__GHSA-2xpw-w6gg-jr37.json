@@ -1,0 +1,425 @@
+{
+ "finding_id": "healthchecks/urllib3@1.26.20/GHSA-2xpw-w6gg-jr37",
+ "config": "full",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-66471",
+   "GHSA-2xpw-w6gg-jr37",
+   "PYSEC-2026-1994"
+  ],
+  "cves": [
+   "CVE-2025-66471"
+  ],
+  "cwes": [
+   "CWE-409"
+  ],
+  "direct_dependency": false,
+  "finding_id": "healthchecks/urllib3@1.26.20/GHSA-2xpw-w6gg-jr37",
+  "first_fixed_above_installed": "2.6.0",
+  "fixed_versions": [
+   "2.6.0"
+  ],
+  "max_cvss": "8.9",
+  "package": "urllib3",
+  "published": "2025-12-05T18:15:54Z",
+  "summary": "urllib3 streaming API improperly handles highly compressed data",
+  "target": "healthchecks",
+  "version": "1.26.20",
+  "vuln_id": "GHSA-2xpw-w6gg-jr37"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.55,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.55,
+  "vulnerable_symbols": [
+   "urllib3.HTTPResponse.stream",
+   "urllib3.HTTPResponse.read",
+   "urllib3.HTTPResponse.read1",
+   "urllib3.HTTPResponse.readinto"
+  ],
+  "reasoning": "urllib3 is never imported or called directly by first-party code, but it is a transitive dependency reached through the `requests` library, which HttpTransport.get/post/put (hc/api/transports.py:215-224) use to deliver webhook/notification payloads to URLs that are effectively third-party/attacker-influenced endpoints (user-configured integrations such as Slack, Zulip, PagerDuty, generic webhooks). `requests` populates response bodies by internally calling urllib3's chunked streaming read (`HTTPResponse.stream()`/`read(amt=...)`) with a fixed chunk size even when the caller does not pass stream=True, so a malicious or compromised notification endpoint returning a small, highly-compressed body can trigger the CWE-409 resource-exhaustion path inside urllib3 on the application's outbound notification worker. Static AST matching found zero direct urllib3 symbol usage because the vulnerable calls live inside the `requests` wrapper, which is outside the scanned first-party code, so absence of direct call sites does not establish non-use. The 'stream' string hits in hc/api/models.py:447 and hc/front/forms.py:300 relate to Zulip's channel concept, not HTTP streaming, and are not evidence either way. Because the app's notification transports fetch responses from URLs it does not fully control and does so via the standard requests->urllib3 decoding path, the vulnerable logic is plausibly reachable rather than provably dead.",
+  "evidence": [
+   {
+    "location": "hc/api/transports.py:215-216",
+    "explanation": "HttpTransport.get issues outbound HTTP GET requests to configured notification/webhook URLs, likely via the requests library which sits on top of urllib3."
+   },
+   {
+    "location": "hc/api/transports.py:219-220",
+    "explanation": "HttpTransport.post issues outbound HTTP POST requests (e.g., webhook/Slack/Zulip notifications) whose response bodies are read through requests -> urllib3."
+   },
+   {
+    "location": "hc/api/transports.py:223-224",
+    "explanation": "HttpTransport.put similarly performs outbound HTTP calls whose responses are decoded via the same requests/urllib3 path."
+   },
+   {
+    "location": "advisory",
+    "explanation": "The advisory states requests/libraries using urllib3's streaming read methods (stream(), read(amt=...)) are affected even when only a small chunk is requested, which matches how requests populates response.content by default."
+   },
+   {
+    "location": "hc/api/models.py:447",
+    "explanation": "String match for 'stream' here is a Zulip API channel parameter, unrelated to urllib3 HTTP streaming, so it does not confirm or rule out reachability."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict's core move -- treating urllib3 as reachable purely because `requests` sits on top of it and HttpTransport makes outbound calls to user-configured webhook/integration URLs -- is directionally sound, but the argument glosses over a real precondition gap: the advisory requires the app to actually consume the response body via a chunked/bounded read (stream(), read(amt=...), iter_content, .text/.content access), not merely issue the request. None of the retrieved code (transports.py:215-224, _request_with_retries stub) shows the response body being read or decoded; the shown snippets only dispatch the HTTP verb. If HttpTransport only inspects status_code and never touches .content/.text, urllib3's decompression path is never invoked and the alert is inert for this call site. That said, this counter-argument is weak in practice: requests' Response.content property internally calls iter_content(CONTENT_CHUNK_SIZE) even when stream=False, and production webhook transports almost universally read body text for error messages/logging on non-2xx responses -- a pattern very likely present in the elided retry/exception-handling code not shown here. Combined with the fact that webhook/integration endpoints (generic webhook, Slack, Zulip, PagerDuty) are user-configured URLs that can point to attacker-controlled or compromised hosts, the SSRF-adjacent exposure to a malicious compressed response is plausible and consistent with how this class of urllib3 CVE is normally scoped (any HTTP client fetching from an untrusted server). The static AST tool correctly found zero direct symbol hits because the vulnerable call lives inside the `requests` wrapper, which is outside first-party scan scope -- the verdict correctly flags this as a scanner blind spot rather than proof of non-use. Net: the verdict's reasoning doesn't misread the evidence, it reasonably extrapolates past a scanning gap, but confidence should be tempered because the actual body-read site is not confirmed in the retrieved code.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.55
+ },
+ "symbols": [
+  "urllib3.HTTPResponse",
+  "stream",
+  "read",
+  "gzip",
+  "deflate",
+  "zstd",
+  "read1",
+  "read_chunked"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/urllib3@1.26.20/GHSA-2xpw-w6gg-jr37",
+    "package": "urllib3",
+    "version": "1.26.20",
+    "vuln_id": "GHSA-2xpw-w6gg-jr37",
+    "aliases": [
+     "CVE-2025-66471",
+     "GHSA-2xpw-w6gg-jr37",
+     "PYSEC-2026-1994"
+    ],
+    "summary": "urllib3 streaming API improperly handles highly compressed data",
+    "max_cvss": "8.9",
+    "fixed_versions": [
+     "2.6.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 24.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#0",
+      "score": 0.896,
+      "text": "GHSA-2xpw-w6gg-jr37 (CVE-2025-66471)\npackage: urllib3\nsummary: urllib3 streaming API improperly handles highly compressed data\naffected: >=1.0, <2.6.0",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#1",
+      "score": 0.824,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\n### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.5.0/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nWhen streaming a compressed response, urllib3 can perform decoding or decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). The library must read compressed data from the network and decompress it until the requested chunk size is met. Any resulting decompressed data that exceeds the requested amount is held in an internal buffer for the next read operation.",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#2",
+      "score": 0.812,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\nThe decompression logic could cause urllib3 to fully decode a small amount of highly compressed data in a single operation. This can result in excessive resource consumption (high CPU usage and massive memory allocation for the decompressed data; CWE-409) on the client side, even if the application only requested a small chunk of data.\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier to stream large compressed responses or content from untrusted sources.\n\n`stream()`, `read(amt=256)`, `read1(amt=256)`, `read_chunked(amt=256)`, `readinto(b)` are examples of `urllib3.HTTPResponse` method calls using the affected logic unless decoding is disabled explicitly.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library avoids decompressing data that exceeds the requested amount.",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#3",
+      "score": 0.737,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\nIf your environment contains a package facilitating the Brotli encoding, upgrade to at least Brotli 1.2.0 or brotlicffi 1.2.0.0 too. These versions are enforced by the `urllib3[brotli]` extra in the patched versions of urllib3.\n\n### Credits\n\nThe issue was reported by @Cycloctane.\nSupplemental information was provided by @stamparm during a security audit performed by [7ASecurity](https://7asecurity.com/) and facilitated by [OSTIF](https://ostif.org/).",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     },
+     {
+      "id": "GHSA-mf9v-mfxr-j63j#1",
+      "score": 0.828,
+      "text": "GHSA-mf9v-mfxr-j63j (urllib3) details:\n### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.7.0/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nurllib3 can perform decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). When using the streaming API since version 2.6.0, the library decompresses only the necessary bytes, enabling partial content consumption.",
+      "vuln_id": "GHSA-mf9v-mfxr-j63j"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#1",
+      "score": 0.824,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\n### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.6.2/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nurllib3 can perform decoding or decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). When using the streaming API, the library decompresses only the necessary bytes, enabling partial content consumption.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     }
+    ],
+    "symbols": [
+     "urllib3.HTTPResponse",
+     "stream",
+     "read",
+     "gzip",
+     "deflate",
+     "zstd",
+     "read1",
+     "read_chunked"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 142.0,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "urllib3.HTTPResponse",
+     "stream",
+     "read",
+     "gzip",
+     "deflate",
+     "zstd",
+     "read1",
+     "read_chunked"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [
+     {
+      "location": "hc/api/models.py:447",
+      "value": "stream",
+      "symbol": "stream",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/tests/test_notify_zulip.py:26",
+      "value": "stream",
+      "symbol": "stream",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_zulip.py:80",
+      "value": "stream",
+      "symbol": "stream",
+      "in_test": true
+     },
+     {
+      "location": "hc/front/forms.py:300",
+      "value": "stream",
+      "symbol": "stream",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/tests/test_add_zulip.py:11",
+      "value": "stream",
+      "symbol": "stream",
+      "in_test": true
+     },
+     {
+      "location": "hc/front/tests/test_add_zulip.py:38",
+      "value": "stream",
+      "symbol": "stream",
+      "in_test": true
+     }
+    ],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 229,
+     "template_dirs": [
+      "templates"
+     ],
+     "template_files": 199
+    },
+    "entry_points": 339,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['urllib3.HTTPResponse', 'stream', 'read', 'gzip', 'deflate', 'zstd', 'read1', 'read_chunked']; 0 production call site(s) of those symbols, 0 with a path from an entry point; 6 config/string reference(s)"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 31.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/api/decorators.py:38",
+      "score": 0.674,
+      "text": "# hc/api/decorators.py:38-61  authorize_read\ndef authorize_read(f):\n    @wraps(f)\n    def wrapper(request, *args, **kwds):\n        if \"HTTP_X_API_KEY\" in request.META:\n            api_key = request.META[\"HTTP_X_API_KEY\"]\n        elif hasattr(request, \"json\"):\n            api_key = str(request.json.get(\"api_key\", \"\"))\n        else:\n            api_key = \"\"\n\n        if len(api_key) != 32:\n            return error(\"missing api key\", 401)\n\n        write_key_match = Q(api_key=api_key)\n        read_key_match = Q(api_key_readonly=api_key)\n        try:\n            request.project = Project.objects.get(write_key_match | read_key_match)\n        except Project.DoesNotExist:\n            return error(\"wrong api key\", 401)\n\n        request.readonly = api_key == request.project.api_key_readonly\n        return f(request, *args, **kwds)\n\n    return wrapper",
+      "file": "hc/api/decorators.py",
+      "start": 38,
+      "qualname": "authorize_read"
+     },
+     {
+      "id": "healthchecks:hc/api/transports.py:219",
+      "score": 0.67,
+      "text": "# hc/api/transports.py:219-220  HttpTransport.post\n    def post(cls, url, **kwargs) -> None:\n        cls._request_with_retries(\"post\", url, **kwargs)",
+      "file": "hc/api/transports.py",
+      "start": 219,
+      "qualname": "HttpTransport.post"
+     },
+     {
+      "id": "healthchecks:hc/api/transports.py:215",
+      "score": 0.66,
+      "text": "# hc/api/transports.py:215-216  HttpTransport.get\n    def get(cls, url, **kwargs) -> None:\n        cls._request_with_retries(\"get\", url, **kwargs)",
+      "file": "hc/api/transports.py",
+      "start": 215,
+      "qualname": "HttpTransport.get"
+     },
+     {
+      "id": "healthchecks:hc/api/management/commands/sendreports.py:21",
+      "score": 0.65,
+      "text": "# hc/api/management/commands/sendreports.py:21-22  Command.pause\n    def pause(self):\n        time.sleep(3)",
+      "file": "hc/api/management/commands/sendreports.py",
+      "start": 21,
+      "qualname": "Command.pause"
+     },
+     {
+      "id": "healthchecks:hc/api/transports.py:223",
+      "score": 0.647,
+      "text": "# hc/api/transports.py:223-224  HttpTransport.put\n    def put(cls, url, **kwargs) -> None:\n        cls._request_with_retries(\"put\", url, **kwargs)",
+      "file": "hc/api/transports.py",
+      "start": 223,
+      "qualname": "HttpTransport.put"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 46660.1,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.55,
+    "vulnerable_symbols": [
+     "urllib3.HTTPResponse.stream",
+     "urllib3.HTTPResponse.read",
+     "urllib3.HTTPResponse.read1",
+     "urllib3.HTTPResponse.readinto"
+    ],
+    "reasoning": "urllib3 is never imported or called directly by first-party code, but it is a transitive dependency reached through the `requests` library, which HttpTransport.get/post/put (hc/api/transports.py:215-224) use to deliver webhook/notification payloads to URLs that are effectively third-party/attacker-influenced endpoints (user-configured integrations such as Slack, Zulip, PagerDuty, generic webhooks). `requests` populates response bodies by internally calling urllib3's chunked streaming read (`HTTPResponse.stream()`/`read(amt=...)`) with a fixed chunk size even when the caller does not pass stream=True, so a malicious or compromised notification endpoint returning a small, highly-compressed body can trigger the CWE-409 resource-exhaustion path inside urllib3 on the application's outbound notification worker. Static AST matching found zero direct urllib3 symbol usage because the vulnerable calls live inside the `requests` wrapper, which is outside the scanned first-party code, so absence of direct call sites does not establish non-use. The 'stream' string hits in hc/api/models.py:447 and hc/front/forms.py:300 relate to Zulip's channel concept, not HTTP streaming, and are not evidence either way. Because the app's notification transports fetch responses from URLs it does not fully control and does so via the standard requests->urllib3 decoding path, the vulnerable logic is plausibly reachable rather than provably dead.",
+    "evidence": [
+     {
+      "location": "hc/api/transports.py:215-216",
+      "explanation": "HttpTransport.get issues outbound HTTP GET requests to configured notification/webhook URLs, likely via the requests library which sits on top of urllib3."
+     },
+     {
+      "location": "hc/api/transports.py:219-220",
+      "explanation": "HttpTransport.post issues outbound HTTP POST requests (e.g., webhook/Slack/Zulip notifications) whose response bodies are read through requests -> urllib3."
+     },
+     {
+      "location": "hc/api/transports.py:223-224",
+      "explanation": "HttpTransport.put similarly performs outbound HTTP calls whose responses are decoded via the same requests/urllib3 path."
+     },
+     {
+      "location": "advisory",
+      "explanation": "The advisory states requests/libraries using urllib3's streaming read methods (stream(), read(amt=...)) are affected even when only a small chunk is requested, which matches how requests populates response.content by default."
+     },
+     {
+      "location": "hc/api/models.py:447",
+      "explanation": "String match for 'stream' here is a Zulip API channel parameter, unrelated to urllib3 HTTP streaming, so it does not confirm or rule out reachability."
+     }
+    ]
+   },
+   "tokens_in": 4119,
+   "tokens_out": 4063,
+   "llm_calls": 1,
+   "llm_seconds": 46.64,
+   "cost_usd_est": 0.073302,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.55, \"vulnerable_symbols\": [\"urllib3.HTTPResponse.stream\", \"urllib3.HTTPResponse.read\", \"urllib3.HTTPResponse.read1\", \"urllib3.HTTPResponse.readinto\"], \"reasoning\": \"urllib3 is never imported or called directly by first-party code, but it is a transitive dependency reached through the `requests` library, which HttpTransport.get/post/put (hc/api/transports.py:215-224) use to deliver webhook/notification payloads to URLs that are effectively third-party/attacker-influenced endpoints (user-configured integrations such as Slack, Zulip, PagerDuty, generic webhooks). `requests` populates response bodies by internally calling urllib3's chunked streaming read (`HTTPResponse.stream()`/`read(amt=...)`) with a fixed chunk size even when the caller does not pass stream=True, so a malicious or compromised notification endpoint returning a small, highly-compressed body can trigger the CWE-409 resource-exhaustion path inside urllib3 on the application's outbound notification worker. Static AST matching found zero direct urllib3 symbol usage because the vulnerable calls live inside the `requests` wrapper, which is outside the scanned first-party code, so absence of direct call sites does not establish non-use. The 'stream' string hits in hc/api/models.py:447 and hc/front/forms.py:300 relate to Zulip's channel concept, not HTTP streaming, and are not evidence either way. Because the app's notification transports fetch responses from URLs it does not fully control and does so via the standard requests->urllib3 decoding path, the vulnerable logic is plausibly reachable rather than provably dead.\", \"evidence\": [{\"location\": \"hc/api/transports.py:215-216\", \"explanation\": \"HttpTransport.get issues outbound HTTP GET requests to configured notification/webhook URLs, likely via the requests library which sits on top of urllib3.\"}, {\"location\": \"hc/api/transports.py:219-220\", \"explanation\": \"HttpTransport.post issues outbound HTTP POST requests (e.g., webhook/Slack/Zulip notifications) whose response bodies are read through requests -> urllib3.\"}, {\"location\": \"hc/api/transports.py:223-224\", \"explanation\": \"HttpTransport.put similarly performs outbound HTTP calls whose responses are decoded via the same requests/urllib3 path.\"}, {\"location\": \"advisory\", \"explanation\": \"The advisory states requests/libraries using urllib3's streaming read methods (stream(), read(amt=...)) are affected even when only a small chunk is requested, which matches how requests populates response.content by default.\"}, {\"location\": \"hc/api/models.py:447\", \"explanation\": \"String match for 'stream' here is a Zulip API channel parameter, unrelated to urllib3 HTTP streaming, so it does not confirm or rule out reachability.\"}]}",
+     "in": 4119,
+     "out": 4063,
+     "s": 46.64,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 66044.3,
+   "output": {
+    "critique": "The verdict's core move -- treating urllib3 as reachable purely because `requests` sits on top of it and HttpTransport makes outbound calls to user-configured webhook/integration URLs -- is directionally sound, but the argument glosses over a real precondition gap: the advisory requires the app to actually consume the response body via a chunked/bounded read (stream(), read(amt=...), iter_content, .text/.content access), not merely issue the request. None of the retrieved code (transports.py:215-224, _request_with_retries stub) shows the response body being read or decoded; the shown snippets only dispatch the HTTP verb. If HttpTransport only inspects status_code and never touches .content/.text, urllib3's decompression path is never invoked and the alert is inert for this call site. That said, this counter-argument is weak in practice: requests' Response.content property internally calls iter_content(CONTENT_CHUNK_SIZE) even when stream=False, and production webhook transports almost universally read body text for error messages/logging on non-2xx responses -- a pattern very likely present in the elided retry/exception-handling code not shown here. Combined with the fact that webhook/integration endpoints (generic webhook, Slack, Zulip, PagerDuty) are user-configured URLs that can point to attacker-controlled or compromised hosts, the SSRF-adjacent exposure to a malicious compressed response is plausible and consistent with how this class of urllib3 CVE is normally scoped (any HTTP client fetching from an untrusted server). The static AST tool correctly found zero direct symbol hits because the vulnerable call lives inside the `requests` wrapper, which is outside first-party scan scope -- the verdict correctly flags this as a scanner blind spot rather than proof of non-use. Net: the verdict's reasoning doesn't misread the evidence, it reasonably extrapolates past a scanning gap, but confidence should be tempered because the actual body-read site is not confirmed in the retrieved code.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.55
+   },
+   "tokens_in": 4410,
+   "tokens_out": 5875,
+   "llm_calls": 1,
+   "llm_seconds": 66.03,
+   "cost_usd_est": 0.101355,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's core move -- treating urllib3 as reachable purely because `requests` sits on top of it and HttpTransport makes outbound calls to user-configured webhook/integration URLs -- is directionally sound, but the argument glosses over a real precondition gap: the advisory requires the app to actually consume the response body via a chunked/bounded read (stream(), read(amt=...), iter_content, .text/.content access), not merely issue the request. None of the retrieved code (transports.py:215-224, _request_with_retries stub) shows the response body being read or decoded; the shown snippets only dispatch the HTTP verb. If HttpTransport only inspects status_code and never touches .content/.text, urllib3's decompression path is never invoked and the alert is inert for this call site. That said, this counter-argument is weak in practice: requests' Response.content property internally calls iter_content(CONTENT_CHUNK_SIZE) even when stream=False, and production webhook transports almost universally read body text for error messages/logging on non-2xx responses -- a pattern very likely present in the elided retry/exception-handling code not shown here. Combined with the fact that webhook/integration endpoints (generic webhook, Slack, Zulip, PagerDuty) are user-configured URLs that can point to attacker-controlled or compromised hosts, the SSRF-adjacent exposure to a malicious compressed response is plausible and consistent with how this class of urllib3 CVE is normally scoped (any HTTP client fetching from an untrusted server). The static AST tool correctly found zero direct symbol hits because the vulnerable call lives inside the `requests` wrapper, which is outside first-party scan scope -- the verdict correctly flags this as a scanner blind spot rather than proof of non-use. Net: the verdict's reasoning doesn't misread the evidence, it reasonably extrapolates past a scanning gap, but confidence should be tempered because the actual body-read site is not confirmed in the retrieved code.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"reachable\",\"confidence\":0.55}",
+     "in": 4410,
+     "out": 5875,
+     "s": 66.03,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.55,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 8529,
+  "tokens_out": 9938,
+  "cost_usd_est": 0.174657,
+  "seconds": 112.91
+ },
+ "created": "2026-11-10T15:25:25+00:00",
+ "code_version": "f26e69b"
+}

@@ -1,0 +1,293 @@
+{
+ "finding_id": "bench/asset-server/aiohttp@3.9.1/GHSA-5h86-8mv2-jq9f",
+ "config": "no-retrieval",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/asset-server",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-23334",
+   "GHSA-5h86-8mv2-jq9f",
+   "PYSEC-2024-24"
+  ],
+  "cves": [
+   "CVE-2024-23334"
+  ],
+  "cwes": [
+   "CWE-22"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/asset-server/aiohttp@3.9.1/GHSA-5h86-8mv2-jq9f",
+  "first_fixed_above_installed": "3.9.2",
+  "fixed_versions": [
+   "3.9.2",
+   "1c335944d6a8b1298baf179b7c0b3069f10c514b"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+  "package": "aiohttp",
+  "published": "2024-01-29T22:31:03Z",
+  "split": "test",
+  "summary": "aiohttp is vulnerable to directory traversal",
+  "target": "bench/asset-server",
+  "version": "3.9.1",
+  "vuln_id": "GHSA-5h86-8mv2-jq9f"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.75,
+  "vulnerable_symbols": [
+   "web.static",
+   "Application.router.add_static"
+  ],
+  "reasoning": "CVE-2024-23334 affects aiohttp's built-in static file serving route (web.static()/router.add_static), which under certain configurations fails to properly validate paths, allowing directory traversal outside the served root. The application only imports aiohttp.web to build an Application, register routes, and call web.run_app; the only file-serving code shown is a direct web.FileResponse(STATIC / \"index.html\") call with a fixed, hardcoded path (assets/app.py:16), not user-supplied input, and not the vulnerable web.static()/add_static directory-serving mechanism. No add_static or web.static() call sites appear among the 11 package references, and the AST search found zero production call sites of the named vulnerable symbols. Since the exploitable feature (static directory route with traversal-prone path resolution) is never registered or invoked, the vulnerable code path is not reachable in this app.",
+  "evidence": [
+   {
+    "location": "assets/app.py:16",
+    "explanation": "The only file-serving call uses web.FileResponse with a hardcoded, non-user-controlled path, not the vulnerable static-directory route handler."
+   },
+   {
+    "location": "assets/app.py:3,9,20",
+    "explanation": "aiohttp is only used to construct the Application and run the server; no add_static/web.static registration is present."
+   },
+   {
+    "location": "advisory",
+    "explanation": "CVE-2024-23334 specifically concerns aiohttp's static file route (web.static/add_static) path traversal, a feature this app does not configure."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict correctly identifies that CVE-2024-23334 requires web.static()/add_static() to be registered with follow_symlinks or improper path normalization, and the evidence shows no such call site among the 11 package references \u2014 only Application(), create_app(), a hardcoded FileResponse, and run_app. FileResponse with a fixed path has no user-controlled input and is not the vulnerable code path at all (the vulnerability is specifically in the StaticResource route handler's path-resolution logic, not in FileResponse construction itself). The static search covered all 2 first-party files and found zero matches for static-serving registration. The only weak spot is that static analysis could miss a static route added dynamically via a string-built method name or through a framework extension not visible in AST, but there's no evidence suggesting that here \u2014 the app is a minimal 20-line file fully enumerated. The verdict's reasoning is sound and matches the advisory's precondition (add_static/web.static usage) against the actual evidence.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/asset-server/aiohttp@3.9.1/GHSA-5h86-8mv2-jq9f",
+    "package": "aiohttp",
+    "version": "3.9.1",
+    "vuln_id": "GHSA-5h86-8mv2-jq9f",
+    "aliases": [
+     "CVE-2024-23334",
+     "GHSA-5h86-8mv2-jq9f",
+     "PYSEC-2024-24"
+    ],
+    "summary": "aiohttp is vulnerable to directory traversal",
+    "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+    "fixed_versions": [
+     "3.9.2",
+     "1c335944d6a8b1298baf179b7c0b3069f10c514b"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 1.9,
+   "output": {
+    "package": "aiohttp",
+    "import_names": [
+     "aiohttp"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "assets/app.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 11,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "assets/app.py:9",
+      "code": "app = web.Application()",
+      "function": "assets.app:create_app",
+      "in_test": false
+     },
+     {
+      "location": "assets/app.py:8",
+      "code": "def create_app() -> web.Application:",
+      "function": "assets.app:create_app",
+      "in_test": false
+     },
+     {
+      "location": "assets/app.py:16",
+      "code": "return web.FileResponse(STATIC / \"index.html\")",
+      "function": "assets.app:index",
+      "in_test": false
+     },
+     {
+      "location": "assets/app.py:20",
+      "code": "web.run_app(create_app())",
+      "function": "assets.app:<main>",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 2,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 2,
+    "paths": [],
+    "summary": "aiohttp: imported in 1 non-test location(s); 11 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 14968.1,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.75,
+    "vulnerable_symbols": [
+     "web.static",
+     "Application.router.add_static"
+    ],
+    "reasoning": "CVE-2024-23334 affects aiohttp's built-in static file serving route (web.static()/router.add_static), which under certain configurations fails to properly validate paths, allowing directory traversal outside the served root. The application only imports aiohttp.web to build an Application, register routes, and call web.run_app; the only file-serving code shown is a direct web.FileResponse(STATIC / \"index.html\") call with a fixed, hardcoded path (assets/app.py:16), not user-supplied input, and not the vulnerable web.static()/add_static directory-serving mechanism. No add_static or web.static() call sites appear among the 11 package references, and the AST search found zero production call sites of the named vulnerable symbols. Since the exploitable feature (static directory route with traversal-prone path resolution) is never registered or invoked, the vulnerable code path is not reachable in this app.",
+    "evidence": [
+     {
+      "location": "assets/app.py:16",
+      "explanation": "The only file-serving call uses web.FileResponse with a hardcoded, non-user-controlled path, not the vulnerable static-directory route handler."
+     },
+     {
+      "location": "assets/app.py:3,9,20",
+      "explanation": "aiohttp is only used to construct the Application and run the server; no add_static/web.static registration is present."
+     },
+     {
+      "location": "advisory",
+      "explanation": "CVE-2024-23334 specifically concerns aiohttp's static file route (web.static/add_static) path traversal, a feature this app does not configure."
+     }
+    ]
+   },
+   "tokens_in": 2090,
+   "tokens_out": 1115,
+   "llm_calls": 1,
+   "llm_seconds": 14.97,
+   "cost_usd_est": 0.022995,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.75,\"vulnerable_symbols\":[\"web.static\",\"Application.router.add_static\"],\"reasoning\":\"CVE-2024-23334 affects aiohttp's built-in static file serving route (web.static()/router.add_static), which under certain configurations fails to properly validate paths, allowing directory traversal outside the served root. The application only imports aiohttp.web to build an Application, register routes, and call web.run_app; the only file-serving code shown is a direct web.FileResponse(STATIC / \\\"index.html\\\") call with a fixed, hardcoded path (assets/app.py:16), not user-supplied input, and not the vulnerable web.static()/add_static directory-serving mechanism. No add_static or web.static() call sites appear among the 11 package references, and the AST search found zero production call sites of the named vulnerable symbols. Since the exploitable feature (static directory route with traversal-prone path resolution) is never registered or invoked, the vulnerable code path is not reachable in this app.\",\"evidence\":[{\"location\":\"assets/app.py:16\",\"explanation\":\"The only file-serving call uses web.FileResponse with a hardcoded, non-user-controlled path, not the vulnerable static-directory route handler.\"},{\"location\":\"assets/app.py:3,9,20\",\"explanation\":\"aiohttp is only used to construct the Application and run the server; no add_static/web.static registration is present.\"},{\"location\":\"advisory\",\"explanation\":\"CVE-2024-23334 specifically concerns aiohttp's static file route (web.static/add_static) path traversal, a feature this app does not configure.\"}]}",
+     "in": 2090,
+     "out": 1115,
+     "s": 14.97,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 7549.9,
+   "output": {
+    "critique": "The verdict correctly identifies that CVE-2024-23334 requires web.static()/add_static() to be registered with follow_symlinks or improper path normalization, and the evidence shows no such call site among the 11 package references \u2014 only Application(), create_app(), a hardcoded FileResponse, and run_app. FileResponse with a fixed path has no user-controlled input and is not the vulnerable code path at all (the vulnerability is specifically in the StaticResource route handler's path-resolution logic, not in FileResponse construction itself). The static search covered all 2 first-party files and found zero matches for static-serving registration. The only weak spot is that static analysis could miss a static route added dynamically via a string-built method name or through a framework extension not visible in AST, but there's no evidence suggesting that here \u2014 the app is a minimal 20-line file fully enumerated. The verdict's reasoning is sound and matches the advisory's precondition (add_static/web.static usage) against the actual evidence.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 2002,
+   "tokens_out": 364,
+   "llm_calls": 1,
+   "llm_seconds": 7.55,
+   "cost_usd_est": 0.011466,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\": \"The verdict correctly identifies that CVE-2024-23334 requires web.static()/add_static() to be registered with follow_symlinks or improper path normalization, and the evidence shows no such call site among the 11 package references \u2014 only Application(), create_app(), a hardcoded FileResponse, and run_app. FileResponse with a fixed path has no user-controlled input and is not the vulnerable code path at all (the vulnerability is specifically in the StaticResource route handler's path-resolution logic, not in FileResponse construction itself). The static search covered all 2 first-party files and found zero matches for static-serving registration. The only weak spot is that static analysis could miss a static route added dynamically via a string-built method name or through a framework extension not visible in AST, but there's no evidence suggesting that here \u2014 the app is a minimal 20-line file fully enumerated. The verdict's reasoning is sound and matches the advisory's precondition (add_static/web.static usage) against the actual evidence.\", \"agrees\": true, \"retry\": false, \"final_verdict\": \"not_reachable\", \"confidence\": 0.85}",
+     "in": 2002,
+     "out": 364,
+     "s": 7.55,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4092,
+  "tokens_out": 1479,
+  "cost_usd_est": 0.034461,
+  "seconds": 22.52
+ },
+ "created": "2026-11-10T16:00:39+00:00",
+ "code_version": "f26e69b"
+}

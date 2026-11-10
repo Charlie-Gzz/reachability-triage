@@ -1,0 +1,265 @@
+{
+ "finding_id": "bench/comments-hub/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+ "config": "no-retrieval",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/comments-hub",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-28957",
+   "GHSA-jq4v-f5q6-mjqq",
+   "PYSEC-2021-19"
+  ],
+  "cves": [
+   "CVE-2021-28957"
+  ],
+  "cwes": [
+   "CWE-79"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/comments-hub/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+  "first_fixed_above_installed": "4.6.3",
+  "fixed_versions": [
+   "4.6.3",
+   "a5f9cb52079dc57477c460dbe6ba0f775e14a999"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+  "package": "lxml",
+  "published": "2021-03-22T16:53:53Z",
+  "split": "test",
+  "summary": "lxml vulnerable to Cross-Site Scripting ",
+  "target": "bench/comments-hub",
+  "version": "4.6.2",
+  "vuln_id": "GHSA-jq4v-f5q6-mjqq"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.78,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "lxml.html.clean.Cleaner"
+  ],
+  "reasoning": "CVE-2021-28957 affects lxml.html.clean.Cleaner, which fails to properly neutralize certain crafted markup (e.g. CDATA/mXSS vectors) even with scripts/javascript/style stripping enabled, allowing XSS to survive sanitization. The application directly instantiates this exact class in comments/sanitize.py:3 with scripts=True, javascript=True, style=True, safe_attrs_only=True \u2014 precisely the vulnerable configuration/API surface the advisory describes. Although the static symbol search didn't match a specific named vulnerable function (because the search list likely didn't include 'Cleaner' itself), the 'other use' evidence shows the Cleaner object is constructed and almost certainly used to sanitize user-supplied comment HTML, an attacker-influenced input. Since this is a sanitizer meant to clean untrusted content, the file name and usage pattern strongly indicate it processes externally-supplied HTML, making the XSS-relevant path reachable from outside input. No evidence shows this Cleaner instance is unused or confined to tests.",
+  "evidence": [
+   {
+    "location": "comments/sanitize.py:1",
+    "explanation": "Imports from lxml.html.clean, the module containing the vulnerable Cleaner class."
+   },
+   {
+    "location": "comments/sanitize.py:3",
+    "explanation": "Instantiates Cleaner with scripts/javascript/style stripping, the exact vulnerable sanitization configuration targeted by CVE-2021-28957."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict's core claim \u2014 that constructing lxml.html.clean.Cleaner with scripts/javascript/style stripping is itself the vulnerable configuration CVE-2021-28957 targets \u2014 is accurate; the advisory shows the mXSS/CDATA bypass survives exactly this kind of sanitizer setup, not just a specific clean_html() call pattern. The strongest counter-argument is that the AST evidence only confirms *instantiation* of Cleaner (comments/sanitize.py:3) and zero confirmed call sites reaching an entry point \u2014 the scanner never actually located a .clean() or .clean_html() invocation on `_cleaner`, nor traced attacker-controlled HTML flowing into it. In principle the object could be dead code or only ever invoked on trusted/internal strings. However, this gap is weak in practice: the module is literally named sanitize.py inside a 'comments' app, the variable is prefixed with an underscore (private module-level singleton, the idiomatic pattern for 'instantiate once, call elsewhere in this file'), and the search tool itself admits it likely didn't include 'Cleaner' or its methods in the symbol list, explaining the 0-call-site result rather than proving non-use. Given the domain context (user comment sanitization) and the exact matching configuration, the inference that this sanitizer processes attacker-supplied markup is reasonable and the advisory's preconditions are plausibly met. The missing call-site evidence tempers certainty slightly but doesn't overturn the verdict.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.78
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/comments-hub/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+    "package": "lxml",
+    "version": "4.6.2",
+    "vuln_id": "GHSA-jq4v-f5q6-mjqq",
+    "aliases": [
+     "CVE-2021-28957",
+     "GHSA-jq4v-f5q6-mjqq",
+     "PYSEC-2021-19"
+    ],
+    "summary": "lxml vulnerable to Cross-Site Scripting ",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+    "fixed_versions": [
+     "4.6.3",
+     "a5f9cb52079dc57477c460dbe6ba0f775e14a999"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.6,
+   "output": {
+    "package": "lxml",
+    "import_names": [
+     "lxml"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "comments/sanitize.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 1,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "comments/sanitize.py:3",
+      "code": "_cleaner = Cleaner(scripts=True, javascript=True, style=True, forms=False, safe_attrs_only=True)",
+      "function": "comments.sanitize:<module>",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [],
+    "summary": "lxml: imported in 1 non-test location(s); 1 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 11620.3,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "lxml.html.clean.Cleaner"
+    ],
+    "reasoning": "CVE-2021-28957 affects lxml.html.clean.Cleaner, which fails to properly neutralize certain crafted markup (e.g. CDATA/mXSS vectors) even with scripts/javascript/style stripping enabled, allowing XSS to survive sanitization. The application directly instantiates this exact class in comments/sanitize.py:3 with scripts=True, javascript=True, style=True, safe_attrs_only=True \u2014 precisely the vulnerable configuration/API surface the advisory describes. Although the static symbol search didn't match a specific named vulnerable function (because the search list likely didn't include 'Cleaner' itself), the 'other use' evidence shows the Cleaner object is constructed and almost certainly used to sanitize user-supplied comment HTML, an attacker-influenced input. Since this is a sanitizer meant to clean untrusted content, the file name and usage pattern strongly indicate it processes externally-supplied HTML, making the XSS-relevant path reachable from outside input. No evidence shows this Cleaner instance is unused or confined to tests.",
+    "evidence": [
+     {
+      "location": "comments/sanitize.py:1",
+      "explanation": "Imports from lxml.html.clean, the module containing the vulnerable Cleaner class."
+     },
+     {
+      "location": "comments/sanitize.py:3",
+      "explanation": "Instantiates Cleaner with scripts/javascript/style stripping, the exact vulnerable sanitization configuration targeted by CVE-2021-28957."
+     }
+    ]
+   },
+   "tokens_in": 2041,
+   "tokens_out": 899,
+   "llm_calls": 1,
+   "llm_seconds": 11.61,
+   "cost_usd_est": 0.019608,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"reachable\",\"confidence\":0.85,\"vulnerable_symbols\":[\"lxml.html.clean.Cleaner\"],\"reasoning\":\"CVE-2021-28957 affects lxml.html.clean.Cleaner, which fails to properly neutralize certain crafted markup (e.g. CDATA/mXSS vectors) even with scripts/javascript/style stripping enabled, allowing XSS to survive sanitization. The application directly instantiates this exact class in comments/sanitize.py:3 with scripts=True, javascript=True, style=True, safe_attrs_only=True \u2014 precisely the vulnerable configuration/API surface the advisory describes. Although the static symbol search didn't match a specific named vulnerable function (because the search list likely didn't include 'Cleaner' itself), the 'other use' evidence shows the Cleaner object is constructed and almost certainly used to sanitize user-supplied comment HTML, an attacker-influenced input. Since this is a sanitizer meant to clean untrusted content, the file name and usage pattern strongly indicate it processes externally-supplied HTML, making the XSS-relevant path reachable from outside input. No evidence shows this Cleaner instance is unused or confined to tests.\",\"evidence\":[{\"location\":\"comments/sanitize.py:1\",\"explanation\":\"Imports from lxml.html.clean, the module containing the vulnerable Cleaner class.\"},{\"location\":\"comments/sanitize.py:3\",\"explanation\":\"Instantiates Cleaner with scripts/javascript/style stripping, the exact vulnerable sanitization configuration targeted by CVE-2021-28957.\"}]}",
+     "in": 2041,
+     "out": 899,
+     "s": 11.61,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 25198.5,
+   "output": {
+    "critique": "The verdict's core claim \u2014 that constructing lxml.html.clean.Cleaner with scripts/javascript/style stripping is itself the vulnerable configuration CVE-2021-28957 targets \u2014 is accurate; the advisory shows the mXSS/CDATA bypass survives exactly this kind of sanitizer setup, not just a specific clean_html() call pattern. The strongest counter-argument is that the AST evidence only confirms *instantiation* of Cleaner (comments/sanitize.py:3) and zero confirmed call sites reaching an entry point \u2014 the scanner never actually located a .clean() or .clean_html() invocation on `_cleaner`, nor traced attacker-controlled HTML flowing into it. In principle the object could be dead code or only ever invoked on trusted/internal strings. However, this gap is weak in practice: the module is literally named sanitize.py inside a 'comments' app, the variable is prefixed with an underscore (private module-level singleton, the idiomatic pattern for 'instantiate once, call elsewhere in this file'), and the search tool itself admits it likely didn't include 'Cleaner' or its methods in the symbol list, explaining the 0-call-site result rather than proving non-use. Given the domain context (user comment sanitization) and the exact matching configuration, the inference that this sanitizer processes attacker-supplied markup is reasonable and the advisory's preconditions are plausibly met. The missing call-site evidence tempers certainty slightly but doesn't overturn the verdict.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.78
+   },
+   "tokens_in": 1971,
+   "tokens_out": 2060,
+   "llm_calls": 1,
+   "llm_seconds": 25.19,
+   "cost_usd_est": 0.036813,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's core claim \\u2014 that constructing lxml.html.clean.Cleaner with scripts/javascript/style stripping is itself the vulnerable configuration CVE-2021-28957 targets \\u2014 is accurate; the advisory shows the mXSS/CDATA bypass survives exactly this kind of sanitizer setup, not just a specific clean_html() call pattern. The strongest counter-argument is that the AST evidence only confirms *instantiation* of Cleaner (comments/sanitize.py:3) and zero confirmed call sites reaching an entry point \\u2014 the scanner never actually located a .clean() or .clean_html() invocation on `_cleaner`, nor traced attacker-controlled HTML flowing into it. In principle the object could be dead code or only ever invoked on trusted/internal strings. However, this gap is weak in practice: the module is literally named sanitize.py inside a 'comments' app, the variable is prefixed with an underscore (private module-level singleton, the idiomatic pattern for 'instantiate once, call elsewhere in this file'), and the search tool itself admits it likely didn't include 'Cleaner' or its methods in the symbol list, explaining the 0-call-site result rather than proving non-use. Given the domain context (user comment sanitization) and the exact matching configuration, the inference that this sanitizer processes attacker-supplied markup is reasonable and the advisory's preconditions are plausibly met. The missing call-site evidence tempers certainty slightly but doesn't overturn the verdict.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"reachable\",\"confidence\":0.78}",
+     "in": 1971,
+     "out": 2060,
+     "s": 25.19,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.78,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4012,
+  "tokens_out": 2959,
+  "cost_usd_est": 0.056421,
+  "seconds": 36.82
+ },
+ "created": "2026-11-10T15:58:54+00:00",
+ "code_version": "f26e69b"
+}

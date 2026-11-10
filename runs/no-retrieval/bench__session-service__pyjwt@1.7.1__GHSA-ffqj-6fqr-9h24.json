@@ -1,0 +1,279 @@
+{
+ "finding_id": "bench/session-service/pyjwt@1.7.1/GHSA-ffqj-6fqr-9h24",
+ "config": "no-retrieval",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/session-service",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-29217",
+   "GHSA-ffqj-6fqr-9h24",
+   "PYSEC-2022-202"
+  ],
+  "cves": [
+   "CVE-2022-29217"
+  ],
+  "cwes": [
+   "CWE-327"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/session-service/pyjwt@1.7.1/GHSA-ffqj-6fqr-9h24",
+  "first_fixed_above_installed": "2.4.0",
+  "fixed_versions": [
+   "2.4.0",
+   "9c528670c455b8d948aff95ed50e22940d1ad3fc"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+  "package": "pyjwt",
+  "published": "2022-05-24T22:17:27Z",
+  "split": "test",
+  "summary": "Key confusion through non-blocklisted public key formats",
+  "target": "bench/session-service",
+  "version": "1.7.1",
+  "vuln_id": "GHSA-ffqj-6fqr-9h24"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.9,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.88,
+  "vulnerable_symbols": [
+   "jwt.decode (with algorithms not restricted to symmetric, allowing public key confusion when verifying with an asymmetric public key as if it were an HMAC secret)"
+  ],
+  "reasoning": "The CVE-2022-29217 key-confusion issue applies when an application decodes JWTs using asymmetric algorithms (RS/EC/etc.) where an attacker can supply a public key or certificate that pyjwt fails to blocklist as an HMAC secret, letting them forge tokens signed with the public key treated as an HMAC key. Here, sessions/auth.py:10 calls jwt.decode(token, SECRET, algorithms=[\"HS256\"]) \u2014 the algorithm is hardcoded to HS256 (symmetric) and SECRET is a fixed server-side secret, not an attacker-suppliable public key, so the asymmetric/public-key confusion scenario the advisory describes cannot occur. jwt.encode at line 14 also only uses HS256. No other decode/encode call sites or algorithm lists were found, and no RSA/EC public keys are loaded or passed to jwt.decode anywhere in the codebase. Because the vulnerable path requires use of asymmetric algorithms with a public key not in pyjwt's blocklist, and this app only ever uses symmetric HS256 with a static secret, the vulnerable behavior is not exercised.",
+  "evidence": [
+   {
+    "location": "sessions/auth.py:10",
+    "explanation": "jwt.decode is restricted to algorithms=[\"HS256\"], a symmetric algorithm, so the asymmetric public-key confusion flaw cannot be triggered."
+   },
+   {
+    "location": "sessions/auth.py:14",
+    "explanation": "jwt.encode also only uses HS256 with a secret, confirming no asymmetric key material is involved in this JWT flow."
+   },
+   {
+    "location": "sessions/auth.py:4",
+    "explanation": "Only import of pyjwt in the application; no other decode/encode call sites exist elsewhere."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that CVE-2022-29217 is about jwt.decode() accepting attacker-controlled algorithm confusion when the 'algorithms' parameter is not strictly enforced or when verify_signature can be bypassed via unvalidated 'alg' header processing in older pyjwt (<2.4.0) combined with certain key types. However, the evidence here explicitly shows decode() is called with algorithms=['HS256'] only and a static server-side SECRET \u2014 there is no public/asymmetric key ever loaded or passed, and the algorithms list is hardcoded (not attacker-influenced, no 'alg' from untrusted JWKS, no RS256/ES256 path). The advisory's precondition \u2014 asymmetric public key material usable as an HMAC secret \u2014 is structurally absent from this codebase. The static evidence also confirms only one import site and no other call sites, which closes off the main 'other path in' concern (middleware, settings, templates) since AST search found zero additional symbol uses. There's no dispatch table, no dynamic algorithm selection, and no public key loading anywhere. The verdict correctly identifies the controlling precondition and verifies it against actual code, not just function presence. I cannot construct a plausible path where this code becomes vulnerable to key confusion given the fixed HS256 symmetric usage.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.9
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/session-service/pyjwt@1.7.1/GHSA-ffqj-6fqr-9h24",
+    "package": "pyjwt",
+    "version": "1.7.1",
+    "vuln_id": "GHSA-ffqj-6fqr-9h24",
+    "aliases": [
+     "CVE-2022-29217",
+     "GHSA-ffqj-6fqr-9h24",
+     "PYSEC-2022-202"
+    ],
+    "summary": "Key confusion through non-blocklisted public key formats",
+    "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+    "fixed_versions": [
+     "2.4.0",
+     "9c528670c455b8d948aff95ed50e22940d1ad3fc"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.6,
+   "output": {
+    "package": "pyjwt",
+    "import_names": [
+     "jwt"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "sessions/auth.py:4"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "sessions/auth.py:10",
+      "code": "return jwt.decode(token, SECRET, algorithms=[\"HS256\"])",
+      "function": "sessions.auth:read_session",
+      "in_test": false
+     },
+     {
+      "location": "sessions/auth.py:14",
+      "code": "return jwt.encode({\"sub\": user_id, \"exp\": int(time.time()) + 3600}, SECRET, algorithm=\"HS256\")",
+      "function": "sessions.auth:new_session",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 2,
+    "paths": [],
+    "summary": "pyjwt: imported in 1 non-test location(s); 6 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 9743.6,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "vulnerable_symbols": [
+     "jwt.decode (with algorithms not restricted to symmetric, allowing public key confusion when verifying with an asymmetric public key as if it were an HMAC secret)"
+    ],
+    "reasoning": "The CVE-2022-29217 key-confusion issue applies when an application decodes JWTs using asymmetric algorithms (RS/EC/etc.) where an attacker can supply a public key or certificate that pyjwt fails to blocklist as an HMAC secret, letting them forge tokens signed with the public key treated as an HMAC key. Here, sessions/auth.py:10 calls jwt.decode(token, SECRET, algorithms=[\"HS256\"]) \u2014 the algorithm is hardcoded to HS256 (symmetric) and SECRET is a fixed server-side secret, not an attacker-suppliable public key, so the asymmetric/public-key confusion scenario the advisory describes cannot occur. jwt.encode at line 14 also only uses HS256. No other decode/encode call sites or algorithm lists were found, and no RSA/EC public keys are loaded or passed to jwt.decode anywhere in the codebase. Because the vulnerable path requires use of asymmetric algorithms with a public key not in pyjwt's blocklist, and this app only ever uses symmetric HS256 with a static secret, the vulnerable behavior is not exercised.",
+    "evidence": [
+     {
+      "location": "sessions/auth.py:10",
+      "explanation": "jwt.decode is restricted to algorithms=[\"HS256\"], a symmetric algorithm, so the asymmetric public-key confusion flaw cannot be triggered."
+     },
+     {
+      "location": "sessions/auth.py:14",
+      "explanation": "jwt.encode also only uses HS256 with a secret, confirming no asymmetric key material is involved in this JWT flow."
+     },
+     {
+      "location": "sessions/auth.py:4",
+      "explanation": "Only import of pyjwt in the application; no other decode/encode call sites exist elsewhere."
+     }
+    ]
+   },
+   "tokens_in": 2087,
+   "tokens_out": 697,
+   "llm_calls": 1,
+   "llm_seconds": 9.75,
+   "cost_usd_est": 0.016716,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.88,\"vulnerable_symbols\":[\"jwt.decode (with algorithms not restricted to symmetric, allowing public key confusion when verifying with an asymmetric public key as if it were an HMAC secret)\"],\"reasoning\":\"The CVE-2022-29217 key-confusion issue applies when an application decodes JWTs using asymmetric algorithms (RS/EC/etc.) where an attacker can supply a public key or certificate that pyjwt fails to blocklist as an HMAC secret, letting them forge tokens signed with the public key treated as an HMAC key. Here, sessions/auth.py:10 calls jwt.decode(token, SECRET, algorithms=[\\\"HS256\\\"]) \u2014 the algorithm is hardcoded to HS256 (symmetric) and SECRET is a fixed server-side secret, not an attacker-suppliable public key, so the asymmetric/public-key confusion scenario the advisory describes cannot occur. jwt.encode at line 14 also only uses HS256. No other decode/encode call sites or algorithm lists were found, and no RSA/EC public keys are loaded or passed to jwt.decode anywhere in the codebase. Because the vulnerable path requires use of asymmetric algorithms with a public key not in pyjwt's blocklist, and this app only ever uses symmetric HS256 with a static secret, the vulnerable behavior is not exercised.\",\"evidence\":[{\"location\":\"sessions/auth.py:10\",\"explanation\":\"jwt.decode is restricted to algorithms=[\\\"HS256\\\"], a symmetric algorithm, so the asymmetric public-key confusion flaw cannot be triggered.\"},{\"location\":\"sessions/auth.py:14\",\"explanation\":\"jwt.encode also only uses HS256 with a secret, confirming no asymmetric key material is involved in this JWT flow.\"},{\"location\":\"sessions/auth.py:4\",\"explanation\":\"Only import of pyjwt in the application; no other decode/encode call sites exist elsewhere.\"}]}\n```",
+     "in": 2087,
+     "out": 697,
+     "s": 9.75,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 8692.9,
+   "output": {
+    "critique": "The strongest counter-argument is that CVE-2022-29217 is about jwt.decode() accepting attacker-controlled algorithm confusion when the 'algorithms' parameter is not strictly enforced or when verify_signature can be bypassed via unvalidated 'alg' header processing in older pyjwt (<2.4.0) combined with certain key types. However, the evidence here explicitly shows decode() is called with algorithms=['HS256'] only and a static server-side SECRET \u2014 there is no public/asymmetric key ever loaded or passed, and the algorithms list is hardcoded (not attacker-influenced, no 'alg' from untrusted JWKS, no RS256/ES256 path). The advisory's precondition \u2014 asymmetric public key material usable as an HMAC secret \u2014 is structurally absent from this codebase. The static evidence also confirms only one import site and no other call sites, which closes off the main 'other path in' concern (middleware, settings, templates) since AST search found zero additional symbol uses. There's no dispatch table, no dynamic algorithm selection, and no public key loading anywhere. The verdict correctly identifies the controlling precondition and verifies it against actual code, not just function presence. I cannot construct a plausible path where this code becomes vulnerable to key confusion given the fixed HS256 symmetric usage.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.9
+   },
+   "tokens_in": 2101,
+   "tokens_out": 480,
+   "llm_calls": 1,
+   "llm_seconds": 8.69,
+   "cost_usd_est": 0.013503,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument is that CVE-2022-29217 is about jwt.decode() accepting attacker-controlled algorithm confusion when the 'algorithms' parameter is not strictly enforced or when verify_signature can be bypassed via unvalidated 'alg' header processing in older pyjwt (<2.4.0) combined with certain key types. However, the evidence here explicitly shows decode() is called with algorithms=['HS256'] only and a static server-side SECRET \u2014 there is no public/asymmetric key ever loaded or passed, and the algorithms list is hardcoded (not attacker-influenced, no 'alg' from untrusted JWKS, no RS256/ES256 path). The advisory's precondition \u2014 asymmetric public key material usable as an HMAC secret \u2014 is structurally absent from this codebase. The static evidence also confirms only one import site and no other call sites, which closes off the main 'other path in' concern (middleware, settings, templates) since AST search found zero additional symbol uses. There's no dispatch table, no dynamic algorithm selection, and no public key loading anywhere. The verdict correctly identifies the controlling precondition and verifies it against actual code, not just function presence. I cannot construct a plausible path where this code becomes vulnerable to key confusion given the fixed HS256 symmetric usage.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.9}",
+     "in": 2101,
+     "out": 480,
+     "s": 8.69,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.9,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4188,
+  "tokens_out": 1177,
+  "cost_usd_est": 0.030219,
+  "seconds": 18.44
+ },
+ "created": "2026-11-10T16:00:17+00:00",
+ "code_version": "f26e69b"
+}

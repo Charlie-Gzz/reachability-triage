@@ -1,0 +1,298 @@
+{
+ "finding_id": "ctfd/gevent@20.9.0/GHSA-x7m3-jprg-wc5g",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-41419",
+   "GHSA-x7m3-jprg-wc5g"
+  ],
+  "cves": [
+   "CVE-2023-41419"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "ctfd/gevent@20.9.0/GHSA-x7m3-jprg-wc5g",
+  "first_fixed_above_installed": "23.9.0",
+  "fixed_versions": [
+   "23.9.0"
+  ],
+  "max_cvss": "9.8",
+  "package": "gevent",
+  "published": "2023-09-25T12:30:44Z",
+  "summary": "Gevent allows remote attacker to escalate privileges",
+  "target": "ctfd",
+  "version": "20.9.0",
+  "vuln_id": "GHSA-x7m3-jprg-wc5g"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [
+   "unspecified - advisory does not name a specific function; CVE-2023-41419 concerns gevent internal privilege-escalation issue"
+  ],
+  "reasoning": "The advisory (GHSA-x7m3-jprg-wc5g / CVE-2023-41419) does not identify a specific vulnerable API in the scanner summary, and no named vulnerable symbols were found anywhere in the first-party codebase. gevent is imported in only one production file, CTFd/utils/events/__init__.py, and the only package usages are generic hub primitives: Timeout (lines 62, 65, 113, 116) and spawn (line 102) for a greenlet-based SSE listener. These are core gevent constructs unrelated by name to any known privilege-escalation path, but without the advisory specifying the affected function/module, it's not possible to definitively confirm the vulnerable code path is or isn't exercised by this narrow usage. The version (20.9.0) predates the fix (23.9.0), so the vulnerable code is present in the installed package, but the app's interaction with gevent is limited to spawning a greenlet and timeout handling, not any obviously privilege-sensitive feature (e.g., subprocess, SSL, or file permission handling) that gevent's escalation CVEs typically involve.",
+  "evidence": [
+   {
+    "location": "CTFd/utils/events/__init__.py:5",
+    "explanation": "Only production import of gevent in the codebase."
+   },
+   {
+    "location": "CTFd/utils/events/__init__.py:102",
+    "explanation": "spawn(_listen) starts a greenlet for SSE event streaming, the sole non-Timeout gevent call site."
+   },
+   {
+    "location": "CTFd/utils/events/__init__.py:62,65,113,116",
+    "explanation": "Timeout/except Timeout used for bounding SSE polling; unrelated by name to any escalation-specific symbol."
+   },
+   {
+    "location": "advisory",
+    "explanation": "GHSA-x7m3-jprg-wc5g does not specify an exploitable function name, so static symbol matching cannot confirm or rule out reachability."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The reviewer's main point\u2014that no advisory-specific symbol was found\u2014is weaker than it looks, because this CVE is not a typical 'call this function' vuln. CVE-2023-41419 concerns gevent's bundled c-ares DNS resolver insecurely creating a predictable config/temp file, which is a local privilege-escalation issue tied to whether the c-ares resolver backend is active (e.g. via GEVENT_RESOLVER=ares env var or explicit resolver configuration), not to any named Python API the application calls. Static AST symbol-matching against call sites is therefore the wrong tool for this advisory: the import alone (spawn/Timeout for SSE) doesn't invoke DNS resolution at all, so even if the ares resolver were active, these cited lines wouldn't be the trigger \u2014 but the evidence also never checked environment variables, settings, or default resolver backend selection, which is the actual precondition. The verdict's own evidence doesn't establish that the ares resolver is enabled, nor does it rule it out; CTFd's observed gevent usage (spawn/Timeout for SSE) doesn't by itself invoke DNS resolution. Given the advisory's real precondition (ares resolver selection) is unaddressed by the evidence shown, 'uncertain' is defensible, and I don't have grounds to force 'not_reachable' or 'reachable'.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.4
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/gevent@20.9.0/GHSA-x7m3-jprg-wc5g",
+    "package": "gevent",
+    "version": "20.9.0",
+    "vuln_id": "GHSA-x7m3-jprg-wc5g",
+    "aliases": [
+     "CVE-2023-41419",
+     "GHSA-x7m3-jprg-wc5g"
+    ],
+    "summary": "Gevent allows remote attacker to escalate privileges",
+    "max_cvss": "9.8",
+    "fixed_versions": [
+     "23.9.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 29.8,
+   "output": {
+    "package": "gevent",
+    "import_names": [
+     "gevent"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "CTFd/utils/events/__init__.py:5"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 8,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/utils/events/__init__.py:62",
+      "code": "with Timeout(5):",
+      "function": "CTFd.utils.events:EventManager.subscribe",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/events/__init__.py:65",
+      "code": "except Timeout:",
+      "function": "CTFd.utils.events:EventManager.subscribe",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/events/__init__.py:102",
+      "code": "spawn(_listen)",
+      "function": "CTFd.utils.events:RedisEventManager.listen",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/events/__init__.py:113",
+      "code": "with Timeout(5):",
+      "function": "CTFd.utils.events:RedisEventManager.subscribe",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/events/__init__.py:116",
+      "code": "except Timeout:",
+      "function": "CTFd.utils.events:RedisEventManager.subscribe",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "gevent: imported in 1 non-test location(s); 8 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 20505.1,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [
+     "unspecified - advisory does not name a specific function; CVE-2023-41419 concerns gevent internal privilege-escalation issue"
+    ],
+    "reasoning": "The advisory (GHSA-x7m3-jprg-wc5g / CVE-2023-41419) does not identify a specific vulnerable API in the scanner summary, and no named vulnerable symbols were found anywhere in the first-party codebase. gevent is imported in only one production file, CTFd/utils/events/__init__.py, and the only package usages are generic hub primitives: Timeout (lines 62, 65, 113, 116) and spawn (line 102) for a greenlet-based SSE listener. These are core gevent constructs unrelated by name to any known privilege-escalation path, but without the advisory specifying the affected function/module, it's not possible to definitively confirm the vulnerable code path is or isn't exercised by this narrow usage. The version (20.9.0) predates the fix (23.9.0), so the vulnerable code is present in the installed package, but the app's interaction with gevent is limited to spawning a greenlet and timeout handling, not any obviously privilege-sensitive feature (e.g., subprocess, SSL, or file permission handling) that gevent's escalation CVEs typically involve.",
+    "evidence": [
+     {
+      "location": "CTFd/utils/events/__init__.py:5",
+      "explanation": "Only production import of gevent in the codebase."
+     },
+     {
+      "location": "CTFd/utils/events/__init__.py:102",
+      "explanation": "spawn(_listen) starts a greenlet for SSE event streaming, the sole non-Timeout gevent call site."
+     },
+     {
+      "location": "CTFd/utils/events/__init__.py:62,65,113,116",
+      "explanation": "Timeout/except Timeout used for bounding SSE polling; unrelated by name to any escalation-specific symbol."
+     },
+     {
+      "location": "advisory",
+      "explanation": "GHSA-x7m3-jprg-wc5g does not specify an exploitable function name, so static symbol matching cannot confirm or rule out reachability."
+     }
+    ]
+   },
+   "tokens_in": 2112,
+   "tokens_out": 1580,
+   "llm_calls": 1,
+   "llm_seconds": 20.5,
+   "cost_usd_est": 0.030036,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"uncertain\",\"confidence\":0.4,\"vulnerable_symbols\":[\"unspecified - advisory does not name a specific function; CVE-2023-41419 concerns gevent internal privilege-escalation issue\"],\"reasoning\":\"The advisory (GHSA-x7m3-jprg-wc5g / CVE-2023-41419) does not identify a specific vulnerable API in the scanner summary, and no named vulnerable symbols were found anywhere in the first-party codebase. gevent is imported in only one production file, CTFd/utils/events/__init__.py, and the only package usages are generic hub primitives: Timeout (lines 62, 65, 113, 116) and spawn (line 102) for a greenlet-based SSE listener. These are core gevent constructs unrelated by name to any known privilege-escalation path, but without the advisory specifying the affected function/module, it's not possible to definitively confirm the vulnerable code path is or isn't exercised by this narrow usage. The version (20.9.0) predates the fix (23.9.0), so the vulnerable code is present in the installed package, but the app's interaction with gevent is limited to spawning a greenlet and timeout handling, not any obviously privilege-sensitive feature (e.g., subprocess, SSL, or file permission handling) that gevent's escalation CVEs typically involve.\",\"evidence\":[{\"location\":\"CTFd/utils/events/__init__.py:5\",\"explanation\":\"Only production import of gevent in the codebase.\"},{\"location\":\"CTFd/utils/events/__init__.py:102\",\"explanation\":\"spawn(_listen) starts a greenlet for SSE event streaming, the sole non-Timeout gevent call site.\"},{\"location\":\"CTFd/utils/events/__init__.py:62,65,113,116\",\"explanation\":\"Timeout/except Timeout used for bounding SSE polling; unrelated by name to any escalation-specific symbol.\"},{\"location\":\"advisory\",\"explanation\":\"GHSA-x7m3-jprg-wc5g does not specify an exploitable function name, so static symbol matching cannot confirm or rule out reachability.\"}]}",
+     "in": 2112,
+     "out": 1580,
+     "s": 20.5,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 22864.3,
+   "output": {
+    "critique": "The reviewer's main point\u2014that no advisory-specific symbol was found\u2014is weaker than it looks, because this CVE is not a typical 'call this function' vuln. CVE-2023-41419 concerns gevent's bundled c-ares DNS resolver insecurely creating a predictable config/temp file, which is a local privilege-escalation issue tied to whether the c-ares resolver backend is active (e.g. via GEVENT_RESOLVER=ares env var or explicit resolver configuration), not to any named Python API the application calls. Static AST symbol-matching against call sites is therefore the wrong tool for this advisory: the import alone (spawn/Timeout for SSE) doesn't invoke DNS resolution at all, so even if the ares resolver were active, these cited lines wouldn't be the trigger \u2014 but the evidence also never checked environment variables, settings, or default resolver backend selection, which is the actual precondition. The verdict's own evidence doesn't establish that the ares resolver is enabled, nor does it rule it out; CTFd's observed gevent usage (spawn/Timeout for SSE) doesn't by itself invoke DNS resolution. Given the advisory's real precondition (ares resolver selection) is unaddressed by the evidence shown, 'uncertain' is defensible, and I don't have grounds to force 'not_reachable' or 'reachable'.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.4
+   },
+   "tokens_in": 2156,
+   "tokens_out": 1746,
+   "llm_calls": 1,
+   "llm_seconds": 22.86,
+   "cost_usd_est": 0.032658,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The reviewer's main point\u2014that no advisory-specific symbol was found\u2014is weaker than it looks, because this CVE is not a typical 'call this function' vuln. CVE-2023-41419 concerns gevent's bundled c-ares DNS resolver insecurely creating a predictable config/temp file, which is a local privilege-escalation issue tied to whether the c-ares resolver backend is active (e.g. via GEVENT_RESOLVER=ares env var or explicit resolver configuration), not to any named Python API the application calls. Static AST symbol-matching against call sites is therefore the wrong tool for this advisory: the import alone (spawn/Timeout for SSE) doesn't invoke DNS resolution at all, so even if the ares resolver were active, these cited lines wouldn't be the trigger \u2014 but the evidence also never checked environment variables, settings, or default resolver backend selection, which is the actual precondition. The verdict's own evidence doesn't establish that the ares resolver is enabled, nor does it rule it out; CTFd's observed gevent usage (spawn/Timeout for SSE) doesn't by itself invoke DNS resolution. Given the advisory's real precondition (ares resolver selection) is unaddressed by the evidence shown, 'uncertain' is defensible, and I don't have grounds to force 'not_reachable' or 'reachable'.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.4}",
+     "in": 2156,
+     "out": 1746,
+     "s": 22.86,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4268,
+  "tokens_out": 3326,
+  "cost_usd_est": 0.062694,
+  "seconds": 43.4
+ },
+ "created": "2026-11-10T16:18:38+00:00",
+ "code_version": "f26e69b"
+}

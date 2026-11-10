@@ -1,0 +1,345 @@
+{
+ "finding_id": "mealie/urllib3@1.26.14/GHSA-v845-jxx5-vc9f",
+ "config": "full",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-43804",
+   "GHSA-v845-jxx5-vc9f"
+  ],
+  "cves": [
+   "CVE-2023-43804"
+  ],
+  "cwes": [
+   "CWE-200"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/urllib3@1.26.14/GHSA-v845-jxx5-vc9f",
+  "first_fixed_above_installed": "1.26.17",
+  "fixed_versions": [
+   "1.26.17",
+   "2.0.6"
+  ],
+  "max_cvss": "7.4",
+  "package": "urllib3",
+  "published": "2023-10-02T23:27:05Z",
+  "summary": "`Cookie` HTTP header isn't stripped on cross-origin redirects",
+  "target": "mealie",
+  "version": "1.26.14",
+  "vuln_id": "GHSA-v845-jxx5-vc9f"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.78,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.82,
+  "vulnerable_symbols": [
+   "Cookie header handling on redirect"
+  ],
+  "reasoning": "The advisory only applies when application code sets a `Cookie` header on outgoing requests and relies on urllib3's automatic cross-origin redirect handling. Static AST analysis found zero direct imports or call sites of urllib3 in first-party code, and zero occurrences of a `Cookie` header being set anywhere in the 322 scanned files (calls, kwargs, string literals). The only network-related code shown (recipe_crud_routes.py:208-218, 417-435) delegates to `recipe_scrapers`/`RecipeDataService` for scraping arbitrary recipe/image URLs, with no visible Cookie header construction. Since urllib3 is only a transitive dependency reached indirectly (e.g., via `requests`), and the app never sets a Cookie header on requests it issues, the precondition the advisory requires ('Using the Cookie header on requests') is not met by first-party code. This matches the not_reachable criteria: the vulnerable behavior (Cookie leak on redirect) requires an app-set Cookie header that doesn't exist in this codebase.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "Exploitation requires the application to explicitly set a Cookie header on outgoing requests and not disable redirects."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 non-test imports of urllib3, 0 call sites, and 0 matches for the 'Cookie' symbol across 322 first-party files."
+   },
+   {
+    "location": "mealie/routes/recipe/recipe_crud_routes.py:208-218",
+    "explanation": "Recipe URL scraping entry point does not set or reference a Cookie header before delegating to recipe_scrapers."
+   },
+   {
+    "location": "mealie/routes/recipe/recipe_crud_routes.py:417-435",
+    "explanation": "Image scraping entry point similarly shows no Cookie header usage or redirect configuration."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument: the app exposes user-supplied-URL fetching (recipe/image scraping) that reaches an HTTP client stack ultimately backed by urllib3, and since redirect targets are attacker-influenced (arbitrary scrape URLs), this is exactly the kind of 'fetches external URL and follows redirects' pattern that reachability reviewers should scrutinize hard for cookie/auth leakage. However, the advisory's exploit condition is narrow and specific: the application itself must construct a literal `Cookie` header on the outgoing request (not just use a cookie-jar-based session, which requests/urllib3 already scope correctly per-domain). The static sweep explicitly searched for the 'Cookie' symbol across calls, kwargs, and string literals in all 322 first-party files and found zero matches, and also found zero direct urllib3 call sites via requests/recipe_scrapers that attach a Cookie header. The scraping code shown only passes a URL, with no header construction at all. Without evidence that mealie ever sets a Cookie header on outbound scrape requests, there is no cookie value to leak via redirect regardless of how arbitrary or attacker-influenced the redirect target is. This differs from cases where a wrapper/dispatch table hides the vulnerable call \u2014 here the precondition (explicit Cookie header) is a specific, checkable fact, and the evidence affirmatively shows its absence rather than just failing to find it. The counter-argument therefore does not hold: the missing precondition is not a gap in search coverage but a substantive architectural fact (recipe_scrapers/requests calls take only a URL, no headers dict with Cookie).",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.78
+ },
+ "symbols": [
+  "Cookie"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/urllib3@1.26.14/GHSA-v845-jxx5-vc9f",
+    "package": "urllib3",
+    "version": "1.26.14",
+    "vuln_id": "GHSA-v845-jxx5-vc9f",
+    "aliases": [
+     "CVE-2023-43804",
+     "GHSA-v845-jxx5-vc9f"
+    ],
+    "summary": "`Cookie` HTTP header isn't stripped on cross-origin redirects",
+    "max_cvss": "7.4",
+    "fixed_versions": [
+     "1.26.17",
+     "2.0.6"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 25.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-v845-jxx5-vc9f#0",
+      "score": 0.894,
+      "text": "GHSA-v845-jxx5-vc9f (CVE-2023-43804)\npackage: urllib3\nsummary: `Cookie` HTTP header isn't stripped on cross-origin redirects\naffected: >=0, <1.26.17; >=2.0.0, <2.0.6",
+      "vuln_id": "GHSA-v845-jxx5-vc9f"
+     },
+     {
+      "id": "GHSA-v845-jxx5-vc9f#1",
+      "score": 0.868,
+      "text": "GHSA-v845-jxx5-vc9f (urllib3) details:\nurllib3 doesn't treat the `Cookie` HTTP header special or provide any helpers for managing cookies over HTTP, that is the responsibility of the user. However, it is possible for a user to specify a `Cookie` header and unknowingly leak information via HTTP redirects to a different origin if that user doesn't disable redirects explicitly.\n\nUsers **must** handle redirects themselves instead of relying on urllib3's automatic redirects to achieve safe processing of the `Cookie` header, thus we decided to strip the header by default in order to further protect users who aren't using the correct approach.\n\n## Affected usages\n\nWe believe the number of usages affected by this advisory is low. It requires all of the following to be true to be exploited:",
+      "vuln_id": "GHSA-v845-jxx5-vc9f"
+     },
+     {
+      "id": "GHSA-v845-jxx5-vc9f#2",
+      "score": 0.86,
+      "text": "GHSA-v845-jxx5-vc9f (urllib3) details:\n* Using an affected version of urllib3 (patched in v1.26.17 and v2.0.6)\n* Using the `Cookie` header on requests, which is mostly typical for impersonating a browser.\n* Not disabling HTTP redirects\n* Either not using HTTPS or for the origin server to redirect to a malicious origin.\n\n## Remediation\n\n* Upgrading to at least urllib3 v1.26.17 or v2.0.6\n* Disabling HTTP redirects using `redirects=False` when sending requests.\n* Not using the `Cookie` header.",
+      "vuln_id": "GHSA-v845-jxx5-vc9f"
+     },
+     {
+      "id": "GHSA-34jh-p97f-mpxf#0",
+      "score": 0.86,
+      "text": "GHSA-34jh-p97f-mpxf (CVE-2024-37891)\npackage: urllib3\nsummary: urllib3's Proxy-Authorization request header isn't stripped during cross-origin redirects\naffected: >=0, <1.26.19; >=2.0.0, <2.2.2",
+      "vuln_id": "GHSA-34jh-p97f-mpxf"
+     },
+     {
+      "id": "GHSA-34jh-p97f-mpxf#1",
+      "score": 0.84,
+      "text": "GHSA-34jh-p97f-mpxf (urllib3) details:\nWhen using urllib3's proxy support with `ProxyManager`, the `Proxy-Authorization` header is only sent to the configured proxy, as expected.\n\nHowever, when sending HTTP requests *without* using urllib3's proxy support, it's possible to accidentally configure the `Proxy-Authorization` header even though it won't have any effect as the request is not using a forwarding proxy or a tunneling proxy. In those cases, urllib3 doesn't treat the `Proxy-Authorization` HTTP header as one carrying authentication material and thus doesn't strip the header on cross-origin redirects.\n\nBecause this is a highly unlikely scenario, we believe the severity of this vulnerability is low for almost all users. Out of an abundance of caution urllib3 will automatically strip the `Proxy-Authorization` header during cross-origin redirects to avoid the small chance that users are doing this on accident.",
+      "vuln_id": "GHSA-34jh-p97f-mpxf"
+     }
+    ],
+    "symbols": [
+     "Cookie"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 19.4,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "Cookie"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['Cookie']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:208",
+      "score": 0.695,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:208-218  RecipeController.test_parse_recipe_url\n    async def test_parse_recipe_url(self, url: ScrapeRecipeTest):\n        # Debugger should produce the same result as the scraper sees before cleaning\n        try:\n            if scraped_data := await RecipeScraperPackage(url.url).scrape_url():\n                return scraped_data.schema.data\n        except ForceTimeoutException as e:\n            raise HTTPException(\n                status_code=408, detail=ErrorResponse.respond(message=\"Recipe Scraping Timed Out\")\n            ) from e\n\n        return \"recipe_scrapers was unable to scrape this URL\"",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 208,
+      "qualname": "RecipeController.test_parse_recipe_url"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:417",
+      "score": 0.694,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:417-435  RecipeController.scrape_image_url\n    async def scrape_image_url(self, slug: str, url: ScrapeRecipe):\n        recipe = self.mixins.get_one(slug)\n        data_service = RecipeDataService(recipe.id)\n\n        try:\n            await data_service.scrape_image(url.url)\n        except NotAnImageError as e:\n            raise HTTPException(\n                status_code=400,\n                detail=ErrorResponse.respond(\"Url is not an image\"),\n            ) from e\n        except InvalidDomainError as e:\n            raise HTTPException(\n                status_code=400,\n                detail=ErrorResponse.respond(\"Url is not from an allowed domain\"),\n            ) from e\n\n        recipe.image = cache.cache_key.new_key()\n        self.service.update_one(recipe.slug, recipe)",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 417,
+      "qualname": "RecipeController.scrape_image_url"
+     },
+     {
+      "id": "mealie:mealie/routes/organizers/controller_tools.py:24",
+      "score": 0.692,
+      "text": "# mealie/routes/organizers/controller_tools.py:24-25  RecipeToolController.mixins\n    def mixins(self) -> HttpRepo:\n        return HttpRepo[RecipeToolCreate, RecipeTool, RecipeToolCreate](self.repo, self.logger)",
+      "file": "mealie/routes/organizers/controller_tools.py",
+      "start": 24,
+      "qualname": "RecipeToolController.mixins"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:77",
+      "score": 0.687,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:77-78  BaseRecipeController.mixins\n    def mixins(self):\n        return HttpRepo[CreateRecipe, Recipe, Recipe](self.repo, self.logger)",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 77,
+      "qualname": "BaseRecipeController.mixins"
+     },
+     {
+      "id": "mealie:mealie/routes/groups/controller_webhooks.py:25",
+      "score": 0.687,
+      "text": "# mealie/routes/groups/controller_webhooks.py:25-26  ReadWebhookController.mixins\n    def mixins(self) -> HttpRepo:\n        return HttpRepo[CreateWebhook, SaveWebhook, CreateWebhook](self.repo, self.logger)",
+      "file": "mealie/routes/groups/controller_webhooks.py",
+      "start": 25,
+      "qualname": "ReadWebhookController.mixins"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 14420.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.82,
+    "vulnerable_symbols": [
+     "Cookie header handling on redirect"
+    ],
+    "reasoning": "The advisory only applies when application code sets a `Cookie` header on outgoing requests and relies on urllib3's automatic cross-origin redirect handling. Static AST analysis found zero direct imports or call sites of urllib3 in first-party code, and zero occurrences of a `Cookie` header being set anywhere in the 322 scanned files (calls, kwargs, string literals). The only network-related code shown (recipe_crud_routes.py:208-218, 417-435) delegates to `recipe_scrapers`/`RecipeDataService` for scraping arbitrary recipe/image URLs, with no visible Cookie header construction. Since urllib3 is only a transitive dependency reached indirectly (e.g., via `requests`), and the app never sets a Cookie header on requests it issues, the precondition the advisory requires ('Using the Cookie header on requests') is not met by first-party code. This matches the not_reachable criteria: the vulnerable behavior (Cookie leak on redirect) requires an app-set Cookie header that doesn't exist in this codebase.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Exploitation requires the application to explicitly set a Cookie header on outgoing requests and not disable redirects."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test imports of urllib3, 0 call sites, and 0 matches for the 'Cookie' symbol across 322 first-party files."
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:208-218",
+      "explanation": "Recipe URL scraping entry point does not set or reference a Cookie header before delegating to recipe_scrapers."
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:417-435",
+      "explanation": "Image scraping entry point similarly shows no Cookie header usage or redirect configuration."
+     }
+    ]
+   },
+   "tokens_in": 3814,
+   "tokens_out": 1160,
+   "llm_calls": 1,
+   "llm_seconds": 14.41,
+   "cost_usd_est": 0.028842,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.82,\"vulnerable_symbols\":[\"Cookie header handling on redirect\"],\"reasoning\":\"The advisory only applies when application code sets a `Cookie` header on outgoing requests and relies on urllib3's automatic cross-origin redirect handling. Static AST analysis found zero direct imports or call sites of urllib3 in first-party code, and zero occurrences of a `Cookie` header being set anywhere in the 322 scanned files (calls, kwargs, string literals). The only network-related code shown (recipe_crud_routes.py:208-218, 417-435) delegates to `recipe_scrapers`/`RecipeDataService` for scraping arbitrary recipe/image URLs, with no visible Cookie header construction. Since urllib3 is only a transitive dependency reached indirectly (e.g., via `requests`), and the app never sets a Cookie header on requests it issues, the precondition the advisory requires ('Using the Cookie header on requests') is not met by first-party code. This matches the not_reachable criteria: the vulnerable behavior (Cookie leak on redirect) requires an app-set Cookie header that doesn't exist in this codebase.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"Exploitation requires the application to explicitly set a Cookie header on outgoing requests and not disable redirects.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 non-test imports of urllib3, 0 call sites, and 0 matches for the 'Cookie' symbol across 322 first-party files.\"},{\"location\":\"mealie/routes/recipe/recipe_crud_routes.py:208-218\",\"explanation\":\"Recipe URL scraping entry point does not set or reference a Cookie header before delegating to recipe_scrapers.\"},{\"location\":\"mealie/routes/recipe/recipe_crud_routes.py:417-435\",\"explanation\":\"Image scraping entry point similarly shows no Cookie header usage or redirect configuration.\"}]}",
+     "in": 3814,
+     "out": 1160,
+     "s": 14.41,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 19267.1,
+   "output": {
+    "critique": "The strongest counter-argument: the app exposes user-supplied-URL fetching (recipe/image scraping) that reaches an HTTP client stack ultimately backed by urllib3, and since redirect targets are attacker-influenced (arbitrary scrape URLs), this is exactly the kind of 'fetches external URL and follows redirects' pattern that reachability reviewers should scrutinize hard for cookie/auth leakage. However, the advisory's exploit condition is narrow and specific: the application itself must construct a literal `Cookie` header on the outgoing request (not just use a cookie-jar-based session, which requests/urllib3 already scope correctly per-domain). The static sweep explicitly searched for the 'Cookie' symbol across calls, kwargs, and string literals in all 322 first-party files and found zero matches, and also found zero direct urllib3 call sites via requests/recipe_scrapers that attach a Cookie header. The scraping code shown only passes a URL, with no header construction at all. Without evidence that mealie ever sets a Cookie header on outbound scrape requests, there is no cookie value to leak via redirect regardless of how arbitrary or attacker-influenced the redirect target is. This differs from cases where a wrapper/dispatch table hides the vulnerable call \u2014 here the precondition (explicit Cookie header) is a specific, checkable fact, and the evidence affirmatively shows its absence rather than just failing to find it. The counter-argument therefore does not hold: the missing precondition is not a gap in search coverage but a substantive architectural fact (recipe_scrapers/requests calls take only a URL, no headers dict with Cookie).",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.78
+   },
+   "tokens_in": 3850,
+   "tokens_out": 1539,
+   "llm_calls": 1,
+   "llm_seconds": 19.25,
+   "cost_usd_est": 0.034635,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\": \"The strongest counter-argument: the app exposes user-supplied-URL fetching (recipe/image scraping) that reaches an HTTP client stack ultimately backed by urllib3, and since redirect targets are attacker-influenced (arbitrary scrape URLs), this is exactly the kind of 'fetches external URL and follows redirects' pattern that reachability reviewers should scrutinize hard for cookie/auth leakage. However, the advisory's exploit condition is narrow and specific: the application itself must construct a literal `Cookie` header on the outgoing request (not just use a cookie-jar-based session, which requests/urllib3 already scope correctly per-domain). The static sweep explicitly searched for the 'Cookie' symbol across calls, kwargs, and string literals in all 322 first-party files and found zero matches, and also found zero direct urllib3 call sites via requests/recipe_scrapers that attach a Cookie header. The scraping code shown only passes a URL, with no header construction at all. Without evidence that mealie ever sets a Cookie header on outbound scrape requests, there is no cookie value to leak via redirect regardless of how arbitrary or attacker-influenced the redirect target is. This differs from cases where a wrapper/dispatch table hides the vulnerable call \u2014 here the precondition (explicit Cookie header) is a specific, checkable fact, and the evidence affirmatively shows its absence rather than just failing to find it. The counter-argument therefore does not hold: the missing precondition is not a gap in search coverage but a substantive architectural fact (recipe_scrapers/requests calls take only a URL, no headers dict with Cookie).\", \"agrees\": true, \"retry\": false, \"final_verdict\": \"not_reachable\", \"confidence\": 0.78}",
+     "in": 3850,
+     "out": 1539,
+     "s": 19.25,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.78,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 7664,
+  "tokens_out": 2699,
+  "cost_usd_est": 0.063477,
+  "seconds": 33.77
+ },
+ "created": "2026-11-10T15:55:19+00:00",
+ "code_version": "f26e69b"
+}

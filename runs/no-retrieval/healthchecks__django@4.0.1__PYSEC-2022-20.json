@@ -1,0 +1,389 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-20",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-23833",
+   "GHSA-6cw3-g6wv-c2xv",
+   "PYSEC-2022-20"
+  ],
+  "cves": [
+   "CVE-2022-23833"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-20",
+  "first_fixed_above_installed": "4.0.2",
+  "fixed_versions": [
+   "2.2.27",
+   "3.2.12",
+   "4.0.2"
+  ],
+  "max_cvss": null,
+  "package": "django",
+  "published": "2022-02-03T02:15:00Z",
+  "summary": "An issue was discovered in MultiPartParser in Django 2.2 before 2.2.27, 3.2 before 3.2.12, and 4.0 before 4.0.2. Passing certain inputs to multipart forms could result in an infinite loop when parsing",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "PYSEC-2022-20"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.82,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "MultiPartParser"
+  ],
+  "reasoning": "Django's MultiPartParser is not something application code calls by name; it is invoked internally by Django's request-handling machinery whenever an incoming HTTP request has Content-Type: multipart/form-data and the view accesses request.POST or request.FILES. The static scan correctly finds zero named call sites because this is framework-internal plumbing, not an app-level API the project would reference directly. The healthchecks app has numerous POST-accepting endpoints (account login/signup, admin forms, profile forms, etc. as seen in hc/accounts/admin.py and the 159 non-test django import sites), and nothing in the evidence shows multipart parsing is disabled or that all POST views reject multipart bodies. Since an attacker fully controls the Content-Type header and body of any request to a POST-accepting URL, they can trigger the vulnerable parsing path regardless of whether the form itself was designed for file uploads. Per the rule for core frameworks, the relevant question is whether multipart POST handling is exercised at all, and for a general-purpose Django web app accepting user input over HTTP, it is.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "CVE-2022-23833 affects Django's MultiPartParser, which runs automatically for any request with multipart/form-data content type when request.POST/FILES is accessed."
+   },
+   {
+    "location": "hc/accounts/admin.py:1-10",
+    "explanation": "Confirms Django is a live, central dependency wired into the app's admin/view layer, not an unused or vendored copy."
+   },
+   {
+    "location": "static evidence: 159 non-test django import sites, 3118 call/reference sites",
+    "explanation": "Django's request/response cycle (including body/multipart parsing) is exercised pervasively across the app's views and forms."
+   },
+   {
+    "location": "static evidence: 0 production call sites of MultiPartParser",
+    "explanation": "Expected and not exculpatory: application code never needs to name MultiPartParser directly, since Django's WSGI/request layer invokes it transparently based on the Content-Type header an attacker controls."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict's core logic is sound and hard to refute: MultiPartParser is Django's internal, framework-invoked parser for any multipart/form-data request, so the complete absence of named call sites is expected and non-exculpatory\u2014this is exactly the kind of 'wrapper/dispatch' pattern the review guidance flags as a reason not to trust a not_reachable-style suppression based on symbol-matching alone. The static tool's methodology (grepping for named calls to MultiPartParser) is structurally incapable of detecting this vulnerability class, since Django never exposes that class to application code by name; it's wired in via MIDDLEWARE/request.POST property access. The verdict correctly identifies that the app has numerous POST-accepting views (login, signup, admin, profile forms per hc/accounts/admin.py and 159 django import sites across the app), and that any such endpoint reachable from an entry point that accepts multipart bodies and touches request.POST/FILES triggers the vulnerable path. The one weakness: the verdict doesn't explicitly confirm these POST views are reachable from an unauthenticated/external entry point (e.g., confirming URLconf wiring to login/signup), but this is a reasonable inference for a general-purpose Django web app, and healthchecks.io is known to have public signup/login forms. There's no evidence suggesting multipart parsing is disabled, upload handlers are swapped out, or POST views only accept JSON\u2014so no counter-evidence undermines the verdict. The reasoning doesn't ignore evidence; it correctly reinterprets the zero-call-site finding as expected framework behavior rather than evidence of non-use.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.82
+ },
+ "symbols": [
+  "MultiPartParser"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-20",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "PYSEC-2022-20",
+    "aliases": [
+     "CVE-2022-23833",
+     "GHSA-6cw3-g6wv-c2xv",
+     "PYSEC-2022-20"
+    ],
+    "summary": "An issue was discovered in MultiPartParser in Django 2.2 before 2.2.27, 3.2 before 3.2.12, and 4.0 before 4.0.2. Passing certain inputs to multipart forms could result in an infinite loop when parsing",
+    "max_cvss": null,
+    "fixed_versions": [
+     "2.2.27",
+     "3.2.12",
+     "4.0.2"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.1,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "MultiPartParser"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 58.0,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "MultiPartParser"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 229,
+     "template_dirs": [
+      "templates"
+     ],
+     "template_files": 199
+    },
+    "entry_points": 339,
+    "paths": [],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols ['MultiPartParser']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 23534.3,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "MultiPartParser"
+    ],
+    "reasoning": "Django's MultiPartParser is not something application code calls by name; it is invoked internally by Django's request-handling machinery whenever an incoming HTTP request has Content-Type: multipart/form-data and the view accesses request.POST or request.FILES. The static scan correctly finds zero named call sites because this is framework-internal plumbing, not an app-level API the project would reference directly. The healthchecks app has numerous POST-accepting endpoints (account login/signup, admin forms, profile forms, etc. as seen in hc/accounts/admin.py and the 159 non-test django import sites), and nothing in the evidence shows multipart parsing is disabled or that all POST views reject multipart bodies. Since an attacker fully controls the Content-Type header and body of any request to a POST-accepting URL, they can trigger the vulnerable parsing path regardless of whether the form itself was designed for file uploads. Per the rule for core frameworks, the relevant question is whether multipart POST handling is exercised at all, and for a general-purpose Django web app accepting user input over HTTP, it is.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "CVE-2022-23833 affects Django's MultiPartParser, which runs automatically for any request with multipart/form-data content type when request.POST/FILES is accessed."
+     },
+     {
+      "location": "hc/accounts/admin.py:1-10",
+      "explanation": "Confirms Django is a live, central dependency wired into the app's admin/view layer, not an unused or vendored copy."
+     },
+     {
+      "location": "static evidence: 159 non-test django import sites, 3118 call/reference sites",
+      "explanation": "Django's request/response cycle (including body/multipart parsing) is exercised pervasively across the app's views and forms."
+     },
+     {
+      "location": "static evidence: 0 production call sites of MultiPartParser",
+      "explanation": "Expected and not exculpatory: application code never needs to name MultiPartParser directly, since Django's WSGI/request layer invokes it transparently based on the Content-Type header an attacker controls."
+     }
+    ]
+   },
+   "tokens_in": 2584,
+   "tokens_out": 1868,
+   "llm_calls": 1,
+   "llm_seconds": 23.52,
+   "cost_usd_est": 0.035772,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.85, \"vulnerable_symbols\": [\"MultiPartParser\"], \"reasoning\": \"Django's MultiPartParser is not something application code calls by name; it is invoked internally by Django's request-handling machinery whenever an incoming HTTP request has Content-Type: multipart/form-data and the view accesses request.POST or request.FILES. The static scan correctly finds zero named call sites because this is framework-internal plumbing, not an app-level API the project would reference directly. The healthchecks app has numerous POST-accepting endpoints (account login/signup, admin forms, profile forms, etc. as seen in hc/accounts/admin.py and the 159 non-test django import sites), and nothing in the evidence shows multipart parsing is disabled or that all POST views reject multipart bodies. Since an attacker fully controls the Content-Type header and body of any request to a POST-accepting URL, they can trigger the vulnerable parsing path regardless of whether the form itself was designed for file uploads. Per the rule for core frameworks, the relevant question is whether multipart POST handling is exercised at all, and for a general-purpose Django web app accepting user input over HTTP, it is.\", \"evidence\": [{\"location\": \"advisory\", \"explanation\": \"CVE-2022-23833 affects Django's MultiPartParser, which runs automatically for any request with multipart/form-data content type when request.POST/FILES is accessed.\"}, {\"location\": \"hc/accounts/admin.py:1-10\", \"explanation\": \"Confirms Django is a live, central dependency wired into the app's admin/view layer, not an unused or vendored copy.\"}, {\"location\": \"static evidence: 159 non-test django import sites, 3118 call/reference sites\", \"explanation\": \"Django's request/response cycle (including body/multipart parsing) is exercised pervasively across the app's views and forms.\"}, {\"location\": \"static evidence: 0 production call sites of MultiPartParser\", \"explanation\": \"Expected and not exculpatory: application code never needs to name MultiPartParser directly, since Django's WSGI/request layer invokes it transparently based on the Content-Type header an attacker controls.\"}]}",
+     "in": 2584,
+     "out": 1868,
+     "s": 23.52,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 10283.2,
+   "output": {
+    "critique": "The verdict's core logic is sound and hard to refute: MultiPartParser is Django's internal, framework-invoked parser for any multipart/form-data request, so the complete absence of named call sites is expected and non-exculpatory\u2014this is exactly the kind of 'wrapper/dispatch' pattern the review guidance flags as a reason not to trust a not_reachable-style suppression based on symbol-matching alone. The static tool's methodology (grepping for named calls to MultiPartParser) is structurally incapable of detecting this vulnerability class, since Django never exposes that class to application code by name; it's wired in via MIDDLEWARE/request.POST property access. The verdict correctly identifies that the app has numerous POST-accepting views (login, signup, admin, profile forms per hc/accounts/admin.py and 159 django import sites across the app), and that any such endpoint reachable from an entry point that accepts multipart bodies and touches request.POST/FILES triggers the vulnerable path. The one weakness: the verdict doesn't explicitly confirm these POST views are reachable from an unauthenticated/external entry point (e.g., confirming URLconf wiring to login/signup), but this is a reasonable inference for a general-purpose Django web app, and healthchecks.io is known to have public signup/login forms. There's no evidence suggesting multipart parsing is disabled, upload handlers are swapped out, or POST views only accept JSON\u2014so no counter-evidence undermines the verdict. The reasoning doesn't ignore evidence; it correctly reinterprets the zero-call-site finding as expected framework behavior rather than evidence of non-use.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.82
+   },
+   "tokens_in": 2671,
+   "tokens_out": 584,
+   "llm_calls": 1,
+   "llm_seconds": 10.26,
+   "cost_usd_est": 0.016773,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's core logic is sound and hard to refute: MultiPartParser is Django's internal, framework-invoked parser for any multipart/form-data request, so the complete absence of named call sites is expected and non-exculpatory\u2014this is exactly the kind of 'wrapper/dispatch' pattern the review guidance flags as a reason not to trust a not_reachable-style suppression based on symbol-matching alone. The static tool's methodology (grepping for named calls to MultiPartParser) is structurally incapable of detecting this vulnerability class, since Django never exposes that class to application code by name; it's wired in via MIDDLEWARE/request.POST property access. The verdict correctly identifies that the app has numerous POST-accepting views (login, signup, admin, profile forms per hc/accounts/admin.py and 159 django import sites across the app), and that any such endpoint reachable from an entry point that accepts multipart bodies and touches request.POST/FILES triggers the vulnerable path. The one weakness: the verdict doesn't explicitly confirm these POST views are reachable from an unauthenticated/external entry point (e.g., confirming URLconf wiring to login/signup), but this is a reasonable inference for a general-purpose Django web app, and healthchecks.io is known to have public signup/login forms. There's no evidence suggesting multipart parsing is disabled, upload handlers are swapped out, or POST views only accept JSON\u2014so no counter-evidence undermines the verdict. The reasoning doesn't ignore evidence; it correctly reinterprets the zero-call-site finding as expected framework behavior rather than evidence of non-use.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"reachable\",\"confidence\":0.82}",
+     "in": 2671,
+     "out": 584,
+     "s": 10.26,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.82,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 5255,
+  "tokens_out": 2452,
+  "cost_usd_est": 0.052545,
+  "seconds": 33.88
+ },
+ "created": "2026-11-10T16:07:35+00:00",
+ "code_version": "f26e69b"
+}

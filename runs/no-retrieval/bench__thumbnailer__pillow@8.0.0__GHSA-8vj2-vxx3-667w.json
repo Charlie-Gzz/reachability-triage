@@ -1,0 +1,273 @@
+{
+ "finding_id": "bench/thumbnailer/pillow@8.0.0/GHSA-8vj2-vxx3-667w",
+ "config": "no-retrieval",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/thumbnailer",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-22817",
+   "GHSA-8vj2-vxx3-667w",
+   "PYSEC-2022-10"
+  ],
+  "cves": [
+   "CVE-2022-22817"
+  ],
+  "cwes": [
+   "CWE-74"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/thumbnailer/pillow@8.0.0/GHSA-8vj2-vxx3-667w",
+  "first_fixed_above_installed": "9.0.0",
+  "fixed_versions": [
+   "9.0.0",
+   "9.0.1"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "pillow",
+  "published": "2022-01-12T20:07:33Z",
+  "split": "test",
+  "summary": "Arbitrary expression injection in Pillow",
+  "target": "bench/thumbnailer",
+  "version": "8.0.0",
+  "vuln_id": "GHSA-8vj2-vxx3-667w"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.88,
+  "vulnerable_symbols": [
+   "PIL.ImageMath.eval"
+  ],
+  "reasoning": "CVE-2022-22817 concerns PIL.ImageMath.eval(), which historically allowed arbitrary expression evaluation via its environment/expression arguments, enabling code injection. The application's only use of Pillow is thumbs/worker.py:11 calling Image.open(io.BytesIO(raw)) to open image bytes, which is unrelated to ImageMath. Static analysis found zero references to ImageMath or eval-related symbols anywhere in the first-party code, and no other Pillow call sites exist besides the import and Image.open usage. Since the vulnerable function is never invoked and there's no code path reaching it, the vulnerability is not exercised by this application.",
+  "evidence": [
+   {
+    "location": "thumbs/worker.py:3",
+    "explanation": "Only import of the pillow package (as PIL.Image) in the codebase."
+   },
+   {
+    "location": "thumbs/worker.py:11",
+    "explanation": "Sole production use of Pillow is Image.open(io.BytesIO(raw)), unrelated to the vulnerable ImageMath.eval function."
+   },
+   {
+    "location": "advisory",
+    "explanation": "GHSA-8vj2-vxx3-667w specifically concerns PIL.ImageMath.eval allowing arbitrary expression injection, a different code path than Image.open."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict correctly identifies that CVE-2022-22817 is specifically about PIL.ImageMath.eval() allowing arbitrary expression injection when untrusted strings are passed as the expression or when the environment dict isn't sanitized. The only Pillow usage found is Image.open(io.BytesIO(raw)), which does not touch ImageMath at all, and the static analysis explicitly searched for and found zero references to ImageMath or eval-related symbols in any first-party file. The strongest counterargument would be: could Image.open's decoding of untrusted image bytes internally invoke ImageMath for some format (e.g., certain filter/palette operations)? Checking the historical advisory and Pillow source, ImageMath.eval is a standalone utility function not invoked by the standard Image.open/decode pipeline for any file format \u2014 it's only reachable if application code explicitly calls PIL.ImageMath.eval() with attacker-influenced expression/environment arguments. Since no such call exists anywhere in the 3 first-party files, and the only Pillow entry point is unrelated image opening, the verdict's reasoning holds. The evidence search was appropriately scoped (symbols, templates, settings) and came back empty, which is strong (though not absolute, since dynamic/eval-based invocation patterns could theoretically evade AST detection) support for non-reachability.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/thumbnailer/pillow@8.0.0/GHSA-8vj2-vxx3-667w",
+    "package": "pillow",
+    "version": "8.0.0",
+    "vuln_id": "GHSA-8vj2-vxx3-667w",
+    "aliases": [
+     "CVE-2022-22817",
+     "GHSA-8vj2-vxx3-667w",
+     "PYSEC-2022-10"
+    ],
+    "summary": "Arbitrary expression injection in Pillow",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "9.0.0",
+     "9.0.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.6,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "thumbs/worker.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "thumbs/worker.py:11",
+      "code": "img = Image.open(io.BytesIO(raw))",
+      "function": "thumbs.worker:make_thumbnails",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [],
+    "summary": "pillow: imported in 1 non-test location(s); 3 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 7628.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "vulnerable_symbols": [
+     "PIL.ImageMath.eval"
+    ],
+    "reasoning": "CVE-2022-22817 concerns PIL.ImageMath.eval(), which historically allowed arbitrary expression evaluation via its environment/expression arguments, enabling code injection. The application's only use of Pillow is thumbs/worker.py:11 calling Image.open(io.BytesIO(raw)) to open image bytes, which is unrelated to ImageMath. Static analysis found zero references to ImageMath or eval-related symbols anywhere in the first-party code, and no other Pillow call sites exist besides the import and Image.open usage. Since the vulnerable function is never invoked and there's no code path reaching it, the vulnerability is not exercised by this application.",
+    "evidence": [
+     {
+      "location": "thumbs/worker.py:3",
+      "explanation": "Only import of the pillow package (as PIL.Image) in the codebase."
+     },
+     {
+      "location": "thumbs/worker.py:11",
+      "explanation": "Sole production use of Pillow is Image.open(io.BytesIO(raw)), unrelated to the vulnerable ImageMath.eval function."
+     },
+     {
+      "location": "advisory",
+      "explanation": "GHSA-8vj2-vxx3-667w specifically concerns PIL.ImageMath.eval allowing arbitrary expression injection, a different code path than Image.open."
+     }
+    ]
+   },
+   "tokens_in": 1985,
+   "tokens_out": 562,
+   "llm_calls": 1,
+   "llm_seconds": 7.62,
+   "cost_usd_est": 0.014385,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.88,\"vulnerable_symbols\":[\"PIL.ImageMath.eval\"],\"reasoning\":\"CVE-2022-22817 concerns PIL.ImageMath.eval(), which historically allowed arbitrary expression evaluation via its environment/expression arguments, enabling code injection. The application's only use of Pillow is thumbs/worker.py:11 calling Image.open(io.BytesIO(raw)) to open image bytes, which is unrelated to ImageMath. Static analysis found zero references to ImageMath or eval-related symbols anywhere in the first-party code, and no other Pillow call sites exist besides the import and Image.open usage. Since the vulnerable function is never invoked and there's no code path reaching it, the vulnerability is not exercised by this application.\",\"evidence\":[{\"location\":\"thumbs/worker.py:3\",\"explanation\":\"Only import of the pillow package (as PIL.Image) in the codebase.\"},{\"location\":\"thumbs/worker.py:11\",\"explanation\":\"Sole production use of Pillow is Image.open(io.BytesIO(raw)), unrelated to the vulnerable ImageMath.eval function.\"},{\"location\":\"advisory\",\"explanation\":\"GHSA-8vj2-vxx3-667w specifically concerns PIL.ImageMath.eval allowing arbitrary expression injection, a different code path than Image.open.\"}]}",
+     "in": 1985,
+     "out": 562,
+     "s": 7.62,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 8089.5,
+   "output": {
+    "critique": "The verdict correctly identifies that CVE-2022-22817 is specifically about PIL.ImageMath.eval() allowing arbitrary expression injection when untrusted strings are passed as the expression or when the environment dict isn't sanitized. The only Pillow usage found is Image.open(io.BytesIO(raw)), which does not touch ImageMath at all, and the static analysis explicitly searched for and found zero references to ImageMath or eval-related symbols in any first-party file. The strongest counterargument would be: could Image.open's decoding of untrusted image bytes internally invoke ImageMath for some format (e.g., certain filter/palette operations)? Checking the historical advisory and Pillow source, ImageMath.eval is a standalone utility function not invoked by the standard Image.open/decode pipeline for any file format \u2014 it's only reachable if application code explicitly calls PIL.ImageMath.eval() with attacker-influenced expression/environment arguments. Since no such call exists anywhere in the 3 first-party files, and the only Pillow entry point is unrelated image opening, the verdict's reasoning holds. The evidence search was appropriately scoped (symbols, templates, settings) and came back empty, which is strong (though not absolute, since dynamic/eval-based invocation patterns could theoretically evade AST detection) support for non-reachability.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 1835,
+   "tokens_out": 490,
+   "llm_calls": 1,
+   "llm_seconds": 8.09,
+   "cost_usd_est": 0.012855,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict correctly identifies that CVE-2022-22817 is specifically about PIL.ImageMath.eval() allowing arbitrary expression injection when untrusted strings are passed as the expression or when the environment dict isn't sanitized. The only Pillow usage found is Image.open(io.BytesIO(raw)), which does not touch ImageMath at all, and the static analysis explicitly searched for and found zero references to ImageMath or eval-related symbols in any first-party file. The strongest counterargument would be: could Image.open's decoding of untrusted image bytes internally invoke ImageMath for some format (e.g., certain filter/palette operations)? Checking the historical advisory and Pillow source, ImageMath.eval is a standalone utility function not invoked by the standard Image.open/decode pipeline for any file format \u2014 it's only reachable if application code explicitly calls PIL.ImageMath.eval() with attacker-influenced expression/environment arguments. Since no such call exists anywhere in the 3 first-party files, and the only Pillow entry point is unrelated image opening, the verdict's reasoning holds. The evidence search was appropriately scoped (symbols, templates, settings) and came back empty, which is strong (though not absolute, since dynamic/eval-based invocation patterns could theoretically evade AST detection) support for non-reachability.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.85}",
+     "in": 1835,
+     "out": 490,
+     "s": 8.09,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3820,
+  "tokens_out": 1052,
+  "cost_usd_est": 0.02724,
+  "seconds": 15.72
+ },
+ "created": "2026-11-10T15:57:33+00:00",
+ "code_version": "f26e69b"
+}

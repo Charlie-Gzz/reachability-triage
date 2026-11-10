@@ -1,0 +1,333 @@
+{
+ "finding_id": "healthchecks/urllib3@1.26.20/GHSA-2xpw-w6gg-jr37",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-66471",
+   "GHSA-2xpw-w6gg-jr37",
+   "PYSEC-2026-1994"
+  ],
+  "cves": [
+   "CVE-2025-66471"
+  ],
+  "cwes": [
+   "CWE-409"
+  ],
+  "direct_dependency": false,
+  "finding_id": "healthchecks/urllib3@1.26.20/GHSA-2xpw-w6gg-jr37",
+  "first_fixed_above_installed": "2.6.0",
+  "fixed_versions": [
+   "2.6.0"
+  ],
+  "max_cvss": "8.9",
+  "package": "urllib3",
+  "published": "2025-12-05T18:15:54Z",
+  "summary": "urllib3 streaming API improperly handles highly compressed data",
+  "target": "healthchecks",
+  "version": "1.26.20",
+  "vuln_id": "GHSA-2xpw-w6gg-jr37"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.55,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.45,
+  "vulnerable_symbols": [
+   "HTTPResponse.read()",
+   "HTTPResponse.stream()",
+   "decompression handling of Content-Encoding (gzip/deflate/brotli) in urllib3's response body streaming"
+  ],
+  "reasoning": "The advisory concerns urllib3's internal handling of highly compressed response bodies during streaming decompression (HTTPResponse.read/stream), which is exercised transparently whenever any HTTP client built on urllib3 (most commonly `requests`, but also some httpx configurations) fetches a response with a compression Content-Encoding header and the app reads .content/.text/.iter_content(). The static evidence provided only confirms the absence of direct urllib3 imports/symbol references in first-party code and templates; it says nothing about whether `requests` or another urllib3-backed client is used to fetch external/untrusted HTTP content, which is the actual path by which this vulnerability would be triggered. Because urllib3 is almost never called directly, a 'zero direct references' result is expected even in a vulnerable app and does not positively demonstrate the feature is unused. Without data on requests/httpx import and call sites, and without knowing if any fetched responses pass through decompression on attacker-influenced input, the evidence cannot settle reachability either way. Per the triage rules, this gap should be resolved as uncertain rather than defaulting to not_reachable, since the cost of a false negative here is high.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "CVE-2025-66471 describes a decompression-bomb style issue in urllib3's streaming response body handling (HTTPResponse.read/stream), not in a user-facing urllib3 API that first-party code would call by name."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "The AST search only looked for literal 'urllib3' imports/symbols across 229 Python files and 199 templates and found none, but did not check for `requests`, `httpx`, or other urllib3-based HTTP client usage."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "No information is given about whether the application performs outbound HTTP requests to external or attacker-influenced URLs and consumes the response bodies, which is the condition needed for this CWE-409 (resource exhaustion) issue to be triggerable."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that the AST evidence actually shows zero import locations for urllib3 itself in 229 first-party files, but the analyst correctly notes this search targeted urllib3's own symbols/imports, not usage of `requests` or `httpx` (the overwhelmingly common wrappers that pull in urllib3 transitively and would never trigger a literal 'urllib3' hit). Since the vulnerable code path (HTTPResponse streaming/decompression) is invoked internally by those wrapper libraries without any urllib3-named call sites in application code, a 'zero urllib3 references' result is exactly what you'd see whether or not the app is vulnerable \u2014 it cannot discriminate reachable from not_reachable. One could push toward not_reachable by noting that if the app made no outbound HTTP calls via any client at all, there'd be no decompression path, but the evidence provided doesn't confirm absence of requests/httpx usage, so that push doesn't succeed either. The analyst's gap identification is accurate and the evidence genuinely does not resolve whether untrusted/attacker-controlled compressed responses are streamed and read by this app. Given the high cost of a false not_reachable call on a resource-exhaustion CWE-409 issue, and the explicit evidentiary gap (no requests/httpx import data, no data on whether responses are read via content-encoding-aware decompression), uncertain is the defensible call rather than a forced binary verdict.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.55
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/urllib3@1.26.20/GHSA-2xpw-w6gg-jr37",
+    "package": "urllib3",
+    "version": "1.26.20",
+    "vuln_id": "GHSA-2xpw-w6gg-jr37",
+    "aliases": [
+     "CVE-2025-66471",
+     "GHSA-2xpw-w6gg-jr37",
+     "PYSEC-2026-1994"
+    ],
+    "summary": "urllib3 streaming API improperly handles highly compressed data",
+    "max_cvss": "8.9",
+    "fixed_versions": [
+     "2.6.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 45.4,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 229,
+     "template_dirs": [
+      "templates"
+     ],
+     "template_files": 199
+    },
+    "entry_points": 339,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 9458.1,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "urllib3 streaming decompression API (e.g. HTTPResponse.read/stream with Content-Encoding)"
+    ],
+    "reasoning": "The advisory concerns urllib3's streaming response decompression handling of highly compressed data (decompression bomb, CWE-409), relevant when the app uses urllib3's streaming/response-reading API directly or indirectly. Static analysis found zero imports of urllib3 in first-party code, zero call/reference sites, and zero matches of vulnerable symbols across 229 Python files and 199 templates. urllib3 is present only as a transitive dependency (likely pulled in via requests or another HTTP library), with no first-party code exercising its streaming decompression path. Since there is no production code path that invokes urllib3's response/stream handling directly, the vulnerable feature is not exercised by this application's own code. Lacking evidence of any entry point reaching urllib3's streaming API, this is not_reachable rather than uncertain.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "CVE-2025-66471 affects urllib3's streaming decompression handling of response bodies, not general HTTP usage."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test imports and 0 call sites of urllib3 in 229 first-party Python files means no first-party code reaches urllib3's API directly."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 production call sites of the named vulnerable symbols confirms the specific streaming decompression path is never invoked by application code."
+     }
+    ]
+   },
+   "tokens_in": 1935,
+   "tokens_out": 569,
+   "llm_calls": 1,
+   "llm_seconds": 9.44,
+   "cost_usd_est": 0.01434,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"not_reachable\",\n  \"confidence\": 0.85,\n  \"vulnerable_symbols\": [\"urllib3 streaming decompression API (e.g. HTTPResponse.read/stream with Content-Encoding)\"],\n  \"reasoning\": \"The advisory concerns urllib3's streaming response decompression handling of highly compressed data (decompression bomb, CWE-409), relevant when the app uses urllib3's streaming/response-reading API directly or indirectly. Static analysis found zero imports of urllib3 in first-party code, zero call/reference sites, and zero matches of vulnerable symbols across 229 Python files and 199 templates. urllib3 is present only as a transitive dependency (likely pulled in via requests or another HTTP library), with no first-party code exercising its streaming decompression path. Since there is no production code path that invokes urllib3's response/stream handling directly, the vulnerable feature is not exercised by this application's own code. Lacking evidence of any entry point reaching urllib3's streaming API, this is not_reachable rather than uncertain.\",\n  \"evidence\": [\n    {\"location\": \"advisory\", \"explanation\": \"CVE-2025-66471 affects urllib3's streaming decompression handling of response bodies, not general HTTP usage.\"},\n    {\"location\": \"static evidence summary\", \"explanation\": \"0 non-test imports and 0 call sites of urllib3 in 229 first-party Python files means no first-party code reaches urllib3's API directly.\"},\n    {\"location\": \"static evidence summary\", \"explanation\": \"0 production call sites of the named vulnerable symbols confirms the specific streaming decompression path is never invoked by application code.\"}\n  ]\n}\n```",
+     "in": 1935,
+     "out": 569,
+     "s": 9.44,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 13664.3,
+   "output": {
+    "critique": "The verdict's core flaw is that it only searched for the literal symbol/import name 'urllib3' in first-party code, but urllib3 is almost never used directly \u2014 it's the transport layer underneath `requests`, and often `httpx`/other HTTP clients. The vulnerable feature (streaming decompression of response bodies, e.g. gzip/deflate/brotli bomb handling in HTTPResponse.read()/stream()) is exercised automatically any time first-party code does something as mundane as `requests.get(url)` and reads `.content`/`.text`/`.iter_content()` on a response with Content-Encoding set \u2014 no direct urllib3 import or reference to a 'named vulnerable symbol' is needed. The static evidence provided says nothing about whether `requests` (or another urllib3-based client) is imported/called in the 229 first-party files; it only confirms absence of *direct* urllib3 usage, which is almost always true even in vulnerable apps. Declaring not_reachable on that basis conflates 'no direct symbol usage' with 'vulnerable code path never executes,' which is exactly the kind of false suppression this review is meant to catch. The analyst needed to check for requests/httpx/urllib3-based call sites and whether any first-party code fetches external/untrusted content over HTTP (a common, high-likelihood pattern), before ruling this out.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 1821,
+   "tokens_out": 1010,
+   "llm_calls": 1,
+   "llm_seconds": 13.66,
+   "cost_usd_est": 0.020613,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's core flaw is that it only searched for the literal symbol/import name 'urllib3' in first-party code, but urllib3 is almost never used directly \u2014 it's the transport layer underneath `requests`, and often `httpx`/other HTTP clients. The vulnerable feature (streaming decompression of response bodies, e.g. gzip/deflate/brotli bomb handling in HTTPResponse.read()/stream()) is exercised automatically any time first-party code does something as mundane as `requests.get(url)` and reads `.content`/`.text`/`.iter_content()` on a response with Content-Encoding set \u2014 no direct urllib3 import or reference to a 'named vulnerable symbol' is needed. The static evidence provided says nothing about whether `requests` (or another urllib3-based client) is imported/called in the 229 first-party files; it only confirms absence of *direct* urllib3 usage, which is almost always true even in vulnerable apps. Declaring not_reachable on that basis conflates 'no direct symbol usage' with 'vulnerable code path never executes,' which is exactly the kind of false suppression this review is meant to catch. The analyst needed to check for requests/httpx/urllib3-based call sites and whether any first-party code fetches external/untrusted content over HTTP (a common, high-likelihood pattern), before ruling this out.\",\"agrees\":false,\"retry\":true,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 1821,
+     "out": 1010,
+     "s": 13.66,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 17670.4,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.45,
+    "vulnerable_symbols": [
+     "HTTPResponse.read()",
+     "HTTPResponse.stream()",
+     "decompression handling of Content-Encoding (gzip/deflate/brotli) in urllib3's response body streaming"
+    ],
+    "reasoning": "The advisory concerns urllib3's internal handling of highly compressed response bodies during streaming decompression (HTTPResponse.read/stream), which is exercised transparently whenever any HTTP client built on urllib3 (most commonly `requests`, but also some httpx configurations) fetches a response with a compression Content-Encoding header and the app reads .content/.text/.iter_content(). The static evidence provided only confirms the absence of direct urllib3 imports/symbol references in first-party code and templates; it says nothing about whether `requests` or another urllib3-backed client is used to fetch external/untrusted HTTP content, which is the actual path by which this vulnerability would be triggered. Because urllib3 is almost never called directly, a 'zero direct references' result is expected even in a vulnerable app and does not positively demonstrate the feature is unused. Without data on requests/httpx import and call sites, and without knowing if any fetched responses pass through decompression on attacker-influenced input, the evidence cannot settle reachability either way. Per the triage rules, this gap should be resolved as uncertain rather than defaulting to not_reachable, since the cost of a false negative here is high.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "CVE-2025-66471 describes a decompression-bomb style issue in urllib3's streaming response body handling (HTTPResponse.read/stream), not in a user-facing urllib3 API that first-party code would call by name."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "The AST search only looked for literal 'urllib3' imports/symbols across 229 Python files and 199 templates and found none, but did not check for `requests`, `httpx`, or other urllib3-based HTTP client usage."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "No information is given about whether the application performs outbound HTTP requests to external or attacker-influenced URLs and consumes the response bodies, which is the condition needed for this CWE-409 (resource exhaustion) issue to be triggerable."
+     }
+    ]
+   },
+   "tokens_in": 2403,
+   "tokens_out": 1326,
+   "llm_calls": 1,
+   "llm_seconds": 17.67,
+   "cost_usd_est": 0.027099,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"uncertain\",\"confidence\":0.45,\"vulnerable_symbols\":[\"HTTPResponse.read()\",\"HTTPResponse.stream()\",\"decompression handling of Content-Encoding (gzip/deflate/brotli) in urllib3's response body streaming\"],\"reasoning\":\"The advisory concerns urllib3's internal handling of highly compressed response bodies during streaming decompression (HTTPResponse.read/stream), which is exercised transparently whenever any HTTP client built on urllib3 (most commonly `requests`, but also some httpx configurations) fetches a response with a compression Content-Encoding header and the app reads .content/.text/.iter_content(). The static evidence provided only confirms the absence of direct urllib3 imports/symbol references in first-party code and templates; it says nothing about whether `requests` or another urllib3-backed client is used to fetch external/untrusted HTTP content, which is the actual path by which this vulnerability would be triggered. Because urllib3 is almost never called directly, a 'zero direct references' result is expected even in a vulnerable app and does not positively demonstrate the feature is unused. Without data on requests/httpx import and call sites, and without knowing if any fetched responses pass through decompression on attacker-influenced input, the evidence cannot settle reachability either way. Per the triage rules, this gap should be resolved as uncertain rather than defaulting to not_reachable, since the cost of a false negative here is high.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"CVE-2025-66471 describes a decompression-bomb style issue in urllib3's streaming response body handling (HTTPResponse.read/stream), not in a user-facing urllib3 API that first-party code would call by name.\"},{\"location\":\"static evidence summary\",\"explanation\":\"The AST search only looked for literal 'urllib3' imports/symbols across 229 Python files and 199 templates and found none, but did not check for `requests`, `httpx`, or other urllib3-based HTTP client usage.\"},{\"location\":\"static evidence summary\",\"explanation\":\"No information is given about whether the application performs outbound HTTP requests to external or attacker-influenced URLs and consumes the response bodies, which is the condition needed for this CWE-409 (resource exhaustion) issue to be triggerable.\"}]}",
+     "in": 2403,
+     "out": 1326,
+     "s": 17.67,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 23178.4,
+   "output": {
+    "critique": "The strongest counter-argument is that the AST evidence actually shows zero import locations for urllib3 itself in 229 first-party files, but the analyst correctly notes this search targeted urllib3's own symbols/imports, not usage of `requests` or `httpx` (the overwhelmingly common wrappers that pull in urllib3 transitively and would never trigger a literal 'urllib3' hit). Since the vulnerable code path (HTTPResponse streaming/decompression) is invoked internally by those wrapper libraries without any urllib3-named call sites in application code, a 'zero urllib3 references' result is exactly what you'd see whether or not the app is vulnerable \u2014 it cannot discriminate reachable from not_reachable. One could push toward not_reachable by noting that if the app made no outbound HTTP calls via any client at all, there'd be no decompression path, but the evidence provided doesn't confirm absence of requests/httpx usage, so that push doesn't succeed either. The analyst's gap identification is accurate and the evidence genuinely does not resolve whether untrusted/attacker-controlled compressed responses are streamed and read by this app. Given the high cost of a false not_reachable call on a resource-exhaustion CWE-409 issue, and the explicit evidentiary gap (no requests/httpx import data, no data on whether responses are read via content-encoding-aware decompression), uncertain is the defensible call rather than a forced binary verdict.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 2027,
+   "tokens_out": 1720,
+   "llm_calls": 1,
+   "llm_seconds": 23.17,
+   "cost_usd_est": 0.031881,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument is that the AST evidence actually shows zero import locations for urllib3 itself in 229 first-party files, but the analyst correctly notes this search targeted urllib3's own symbols/imports, not usage of `requests` or `httpx` (the overwhelmingly common wrappers that pull in urllib3 transitively and would never trigger a literal 'urllib3' hit). Since the vulnerable code path (HTTPResponse streaming/decompression) is invoked internally by those wrapper libraries without any urllib3-named call sites in application code, a 'zero urllib3 references' result is exactly what you'd see whether or not the app is vulnerable \u2014 it cannot discriminate reachable from not_reachable. One could push toward not_reachable by noting that if the app made no outbound HTTP calls via any client at all, there'd be no decompression path, but the evidence provided doesn't confirm absence of requests/httpx usage, so that push doesn't succeed either. The analyst's gap identification is accurate and the evidence genuinely does not resolve whether untrusted/attacker-controlled compressed responses are streamed and read by this app. Given the high cost of a false not_reachable call on a resource-exhaustion CWE-409 issue, and the explicit evidentiary gap (no requests/httpx import data, no data on whether responses are read via content-encoding-aware decompression), uncertain is the defensible call rather than a forced binary verdict.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 2027,
+     "out": 1720,
+     "s": 23.17,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.55,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 8186,
+  "tokens_out": 4625,
+  "cost_usd_est": 0.093933,
+  "seconds": 64.02
+ },
+ "created": "2026-11-10T16:13:40+00:00",
+ "code_version": "f26e69b"
+}

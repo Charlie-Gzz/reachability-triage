@@ -1,0 +1,339 @@
+{
+ "finding_id": "ctfd/urllib3@1.25.11/GHSA-v845-jxx5-vc9f",
+ "config": "full",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-43804",
+   "GHSA-v845-jxx5-vc9f"
+  ],
+  "cves": [
+   "CVE-2023-43804"
+  ],
+  "cwes": [
+   "CWE-200"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/urllib3@1.25.11/GHSA-v845-jxx5-vc9f",
+  "first_fixed_above_installed": "1.26.17",
+  "fixed_versions": [
+   "1.26.17",
+   "2.0.6"
+  ],
+  "max_cvss": "7.4",
+  "package": "urllib3",
+  "published": "2023-10-02T23:27:05Z",
+  "summary": "`Cookie` HTTP header isn't stripped on cross-origin redirects",
+  "target": "ctfd",
+  "version": "1.25.11",
+  "vuln_id": "GHSA-v845-jxx5-vc9f"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.75,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.78,
+  "vulnerable_symbols": [
+   "Cookie header (stripped on cross-origin redirect)"
+  ],
+  "reasoning": "The advisory requires an application to set a custom `Cookie` HTTP header on outbound requests made via urllib3 (directly or through `requests`) while allowing automatic redirects. Static analysis found zero direct urllib3 imports/usages and zero references to a `Cookie` header symbol anywhere in first-party code, including templates. The only outbound HTTP call shown (`requests.post` in CTFd/auth.py for OAuth token exchange) sets only `content-type` and `Authorization`-style headers, not `Cookie`; CTFd's own cookie handling (CTFd/utils/sessions/__init__.py) is Flask's inbound session cookie, unrelated to urllib3's redirect-following outbound requests. Since the exploit precondition \u2014 the app explicitly sending a `Cookie` header on a urllib3/requests call with redirects enabled \u2014 is not met anywhere in the codebase, the vulnerable behavior is not exercised. This is a transitive dependency used only incidentally through `requests`, and no code path forwards a Cookie header through it.",
+  "evidence": [
+   {
+    "location": "CTFd/auth.py:449-480",
+    "explanation": "Only outbound requests.post/get calls found; headers set are content-type/Authorization, never Cookie."
+   },
+   {
+    "location": "CTFd/utils/sessions/__init__.py:86-128",
+    "explanation": "Cookie handling here is Flask's own session cookie set on the response, not a header sent via urllib3/requests to a third party."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 production call sites of the 'Cookie' symbol and 0 direct urllib3 imports confirm the vulnerable pattern is absent."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument: the advisory's exploit condition is that the application sets a custom Cookie header on outbound requests without disabling redirects \u2014 but the static evidence presented doesn't actually rule this out comprehensively, it only confirms no first-party code explicitly sets request.headers['Cookie']. The analysis correctly notes the one outbound call (oauth_redirect's requests.post) doesn't set Cookie. However, the verdict doesn't verify whether `requests.post`/`requests.get` elsewhere in CTFd (e.g., any webhook/notification/update-check functionality, or third-party integration code not shown) might forward session cookies, and it doesn't confirm that `allow_redirects` is disabled on the one call shown \u2014 redirects are enabled by default in requests/urllib3, which somewhat weakens the 'not using automatic redirects' precondition framing (the reasoning focuses on absence of Cookie header, which is the dispositive factor, so this is a minor gap, not a reachability path). The 0-call-site symbol search for 'Cookie' is strong because it's a literal/attribute search across 142 files, and the one real outbound HTTP call shown corroborates it. No wrapper, dispatch table, or config mechanism surfaced that would inject a Cookie header into outbound urllib3/requests calls. The verdict's suppression is well-supported rather than evidence-ignoring.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.75
+ },
+ "symbols": [
+  "Cookie"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/urllib3@1.25.11/GHSA-v845-jxx5-vc9f",
+    "package": "urllib3",
+    "version": "1.25.11",
+    "vuln_id": "GHSA-v845-jxx5-vc9f",
+    "aliases": [
+     "CVE-2023-43804",
+     "GHSA-v845-jxx5-vc9f"
+    ],
+    "summary": "`Cookie` HTTP header isn't stripped on cross-origin redirects",
+    "max_cvss": "7.4",
+    "fixed_versions": [
+     "1.26.17",
+     "2.0.6"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 25.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-v845-jxx5-vc9f#0",
+      "score": 0.894,
+      "text": "GHSA-v845-jxx5-vc9f (CVE-2023-43804)\npackage: urllib3\nsummary: `Cookie` HTTP header isn't stripped on cross-origin redirects\naffected: >=0, <1.26.17; >=2.0.0, <2.0.6",
+      "vuln_id": "GHSA-v845-jxx5-vc9f"
+     },
+     {
+      "id": "GHSA-v845-jxx5-vc9f#1",
+      "score": 0.868,
+      "text": "GHSA-v845-jxx5-vc9f (urllib3) details:\nurllib3 doesn't treat the `Cookie` HTTP header special or provide any helpers for managing cookies over HTTP, that is the responsibility of the user. However, it is possible for a user to specify a `Cookie` header and unknowingly leak information via HTTP redirects to a different origin if that user doesn't disable redirects explicitly.\n\nUsers **must** handle redirects themselves instead of relying on urllib3's automatic redirects to achieve safe processing of the `Cookie` header, thus we decided to strip the header by default in order to further protect users who aren't using the correct approach.\n\n## Affected usages\n\nWe believe the number of usages affected by this advisory is low. It requires all of the following to be true to be exploited:",
+      "vuln_id": "GHSA-v845-jxx5-vc9f"
+     },
+     {
+      "id": "GHSA-v845-jxx5-vc9f#2",
+      "score": 0.86,
+      "text": "GHSA-v845-jxx5-vc9f (urllib3) details:\n* Using an affected version of urllib3 (patched in v1.26.17 and v2.0.6)\n* Using the `Cookie` header on requests, which is mostly typical for impersonating a browser.\n* Not disabling HTTP redirects\n* Either not using HTTPS or for the origin server to redirect to a malicious origin.\n\n## Remediation\n\n* Upgrading to at least urllib3 v1.26.17 or v2.0.6\n* Disabling HTTP redirects using `redirects=False` when sending requests.\n* Not using the `Cookie` header.",
+      "vuln_id": "GHSA-v845-jxx5-vc9f"
+     },
+     {
+      "id": "GHSA-34jh-p97f-mpxf#0",
+      "score": 0.86,
+      "text": "GHSA-34jh-p97f-mpxf (CVE-2024-37891)\npackage: urllib3\nsummary: urllib3's Proxy-Authorization request header isn't stripped during cross-origin redirects\naffected: >=0, <1.26.19; >=2.0.0, <2.2.2",
+      "vuln_id": "GHSA-34jh-p97f-mpxf"
+     },
+     {
+      "id": "GHSA-34jh-p97f-mpxf#1",
+      "score": 0.84,
+      "text": "GHSA-34jh-p97f-mpxf (urllib3) details:\nWhen using urllib3's proxy support with `ProxyManager`, the `Proxy-Authorization` header is only sent to the configured proxy, as expected.\n\nHowever, when sending HTTP requests *without* using urllib3's proxy support, it's possible to accidentally configure the `Proxy-Authorization` header even though it won't have any effect as the request is not using a forwarding proxy or a tunneling proxy. In those cases, urllib3 doesn't treat the `Proxy-Authorization` HTTP header as one carrying authentication material and thus doesn't strip the header on cross-origin redirects.\n\nBecause this is a highly unlikely scenario, we believe the severity of this vulnerability is low for almost all users. Out of an abundance of caution urllib3 will automatically strip the `Proxy-Authorization` header during cross-origin redirects to avoid the small chance that users are doing this on accident.",
+      "vuln_id": "GHSA-34jh-p97f-mpxf"
+     }
+    ],
+    "symbols": [
+     "Cookie"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 39.6,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "Cookie"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['Cookie']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 22.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/api/v1/helpers/request.py:module",
+      "score": 0.707,
+      "text": "# CTFd/api/v1/helpers/request.py (module level)\nfrom functools import wraps\nfrom flask import request\nfrom pydantic import ValidationError, create_model\nARG_LOCATIONS = {\n    \"query\": lambda: request.args,\n    \"json\": lambda: request.get_json(),\n    \"form\": lambda: request.form,\n    \"headers\": lambda: request.headers,\n    \"cookies\": lambda: request.cookies,\n}",
+      "file": "CTFd/api/v1/helpers/request.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/auth.py:449",
+      "score": 0.689,
+      "text": "# CTFd/auth.py:449-566  oauth_redirect\ndef oauth_redirect():\n    oauth_code = request.args.get(\"code\")\n    state = request.args.get(\"state\")\n    if session[\"nonce\"] != state:\n        log(\"logins\", \"[{date}] {ip} - OAuth State validation mismatch\")\n        error_for(endpoint=\"auth.login\", message=\"OAuth State validation mismatch.\")\n        return redirect(url_for(\"auth.login\"))\n\n    if oauth_code:\n        url = (\n            get_app_config(\"OAUTH_TOKEN_ENDPOINT\")\n            or get_config(\"oauth_token_endpoint\")\n            or \"https://auth.majorleaguecyber.org/oauth/token\"\n        )\n\n        client_id = get_app_config(\"OAUTH_CLIENT_ID\") or get_config(\"oauth_client_id\")\n        client_secret = get_app_config(\"OAUTH_CLIENT_SECRET\") or get_config(\n            \"oauth_client_secret\"\n        )\n        headers = {\"content-type\": \"application/x-www-form-urlencoded\"}\n        data = {\n            \"code\": oauth_code,\n            \"client_id\": client_id,\n            \"client_secret\": client_secret,\n            \"grant_type\": \"authorization_code\",\n        }\n        token_request = requests.post(url, data=data, headers=headers)\n\n        if token_request.status_code == requests.codes.ok:\n            token = token_request.json()[\"access_token\"]\n            user_url = (\n                get_app_config(\"OAUTH_API_ENDPOINT\")\n                or get_config(\"oauth_api_endpoint\")\n                or \"https://api.majorleaguecyber.org/user\"\n            )\n\n            headers = {\n                \"Authorization\": \"Bearer \" + str(token),\n                \"Content-type\": \"application/json\",\n            }\n            api_data = requests.get(url=user_url, headers=headers).json()\n\n            user_id = api_data[\"id\"]\n            user_name = api_data[\"name\"]\n            user_email = api_data[\"email\"]\n\n            user = Users.query.filter_by(email=user_email).first()\n            if user is None:\n                # Check if we are allowing registration before creating users\n                if registration_visible() or mlc_registration():\n                    user = Users(\n                        name=user_name,\n                        email=user_email,\n                        oauth_id=user_id,\n                        verified=True,\n                    )\n                    db.session.add(user)\n                    db.session.commit()\n                else:\n                    log(\"logins\", \"[{date}] {ip} - Public registration via MLC blocked\")",
+      "file": "CTFd/auth.py",
+      "start": 449,
+      "qualname": "oauth_redirect"
+     },
+     {
+      "id": "ctfd:CTFd/constants/plugins.py:10",
+      "score": 0.66,
+      "text": "# CTFd/constants/plugins.py:10-23  _PluginWrapper.scripts\n    def scripts(self):\n        application_root = current_app.config.get(\"APPLICATION_ROOT\")\n        subdir = application_root != \"/\"\n        scripts = []\n        for script in get_registered_scripts():\n            if script.startswith(\"http\"):\n                scripts.append(f'<script defer src=\"{script}\"></script>')\n            elif subdir:\n                scripts.append(\n                    f'<script defer src=\"{application_root}/{script}\"></script>'\n                )\n            else:\n                scripts.append(f'<script defer src=\"{script}\"></script>')\n        return markup(\"\\n\".join(scripts))",
+      "file": "CTFd/constants/plugins.py",
+      "start": 10,
+      "qualname": "_PluginWrapper.scripts"
+     },
+     {
+      "id": "ctfd:CTFd/utils/sessions/__init__.py:86",
+      "score": 0.654,
+      "text": "# CTFd/utils/sessions/__init__.py:86-128  CachingSessionInterface.save_session\n    def save_session(self, app, session, response):\n        domain = self.get_cookie_domain(app)\n        path = self.get_cookie_path(app)\n\n        if not session:\n            if session.modified:\n                cache.delete(self.key_prefix + session.sid)\n                response.delete_cookie(\n                    app.session_cookie_name, domain=domain, path=path\n                )\n            return\n\n        if session.modified:\n            httponly = self.get_cookie_httponly(app)\n            secure = self.get_cookie_secure(app)\n            expires = self.get_expiration_time(app, session)\n            samesite = self.get_cookie_samesite(app)\n            val = self.serializer.dumps(dict(session))\n\n            if session.sid is None:\n                session.sid = self._generate_sid()\n\n            cache.set(\n                key=self.key_prefix + session.sid,\n                value=val,\n                timeout=total_seconds(app.permanent_session_lifetime),\n            )\n\n            if self.use_signer:\n                session_id = sign(want_bytes(session.sid))\n            else:\n                session_id = session.sid\n\n            response.set_cookie(\n                app.session_cookie_name,\n                session_id,\n                expires=expires,\n                httponly=httponly,\n                domain=domain,\n                path=path,\n                secure=secure,\n                samesite=samesite,\n            )",
+      "file": "CTFd/utils/sessions/__init__.py",
+      "start": 86,
+      "qualname": "CachingSessionInterface.save_session"
+     },
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:14",
+      "score": 0.651,
+      "text": "# CTFd/utils/validators/__init__.py:14-17  is_safe_url\ndef is_safe_url(target):\n    ref_url = urlparse(request.host_url)\n    test_url = urlparse(urljoin(request.host_url, target))\n    return test_url.scheme in (\"http\", \"https\") and ref_url.netloc == test_url.netloc",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 14,
+      "qualname": "is_safe_url"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 12586.6,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.78,
+    "vulnerable_symbols": [
+     "Cookie header (stripped on cross-origin redirect)"
+    ],
+    "reasoning": "The advisory requires an application to set a custom `Cookie` HTTP header on outbound requests made via urllib3 (directly or through `requests`) while allowing automatic redirects. Static analysis found zero direct urllib3 imports/usages and zero references to a `Cookie` header symbol anywhere in first-party code, including templates. The only outbound HTTP call shown (`requests.post` in CTFd/auth.py for OAuth token exchange) sets only `content-type` and `Authorization`-style headers, not `Cookie`; CTFd's own cookie handling (CTFd/utils/sessions/__init__.py) is Flask's inbound session cookie, unrelated to urllib3's redirect-following outbound requests. Since the exploit precondition \u2014 the app explicitly sending a `Cookie` header on a urllib3/requests call with redirects enabled \u2014 is not met anywhere in the codebase, the vulnerable behavior is not exercised. This is a transitive dependency used only incidentally through `requests`, and no code path forwards a Cookie header through it.",
+    "evidence": [
+     {
+      "location": "CTFd/auth.py:449-480",
+      "explanation": "Only outbound requests.post/get calls found; headers set are content-type/Authorization, never Cookie."
+     },
+     {
+      "location": "CTFd/utils/sessions/__init__.py:86-128",
+      "explanation": "Cookie handling here is Flask's own session cookie set on the response, not a header sent via urllib3/requests to a third party."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 production call sites of the 'Cookie' symbol and 0 direct urllib3 imports confirm the vulnerable pattern is absent."
+     }
+    ]
+   },
+   "tokens_in": 4503,
+   "tokens_out": 1019,
+   "llm_calls": 1,
+   "llm_seconds": 12.58,
+   "cost_usd_est": 0.028794,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"not_reachable\",\n  \"confidence\": 0.78,\n  \"vulnerable_symbols\": [\"Cookie header (stripped on cross-origin redirect)\"],\n  \"reasoning\": \"The advisory requires an application to set a custom `Cookie` HTTP header on outbound requests made via urllib3 (directly or through `requests`) while allowing automatic redirects. Static analysis found zero direct urllib3 imports/usages and zero references to a `Cookie` header symbol anywhere in first-party code, including templates. The only outbound HTTP call shown (`requests.post` in CTFd/auth.py for OAuth token exchange) sets only `content-type` and `Authorization`-style headers, not `Cookie`; CTFd's own cookie handling (CTFd/utils/sessions/__init__.py) is Flask's inbound session cookie, unrelated to urllib3's redirect-following outbound requests. Since the exploit precondition \u2014 the app explicitly sending a `Cookie` header on a urllib3/requests call with redirects enabled \u2014 is not met anywhere in the codebase, the vulnerable behavior is not exercised. This is a transitive dependency used only incidentally through `requests`, and no code path forwards a Cookie header through it.\",\n  \"evidence\": [\n    {\"location\": \"CTFd/auth.py:449-480\", \"explanation\": \"Only outbound requests.post/get calls found; headers set are content-type/Authorization, never Cookie.\"},\n    {\"location\": \"CTFd/utils/sessions/__init__.py:86-128\", \"explanation\": \"Cookie handling here is Flask's own session cookie set on the response, not a header sent via urllib3/requests to a third party.\"},\n    {\"location\": \"static evidence summary\", \"explanation\": \"0 production call sites of the 'Cookie' symbol and 0 direct urllib3 imports confirm the vulnerable pattern is absent.\"}\n  ]\n}\n```",
+     "in": 4503,
+     "out": 1019,
+     "s": 12.58,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 8802.4,
+   "output": {
+    "critique": "The strongest counter-argument: the advisory's exploit condition is that the application sets a custom Cookie header on outbound requests without disabling redirects \u2014 but the static evidence presented doesn't actually rule this out comprehensively, it only confirms no first-party code explicitly sets request.headers['Cookie']. The analysis correctly notes the one outbound call (oauth_redirect's requests.post) doesn't set Cookie. However, the verdict doesn't verify whether `requests.post`/`requests.get` elsewhere in CTFd (e.g., any webhook/notification/update-check functionality, or third-party integration code not shown) might forward session cookies, and it doesn't confirm that `allow_redirects` is disabled on the one call shown \u2014 redirects are enabled by default in requests/urllib3, which somewhat weakens the 'not using automatic redirects' precondition framing (the reasoning focuses on absence of Cookie header, which is the dispositive factor, so this is a minor gap, not a reachability path). The 0-call-site symbol search for 'Cookie' is strong because it's a literal/attribute search across 142 files, and the one real outbound HTTP call shown corroborates it. No wrapper, dispatch table, or config mechanism surfaced that would inject a Cookie header into outbound urllib3/requests calls. The verdict's suppression is well-supported rather than evidence-ignoring.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.75
+   },
+   "tokens_in": 4485,
+   "tokens_out": 504,
+   "llm_calls": 1,
+   "llm_seconds": 8.8,
+   "cost_usd_est": 0.021015,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument: the advisory's exploit condition is that the application sets a custom Cookie header on outbound requests without disabling redirects \u2014 but the static evidence presented doesn't actually rule this out comprehensively, it only confirms no first-party code explicitly sets request.headers['Cookie']. The analysis correctly notes the one outbound call (oauth_redirect's requests.post) doesn't set Cookie. However, the verdict doesn't verify whether `requests.post`/`requests.get` elsewhere in CTFd (e.g., any webhook/notification/update-check functionality, or third-party integration code not shown) might forward session cookies, and it doesn't confirm that `allow_redirects` is disabled on the one call shown \u2014 redirects are enabled by default in requests/urllib3, which somewhat weakens the 'not using automatic redirects' precondition framing (the reasoning focuses on absence of Cookie header, which is the dispositive factor, so this is a minor gap, not a reachability path). The 0-call-site symbol search for 'Cookie' is strong because it's a literal/attribute search across 142 files, and the one real outbound HTTP call shown corroborates it. No wrapper, dispatch table, or config mechanism surfaced that would inject a Cookie header into outbound urllib3/requests calls. The verdict's suppression is well-supported rather than evidence-ignoring.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.75}",
+     "in": 4485,
+     "out": 504,
+     "s": 8.8,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.75,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 8988,
+  "tokens_out": 1523,
+  "cost_usd_est": 0.049809,
+  "seconds": 21.48
+ },
+ "created": "2026-11-10T15:35:59+00:00",
+ "code_version": "f26e69b"
+}

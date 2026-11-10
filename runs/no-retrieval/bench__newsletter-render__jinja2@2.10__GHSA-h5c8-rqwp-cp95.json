@@ -1,0 +1,262 @@
+{
+ "finding_id": "bench/newsletter-render/jinja2@2.10/GHSA-h5c8-rqwp-cp95",
+ "config": "no-retrieval",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/newsletter-render",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-22195",
+   "GHSA-h5c8-rqwp-cp95",
+   "PYSEC-2026-1473"
+  ],
+  "cves": [
+   "CVE-2024-22195"
+  ],
+  "cwes": [
+   "CWE-79"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/newsletter-render/jinja2@2.10/GHSA-h5c8-rqwp-cp95",
+  "first_fixed_above_installed": "3.1.3",
+  "fixed_versions": [
+   "3.1.3"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+  "package": "jinja2",
+  "published": "2024-01-11T15:20:48Z",
+  "split": "test",
+  "summary": "Jinja vulnerable to HTML attribute injection when passing user input as keys to xmlattr filter",
+  "target": "bench/newsletter-render",
+  "version": "2.10",
+  "vuln_id": "GHSA-h5c8-rqwp-cp95"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.65,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.9,
+  "vulnerable_symbols": [
+   "xmlattr"
+  ],
+  "reasoning": "The advisory requires use of Jinja2's |xmlattr filter with user-controlled keys. Static analysis found zero imports of jinja2 in production code and zero uses of the xmlattr filter (or any jinja2 symbols) in the single template file searched. Jinja2 appears to be an unused/transitive dependency rather than an actively used templating engine in this application. Since the specific vulnerable feature (xmlattr filter) is never invoked anywhere in first-party code or templates, there is no exploitable path. This satisfies the not_reachable bar: positive evidence (zero matches across code and templates) that the vulnerable feature is unused.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "Vulnerability requires passing user-controlled dict keys to the |xmlattr filter, enabling HTML attribute injection."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 non-test imports of jinja2 and 0 production call sites of any jinja2 symbols were found in the codebase."
+   },
+   {
+    "location": "template search (1 HTML file)",
+    "explanation": "No |xmlattr filter usage found in the only template file scanned, meaning the vulnerable filter is never invoked."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict's strongest weakness is the thinness of the evidence base: only a single HTML template file was searched, and jinja2 has zero imports/call sites in production code, which is odd for a 'direct dependency' per the scanner. This raises the possibility that jinja2 is invoked indirectly\u2014e.g., via a web framework (Flask/Django) that auto-renders templates without explicit 'import jinja2' or '.render()' calls appearing as jinja2 symbol references, or via string-based template rendering (render_template_string) where |xmlattr could appear in a dynamically constructed template string not captured by static AST/grep search of a single .html file. However, the evidence as given shows zero imports of jinja2 anywhere (not even via a framework wrapper), which would be unusual if jinja2 were truly used as a 'direct dependency' for templating \u2014 this inconsistency itself is suspicious but is evidence the reviewer should flag as a gap rather than resolve definitively. Given only one template file exists and no |xmlattr usage is found there, and no code imports jinja2 directly, the surface for exploitation is minimal. The suppression is plausible but the single-file template scope and absence of explanation for why a 'direct dependency' shows zero import sites warrants lower confidence rather than full agreement.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.65
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/newsletter-render/jinja2@2.10/GHSA-h5c8-rqwp-cp95",
+    "package": "jinja2",
+    "version": "2.10",
+    "vuln_id": "GHSA-h5c8-rqwp-cp95",
+    "aliases": [
+     "CVE-2024-22195",
+     "GHSA-h5c8-rqwp-cp95",
+     "PYSEC-2026-1473"
+    ],
+    "summary": "Jinja vulnerable to HTML attribute injection when passing user input as keys to xmlattr filter",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+    "fixed_versions": [
+     "3.1.3"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 7.6,
+   "output": {
+    "package": "jinja2",
+    "import_names": [
+     "jinja2"
+    ],
+    "symbols": [],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 1,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 1
+    },
+    "entry_points": 1,
+    "paths": [],
+    "summary": "jinja2: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 10073.3,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.9,
+    "vulnerable_symbols": [
+     "xmlattr"
+    ],
+    "reasoning": "The advisory requires use of Jinja2's |xmlattr filter with user-controlled keys. Static analysis found zero imports of jinja2 in production code and zero uses of the xmlattr filter (or any jinja2 symbols) in the single template file searched. Jinja2 appears to be an unused/transitive dependency rather than an actively used templating engine in this application. Since the specific vulnerable feature (xmlattr filter) is never invoked anywhere in first-party code or templates, there is no exploitable path. This satisfies the not_reachable bar: positive evidence (zero matches across code and templates) that the vulnerable feature is unused.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Vulnerability requires passing user-controlled dict keys to the |xmlattr filter, enabling HTML attribute injection."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test imports of jinja2 and 0 production call sites of any jinja2 symbols were found in the codebase."
+     },
+     {
+      "location": "template search (1 HTML file)",
+      "explanation": "No |xmlattr filter usage found in the only template file scanned, meaning the vulnerable filter is never invoked."
+     }
+    ]
+   },
+   "tokens_in": 1945,
+   "tokens_out": 446,
+   "llm_calls": 1,
+   "llm_seconds": 10.06,
+   "cost_usd_est": 0.012525,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.9,\"vulnerable_symbols\":[\"xmlattr\"],\"reasoning\":\"The advisory requires use of Jinja2's |xmlattr filter with user-controlled keys. Static analysis found zero imports of jinja2 in production code and zero uses of the xmlattr filter (or any jinja2 symbols) in the single template file searched. Jinja2 appears to be an unused/transitive dependency rather than an actively used templating engine in this application. Since the specific vulnerable feature (xmlattr filter) is never invoked anywhere in first-party code or templates, there is no exploitable path. This satisfies the not_reachable bar: positive evidence (zero matches across code and templates) that the vulnerable feature is unused.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"Vulnerability requires passing user-controlled dict keys to the |xmlattr filter, enabling HTML attribute injection.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 non-test imports of jinja2 and 0 production call sites of any jinja2 symbols were found in the codebase.\"},{\"location\":\"template search (1 HTML file)\",\"explanation\":\"No |xmlattr filter usage found in the only template file scanned, meaning the vulnerable filter is never invoked.\"}]}\n```",
+     "in": 1945,
+     "out": 446,
+     "s": 10.06,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 8564.1,
+   "output": {
+    "critique": "The verdict's strongest weakness is the thinness of the evidence base: only a single HTML template file was searched, and jinja2 has zero imports/call sites in production code, which is odd for a 'direct dependency' per the scanner. This raises the possibility that jinja2 is invoked indirectly\u2014e.g., via a web framework (Flask/Django) that auto-renders templates without explicit 'import jinja2' or '.render()' calls appearing as jinja2 symbol references, or via string-based template rendering (render_template_string) where |xmlattr could appear in a dynamically constructed template string not captured by static AST/grep search of a single .html file. However, the evidence as given shows zero imports of jinja2 anywhere (not even via a framework wrapper), which would be unusual if jinja2 were truly used as a 'direct dependency' for templating \u2014 this inconsistency itself is suspicious but is evidence the reviewer should flag as a gap rather than resolve definitively. Given only one template file exists and no |xmlattr usage is found there, and no code imports jinja2 directly, the surface for exploitation is minimal. The suppression is plausible but the single-file template scope and absence of explanation for why a 'direct dependency' shows zero import sites warrants lower confidence rather than full agreement.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.65
+   },
+   "tokens_in": 1766,
+   "tokens_out": 464,
+   "llm_calls": 1,
+   "llm_seconds": 8.55,
+   "cost_usd_est": 0.012258,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's strongest weakness is the thinness of the evidence base: only a single HTML template file was searched, and jinja2 has zero imports/call sites in production code, which is odd for a 'direct dependency' per the scanner. This raises the possibility that jinja2 is invoked indirectly\u2014e.g., via a web framework (Flask/Django) that auto-renders templates without explicit 'import jinja2' or '.render()' calls appearing as jinja2 symbol references, or via string-based template rendering (render_template_string) where |xmlattr could appear in a dynamically constructed template string not captured by static AST/grep search of a single .html file. However, the evidence as given shows zero imports of jinja2 anywhere (not even via a framework wrapper), which would be unusual if jinja2 were truly used as a 'direct dependency' for templating \u2014 this inconsistency itself is suspicious but is evidence the reviewer should flag as a gap rather than resolve definitively. Given only one template file exists and no |xmlattr usage is found there, and no code imports jinja2 directly, the surface for exploitation is minimal. The suppression is plausible but the single-file template scope and absence of explanation for why a 'direct dependency' shows zero import sites warrants lower confidence rather than full agreement.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.65}",
+     "in": 1766,
+     "out": 464,
+     "s": 8.55,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.65,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3711,
+  "tokens_out": 910,
+  "cost_usd_est": 0.024783,
+  "seconds": 18.65
+ },
+ "created": "2026-11-10T15:56:01+00:00",
+ "code_version": "f26e69b"
+}

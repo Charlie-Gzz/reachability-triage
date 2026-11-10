@@ -1,0 +1,368 @@
+{
+ "finding_id": "mealie/soupsieve@2.3.2.post1/GHSA-836r-79rf-4m37",
+ "config": "full",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-49477",
+   "GHSA-836r-79rf-4m37",
+   "PYSEC-2026-3072"
+  ],
+  "cves": [
+   "CVE-2026-49477"
+  ],
+  "cwes": [
+   "CWE-1333",
+   "CWE-400"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/soupsieve@2.3.2.post1/GHSA-836r-79rf-4m37",
+  "first_fixed_above_installed": "2.8.4",
+  "fixed_versions": [
+   "2.8.4"
+  ],
+  "max_cvss": "7.5",
+  "package": "soupsieve",
+  "published": "2026-07-09T13:37:46Z",
+  "summary": "Soup Sieve: Regular Expression Denial of Service (ReDoS) via Selector Parser",
+  "target": "mealie",
+  "version": "2.3.2.post1",
+  "vuln_id": "GHSA-836r-79rf-4m37"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.68,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.72,
+  "vulnerable_symbols": [
+   "soupsieve.compile",
+   "BeautifulSoup.select",
+   "BeautifulSoup.select_one"
+  ],
+  "reasoning": "The advisory requires an attacker-controlled CSS *selector string* to be passed into soupsieve.compile() or .select()/.select_one(); it is not triggered merely by parsing attacker-controlled HTML content. Static analysis found zero first-party imports of soupsieve and zero call sites of compile/select/select_one anywhere in the 322 scanned files, so the application itself never constructs or passes selector strings to BeautifulSoup/soupsieve. The retrieved application code shows the app only fetches arbitrary HTML (scraper_strategies.py) and hands it to the third-party `recipe-scrapers` package (scrape_html), which internally uses BeautifulSoup with its own hardcoded selectors to extract recipe schema data \u2014 the untrusted part is the HTML content, not the selector strings, so the vulnerable regex path (parsing an attacker-chosen selector) is not exercised by user input here. Because no code path in this application passes externally influenced selector text into soupsieve's parser, the specific vulnerable feature is unused even though beautifulsoup4 (and thus soupsieve) is present as a transitive dependency. This matches the not_reachable criteria: the package/feature combination required by the advisory is not invoked by production code.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "Vulnerability requires untrusted CSS selector strings passed to soupsieve.compile() or .select()/.select_one(), not just untrusted HTML content."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 imports of soupsieve and 0 production call sites of compile/select/select_one across 322 first-party files."
+   },
+   {
+    "location": "mealie/services/scraper/scraper_strategies.py:27-70 safe_scrape_html",
+    "explanation": "Fetches arbitrary remote HTML (untrusted content) but does not construct or pass any CSS selector string."
+   },
+   {
+    "location": "mealie/services/scraper/scraper_strategies.py:169-196 RecipeScraperPackage.scrape_url",
+    "explanation": "Delegates HTML parsing to the third-party recipe-scrapers package via scrape_html(); any BeautifulSoup .select() calls inside that library use its own fixed selectors, not attacker-supplied selector strings."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that the static scan only covers the 322 first-party files, so it cannot see whether the third-party `recipe-scrapers` package (or beautifulsoup4 itself) ever builds a CSS selector string dynamically from attacker-influenced HTML (e.g., extracting a class/id token from fetched content and feeding it into `.select()`). If such a pattern existed, the 'zero call sites' finding would be a blind spot rather than proof of safety, and the advisory's trigger (attacker-controlled selector text, not just HTML body) could still be met indirectly. However, this is speculative: recipe-scrapers is documented to use fixed, developer-authored CSS/schema.org selectors to locate recipe JSON-LD/microdata, not selectors derived from untrasted page content, and the advisory's PoC specifically requires the *selector* itself to contain an unterminated quoted attribute value \u2014 a pattern that would require the scraping library to literally interpolate raw HTML text into a selector string, which is not a known behavior of that library and isn't shown anywhere in the retrieved code. The cited regex compilations in string_utils.py/cleaner.py are unrelated application-level regexes, not soupsieve's VALUE pattern, so they don't establish reachability either. Given no evidence of selector-string construction from untrusted input anywhere in the call chain, the verdict's conclusion is the best-supported reading of the evidence, even though it rests partly on the absence of a dynamic-selector pattern in an unscanned third-party dependency.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.68
+ },
+ "symbols": [
+  "soupsieve.compile",
+  "beautifulsoup4",
+  "select",
+  "compile",
+  "select_one"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/soupsieve@2.3.2.post1/GHSA-836r-79rf-4m37",
+    "package": "soupsieve",
+    "version": "2.3.2.post1",
+    "vuln_id": "GHSA-836r-79rf-4m37",
+    "aliases": [
+     "CVE-2026-49477",
+     "GHSA-836r-79rf-4m37",
+     "PYSEC-2026-3072"
+    ],
+    "summary": "Soup Sieve: Regular Expression Denial of Service (ReDoS) via Selector Parser",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "2.8.4"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 28.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-836r-79rf-4m37#0",
+      "score": 0.89,
+      "text": "GHSA-836r-79rf-4m37 (CVE-2026-49477)\npackage: soupsieve\nsummary: Soup Sieve: Regular Expression Denial of Service (ReDoS) via Selector Parser\naffected: >=0, <2.8.4",
+      "vuln_id": "GHSA-836r-79rf-4m37"
+     },
+     {
+      "id": "GHSA-836r-79rf-4m37#1",
+      "score": 0.846,
+      "text": "GHSA-836r-79rf-4m37 (soupsieve) details:\n### Summary\n\nThe CSS selector parser in soupsieve (the CSS selector engine for Beautiful Soup 4) contains a regular expression vulnerable to catastrophic backtracking. When processing an attribute selector with an unterminated quoted value, the `VALUE` regex pattern in `css_parser.py` enters exponential backtracking. A payload of only **300 bytes** causes the regex engine to hang for **over 3 seconds**, enabling a trivial Regular Expression Denial of Service (ReDoS) attack.\n\nTo be completely transparent, AI tools helped surface this issue. However, this was independently reproduced and carefully validated.\n\nAny application that passes untrusted CSS selector strings to `soupsieve.compile()` or Beautiful Soup's `.select()` / `.select_one()` is affected.\n\n### Details\n\n**Affected code:** `soupsieve/css_parser.py`, line ~121 - `RE_VALUES` / `VALUE` regex pattern",
+      "vuln_id": "GHSA-836r-79rf-4m37"
+     },
+     {
+      "id": "GHSA-836r-79rf-4m37#8",
+      "score": 0.839,
+      "text": "GHSA-836r-79rf-4m37 (soupsieve) details:\n**Deployment impact:** In threaded or async web applications, a single malicious request blocks a worker thread for the duration of the backtracking. An attacker can submit multiple concurrent requests to exhaust all available workers, causing complete service denial. The small payload size makes the attack easy to deliver and difficult to detect via request size limits.\n\n**Downstream exposure:** soupsieve is an automatic dependency of `beautifulsoup4`, one of the most widely installed Python packages. Any web application, API, or service that accepts CSS selectors from users is potentially affected.\n\n---\n\n### Credit",
+      "vuln_id": "GHSA-836r-79rf-4m37"
+     },
+     {
+      "id": "GHSA-836r-79rf-4m37#9",
+      "score": 0.796,
+      "text": "GHSA-836r-79rf-4m37 (soupsieve) details:\nThe vulnerability was discovered by a security research team from the University of Sydney, whose focus is detecting open source software vulnerabilities.\nLiyi Zhou: https://lzhou1110.github.io/\nZiyue Wang: https://zyy0530.github.io/\nStrick: https://str1ckl4nd.github.io/\nMaurice: https://maurice.busystar.org/\nChenchen Yu: https://7thparkk.github.io/",
+      "vuln_id": "GHSA-836r-79rf-4m37"
+     },
+     {
+      "id": "GHSA-gjv8-xp57-g29c#0",
+      "score": 0.819,
+      "text": "GHSA-gjv8-xp57-g29c (CVE-2026-86000)\npackage: soupsieve\nsummary: Soup Sieve: Polynomial-time ReDoS (O(n\u00b2)) in the `IDENTIFIER` / `VALUE` selector sub-patterns\naffected: >=0, <2.9.0",
+      "vuln_id": "GHSA-gjv8-xp57-g29c"
+     },
+     {
+      "id": "GHSA-2wc2-fm75-p42x#0",
+      "score": 0.809,
+      "text": "GHSA-2wc2-fm75-p42x (CVE-2026-49476)\npackage: soupsieve\nsummary: Soup Sieve has Memory Exhaustion via Large Comma-Separated Selector Lists\naffected: >=0, <2.8.4",
+      "vuln_id": "GHSA-2wc2-fm75-p42x"
+     }
+    ],
+    "symbols": [
+     "soupsieve.compile",
+     "beautifulsoup4",
+     "select",
+     "compile",
+     "select_one"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 47.0,
+   "output": {
+    "package": "soupsieve",
+    "import_names": [
+     "soupsieve"
+    ],
+    "symbols": [
+     "soupsieve.compile",
+     "beautifulsoup4",
+     "select",
+     "compile",
+     "select_one"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "soupsieve: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['soupsieve.compile', 'beautifulsoup4', 'select', 'compile', 'select_one']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 29.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/services/parser_services/_helpers/string_utils.py:module",
+      "score": 0.725,
+      "text": "# mealie/services/parser_services/_helpers/string_utils.py (module level)\nimport re\ncompiled_match = re.compile(r\"(.){1,6}\\s\\((.[^\\(\\)])+\\)\\s\")\ncompiled_search = re.compile(r\"\\((.[^\\(])+\\)\")",
+      "file": "mealie/services/parser_services/_helpers/string_utils.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/scraper/cleaner.py:module",
+      "score": 0.696,
+      "text": "# mealie/services/scraper/cleaner.py (module level)\nimport contextlib\nimport functools\nimport html\nimport json\nimport operator\nimport re\nimport typing\nfrom datetime import datetime, timedelta\nfrom slugify import slugify\nfrom mealie.core.root_logger import get_logger\nlogger = get_logger(\"recipe-scraper\")\nMATCH_DIGITS = re.compile(r\"\\d+([.,]\\d+)?\")\n\"\"\" Allow for commas as decimals (common in Europe) \"\"\"\nMATCH_ISO_STR = re.compile(\n    r\"^P((\\d+)Y)?((\\d+)M)?((?P<days>\\d+)D)?\" r\"T((?P<hours>\\d+)H)?((?P<minutes>\\d+)M)?((?P<seconds>\\d+(?:\\.\\d+)?)S)?$\",\n)\n\"\"\" Match Duration Strings \"\"\"\nMATCH_HTML_TAGS = re.compile(r\"<[^<]+?>\")\n\"\"\" Matches HTML tags `<p>Text</p>` -> `Text` \"\"\"\nMATCH_MULTI_SPACE = re.compile(r\" +\")\n\"\"\" Matches multiple spaces `Hello    World` -> `Hello World` \"\"\"\nMATCH_ERRONEOUS_WHITE_SPACE = re.compile(r\"\\n\\s*\\n\")\n\"\"\" Matches multiple new lines and removes erroneous white space \"\"\"\n            # should probably raise exception\n            # raise TypeError(f\"Unexpected type for tags: {type(data)}, {data}\")",
+      "file": "mealie/services/scraper/cleaner.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/scraper/scraper_strategies.py:27",
+      "score": 0.679,
+      "text": "# mealie/services/scraper/scraper_strategies.py:27-70  safe_scrape_html\nasync def safe_scrape_html(url: str) -> str:\n    \"\"\"\n    Scrapes the html from a url but will cancel the request\n    if the request takes longer than 15 seconds. This is used to mitigate\n    DDOS attacks from users providing a url with arbitrary large content.\n    \"\"\"\n    async with AsyncClient() as client:\n        html_bytes = b\"\"\n        async with client.stream(\"GET\", url, timeout=SCRAPER_TIMEOUT, headers={\"User-Agent\": _FIREFOX_UA}) as resp:\n            start_time = time.time()\n\n            async for chunk in resp.aiter_bytes(chunk_size=1024):\n                html_bytes += chunk\n\n                if time.time() - start_time > SCRAPER_TIMEOUT:\n                    raise ForceTimeoutException()\n\n        # =====================================\n        # Copied from requests text property\n\n        # Try charset from content-type\n        content = None\n        encoding = resp.encoding\n\n        if not html_bytes:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if encoding is None:\n            encoding = resp.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(html_bytes, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(html_bytes, errors=\"replace\")\n\n        return content",
+      "file": "mealie/services/scraper/scraper_strategies.py",
+      "start": 27,
+      "qualname": "safe_scrape_html"
+     },
+     {
+      "id": "mealie:mealie/schema/recipe/recipe_scraper.py:module",
+      "score": 0.678,
+      "text": "# mealie/schema/recipe/recipe_scraper.py (module level)\nfrom mealie.schema._mealie.mealie_model import MealieModel\nclass ScrapeRecipeTest(MealieModel):\n    url: str\nclass ScrapeRecipe(MealieModel):\n    url: str\n    include_tags: bool = False\n    class Config:\n        schema_extra = {\n            \"example\": {\n                \"url\": \"https://myfavoriterecipes.com/recipes\",\n                \"includeTags\": True,\n            },\n        }",
+      "file": "mealie/schema/recipe/recipe_scraper.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/scraper/scraper_strategies.py:169",
+      "score": 0.677,
+      "text": "# mealie/services/scraper/scraper_strategies.py:169-196  RecipeScraperPackage.scrape_url\n    async def scrape_url(self) -> SchemaScraperFactory.SchemaScraper | Any | None:\n        recipe_html = await self.get_html(self.url)\n\n        try:\n            scraped_schema = scrape_html(recipe_html, org_url=self.url)\n        except (NoSchemaFoundInWildMode, AttributeError):\n            self.logger.error(f\"Recipe Scraper was unable to extract a recipe from {self.url}\")\n            return None\n\n        except ConnectionError as e:\n            raise HTTPException(status.HTTP_400_BAD_REQUEST, {\"details\": \"CONNECTION_ERROR\"}) from e\n\n        # Check to see if the recipe is valid\n        try:\n            ingredients = scraped_schema.ingredients()\n        except Exception:\n            ingredients = []\n\n        try:\n            instruct: list | str = scraped_schema.instructions()\n        except Exception:\n            instruct = []\n\n        if instruct or ingredients:\n            return scraped_schema\n\n        self.logger.debug(f\"Recipe Scraper [Package] was unable to extract a recipe from {self.url}\")\n        return None",
+      "file": "mealie/services/scraper/scraper_strategies.py",
+      "start": 169,
+      "qualname": "RecipeScraperPackage.scrape_url"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 19800.5,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.72,
+    "vulnerable_symbols": [
+     "soupsieve.compile",
+     "BeautifulSoup.select",
+     "BeautifulSoup.select_one"
+    ],
+    "reasoning": "The advisory requires an attacker-controlled CSS *selector string* to be passed into soupsieve.compile() or .select()/.select_one(); it is not triggered merely by parsing attacker-controlled HTML content. Static analysis found zero first-party imports of soupsieve and zero call sites of compile/select/select_one anywhere in the 322 scanned files, so the application itself never constructs or passes selector strings to BeautifulSoup/soupsieve. The retrieved application code shows the app only fetches arbitrary HTML (scraper_strategies.py) and hands it to the third-party `recipe-scrapers` package (scrape_html), which internally uses BeautifulSoup with its own hardcoded selectors to extract recipe schema data \u2014 the untrusted part is the HTML content, not the selector strings, so the vulnerable regex path (parsing an attacker-chosen selector) is not exercised by user input here. Because no code path in this application passes externally influenced selector text into soupsieve's parser, the specific vulnerable feature is unused even though beautifulsoup4 (and thus soupsieve) is present as a transitive dependency. This matches the not_reachable criteria: the package/feature combination required by the advisory is not invoked by production code.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Vulnerability requires untrusted CSS selector strings passed to soupsieve.compile() or .select()/.select_one(), not just untrusted HTML content."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 imports of soupsieve and 0 production call sites of compile/select/select_one across 322 first-party files."
+     },
+     {
+      "location": "mealie/services/scraper/scraper_strategies.py:27-70 safe_scrape_html",
+      "explanation": "Fetches arbitrary remote HTML (untrusted content) but does not construct or pass any CSS selector string."
+     },
+     {
+      "location": "mealie/services/scraper/scraper_strategies.py:169-196 RecipeScraperPackage.scrape_url",
+      "explanation": "Delegates HTML parsing to the third-party recipe-scrapers package via scrape_html(); any BeautifulSoup .select() calls inside that library use its own fixed selectors, not attacker-supplied selector strings."
+     }
+    ]
+   },
+   "tokens_in": 4780,
+   "tokens_out": 1711,
+   "llm_calls": 1,
+   "llm_seconds": 19.78,
+   "cost_usd_est": 0.040005,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.72, \"vulnerable_symbols\": [\"soupsieve.compile\", \"BeautifulSoup.select\", \"BeautifulSoup.select_one\"], \"reasoning\": \"The advisory requires an attacker-controlled CSS *selector string* to be passed into soupsieve.compile() or .select()/.select_one(); it is not triggered merely by parsing attacker-controlled HTML content. Static analysis found zero first-party imports of soupsieve and zero call sites of compile/select/select_one anywhere in the 322 scanned files, so the application itself never constructs or passes selector strings to BeautifulSoup/soupsieve. The retrieved application code shows the app only fetches arbitrary HTML (scraper_strategies.py) and hands it to the third-party `recipe-scrapers` package (scrape_html), which internally uses BeautifulSoup with its own hardcoded selectors to extract recipe schema data \u2014 the untrusted part is the HTML content, not the selector strings, so the vulnerable regex path (parsing an attacker-chosen selector) is not exercised by user input here. Because no code path in this application passes externally influenced selector text into soupsieve's parser, the specific vulnerable feature is unused even though beautifulsoup4 (and thus soupsieve) is present as a transitive dependency. This matches the not_reachable criteria: the package/feature combination required by the advisory is not invoked by production code.\", \"evidence\": [{\"location\": \"advisory\", \"explanation\": \"Vulnerability requires untrusted CSS selector strings passed to soupsieve.compile() or .select()/.select_one(), not just untrusted HTML content.\"}, {\"location\": \"static evidence summary\", \"explanation\": \"0 imports of soupsieve and 0 production call sites of compile/select/select_one across 322 first-party files.\"}, {\"location\": \"mealie/services/scraper/scraper_strategies.py:27-70 safe_scrape_html\", \"explanation\": \"Fetches arbitrary remote HTML (untrusted content) but does not construct or pass any CSS selector string.\"}, {\"location\": \"mealie/services/scraper/scraper_strategies.py:169-196 RecipeScraperPackage.scrape_url\", \"explanation\": \"Delegates HTML parsing to the third-party recipe-scrapers package via scrape_html(); any BeautifulSoup .select() calls inside that library use its own fixed selectors, not attacker-supplied selector strings.\"}]}",
+     "in": 4780,
+     "out": 1711,
+     "s": 19.78,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 17117.4,
+   "output": {
+    "critique": "The strongest counter-argument is that the static scan only covers the 322 first-party files, so it cannot see whether the third-party `recipe-scrapers` package (or beautifulsoup4 itself) ever builds a CSS selector string dynamically from attacker-influenced HTML (e.g., extracting a class/id token from fetched content and feeding it into `.select()`). If such a pattern existed, the 'zero call sites' finding would be a blind spot rather than proof of safety, and the advisory's trigger (attacker-controlled selector text, not just HTML body) could still be met indirectly. However, this is speculative: recipe-scrapers is documented to use fixed, developer-authored CSS/schema.org selectors to locate recipe JSON-LD/microdata, not selectors derived from untrasted page content, and the advisory's PoC specifically requires the *selector* itself to contain an unterminated quoted attribute value \u2014 a pattern that would require the scraping library to literally interpolate raw HTML text into a selector string, which is not a known behavior of that library and isn't shown anywhere in the retrieved code. The cited regex compilations in string_utils.py/cleaner.py are unrelated application-level regexes, not soupsieve's VALUE pattern, so they don't establish reachability either. Given no evidence of selector-string construction from untrusted input anywhere in the call chain, the verdict's conclusion is the best-supported reading of the evidence, even though it rests partly on the absence of a dynamic-selector pattern in an unscanned third-party dependency.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.68
+   },
+   "tokens_in": 4947,
+   "tokens_out": 1435,
+   "llm_calls": 1,
+   "llm_seconds": 17.11,
+   "cost_usd_est": 0.036366,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument is that the static scan only covers the 322 first-party files, so it cannot see whether the third-party `recipe-scrapers` package (or beautifulsoup4 itself) ever builds a CSS selector string dynamically from attacker-influenced HTML (e.g., extracting a class/id token from fetched content and feeding it into `.select()`). If such a pattern existed, the 'zero call sites' finding would be a blind spot rather than proof of safety, and the advisory's trigger (attacker-controlled selector text, not just HTML body) could still be met indirectly. However, this is speculative: recipe-scrapers is documented to use fixed, developer-authored CSS/schema.org selectors to locate recipe JSON-LD/microdata, not selectors derived from untrasted page content, and the advisory's PoC specifically requires the *selector* itself to contain an unterminated quoted attribute value \u2014 a pattern that would require the scraping library to literally interpolate raw HTML text into a selector string, which is not a known behavior of that library and isn't shown anywhere in the retrieved code. The cited regex compilations in string_utils.py/cleaner.py are unrelated application-level regexes, not soupsieve's VALUE pattern, so they don't establish reachability either. Given no evidence of selector-string construction from untrusted input anywhere in the call chain, the verdict's conclusion is the best-supported reading of the evidence, even though it rests partly on the absence of a dynamic-selector pattern in an unscanned third-party dependency.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.68}",
+     "in": 4947,
+     "out": 1435,
+     "s": 17.11,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.68,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 9727,
+  "tokens_out": 3146,
+  "cost_usd_est": 0.076371,
+  "seconds": 37.03
+ },
+ "created": "2026-11-10T15:52:34+00:00",
+ "code_version": "f26e69b"
+}

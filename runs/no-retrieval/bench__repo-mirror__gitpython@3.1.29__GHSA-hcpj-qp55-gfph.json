@@ -1,0 +1,343 @@
+{
+ "finding_id": "bench/repo-mirror/gitpython@3.1.29/GHSA-hcpj-qp55-gfph",
+ "config": "no-retrieval",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/repo-mirror",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-24439",
+   "GHSA-hcpj-qp55-gfph",
+   "PYSEC-2022-42992"
+  ],
+  "cves": [
+   "CVE-2022-24439"
+  ],
+  "cwes": [
+   "CWE-20",
+   "CWE-94"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/repo-mirror/gitpython@3.1.29/GHSA-hcpj-qp55-gfph",
+  "first_fixed_above_installed": "3.1.30",
+  "fixed_versions": [
+   "3.1.30"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "gitpython",
+  "published": "2022-12-06T06:30:17Z",
+  "split": "test",
+  "summary": "GitPython vulnerable to Remote Code Execution due to improper user input validation",
+  "target": "bench/repo-mirror",
+  "version": "3.1.29",
+  "vuln_id": "GHSA-hcpj-qp55-gfph"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.5,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.45,
+  "vulnerable_symbols": [
+   "Repo.clone_from",
+   "Repo.clone"
+  ],
+  "reasoning": "The advisory's sink, Repo.clone_from, is called directly at mirror/service.py:11 with a URL and destination path, so the vulnerable code path in GitPython is genuinely invoked (not a name-based false match). However, CVE-2022-24439 requires that the clone URL/path be attacker-influenced for RCE via crafted remote helpers or ext:: protocol strings; the evidence provided shows no caller, entry point, CLI arg, HTTP handler, or config file that establishes where 'url' originates. The report explicitly states 0 call sites have a path from an entry point, so there is no positive evidence of either attacker-controlled input or a safely hardcoded/operator-curated source list. Without seeing the definition or callers of the function in mirror/service.py containing this clone_from call, I cannot confirm taint, and I also cannot confirm the URL is fixed/trusted, so the precondition for exploitability is unverified in either direction. This matches the 'uncertain' case: the vulnerable feature is used, but reachability from an untrusted actor is not established by the evidence shown.",
+  "evidence": [
+   {
+    "location": "mirror/service.py:11",
+    "explanation": "Direct call to the vulnerable sink Repo.clone_from(url, dest, mirror=True), confirming the vulnerable feature is exercised by the app."
+   },
+   {
+    "location": "mirror/service.py:4",
+    "explanation": "Import of gitpython, establishing the only first-party module that touches the vulnerable package."
+   },
+   {
+    "location": "evidence summary",
+    "explanation": "0 of the call sites have a traced path from an entry point, so no caller/CLI/HTTP handler is shown to demonstrate the 'url' parameter is attacker-influenced."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict correctly identifies that Repo.clone_from is a genuine sink hit (not a name collision) and that the evidence lacks a traced path from an entry point to the 'url' argument. The strongest counter-argument is that the file is literally named mirror/service.py and performs Repo.clone_from(url, dest, mirror=True) \u2014 the entire purpose of a 'mirror service' is almost certainly to clone repositories specified by external callers (API requests, webhook payloads, config entries pulled from a database, etc.), which is a strong contextual signal toward attacker-influenced input and leans the verdict toward 'reachable' rather than a neutral 'uncertain'. However, this is an inference from naming convention, not hard evidence: the scanner evidence provided stops at line 11 and does not show the function signature, its callers, or where 'url' is bound (hardcoded list of trusted mirrors vs. user-submitted parameter), so I cannot promote this to a confirmed 'reachable' call. The verdict did not ignore any evidence that was actually supplied \u2014 it explicitly flagged the missing entry-point trace \u2014 so there's no clear misreading to justify a forced retry, even though the naming pattern makes me suspect the true answer skews toward reachable more than the stated 0.45 confidence suggests. Pulling the surrounding function definition and its callers (likely in the same 3 analyzed files) would very plausibly resolve this to 'reachable', so while I won't fault the verdict for the data it had, the investigation feels incomplete rather than genuinely indeterminate.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.5
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/repo-mirror/gitpython@3.1.29/GHSA-hcpj-qp55-gfph",
+    "package": "gitpython",
+    "version": "3.1.29",
+    "vuln_id": "GHSA-hcpj-qp55-gfph",
+    "aliases": [
+     "CVE-2022-24439",
+     "GHSA-hcpj-qp55-gfph",
+     "PYSEC-2022-42992"
+    ],
+    "summary": "GitPython vulnerable to Remote Code Execution due to improper user input validation",
+    "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "3.1.30"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.2,
+   "output": {
+    "package": "gitpython",
+    "import_names": [
+     "git"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "mirror/service.py:4"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mirror/service.py:11",
+      "code": "Repo.clone_from(url, dest, mirror=True)",
+      "function": "mirror.service:create_mirror",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [],
+    "summary": "gitpython: imported in 1 non-test location(s); 3 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 15949.6,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.7,
+    "vulnerable_symbols": [
+     "Repo.clone_from",
+     "Git.clone"
+    ],
+    "reasoning": "CVE-2022-24439 describes RCE in GitPython caused by insufficient validation of repository URLs/paths passed to git clone, allowing options-injection or 'ext::' transport abuse when the URL is attacker-influenced. The application directly calls Repo.clone_from(url, dest, mirror=True) in mirror/service.py:11, which is exactly the vulnerable entry point the advisory targets, even though the scanner's symbol search (looking for other named identifiers) returned no hits. The file is named mirror/service.py, strongly suggesting its purpose is to clone/mirror repositories from URLs that are plausibly supplied or influenced by an external source (a user-requested repo to mirror) rather than a fixed, hardcoded internal URL. Without evidence that 'url' is a hardcoded constant, the call represents a live, reachable path to the vulnerable clone operation. This is not dead code and not an unaffected part of the library; it is the actual mechanism that performs cloning.",
+    "evidence": [
+     {
+      "location": "mirror/service.py:4",
+      "explanation": "GitPython is imported and used in this production module."
+     },
+     {
+      "location": "mirror/service.py:11",
+      "explanation": "Repo.clone_from(url, dest, mirror=True) is called directly, which is the vulnerable clone operation named by the advisory."
+     },
+     {
+      "location": "advisory",
+      "explanation": "CVE-2022-24439 concerns improper validation of clone URLs/paths leading to RCE, which matches the clone_from usage pattern in this service."
+     }
+    ]
+   },
+   "tokens_in": 1997,
+   "tokens_out": 1250,
+   "llm_calls": 1,
+   "llm_seconds": 15.94,
+   "cost_usd_est": 0.024741,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"reachable\",\"confidence\":0.7,\"vulnerable_symbols\":[\"Repo.clone_from\",\"Git.clone\"],\"reasoning\":\"CVE-2022-24439 describes RCE in GitPython caused by insufficient validation of repository URLs/paths passed to git clone, allowing options-injection or 'ext::' transport abuse when the URL is attacker-influenced. The application directly calls Repo.clone_from(url, dest, mirror=True) in mirror/service.py:11, which is exactly the vulnerable entry point the advisory targets, even though the scanner's symbol search (looking for other named identifiers) returned no hits. The file is named mirror/service.py, strongly suggesting its purpose is to clone/mirror repositories from URLs that are plausibly supplied or influenced by an external source (a user-requested repo to mirror) rather than a fixed, hardcoded internal URL. Without evidence that 'url' is a hardcoded constant, the call represents a live, reachable path to the vulnerable clone operation. This is not dead code and not an unaffected part of the library; it is the actual mechanism that performs cloning.\",\"evidence\":[{\"location\":\"mirror/service.py:4\",\"explanation\":\"GitPython is imported and used in this production module.\"},{\"location\":\"mirror/service.py:11\",\"explanation\":\"Repo.clone_from(url, dest, mirror=True) is called directly, which is the vulnerable clone operation named by the advisory.\"},{\"location\":\"advisory\",\"explanation\":\"CVE-2022-24439 concerns improper validation of clone URLs/paths leading to RCE, which matches the clone_from usage pattern in this service.\"}]}",
+     "in": 1997,
+     "out": 1250,
+     "s": 15.94,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 26352.9,
+   "output": {
+    "critique": "The verdict correctly identifies that clone_from is the exact vulnerable sink named by the advisory, and that is a legitimate rebuttal against any instinct to dismiss this as a non-match (the symbol search missed it because it was looking for different named identifiers, not clone_from itself). However, the verdict's confidence of 'reachable' rests entirely on speculation about the *origin* of the 'url' argument -- it infers attacker-influence purely from the file being named 'mirror/service.py', with no cited evidence (no caller, no CLI/HTTP entry point, no config file) showing that 'url' is actually derived from an untrusted source rather than a fixed internal remote list or admin-configured value. The report explicitly notes 0 call sites have a path from an entry point, which the verdict never addresses or refutes -- it simply asserts the opposite inference from a filename. A mirror service could just as plausibly clone from a static, operator-curated list of trusted upstream repos, which would make this non-reachable in practice. The advisory's precondition (attacker-controlled clone URL/path) is not demonstrated by the evidence shown; the verdict inverts the burden of proof ('without evidence it's hardcoded, assume reachable') rather than requiring positive evidence of taint. This gap is real but not a clear misreading of a specific fact -- it's an unverified inferential leap presented with unwarranted confidence.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 1922,
+   "tokens_out": 2109,
+   "llm_calls": 1,
+   "llm_seconds": 26.34,
+   "cost_usd_est": 0.037401,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict correctly identifies that clone_from is the exact vulnerable sink named by the advisory, and that is a legitimate rebuttal against any instinct to dismiss this as a non-match (the symbol search missed it because it was looking for different named identifiers, not clone_from itself). However, the verdict's confidence of 'reachable' rests entirely on speculation about the *origin* of the 'url' argument -- it infers attacker-influence purely from the file being named 'mirror/service.py', with no cited evidence (no caller, no CLI/HTTP entry point, no config file) showing that 'url' is actually derived from an untrusted source rather than a fixed internal remote list or admin-configured value. The report explicitly notes 0 call sites have a path from an entry point, which the verdict never addresses or refutes -- it simply asserts the opposite inference from a filename. A mirror service could just as plausibly clone from a static, operator-curated list of trusted upstream repos, which would make this non-reachable in practice. The advisory's precondition (attacker-controlled clone URL/path) is not demonstrated by the evidence shown; the verdict inverts the burden of proof ('without evidence it's hardcoded, assume reachable') rather than requiring positive evidence of taint. This gap is real but not a clear misreading of a specific fact -- it's an unverified inferential leap presented with unwarranted confidence.\",\"agrees\":false,\"retry\":true,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 1922,
+     "out": 2109,
+     "s": 26.34,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 17781.4,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.45,
+    "vulnerable_symbols": [
+     "Repo.clone_from",
+     "Repo.clone"
+    ],
+    "reasoning": "The advisory's sink, Repo.clone_from, is called directly at mirror/service.py:11 with a URL and destination path, so the vulnerable code path in GitPython is genuinely invoked (not a name-based false match). However, CVE-2022-24439 requires that the clone URL/path be attacker-influenced for RCE via crafted remote helpers or ext:: protocol strings; the evidence provided shows no caller, entry point, CLI arg, HTTP handler, or config file that establishes where 'url' originates. The report explicitly states 0 call sites have a path from an entry point, so there is no positive evidence of either attacker-controlled input or a safely hardcoded/operator-curated source list. Without seeing the definition or callers of the function in mirror/service.py containing this clone_from call, I cannot confirm taint, and I also cannot confirm the URL is fixed/trusted, so the precondition for exploitability is unverified in either direction. This matches the 'uncertain' case: the vulnerable feature is used, but reachability from an untrusted actor is not established by the evidence shown.",
+    "evidence": [
+     {
+      "location": "mirror/service.py:11",
+      "explanation": "Direct call to the vulnerable sink Repo.clone_from(url, dest, mirror=True), confirming the vulnerable feature is exercised by the app."
+     },
+     {
+      "location": "mirror/service.py:4",
+      "explanation": "Import of gitpython, establishing the only first-party module that touches the vulnerable package."
+     },
+     {
+      "location": "evidence summary",
+      "explanation": "0 of the call sites have a traced path from an entry point, so no caller/CLI/HTTP handler is shown to demonstrate the 'url' parameter is attacker-influenced."
+     }
+    ]
+   },
+   "tokens_in": 2479,
+   "tokens_out": 1410,
+   "llm_calls": 1,
+   "llm_seconds": 17.78,
+   "cost_usd_est": 0.028587,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"uncertain\",\"confidence\":0.45,\"vulnerable_symbols\":[\"Repo.clone_from\",\"Repo.clone\"],\"reasoning\":\"The advisory's sink, Repo.clone_from, is called directly at mirror/service.py:11 with a URL and destination path, so the vulnerable code path in GitPython is genuinely invoked (not a name-based false match). However, CVE-2022-24439 requires that the clone URL/path be attacker-influenced for RCE via crafted remote helpers or ext:: protocol strings; the evidence provided shows no caller, entry point, CLI arg, HTTP handler, or config file that establishes where 'url' originates. The report explicitly states 0 call sites have a path from an entry point, so there is no positive evidence of either attacker-controlled input or a safely hardcoded/operator-curated source list. Without seeing the definition or callers of the function in mirror/service.py containing this clone_from call, I cannot confirm taint, and I also cannot confirm the URL is fixed/trusted, so the precondition for exploitability is unverified in either direction. This matches the 'uncertain' case: the vulnerable feature is used, but reachability from an untrusted actor is not established by the evidence shown.\",\"evidence\":[{\"location\":\"mirror/service.py:11\",\"explanation\":\"Direct call to the vulnerable sink Repo.clone_from(url, dest, mirror=True), confirming the vulnerable feature is exercised by the app.\"},{\"location\":\"mirror/service.py:4\",\"explanation\":\"Import of gitpython, establishing the only first-party module that touches the vulnerable package.\"},{\"location\":\"evidence summary\",\"explanation\":\"0 of the call sites have a traced path from an entry point, so no caller/CLI/HTTP handler is shown to demonstrate the 'url' parameter is attacker-influenced.\"}]}",
+     "in": 2479,
+     "out": 1410,
+     "s": 17.78,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 32394.4,
+   "output": {
+    "critique": "The verdict correctly identifies that Repo.clone_from is a genuine sink hit (not a name collision) and that the evidence lacks a traced path from an entry point to the 'url' argument. The strongest counter-argument is that the file is literally named mirror/service.py and performs Repo.clone_from(url, dest, mirror=True) \u2014 the entire purpose of a 'mirror service' is almost certainly to clone repositories specified by external callers (API requests, webhook payloads, config entries pulled from a database, etc.), which is a strong contextual signal toward attacker-influenced input and leans the verdict toward 'reachable' rather than a neutral 'uncertain'. However, this is an inference from naming convention, not hard evidence: the scanner evidence provided stops at line 11 and does not show the function signature, its callers, or where 'url' is bound (hardcoded list of trusted mirrors vs. user-submitted parameter), so I cannot promote this to a confirmed 'reachable' call. The verdict did not ignore any evidence that was actually supplied \u2014 it explicitly flagged the missing entry-point trace \u2014 so there's no clear misreading to justify a forced retry, even though the naming pattern makes me suspect the true answer skews toward reachable more than the stated 0.45 confidence suggests. Pulling the surrounding function definition and its callers (likely in the same 3 analyzed files) would very plausibly resolve this to 'reachable', so while I won't fault the verdict for the data it had, the investigation feels incomplete rather than genuinely indeterminate.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.5
+   },
+   "tokens_in": 1988,
+   "tokens_out": 2603,
+   "llm_calls": 1,
+   "llm_seconds": 32.38,
+   "cost_usd_est": 0.045009,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict correctly identifies that Repo.clone_from is a genuine sink hit (not a name collision) and that the evidence lacks a traced path from an entry point to the 'url' argument. The strongest counter-argument is that the file is literally named mirror/service.py and performs Repo.clone_from(url, dest, mirror=True) \u2014 the entire purpose of a 'mirror service' is almost certainly to clone repositories specified by external callers (API requests, webhook payloads, config entries pulled from a database, etc.), which is a strong contextual signal toward attacker-influenced input and leans the verdict toward 'reachable' rather than a neutral 'uncertain'. However, this is an inference from naming convention, not hard evidence: the scanner evidence provided stops at line 11 and does not show the function signature, its callers, or where 'url' is bound (hardcoded list of trusted mirrors vs. user-submitted parameter), so I cannot promote this to a confirmed 'reachable' call. The verdict did not ignore any evidence that was actually supplied \u2014 it explicitly flagged the missing entry-point trace \u2014 so there's no clear misreading to justify a forced retry, even though the naming pattern makes me suspect the true answer skews toward reachable more than the stated 0.45 confidence suggests. Pulling the surrounding function definition and its callers (likely in the same 3 analyzed files) would very plausibly resolve this to 'reachable', so while I won't fault the verdict for the data it had, the investigation feels incomplete rather than genuinely indeterminate.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.5}",
+     "in": 1988,
+     "out": 2603,
+     "s": 32.38,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.5,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 8386,
+  "tokens_out": 7372,
+  "cost_usd_est": 0.135738,
+  "seconds": 92.49
+ },
+ "created": "2026-11-10T16:02:12+00:00",
+ "code_version": "f26e69b"
+}

@@ -1,0 +1,375 @@
+{
+ "finding_id": "healthchecks/requests@2.27.1/GHSA-9hjg-9r4m-mvj7",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-47081",
+   "GHSA-9hjg-9r4m-mvj7",
+   "PYSEC-2026-1872"
+  ],
+  "cves": [
+   "CVE-2024-47081"
+  ],
+  "cwes": [
+   "CWE-522"
+  ],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/requests@2.27.1/GHSA-9hjg-9r4m-mvj7",
+  "first_fixed_above_installed": "2.32.4",
+  "fixed_versions": [
+   "2.32.4"
+  ],
+  "max_cvss": "5.3",
+  "package": "requests",
+  "published": "2025-06-09T19:06:08Z",
+  "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+  "target": "healthchecks",
+  "version": "2.27.1",
+  "vuln_id": "GHSA-9hjg-9r4m-mvj7"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.58,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.62,
+  "vulnerable_symbols": [
+   "requests.utils.get_netrc_auth",
+   "Session.send (implicit netrc auth lookup)"
+  ],
+  "reasoning": "CVE-2024-47081 affects requests' default behavior of consulting a local .netrc file for credentials based on a URL's host, derived via flawed parsing that can be tricked by a crafted URL into leaking credentials to an attacker-controlled host. No vulnerable symbol name appears in static matches because the flaw lives inside requests' internal request-sending path (not a distinctly named call site), so it is always exercised whenever requests.get/post/request is invoked with trust_env left at its default (True). This app is healthchecks.io-style: it sends outbound requests to externally configured webhook/integration URLs (e.g. hc/api/transports.py:187 `requests.request(method, url, **options)` for notification transports, hc/front/views.py:1238/1323/1383/2025 `requests.post(...)` for Slack/Telegram/webhook test pings, hc/front/forms.py:269, and hc/api/management/commands/settelegramwebhook.py:23). These URLs originate from user/admin-supplied integration configuration, i.e. attacker-influenceable input, which is exactly the SSRF-like precondition the advisory requires. None of the call sites pass `trust_env=False` or otherwise disable netrc lookup, so if the host machine has a ~/.netrc file with credentials, a malicious integration URL could exfiltrate them. Because the vulnerable behavior is default/implicit rather than an explicit named API, and the app's dominant use of requests is precisely 'send to externally-controlled URL', this is reachable rather than merely theoretical.",
+  "evidence": [
+   {
+    "location": "hc/api/transports.py:187",
+    "explanation": "requests.request(method, url, **options) sends to transport URLs which are user-configured webhook/notification endpoints, an attacker-influenceable URL."
+   },
+   {
+    "location": "hc/front/views.py:1238",
+    "explanation": "requests.post to a URL from front-end integration setup (e.g. Slack/webhook test), externally influenced input."
+   },
+   {
+    "location": "hc/front/views.py:1875",
+    "explanation": "requests.get(url).json() fetches a user/third-party supplied URL directly."
+   },
+   {
+    "location": "hc/api/management/commands/settelegramwebhook.py:23",
+    "explanation": "requests.post(url, json=form) sets a webhook URL, another externally-influenced URL path."
+   },
+   {
+    "location": "advisory",
+    "explanation": "The vulnerable netrc-credential lookup is implicit in requests' connection-sending logic (trust_env default True), not a distinctly named symbol, so static name-matching finds zero hits even though every requests.* call site is affected unless trust_env is disabled."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict's strongest move is correctly recognizing that a default-behavior flaw (netrc lookup during URL parsing) won't show up as a named symbol, so it reasons about data flow into requests.* instead of symbol matches \u2014 that's the right approach for this CVE and the zero-symbol-match result should not be read as 'not reachable.' The core argument holds for transports.py:187 and forms.py:269: these are genuinely user/account-owner-supplied webhook URLs forwarded server-side via requests.request/post with no trust_env=False, which is exactly the shape of input the advisory's netrc-confusion bug needs (attacker-influenceable URL, default trust_env). In a multi-tenant deployment (healthchecks.io-style), any signed-up user can set an integration URL, so the 'attacker-controlled URL reaching requests' precondition is plausibly met without needing additional access. That said, the verdict overreaches in one place: settelegramwebhook.py:23 posts to Telegram's own fixed API endpoint (the webhook value being registered is in the JSON body, not the request's destination URL), so it isn't actually an attacker-controlled destination and shouldn't be cited as supporting evidence \u2014 this is a minor misread but doesn't invalidate the overall conclusion since transports.py and forms.py alone already satisfy the pattern. The bigger unresolved gap is the advisory's actual trigger precondition: a local .netrc file with real credentials must exist on the host, and the URL must be crafted in the specific way that confuses requests' host-matching logic \u2014 neither is confirmed by static evidence, and this is an operational/environmental fact the analysis can't verify from code alone. That gap justifies tempering confidence but not reversing the verdict, since the SSRF-shaped data flow into unmodified requests calls is real and sufficient to call this reachable rather than suppress it.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.58
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/requests@2.27.1/GHSA-9hjg-9r4m-mvj7",
+    "package": "requests",
+    "version": "2.27.1",
+    "vuln_id": "GHSA-9hjg-9r4m-mvj7",
+    "aliases": [
+     "CVE-2024-47081",
+     "GHSA-9hjg-9r4m-mvj7",
+     "PYSEC-2026-1872"
+    ],
+    "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+    "max_cvss": "5.3",
+    "fixed_versions": [
+     "2.32.4"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 41.9,
+   "output": {
+    "package": "requests",
+    "import_names": [
+     "requests"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "hc/api/management/commands/settelegramwebhook.py:5",
+     "hc/api/transports.py:9",
+     "hc/front/forms.py:15",
+     "hc/front/views.py:53"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 39,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/api/management/commands/settelegramwebhook.py:23",
+      "code": "r = requests.post(url, json=form)",
+      "function": "hc.api.management.commands.settelegramwebhook:Command.handle",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:187",
+      "code": "r = requests.request(method, url, **options)",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:191",
+      "code": "except requests.exceptions.Timeout:",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/transports.py:194",
+      "code": "except requests.exceptions.ConnectionError:",
+      "function": "hc.api.transports:HttpTransport._request",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/forms.py:269",
+      "code": "r = requests.post(url, {})",
+      "function": "hc.front.forms:AddMatrixForm.clean_alias",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1238",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_slack_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1323",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_pushbullet_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1383",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_discord_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:1875",
+      "code": "boards = requests.get(url).json()",
+      "function": "hc.front.views:trello_settings",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:2025",
+      "code": "result = requests.post(",
+      "function": "hc.front.views:add_linenotify_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/front/views.py:2043",
+      "code": "result = requests.get(",
+      "function": "hc.front.views:add_linenotify_complete",
+      "in_test": false
+     },
+     {
+      "location": "hc/api/tests/test_notify_slack.py:71",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_slack:NotifySlackTestCase.test_it_handles_timeout",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:48",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_handle_timeouts",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:69",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=ConnectionError)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_handle_connection_errors",
+      "in_test": true
+     },
+     {
+      "location": "hc/api/tests/test_notify_webhook.py:106",
+      "code": "@patch(\"hc.api.transports.requests.request\", side_effect=Timeout)",
+      "function": "hc.api.tests.test_notify_webhook:NotifyWebhookTestCase.test_webhooks_dont_retry_when_sending_test_notifications",
+      "in_test": true
+     }
+    ],
+    "searched": {
+     "python_files": 229,
+     "template_dirs": [
+      "templates"
+     ],
+     "template_files": 199
+    },
+    "entry_points": 339,
+    "paths": [],
+    "summary": "requests: imported in 4 non-test location(s) and 2 test location(s); 39 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 23771.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.62,
+    "vulnerable_symbols": [
+     "requests.utils.get_netrc_auth",
+     "Session.send (implicit netrc auth lookup)"
+    ],
+    "reasoning": "CVE-2024-47081 affects requests' default behavior of consulting a local .netrc file for credentials based on a URL's host, derived via flawed parsing that can be tricked by a crafted URL into leaking credentials to an attacker-controlled host. No vulnerable symbol name appears in static matches because the flaw lives inside requests' internal request-sending path (not a distinctly named call site), so it is always exercised whenever requests.get/post/request is invoked with trust_env left at its default (True). This app is healthchecks.io-style: it sends outbound requests to externally configured webhook/integration URLs (e.g. hc/api/transports.py:187 `requests.request(method, url, **options)` for notification transports, hc/front/views.py:1238/1323/1383/2025 `requests.post(...)` for Slack/Telegram/webhook test pings, hc/front/forms.py:269, and hc/api/management/commands/settelegramwebhook.py:23). These URLs originate from user/admin-supplied integration configuration, i.e. attacker-influenceable input, which is exactly the SSRF-like precondition the advisory requires. None of the call sites pass `trust_env=False` or otherwise disable netrc lookup, so if the host machine has a ~/.netrc file with credentials, a malicious integration URL could exfiltrate them. Because the vulnerable behavior is default/implicit rather than an explicit named API, and the app's dominant use of requests is precisely 'send to externally-controlled URL', this is reachable rather than merely theoretical.",
+    "evidence": [
+     {
+      "location": "hc/api/transports.py:187",
+      "explanation": "requests.request(method, url, **options) sends to transport URLs which are user-configured webhook/notification endpoints, an attacker-influenceable URL."
+     },
+     {
+      "location": "hc/front/views.py:1238",
+      "explanation": "requests.post to a URL from front-end integration setup (e.g. Slack/webhook test), externally influenced input."
+     },
+     {
+      "location": "hc/front/views.py:1875",
+      "explanation": "requests.get(url).json() fetches a user/third-party supplied URL directly."
+     },
+     {
+      "location": "hc/api/management/commands/settelegramwebhook.py:23",
+      "explanation": "requests.post(url, json=form) sets a webhook URL, another externally-influenced URL path."
+     },
+     {
+      "location": "advisory",
+      "explanation": "The vulnerable netrc-credential lookup is implicit in requests' connection-sending logic (trust_env default True), not a distinctly named symbol, so static name-matching finds zero hits even though every requests.* call site is affected unless trust_env is disabled."
+     }
+    ]
+   },
+   "tokens_in": 2336,
+   "tokens_out": 1947,
+   "llm_calls": 1,
+   "llm_seconds": 23.77,
+   "cost_usd_est": 0.036213,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"reachable\",\"confidence\":0.62,\"vulnerable_symbols\":[\"requests.utils.get_netrc_auth\",\"Session.send (implicit netrc auth lookup)\"],\"reasoning\":\"CVE-2024-47081 affects requests' default behavior of consulting a local .netrc file for credentials based on a URL's host, derived via flawed parsing that can be tricked by a crafted URL into leaking credentials to an attacker-controlled host. No vulnerable symbol name appears in static matches because the flaw lives inside requests' internal request-sending path (not a distinctly named call site), so it is always exercised whenever requests.get/post/request is invoked with trust_env left at its default (True). This app is healthchecks.io-style: it sends outbound requests to externally configured webhook/integration URLs (e.g. hc/api/transports.py:187 `requests.request(method, url, **options)` for notification transports, hc/front/views.py:1238/1323/1383/2025 `requests.post(...)` for Slack/Telegram/webhook test pings, hc/front/forms.py:269, and hc/api/management/commands/settelegramwebhook.py:23). These URLs originate from user/admin-supplied integration configuration, i.e. attacker-influenceable input, which is exactly the SSRF-like precondition the advisory requires. None of the call sites pass `trust_env=False` or otherwise disable netrc lookup, so if the host machine has a ~/.netrc file with credentials, a malicious integration URL could exfiltrate them. Because the vulnerable behavior is default/implicit rather than an explicit named API, and the app's dominant use of requests is precisely 'send to externally-controlled URL', this is reachable rather than merely theoretical.\",\"evidence\":[{\"location\":\"hc/api/transports.py:187\",\"explanation\":\"requests.request(method, url, **options) sends to transport URLs which are user-configured webhook/notification endpoints, an attacker-influenceable URL.\"},{\"location\":\"hc/front/views.py:1238\",\"explanation\":\"requests.post to a URL from front-end integration setup (e.g. Slack/webhook test), externally influenced input.\"},{\"location\":\"hc/front/views.py:1875\",\"explanation\":\"requests.get(url).json() fetches a user/third-party supplied URL directly.\"},{\"location\":\"hc/api/management/commands/settelegramwebhook.py:23\",\"explanation\":\"requests.post(url, json=form) sets a webhook URL, another externally-influenced URL path.\"},{\"location\":\"advisory\",\"explanation\":\"The vulnerable netrc-credential lookup is implicit in requests' connection-sending logic (trust_env default True), not a distinctly named symbol, so static name-matching finds zero hits even though every requests.* call site is affected unless trust_env is disabled.\"}]}",
+     "in": 2336,
+     "out": 1947,
+     "s": 23.77,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 43253.1,
+   "output": {
+    "critique": "The verdict's strongest move is correctly recognizing that a default-behavior flaw (netrc lookup during URL parsing) won't show up as a named symbol, so it reasons about data flow into requests.* instead of symbol matches \u2014 that's the right approach for this CVE and the zero-symbol-match result should not be read as 'not reachable.' The core argument holds for transports.py:187 and forms.py:269: these are genuinely user/account-owner-supplied webhook URLs forwarded server-side via requests.request/post with no trust_env=False, which is exactly the shape of input the advisory's netrc-confusion bug needs (attacker-influenceable URL, default trust_env). In a multi-tenant deployment (healthchecks.io-style), any signed-up user can set an integration URL, so the 'attacker-controlled URL reaching requests' precondition is plausibly met without needing additional access. That said, the verdict overreaches in one place: settelegramwebhook.py:23 posts to Telegram's own fixed API endpoint (the webhook value being registered is in the JSON body, not the request's destination URL), so it isn't actually an attacker-controlled destination and shouldn't be cited as supporting evidence \u2014 this is a minor misread but doesn't invalidate the overall conclusion since transports.py and forms.py alone already satisfy the pattern. The bigger unresolved gap is the advisory's actual trigger precondition: a local .netrc file with real credentials must exist on the host, and the URL must be crafted in the specific way that confuses requests' host-matching logic \u2014 neither is confirmed by static evidence, and this is an operational/environmental fact the analysis can't verify from code alone. That gap justifies tempering confidence but not reversing the verdict, since the SSRF-shaped data flow into unmodified requests calls is real and sufficient to call this reachable rather than suppress it.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.58
+   },
+   "tokens_in": 2611,
+   "tokens_out": 3582,
+   "llm_calls": 1,
+   "llm_seconds": 43.23,
+   "cost_usd_est": 0.061563,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's strongest move is correctly recognizing that a default-behavior flaw (netrc lookup during URL parsing) won't show up as a named symbol, so it reasons about data flow into requests.* instead of symbol matches \u2014 that's the right approach for this CVE and the zero-symbol-match result should not be read as 'not reachable.' The core argument holds for transports.py:187 and forms.py:269: these are genuinely user/account-owner-supplied webhook URLs forwarded server-side via requests.request/post with no trust_env=False, which is exactly the shape of input the advisory's netrc-confusion bug needs (attacker-influenceable URL, default trust_env). In a multi-tenant deployment (healthchecks.io-style), any signed-up user can set an integration URL, so the 'attacker-controlled URL reaching requests' precondition is plausibly met without needing additional access. That said, the verdict overreaches in one place: settelegramwebhook.py:23 posts to Telegram's own fixed API endpoint (the webhook value being registered is in the JSON body, not the request's destination URL), so it isn't actually an attacker-controlled destination and shouldn't be cited as supporting evidence \u2014 this is a minor misread but doesn't invalidate the overall conclusion since transports.py and forms.py alone already satisfy the pattern. The bigger unresolved gap is the advisory's actual trigger precondition: a local .netrc file with real credentials must exist on the host, and the URL must be crafted in the specific way that confuses requests' host-matching logic \u2014 neither is confirmed by static evidence, and this is an operational/environmental fact the analysis can't verify from code alone. That gap justifies tempering confidence but not reversing the verdict, since the SSRF-shaped data flow into unmodified requests calls is real and sufficient to call this reachable rather than suppress it.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"reachable\",\"confidence\":0.58}",
+     "in": 2611,
+     "out": 3582,
+     "s": 43.23,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.58,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4947,
+  "tokens_out": 5529,
+  "cost_usd_est": 0.097776,
+  "seconds": 67.07
+ },
+ "created": "2026-11-10T16:11:02+00:00",
+ "code_version": "f26e69b"
+}
