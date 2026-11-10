@@ -391,8 +391,12 @@ def submit_job():
      }, ["flask==2.0.3"])
 
 # ----------------------------------------------------------------- lxml 4.6.2 / Cleaner formaction XSS
-case("comments-hub", "lxml", "4.6.2", "GHSA-jq4v-f5q6-mjqq", "reachable", "direct_call", "test",
-     "comments/sanitize.py:9", "User comment HTML is sanitised with lxml.html.clean.Cleaner and shown to other users.", {
+# POST-HOC CORRECTION (2026-11-09, see docs/DECISIONS.md): originally labelled reachable/direct_call. The advisory
+# needs BOTH forms and safe_attrs_only disabled; this app keeps safe_attrs_only=True, and lxml 4.6.2 run in a
+# container strips formaction under this exact config. Code unchanged; label corrected.
+case("comments-hub", "lxml", "4.6.2", "GHSA-jq4v-f5q6-mjqq", "not_reachable", "config_disabled", "test",
+     "comments/sanitize.py:9", "Cleaner is used on user HTML with forms=False but safe_attrs_only=True; the advisory "
+     "requires both disabled, and lxml 4.6.2 strips formaction under this config (verified in a container).", {
          "comments/__init__.py": "",
          "comments/sanitize.py": '''from lxml.html.clean import Cleaner
 

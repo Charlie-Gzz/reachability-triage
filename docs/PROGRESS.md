@@ -11,7 +11,7 @@ Last updated: 2026-11-09 evening (session paused by Charlie).
 | M1 RAG layer | **done** | Chroma + FAISS, bge-small. `rt index`, `rt retrieval-check` → `eval/results/retrieval.json` |
 | M2 Reachability agent | **done** | LangGraph graph; mock on all 186 findings; Claude on 10 dev + 3 non-eval real findings |
 | M3 Test-first remediation | **built, not yet run on Claude** | Plumbing verified on mock (worktree → container → red → upgrade → gate). Needs `full` triage on the real set first. |
-| M4 Synthetic benchmark | **done** | 30 cases, 10 dev / 20 test, validated with osv-scanner. **One label error found** (QUESTIONS #2). |
+| M4 Synthetic benchmark | **done** | 30 cases, 10 dev / 20 test, validated with osv-scanner. One label corrected post hoc (disclosed). |
 | M5 Real-set labels + review page | **done, labels pending review** | 50 sampled, drafted (8 reachable / 13 not / 29 uncertain), all `pending_review`. `rt review` works. |
 | M6 Evaluation | **partially run** | `full` on bench test: complete (20/20). `full` on real set: 2/50, then stopped on the Claude session limit. Ablations, remediation, local: not run. |
 | M7 Case explorer, assets, kit | **built, needs final data** | Site, charts, diagrams, screenshots all generate. Still to write: DEMO_SCRIPT, SLIDES_OUTLINE, PORTFOLIO_CARD; GitHub Pages workflow. |
@@ -19,9 +19,10 @@ Last updated: 2026-11-09 evening (session paused by Charlie).
 
 ## Current results (partial, regenerate with `rt eval`)
 
-- Benchmark test split, `full` (claude-sonnet-5), n=20: false-suppression 9% [0–29], precision 100%, recall 91% [71–100],
-  noise reduction 45% [25–65], 0 uncertain, ~2 calls and ~20 s per finding, ~$0.05 API-price estimate per finding.
-  The single false suppression is `bench/comments-hub`, which is a **benchmark label error**, not an agent error (QUESTIONS #2).
+- Benchmark test split, `full` (claude-sonnet-5), n=20: 20/20 correct: false-suppression 0%, precision 100%, recall 100%,
+  noise reduction 50% [30–70], 0 uncertain, ~2 calls and ~20 s per finding, ~$0.05 API-price estimate per finding.
+  This is after the disclosed `comments-hub` label correction (was 1 false suppression before). n=20 is small and the
+  benchmark is probably easy; the real set is the stronger test.
 - Retrieval: advisory recall@5 0.98 (n=186), code recall@5 1.00 (n=22); Chroma = FAISS on recall, FAISS faster unfiltered
   (0.1 vs 1.9 ms), Chroma faster with the codebase filter (4.0 vs 9.8 ms).
 - Container baselines: healthchecks 1061/1061; CTFd 483 pass + 1 known failure; mealie 853 pass + 1 known failure.
@@ -35,9 +36,7 @@ Expected remaining cost: ~48 real × 2.3 + 140 ablation × 2.2 + ~50 remediation
 
 ## Next steps, in order
 
-1. **Decide QUESTIONS #2** (the lxml benchmark label). Recommended: relabel `comments-hub` → `not_reachable`
-   (`config_disabled`) in `bench/build_cases.py`, regenerate with `uv run python bench/build_cases.py .`, and log it in
-   DECISIONS as a post-hoc correction found via an agent disagreement and confirmed by running lxml 4.6.2.
+1. ~~Decide QUESTIONS #2~~ done: `comments-hub` relabelled (disclosed in DECISIONS).
 2. **Resume the eval** (unattended, resumable): `uv run rt showcase --skip-local` in a normal terminal.
    Order: full real → no-retrieval → no-reflection (bench test + real) → remediation (max 10).
 3. **Local model run:** load it with `lms load qwen2.5-coder-14b-instruct` (LM Studio server is on :1235), then
@@ -80,3 +79,4 @@ uv run rt review          # label review page (http://127.0.0.1:8765)
 - 2026-11-09: bench committed (a3e1ef4) before prompts; eval config frozen (144cabc).
 - 2026-11-09 19:28: `full` stopped on a usage/credit limit after 2 new findings (0 cached). Rerun the same command to resume.
 - 2026-11-09: session paused by Charlie; audit, commit.
+- 2026-11-09: `comments-hub` label corrected with Charlie's approval (see DECISIONS).

@@ -1,8 +1,8 @@
 # Results
 
-_Generated 2026-11-10T03:23:54+00:00 by `rt eval` from `runs/` (no LLM calls)._
+_Generated 2026-11-10T03:27:57+00:00 by `rt eval` from `runs/` (no LLM calls)._
 
-**Suppresses 45% of scanner noise with a 9% false-suppression rate (benchmark test split), and fixed 0 real vulnerabilities test-first.**
+**Suppresses 50% of scanner noise with a 0% false-suppression rate (benchmark test split), and fixed 0 real vulnerabilities test-first.**
 
 > Real-set numbers are **provisional**: 50 of 50 real labels are machine-drafted and still pending human review (`rt review`). Ground-truth `uncertain` labels are excluded from graded metrics.
 
@@ -12,7 +12,7 @@ Brackets are 95% bootstrap confidence intervals. With samples this small, differ
 
 | Config | Model | n graded | False-suppression | Precision | Recall | Noise reduction | Uncertain | Calls/finding | Tokens in/out | Est. $/finding | p50 s |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| `full` | claude-sonnet-5 | 20 | 9% [0–29] | 100% [100–100] | 91% [71–100] | 45% [25–65] | 0% | 2 | 6723/2037 | 0.0507 | 19.7 |
+| `full` | claude-sonnet-5 | 20 | 0% [0–0] | 100% [100–100] | 100% [100–100] | 50% [30–70] | 0% | 2 | 6723/2037 | 0.0507 | 19.7 |
 
 ## Real-repo eval set (50 findings)
 

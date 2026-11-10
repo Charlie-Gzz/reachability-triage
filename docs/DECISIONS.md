@@ -71,3 +71,12 @@ Each entry: what was decided, why, and what it affects. Newest at the bottom of 
   (`sonnet`), `local` on Qwen2.5-Coder-14B (LM Studio, :1235). Retrieval: own-advisory chunks k=4 + 2 related
   advisories for the same package; code k=5 similarity hits, with production call-site snippets put first
   (max 7 chunks). One reflection-triggered retry at most. Datasets: bench `test` split (20) and the real eval set (50).
+- **2026-11-09 · Post-hoc benchmark label correction (approved by Charlie): `bench/comments-hub`** (lxml
+  GHSA-jq4v-f5q6-mjqq), `reachable/direct_call` → `not_reachable/config_disabled`. Found because the agent disagreed
+  with the label on the test split. The advisory requires both `forms` and `safe_attrs_only` disabled; the app keeps
+  `safe_attrs_only=True`. Verified with lxml 4.6.2 in a container: the app's config outputs
+  `<form><button>x</button></form>`, while the advisory's config keeps `formaction="javascript:..."`. App code
+  unchanged (byte-identical); only the label moved. **Disclosure:** this correction moved the `full` benchmark
+  result from 1 false suppression to 0 (20/20 correct). It was made after seeing agent output, so it favours the agent;
+  with n=20 the benchmark is small and probably on the easy side. Read the real-set numbers (after label review)
+  as the stronger evidence.
