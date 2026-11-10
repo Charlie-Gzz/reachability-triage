@@ -272,7 +272,8 @@ def _slug(f: dict) -> str:
     return re.sub(r"[^A-Za-z0-9]+", "-", f"{f['package']}-{f['vuln_id']}")[:60]
 
 
-def remediate_cli(cfg: Config, args) -> None:
+def remediate_cli(cfg: Config, args) -> bool:
+    """Returns True if it stopped on a usage/credit limit (rerun to resume)."""
     run_cfg = load_run_config(args.config)
     provider = make(run_cfg["provider"], label=f"{run_cfg['name']}-remediation")
     out_dir = RUNS / f"{run_cfg['name']}-remediation"
@@ -298,8 +299,9 @@ def remediate_cli(cfg: Config, args) -> None:
             print(f"STOPPED on usage/credit limit: {str(e)[:200]}", file=sys.stderr)
             from ..agent.runner import _log_progress
             _log_progress("remediation stopped on a usage/credit limit; rerun `rt remediate` to resume")
-            break
+            return True
         res["seconds"] = round(time.perf_counter() - st, 1)
         res["created"] = datetime.now(UTC).isoformat(timespec="seconds")
         path.write_text(json.dumps(res, indent=1, default=str) + "\n", encoding="utf-8", newline="\n")
         print(f"{res['status']:7} {f['finding_id']}  {res.get('reason') or res.get('fix_kind')}  ({res['seconds']}s)")
+    return False

@@ -183,7 +183,7 @@ def main(argv: list[str] | None = None) -> None:
             build_site()
         case "showcase":
             from .eval.showcase import showcase
-            showcase(cfg, skip_local=args.skip_local)
+            sys.exit(showcase(cfg, skip_local=args.skip_local))
         case "refresh":
             from .eval.metrics import run_eval
             from .outputs.assets import build_assets

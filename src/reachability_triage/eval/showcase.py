@@ -8,14 +8,18 @@ from __future__ import annotations
 import time
 from argparse import Namespace
 
-from ..agent.providers import claude_calls_used, discover_local
+from ..agent.providers import CLAUDE_CALL_CAP, claude_calls_used, discover_local
 from ..agent.runner import load_run_config, run_triage, select
 from ..config import Config
 
 LOCAL_REAL_SUBSET = 20
 
 
-def showcase(cfg: Config, skip_local: bool = False) -> None:
+# exit codes for `rt showcase`, so a wrapper can resume after a usage-limit reset
+DONE, LIMIT, CAP = 0, 75, 3
+
+
+def showcase(cfg: Config, skip_local: bool = False) -> int:
     t0 = time.time()
     calls0 = claude_calls_used()
     summary = []
@@ -33,8 +37,8 @@ def showcase(cfg: Config, skip_local: bool = False) -> None:
             break
     if not stopped:
         from ..remediate.pipeline import remediate_cli
-        remediate_cli(cfg, Namespace(config="full", max=10, finding_ids=[], force=False))
-        summary.append("remediation    done (see runs/full-remediation/)")
+        stopped = remediate_cli(cfg, Namespace(config="full", max=10, finding_ids=[], force=False))
+        summary.append("remediation    " + ("STOPPED (usage limit)" if stopped else "done (see runs/full-remediation/)"))
     if not stopped and not skip_local:
         if discover_local():
             local = load_run_config("local")
@@ -50,3 +54,6 @@ def showcase(cfg: Config, skip_local: bool = False) -> None:
     print("\n".join(summary))
     print(f"Claude calls this run: {claude_calls_used() - calls0} (total {claude_calls_used()} of 1500)")
     print(f"elapsed: {(time.time() - t0) / 60:.1f} min.  Next: `rt refresh` (eval + assets + site).")
+    if not stopped:
+        return DONE
+    return CAP if claude_calls_used() >= CLAUDE_CALL_CAP else LIMIT
