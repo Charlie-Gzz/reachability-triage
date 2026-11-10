@@ -1,0 +1,338 @@
+{
+ "finding_id": "mealie/soupsieve@2.3.2.post1/GHSA-836r-79rf-4m37",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-49477",
+   "GHSA-836r-79rf-4m37",
+   "PYSEC-2026-3072"
+  ],
+  "cves": [
+   "CVE-2026-49477"
+  ],
+  "cwes": [
+   "CWE-1333",
+   "CWE-400"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/soupsieve@2.3.2.post1/GHSA-836r-79rf-4m37",
+  "first_fixed_above_installed": "2.8.4",
+  "fixed_versions": [
+   "2.8.4"
+  ],
+  "max_cvss": "7.5",
+  "package": "soupsieve",
+  "published": "2026-07-09T13:37:46Z",
+  "summary": "Soup Sieve: Regular Expression Denial of Service (ReDoS) via Selector Parser",
+  "target": "mealie",
+  "version": "2.3.2.post1",
+  "vuln_id": "GHSA-836r-79rf-4m37"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.55,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [
+   "soupsieve.compile",
+   "soupsieve.match",
+   "BeautifulSoup.select",
+   "BeautifulSoup.select_one",
+   "Tag.select",
+   "Tag.select_one"
+  ],
+  "reasoning": "The advisory's ReDoS is in soupsieve's CSS selector parser, which is overwhelmingly invoked indirectly via bs4's .select()/.select_one() rather than by importing soupsieve directly. The provided static evidence only confirms zero direct imports/calls of the 'soupsieve' package and its named symbols; it does not state whether the AST search also covered bs4 BeautifulSoup/Tag .select or .select_one call sites, which is the standard trigger path for this exact CVE class. Given that gap, a verdict of not_reachable cannot be positively supported \u2014 the evidence shown doesn't rule out the common indirect path. Without confirmation that bs4 is also absent (or that .select/.select_one are never called, or only called with hardcoded/non-attacker-influenced selector strings), this must be treated as uncertain rather than confidently dismissed. If bs4 itself is not a dependency at all, or if a follow-up search confirms zero .select/.select_one call sites, this would become not_reachable; if any such call takes user-influenced input, it would become reachable.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "ReDoS triggers when soupsieve parses/matches a crafted CSS selector string, typically reached via BeautifulSoup(...).select(selector) or .select_one(selector)."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "Confirms 0 imports of 'soupsieve' and 0 calls to its named symbols, but does not explicitly state bs4 .select/.select_one call sites were included in the search scope."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "'0 package call/reference site(s)' is ambiguous as to whether it was scoped to include indirect bs4 entry points into soupsieve."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The reviewer's core point is sound and actually understates the problem: the static search explicitly targeted 'soupsieve' imports and its own named symbols, but soupsieve is virtually never imported directly by application code \u2014 it's exercised exclusively through bs4's Tag.select()/.select_one() (or SoupSieve's css selector engine invoked internally by bs4). A search scoped to soupsieve's own name and symbols was therefore almost guaranteed to return zero hits regardless of whether the app is actually exposed, making this evidence close to uninformative rather than exculpatory. The verdict is right to flag that we have no visibility into whether bs4 (or beautifulsoup4) is imported/used at all in the 322 first-party files, nor whether any .select()/.select_one() calls take attacker-controlled selector strings (e.g., from request params, config, or templates). Without that check, neither not_reachable nor reachable can be asserted. One could try to push toward not_reachable by arguing 'if bs4 isn't even a direct dependency, there's no trigger path,' but the evidence given doesn't confirm bs4's absence \u2014 only soupsieve's own symbols were searched. So the uncertainty is correctly identified and, if anything, is justified for a slightly stronger reason than stated.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.55
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/soupsieve@2.3.2.post1/GHSA-836r-79rf-4m37",
+    "package": "soupsieve",
+    "version": "2.3.2.post1",
+    "vuln_id": "GHSA-836r-79rf-4m37",
+    "aliases": [
+     "CVE-2026-49477",
+     "GHSA-836r-79rf-4m37",
+     "PYSEC-2026-3072"
+    ],
+    "summary": "Soup Sieve: Regular Expression Denial of Service (ReDoS) via Selector Parser",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "2.8.4"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 8.0,
+   "output": {
+    "package": "soupsieve",
+    "import_names": [
+     "soupsieve"
+    ],
+    "symbols": [],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "soupsieve: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 8709.6,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.92,
+    "vulnerable_symbols": [
+     "soupsieve selector parser (CSS selector compile/match functions)"
+    ],
+    "reasoning": "The advisory requires the application to pass attacker-influenced CSS selector strings into soupsieve's selector parser (e.g., via BeautifulSoup's .select()/.select_one() or soupsieve.compile/match). Static AST analysis found zero imports of soupsieve in non-test code, zero package call/reference sites, and zero production call sites of any related symbols, meaning no first-party code invokes soupsieve's parser at all. Since soupsieve is only a transitive dependency with no evidenced usage path from any entry point (view, task, CLI, etc.), the vulnerable selector-parsing code is never exercised by this application. This matches the not_reachable criteria: the package is present only as a transitive dependency and no production code imports or calls it.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Vulnerability requires selector strings to be parsed by soupsieve's CSS selector engine, typically via BeautifulSoup.select()/select_one() or soupsieve.compile()/match()."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test imports of soupsieve and 0 production call sites of any soupsieve/BeautifulSoup select-related symbols were found across 322 first-party Python files."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "No HTML templates reference selector-based filters either, ruling out indirect template-driven usage."
+     }
+    ]
+   },
+   "tokens_in": 1955,
+   "tokens_out": 520,
+   "llm_calls": 1,
+   "llm_seconds": 8.69,
+   "cost_usd_est": 0.013665,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.92,\"vulnerable_symbols\":[\"soupsieve selector parser (CSS selector compile/match functions)\"],\"reasoning\":\"The advisory requires the application to pass attacker-influenced CSS selector strings into soupsieve's selector parser (e.g., via BeautifulSoup's .select()/.select_one() or soupsieve.compile/match). Static AST analysis found zero imports of soupsieve in non-test code, zero package call/reference sites, and zero production call sites of any related symbols, meaning no first-party code invokes soupsieve's parser at all. Since soupsieve is only a transitive dependency with no evidenced usage path from any entry point (view, task, CLI, etc.), the vulnerable selector-parsing code is never exercised by this application. This matches the not_reachable criteria: the package is present only as a transitive dependency and no production code imports or calls it.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"Vulnerability requires selector strings to be parsed by soupsieve's CSS selector engine, typically via BeautifulSoup.select()/select_one() or soupsieve.compile()/match().\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 non-test imports of soupsieve and 0 production call sites of any soupsieve/BeautifulSoup select-related symbols were found across 322 first-party Python files.\"},{\"location\":\"static evidence summary\",\"explanation\":\"No HTML templates reference selector-based filters either, ruling out indirect template-driven usage.\"}]}",
+     "in": 1955,
+     "out": 520,
+     "s": 8.69,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 17912.0,
+   "output": {
+    "critique": "The strongest objection is that soupsieve is almost never imported or called directly by application code \u2014 it's an internal engine invoked when a program calls BeautifulSoup's `.select()` or `.select_one()` on a parsed document. The static evidence as described confirms zero imports of 'soupsieve' itself and zero calls to 'named vulnerable symbols' (likely soupsieve.compile/match), but it never explicitly states that the search also covered bs4's `.select()`/`.select_one()` method calls on BeautifulSoup/Tag objects \u2014 which is the overwhelmingly common invocation path for this exact CVE class. The verdict's own reasoning acknowledges this is the typical trigger ('typically via BeautifulSoup.select()/select_one()') yet the cited evidence only speaks to direct soupsieve symbol usage, not to bs4 select-method call sites. If the codebase uses `bs4.BeautifulSoup(...).select(user_input)` anywhere, that reaches soupsieve's parser without ever importing soupsieve by name, and the stated AST evidence would be silent on it. This is a material gap: the verdict conflates 'no direct soupsieve import' with 'no usage,' which is not equivalent given how this dependency is actually consumed in practice. However, the evidence does state '0 package call/reference site(s)' which may have been scoped broadly enough to include bs4 select calls \u2014 the ambiguity itself is the problem, not a clear misread. Given this, confidence of 0.92 is too high; the analysis should explicitly confirm whether BeautifulSoup .select/.select_one (or soupsieve.compile/match) are called anywhere, including with non-static/constant selector strings, before ruling out reachability.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 1837,
+   "tokens_out": 1469,
+   "llm_calls": 1,
+   "llm_seconds": 17.91,
+   "cost_usd_est": 0.027546,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest objection is that soupsieve is almost never imported or called directly by application code \u2014 it's an internal engine invoked when a program calls BeautifulSoup's `.select()` or `.select_one()` on a parsed document. The static evidence as described confirms zero imports of 'soupsieve' itself and zero calls to 'named vulnerable symbols' (likely soupsieve.compile/match), but it never explicitly states that the search also covered bs4's `.select()`/`.select_one()` method calls on BeautifulSoup/Tag objects \u2014 which is the overwhelmingly common invocation path for this exact CVE class. The verdict's own reasoning acknowledges this is the typical trigger ('typically via BeautifulSoup.select()/select_one()') yet the cited evidence only speaks to direct soupsieve symbol usage, not to bs4 select-method call sites. If the codebase uses `bs4.BeautifulSoup(...).select(user_input)` anywhere, that reaches soupsieve's parser without ever importing soupsieve by name, and the stated AST evidence would be silent on it. This is a material gap: the verdict conflates 'no direct soupsieve import' with 'no usage,' which is not equivalent given how this dependency is actually consumed in practice. However, the evidence does state '0 package call/reference site(s)' which may have been scoped broadly enough to include bs4 select calls \u2014 the ambiguity itself is the problem, not a clear misread. Given this, confidence of 0.92 is too high; the analysis should explicitly confirm whether BeautifulSoup .select/.select_one (or soupsieve.compile/match) are called anywhere, including with non-static/constant selector strings, before ruling out reachability.\",\"agrees\":false,\"retry\":true,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 1837,
+     "out": 1469,
+     "s": 17.91,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 9369.6,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [
+     "soupsieve.compile",
+     "soupsieve.match",
+     "BeautifulSoup.select",
+     "BeautifulSoup.select_one",
+     "Tag.select",
+     "Tag.select_one"
+    ],
+    "reasoning": "The advisory's ReDoS is in soupsieve's CSS selector parser, which is overwhelmingly invoked indirectly via bs4's .select()/.select_one() rather than by importing soupsieve directly. The provided static evidence only confirms zero direct imports/calls of the 'soupsieve' package and its named symbols; it does not state whether the AST search also covered bs4 BeautifulSoup/Tag .select or .select_one call sites, which is the standard trigger path for this exact CVE class. Given that gap, a verdict of not_reachable cannot be positively supported \u2014 the evidence shown doesn't rule out the common indirect path. Without confirmation that bs4 is also absent (or that .select/.select_one are never called, or only called with hardcoded/non-attacker-influenced selector strings), this must be treated as uncertain rather than confidently dismissed. If bs4 itself is not a dependency at all, or if a follow-up search confirms zero .select/.select_one call sites, this would become not_reachable; if any such call takes user-influenced input, it would become reachable.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "ReDoS triggers when soupsieve parses/matches a crafted CSS selector string, typically reached via BeautifulSoup(...).select(selector) or .select_one(selector)."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "Confirms 0 imports of 'soupsieve' and 0 calls to its named symbols, but does not explicitly state bs4 .select/.select_one call sites were included in the search scope."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "'0 package call/reference site(s)' is ambiguous as to whether it was scoped to include indirect bs4 entry points into soupsieve."
+     }
+    ]
+   },
+   "tokens_in": 2547,
+   "tokens_out": 679,
+   "llm_calls": 1,
+   "llm_seconds": 9.38,
+   "cost_usd_est": 0.017826,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"uncertain\",\"confidence\":0.4,\"vulnerable_symbols\":[\"soupsieve.compile\",\"soupsieve.match\",\"BeautifulSoup.select\",\"BeautifulSoup.select_one\",\"Tag.select\",\"Tag.select_one\"],\"reasoning\":\"The advisory's ReDoS is in soupsieve's CSS selector parser, which is overwhelmingly invoked indirectly via bs4's .select()/.select_one() rather than by importing soupsieve directly. The provided static evidence only confirms zero direct imports/calls of the 'soupsieve' package and its named symbols; it does not state whether the AST search also covered bs4 BeautifulSoup/Tag .select or .select_one call sites, which is the standard trigger path for this exact CVE class. Given that gap, a verdict of not_reachable cannot be positively supported \u2014 the evidence shown doesn't rule out the common indirect path. Without confirmation that bs4 is also absent (or that .select/.select_one are never called, or only called with hardcoded/non-attacker-influenced selector strings), this must be treated as uncertain rather than confidently dismissed. If bs4 itself is not a dependency at all, or if a follow-up search confirms zero .select/.select_one call sites, this would become not_reachable; if any such call takes user-influenced input, it would become reachable.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"ReDoS triggers when soupsieve parses/matches a crafted CSS selector string, typically reached via BeautifulSoup(...).select(selector) or .select_one(selector).\"},{\"location\":\"static evidence summary\",\"explanation\":\"Confirms 0 imports of 'soupsieve' and 0 calls to its named symbols, but does not explicitly state bs4 .select/.select_one call sites were included in the search scope.\"},{\"location\":\"static evidence summary\",\"explanation\":\"'0 package call/reference site(s)' is ambiguous as to whether it was scoped to include indirect bs4 entry points into soupsieve.\"}]}",
+     "in": 2547,
+     "out": 679,
+     "s": 9.38,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 28701.4,
+   "output": {
+    "critique": "The reviewer's core point is sound and actually understates the problem: the static search explicitly targeted 'soupsieve' imports and its own named symbols, but soupsieve is virtually never imported directly by application code \u2014 it's exercised exclusively through bs4's Tag.select()/.select_one() (or SoupSieve's css selector engine invoked internally by bs4). A search scoped to soupsieve's own name and symbols was therefore almost guaranteed to return zero hits regardless of whether the app is actually exposed, making this evidence close to uninformative rather than exculpatory. The verdict is right to flag that we have no visibility into whether bs4 (or beautifulsoup4) is imported/used at all in the 322 first-party files, nor whether any .select()/.select_one() calls take attacker-controlled selector strings (e.g., from request params, config, or templates). Without that check, neither not_reachable nor reachable can be asserted. One could try to push toward not_reachable by arguing 'if bs4 isn't even a direct dependency, there's no trigger path,' but the evidence given doesn't confirm bs4's absence \u2014 only soupsieve's own symbols were searched. So the uncertainty is correctly identified and, if anything, is justified for a slightly stronger reason than stated.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 1965,
+   "tokens_out": 2334,
+   "llm_calls": 1,
+   "llm_seconds": 28.7,
+   "cost_usd_est": 0.040905,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The reviewer's core point is sound and actually understates the problem: the static search explicitly targeted 'soupsieve' imports and its own named symbols, but soupsieve is virtually never imported directly by application code \u2014 it's exercised exclusively through bs4's Tag.select()/.select_one() (or SoupSieve's css selector engine invoked internally by bs4). A search scoped to soupsieve's own name and symbols was therefore almost guaranteed to return zero hits regardless of whether the app is actually exposed, making this evidence close to uninformative rather than exculpatory. The verdict is right to flag that we have no visibility into whether bs4 (or beautifulsoup4) is imported/used at all in the 322 first-party files, nor whether any .select()/.select_one() calls take attacker-controlled selector strings (e.g., from request params, config, or templates). Without that check, neither not_reachable nor reachable can be asserted. One could try to push toward not_reachable by arguing 'if bs4 isn't even a direct dependency, there's no trigger path,' but the evidence given doesn't confirm bs4's absence \u2014 only soupsieve's own symbols were searched. So the uncertainty is correctly identified and, if anything, is justified for a slightly stronger reason than stated.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 1965,
+     "out": 2334,
+     "s": 28.7,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.55,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 8304,
+  "tokens_out": 5002,
+  "cost_usd_est": 0.099942,
+  "seconds": 64.71
+ },
+ "created": "2026-11-10T20:19:00+00:00",
+ "code_version": "225d357"
+}

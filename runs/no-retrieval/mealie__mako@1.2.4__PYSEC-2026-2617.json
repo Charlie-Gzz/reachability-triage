@@ -1,0 +1,263 @@
+{
+ "finding_id": "mealie/mako@1.2.4/PYSEC-2026-2617",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-44307",
+   "GHSA-2h4p-vjrc-8xpq",
+   "PYSEC-2026-2617"
+  ],
+  "cves": [
+   "CVE-2026-44307"
+  ],
+  "cwes": [],
+  "direct_dependency": false,
+  "finding_id": "mealie/mako@1.2.4/PYSEC-2026-2617",
+  "first_fixed_above_installed": "1.3.12",
+  "fixed_versions": [
+   "1.3.12"
+  ],
+  "max_cvss": "8.7",
+  "package": "mako",
+  "published": "2026-07-13T15:15:39.881159Z",
+  "summary": "Mako vulnerable to path traversal via backslash URI on Windows in TemplateLookup",
+  "target": "mealie",
+  "version": "1.2.4",
+  "vuln_id": "PYSEC-2026-2617"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.65,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.92,
+  "vulnerable_symbols": [
+   "TemplateLookup"
+  ],
+  "reasoning": "The advisory requires use of Mako's TemplateLookup (which resolves template URIs from filesystem paths) with attacker-influenced URIs containing backslashes on Windows. Static analysis found zero imports of mako in any first-party production or test file, zero references to TemplateLookup, and zero call sites with a path from an application entry point. Since mako is only a transitive dependency and the application never imports or instantiates TemplateLookup, there is no code path through which a request could reach the vulnerable URI-resolution logic. The package appears to be pulled in only indirectly (e.g., by another dependency) without the app itself using Mako's templating/lookup feature.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "Vulnerability requires TemplateLookup to resolve a template URI containing a backslash on Windows."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 imports of mako in any of 322 first-party Python files, 0 references to TemplateLookup, 0 production call sites."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 call sites with a path from any entry point, confirming no route/view/task exercises Mako's lookup feature."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument: the static analysis only scanned 322 first-party Python/HTML files for mako symbols, but mako is explicitly a *transitive* dependency \u2014 meaning some other (non-first-party) package the app does use depends on it. If that intermediate package internally wraps Mako's TemplateLookup (e.g., a templating/reporting/migration library that takes a filename or template-id from the app and resolves it via Mako under the hood), then first-party code could reach the vulnerable URI-resolution logic without ever importing mako or TemplateLookup directly \u2014 it would call the wrapper's API instead. The evidence presented says nothing about which package pulls in mako or whether that package's public API accepts attacker-influenced path/template-name strings. This is exactly the 'wrapper' scenario the review should probe. That said, no concrete evidence of such a wrapper is shown here, and the search did cover settings/config literals and template filters where such usage might surface, finding nothing. So while the blind spot is real and the confidence is probably too high (0.92), there's no specific piece of evidence that was ignored or misread \u2014 the gap is a scope limitation in what was searched (first-party only), not a misreading of what was found. That doesn't meet the bar for a mandatory retry, but it does mean the verdict should be held with lower confidence and flagged as needing dependency-tree inspection (what package actually requires mako, and does it expose a path-like parameter to app code) before being fully trusted.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.65
+ },
+ "symbols": [
+  "TemplateLookup"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/mako@1.2.4/PYSEC-2026-2617",
+    "package": "mako",
+    "version": "1.2.4",
+    "vuln_id": "PYSEC-2026-2617",
+    "aliases": [
+     "CVE-2026-44307",
+     "GHSA-2h4p-vjrc-8xpq",
+     "PYSEC-2026-2617"
+    ],
+    "summary": "Mako vulnerable to path traversal via backslash URI on Windows in TemplateLookup",
+    "max_cvss": "8.7",
+    "fixed_versions": [
+     "1.3.12"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.1,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "TemplateLookup"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 19.3,
+   "output": {
+    "package": "mako",
+    "import_names": [
+     "mako"
+    ],
+    "symbols": [
+     "TemplateLookup"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "mako: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['TemplateLookup']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 7505.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.92,
+    "vulnerable_symbols": [
+     "TemplateLookup"
+    ],
+    "reasoning": "The advisory requires use of Mako's TemplateLookup (which resolves template URIs from filesystem paths) with attacker-influenced URIs containing backslashes on Windows. Static analysis found zero imports of mako in any first-party production or test file, zero references to TemplateLookup, and zero call sites with a path from an application entry point. Since mako is only a transitive dependency and the application never imports or instantiates TemplateLookup, there is no code path through which a request could reach the vulnerable URI-resolution logic. The package appears to be pulled in only indirectly (e.g., by another dependency) without the app itself using Mako's templating/lookup feature.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Vulnerability requires TemplateLookup to resolve a template URI containing a backslash on Windows."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 imports of mako in any of 322 first-party Python files, 0 references to TemplateLookup, 0 production call sites."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 call sites with a path from any entry point, confirming no route/view/task exercises Mako's lookup feature."
+     }
+    ]
+   },
+   "tokens_in": 1947,
+   "tokens_out": 437,
+   "llm_calls": 1,
+   "llm_seconds": 7.5,
+   "cost_usd_est": 0.012396,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.92,\"vulnerable_symbols\":[\"TemplateLookup\"],\"reasoning\":\"The advisory requires use of Mako's TemplateLookup (which resolves template URIs from filesystem paths) with attacker-influenced URIs containing backslashes on Windows. Static analysis found zero imports of mako in any first-party production or test file, zero references to TemplateLookup, and zero call sites with a path from an application entry point. Since mako is only a transitive dependency and the application never imports or instantiates TemplateLookup, there is no code path through which a request could reach the vulnerable URI-resolution logic. The package appears to be pulled in only indirectly (e.g., by another dependency) without the app itself using Mako's templating/lookup feature.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"Vulnerability requires TemplateLookup to resolve a template URI containing a backslash on Windows.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 imports of mako in any of 322 first-party Python files, 0 references to TemplateLookup, 0 production call sites.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 call sites with a path from any entry point, confirming no route/view/task exercises Mako's lookup feature.\"}]}",
+     "in": 1947,
+     "out": 437,
+     "s": 7.5,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 22770.1,
+   "output": {
+    "critique": "The strongest counter-argument: the static analysis only scanned 322 first-party Python/HTML files for mako symbols, but mako is explicitly a *transitive* dependency \u2014 meaning some other (non-first-party) package the app does use depends on it. If that intermediate package internally wraps Mako's TemplateLookup (e.g., a templating/reporting/migration library that takes a filename or template-id from the app and resolves it via Mako under the hood), then first-party code could reach the vulnerable URI-resolution logic without ever importing mako or TemplateLookup directly \u2014 it would call the wrapper's API instead. The evidence presented says nothing about which package pulls in mako or whether that package's public API accepts attacker-influenced path/template-name strings. This is exactly the 'wrapper' scenario the review should probe. That said, no concrete evidence of such a wrapper is shown here, and the search did cover settings/config literals and template filters where such usage might surface, finding nothing. So while the blind spot is real and the confidence is probably too high (0.92), there's no specific piece of evidence that was ignored or misread \u2014 the gap is a scope limitation in what was searched (first-party only), not a misreading of what was found. That doesn't meet the bar for a mandatory retry, but it does mean the verdict should be held with lower confidence and flagged as needing dependency-tree inspection (what package actually requires mako, and does it expose a path-like parameter to app code) before being fully trusted.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.65
+   },
+   "tokens_in": 1760,
+   "tokens_out": 1820,
+   "llm_calls": 1,
+   "llm_seconds": 22.75,
+   "cost_usd_est": 0.03258,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument: the static analysis only scanned 322 first-party Python/HTML files for mako symbols, but mako is explicitly a *transitive* dependency \u2014 meaning some other (non-first-party) package the app does use depends on it. If that intermediate package internally wraps Mako's TemplateLookup (e.g., a templating/reporting/migration library that takes a filename or template-id from the app and resolves it via Mako under the hood), then first-party code could reach the vulnerable URI-resolution logic without ever importing mako or TemplateLookup directly \u2014 it would call the wrapper's API instead. The evidence presented says nothing about which package pulls in mako or whether that package's public API accepts attacker-influenced path/template-name strings. This is exactly the 'wrapper' scenario the review should probe. That said, no concrete evidence of such a wrapper is shown here, and the search did cover settings/config literals and template filters where such usage might surface, finding nothing. So while the blind spot is real and the confidence is probably too high (0.92), there's no specific piece of evidence that was ignored or misread \u2014 the gap is a scope limitation in what was searched (first-party only), not a misreading of what was found. That doesn't meet the bar for a mandatory retry, but it does mean the verdict should be held with lower confidence and flagged as needing dependency-tree inspection (what package actually requires mako, and does it expose a path-like parameter to app code) before being fully trusted.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.65}",
+     "in": 1760,
+     "out": 1820,
+     "s": 22.75,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.65,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3707,
+  "tokens_out": 2257,
+  "cost_usd_est": 0.044976,
+  "seconds": 30.3
+ },
+ "created": "2026-11-10T16:33:43+00:00",
+ "code_version": "225d357"
+}

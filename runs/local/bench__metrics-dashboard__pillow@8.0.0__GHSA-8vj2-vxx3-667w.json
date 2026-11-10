@@ -1,0 +1,379 @@
+{
+ "finding_id": "bench/metrics-dashboard/pillow@8.0.0/GHSA-8vj2-vxx3-667w",
+ "config": "local",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/metrics-dashboard",
+ "provider": "local",
+ "model": "qwen2.5-coder-14b-instruct",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-22817",
+   "GHSA-8vj2-vxx3-667w",
+   "PYSEC-2022-10"
+  ],
+  "cves": [
+   "CVE-2022-22817"
+  ],
+  "cwes": [
+   "CWE-74"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/metrics-dashboard/pillow@8.0.0/GHSA-8vj2-vxx3-667w",
+  "first_fixed_above_installed": "9.0.0",
+  "fixed_versions": [
+   "9.0.0",
+   "9.0.1"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "pillow",
+  "published": "2022-01-12T20:07:33Z",
+  "split": "test",
+  "summary": "Arbitrary expression injection in Pillow",
+  "target": "bench/metrics-dashboard",
+  "version": "8.0.0",
+  "vuln_id": "GHSA-8vj2-vxx3-667w"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 1.0,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 1.0,
+  "vulnerable_symbols": [
+   "PIL.ImageMath.eval",
+   "ImageMath.eval"
+  ],
+  "reasoning": "The application uses the vulnerable function `ImageMath.eval` directly in the `composite` function, which is called by the `satellite_composite` endpoint. The `expression` parameter passed to `ImageMath.eval` can be influenced by an outside party through the API request.",
+  "evidence": [
+   {
+    "location": "dashboard/bands.py:10",
+    "explanation": "The vulnerable function `ImageMath.eval` is called directly in the `composite` function."
+   },
+   {
+    "location": "dashboard/api.py:9-11",
+    "explanation": "The `satellite_composite` endpoint allows an outside party to pass an `expression` parameter, which is then used in the `ImageMath.eval` call."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The application uses the vulnerable function `ImageMath.eval` directly in the `composite` function, which is called by the `satellite_composite` endpoint. The `expression` parameter passed to `ImageMath.eval` can be influenced by an outside party through the API request.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 1.0
+ },
+ "symbols": [
+  "PIL.ImageMath.eval",
+  "ImageMath.eval",
+  "eval",
+  "exit",
+  "ImageMath"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/metrics-dashboard/pillow@8.0.0/GHSA-8vj2-vxx3-667w",
+    "package": "pillow",
+    "version": "8.0.0",
+    "vuln_id": "GHSA-8vj2-vxx3-667w",
+    "aliases": [
+     "CVE-2022-22817",
+     "GHSA-8vj2-vxx3-667w",
+     "PYSEC-2022-10"
+    ],
+    "summary": "Arbitrary expression injection in Pillow",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "9.0.0",
+     "9.0.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 44.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-8vj2-vxx3-667w#0",
+      "score": 0.858,
+      "text": "GHSA-8vj2-vxx3-667w (CVE-2022-22817)\npackage: pillow\nsummary: Arbitrary expression injection in Pillow\naffected: >=0, <9.0.1",
+      "vuln_id": "GHSA-8vj2-vxx3-667w"
+     },
+     {
+      "id": "GHSA-8vj2-vxx3-667w#1",
+      "score": 0.75,
+      "text": "GHSA-8vj2-vxx3-667w (pillow) details:\n`PIL.ImageMath.eval` in Pillow before 9.0.0 allows evaluation of arbitrary expressions, such as ones that use the Python exec method `ImageMath.eval(\"exec(exit())\")`.\n\nWhile Pillow 9.0.0 restricted top-level builtins available to PIL.ImageMath.eval(), it did not prevent builtins available to lambda expressions. These are now also restricted in 9.0.1.",
+      "vuln_id": "GHSA-8vj2-vxx3-667w"
+     },
+     {
+      "id": "GHSA-3f63-hfp8-52jq#0",
+      "score": 0.807,
+      "text": "GHSA-3f63-hfp8-52jq (CVE-2023-50447)\npackage: pillow\nsummary: Arbitrary Code Execution in Pillow\naffected: >=0, <10.2.0",
+      "vuln_id": "GHSA-3f63-hfp8-52jq"
+     },
+     {
+      "id": "GHSA-j6f7-g425-4gmx#0",
+      "score": 0.803,
+      "text": "GHSA-j6f7-g425-4gmx (CVE-2014-3598)\npackage: pillow\nsummary: Pillow is vulnerable to Denial of Service (DOS) in the Jpeg2KImagePlugin\naffected: >=0, <2.5.3",
+      "vuln_id": "GHSA-j6f7-g425-4gmx"
+     }
+    ],
+    "symbols": [
+     "PIL.ImageMath.eval",
+     "ImageMath.eval",
+     "eval",
+     "exit",
+     "ImageMath"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 5.2,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [
+     "PIL.ImageMath.eval",
+     "ImageMath.eval",
+     "eval",
+     "exit",
+     "ImageMath"
+    ],
+    "imported": true,
+    "import_locations": [
+     "dashboard/bands.py:4"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 8,
+    "vulnerable_call_sites": [
+     {
+      "file": "dashboard/bands.py",
+      "line": 10,
+      "code": "result = ImageMath.eval(expression, a=r, b=g, c=b)",
+      "resolved": "PIL.ImageMath.eval",
+      "function": "dashboard.bands:composite",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "dashboard.api:satellite_composite",
+       "dashboard.bands:composite"
+      ],
+      "callers": 1,
+      "snippet": "    7  def composite(raw: bytes, expression: str) -> str:\n    8      img = Image.open(io.BytesIO(raw)).convert(\"RGB\")\n    9      r, g, b = img.split()\n   10      result = ImageMath.eval(expression, a=r, b=g, c=b)\n   11      out = io.BytesIO()\n   12      result.convert(\"L\").save(out, format=\"PNG\")\n   13      return base64.b64encode(out.getvalue()).decode()"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "dashboard/bands.py:8",
+      "code": "img = Image.open(io.BytesIO(raw)).convert(\"RGB\")",
+      "function": "dashboard.bands:composite",
+      "in_test": false
+     },
+     {
+      "location": "dashboard/bands.py:10",
+      "code": "result = ImageMath.eval(expression, a=r, b=g, c=b)",
+      "function": "dashboard.bands:composite",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [
+     [
+      "dashboard.api:satellite_composite",
+      "dashboard.bands:composite"
+     ]
+    ],
+    "summary": "pillow: imported in 1 non-test location(s); 8 package call/reference site(s); named vulnerable symbols ['PIL.ImageMath.eval', 'ImageMath.eval', 'eval', 'exit', 'ImageMath']; 1 production call site(s) of those symbols, 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 32.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:dashboard/bands.py:10",
+      "score": 1.0,
+      "file": "dashboard/bands.py",
+      "start": 10,
+      "qualname": "dashboard.bands:composite",
+      "text": "# dashboard/bands.py around line 10\n    7  def composite(raw: bytes, expression: str) -> str:\n    8      img = Image.open(io.BytesIO(raw)).convert(\"RGB\")\n    9      r, g, b = img.split()\n   10      result = ImageMath.eval(expression, a=r, b=g, c=b)\n   11      out = io.BytesIO()\n   12      result.convert(\"L\").save(out, format=\"PNG\")\n   13      return base64.b64encode(out.getvalue()).decode()"
+     },
+     {
+      "id": "bench/metrics-dashboard:dashboard/bands.py:7",
+      "score": 0.675,
+      "text": "# dashboard/bands.py:7-13  composite\ndef composite(raw: bytes, expression: str) -> str:\n    img = Image.open(io.BytesIO(raw)).convert(\"RGB\")\n    r, g, b = img.split()\n    result = ImageMath.eval(expression, a=r, b=g, c=b)\n    out = io.BytesIO()\n    result.convert(\"L\").save(out, format=\"PNG\")\n    return base64.b64encode(out.getvalue()).decode()",
+      "file": "dashboard/bands.py",
+      "start": 7,
+      "qualname": "composite"
+     },
+     {
+      "id": "bench/metrics-dashboard:dashboard/bands.py:module",
+      "score": 0.654,
+      "text": "# dashboard/bands.py (module level)\nimport base64\nimport io\nfrom PIL import Image, ImageMath",
+      "file": "dashboard/bands.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/metrics-dashboard:dashboard/api.py:9",
+      "score": 0.626,
+      "text": "# dashboard/api.py:9-11  satellite_composite\nasync def satellite_composite(image: UploadFile, expression: str = \"(a - b) / (a + b)\"):\n    data = await image.read()\n    return {\"png\": composite(data, expression)}",
+      "file": "dashboard/api.py",
+      "start": 9,
+      "qualname": "satellite_composite"
+     },
+     {
+      "id": "bench/metrics-dashboard:dashboard/api.py:module",
+      "score": 0.576,
+      "text": "# dashboard/api.py (module level)\nfrom fastapi import FastAPI, UploadFile\nfrom dashboard.bands import composite\napp = FastAPI()\n@app.post(\"/satellite/composite\")",
+      "file": "dashboard/api.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 26963.1,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 1.0,
+    "vulnerable_symbols": [
+     "PIL.ImageMath.eval",
+     "ImageMath.eval"
+    ],
+    "reasoning": "The application uses the vulnerable function `ImageMath.eval` directly in the `composite` function, which is called by the `satellite_composite` endpoint. The `expression` parameter passed to `ImageMath.eval` can be influenced by an outside party through the API request.",
+    "evidence": [
+     {
+      "location": "dashboard/bands.py:10",
+      "explanation": "The vulnerable function `ImageMath.eval` is called directly in the `composite` function."
+     },
+     {
+      "location": "dashboard/api.py:9-11",
+      "explanation": "The `satellite_composite` endpoint allows an outside party to pass an `expression` parameter, which is then used in the `ImageMath.eval` call."
+     }
+    ]
+   },
+   "tokens_in": 1681,
+   "tokens_out": 208,
+   "llm_calls": 1,
+   "llm_seconds": 26.97,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"reachable\",\n  \"confidence\": 1,\n  \"vulnerable_symbols\": [\"PIL.ImageMath.eval\", \"ImageMath.eval\"],\n  \"reasoning\": \"The application uses the vulnerable function `ImageMath.eval` directly in the `composite` function, which is called by the `satellite_composite` endpoint. The `expression` parameter passed to `ImageMath.eval` can be influenced by an outside party through the API request.\",\n  \"evidence\": [\n    {\n      \"location\": \"dashboard/bands.py:10\",\n      \"explanation\": \"The vulnerable function `ImageMath.eval` is called directly in the `composite` function.\"\n    },\n    {\n      \"location\": \"dashboard/api.py:9-11\",\n      \"explanation\": \"The `satellite_composite` endpoint allows an outside party to pass an `expression` parameter, which is then used in the `ImageMath.eval` call.\"\n    }\n  ]\n}\n```",
+     "in": 1681,
+     "out": 208,
+     "s": 26.97,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 16350.8,
+   "output": {
+    "critique": "The application uses the vulnerable function `ImageMath.eval` directly in the `composite` function, which is called by the `satellite_composite` endpoint. The `expression` parameter passed to `ImageMath.eval` can be influenced by an outside party through the API request.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 1.0
+   },
+   "tokens_in": 1465,
+   "tokens_out": 100,
+   "llm_calls": 1,
+   "llm_seconds": 16.34,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"critique\": \"The application uses the vulnerable function `ImageMath.eval` directly in the `composite` function, which is called by the `satellite_composite` endpoint. The `expression` parameter passed to `ImageMath.eval` can be influenced by an outside party through the API request.\",\n  \"agrees\": true,\n  \"retry\": false,\n  \"final_verdict\": \"reachable\",\n  \"confidence\": 1.0\n}\n```",
+     "in": 1465,
+     "out": 100,
+     "s": 16.34,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 1.0,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3146,
+  "tokens_out": 308,
+  "cost_usd_est": 0.0,
+  "seconds": 43.4
+ },
+ "created": "2026-11-10T22:33:37+00:00",
+ "code_version": "ea5880b"
+}

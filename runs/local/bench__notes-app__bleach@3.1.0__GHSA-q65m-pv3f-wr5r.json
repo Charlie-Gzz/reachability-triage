@@ -1,0 +1,377 @@
+{
+ "finding_id": "bench/notes-app/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+ "config": "local",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/notes-app",
+ "provider": "local",
+ "model": "qwen2.5-coder-14b-instruct",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2020-6802",
+   "GHSA-q65m-pv3f-wr5r",
+   "PYSEC-2020-27"
+  ],
+  "cves": [
+   "CVE-2020-6802"
+  ],
+  "cwes": [
+   "CWE-79"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/notes-app/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+  "first_fixed_above_installed": "3.1.1",
+  "fixed_versions": [
+   "3.1.1"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+  "package": "bleach",
+  "published": "2020-02-24T17:33:44Z",
+  "split": "test",
+  "summary": "XSS in Bleach when noscript and raw tag whitelisted",
+  "target": "bench/notes-app",
+  "version": "3.1.0",
+  "vuln_id": "GHSA-q65m-pv3f-wr5r"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 1.0,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": true,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 1.0,
+  "vulnerable_symbols": [
+   "bleach.clean",
+   "noscript"
+  ],
+  "reasoning": "The application uses the vulnerable `bleach.clean` function with `strip=False` and includes 'noscript' in the allowed tags. The `render_note` function, which calls `bleach.clean`, is reachable from the entry point `save` in `notes/web.py`. An outside party can influence the input to this path through HTTP requests.",
+  "evidence": [
+   {
+    "location": "notes/render.py:10",
+    "explanation": "The vulnerable `bleach.clean` function is called with `strip=False` and includes 'noscript' in the allowed tags."
+   },
+   {
+    "location": "notes/web.py:10-12",
+    "explanation": "The `save` function, which calls `render_note`, is an entry point reachable via HTTP PUT requests."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The application does not whitelist any raw tags other than 'noscript' and 'style', which are not considered RCDATA tags. Additionally, the advisory specifically mentions that the vulnerability requires both 'noscript' and one or more of the following raw tags to be whitelisted: title, textarea, script, style, noembed, noframes, iframe, xmp. Since none of these raw tags are included in the allowed tags list, the application does not meet the advisory's preconditions for the vulnerability.",
+  "agrees": false,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 1.0
+ },
+ "symbols": [
+  "bleach.clean",
+  "noscript"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/notes-app/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+    "package": "bleach",
+    "version": "3.1.0",
+    "vuln_id": "GHSA-q65m-pv3f-wr5r",
+    "aliases": [
+     "CVE-2020-6802",
+     "GHSA-q65m-pv3f-wr5r",
+     "PYSEC-2020-27"
+    ],
+    "summary": "XSS in Bleach when noscript and raw tag whitelisted",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+    "fixed_versions": [
+     "3.1.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 26.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-q65m-pv3f-wr5r#0",
+      "score": 0.897,
+      "text": "GHSA-q65m-pv3f-wr5r (CVE-2020-6802)\npackage: bleach\nsummary: XSS in Bleach when noscript and raw tag whitelisted\naffected: >=0, <3.1.1",
+      "vuln_id": "GHSA-q65m-pv3f-wr5r"
+     },
+     {
+      "id": "GHSA-q65m-pv3f-wr5r#1",
+      "score": 0.866,
+      "text": "GHSA-q65m-pv3f-wr5r (bleach) details:\n### Impact\n\nA [mutation XSS](https://cure53.de/fp170.pdf) affects users calling `bleach.clean` with `noscript` and a raw tag (see below) in the allowed/whitelisted tags option.\n\n### Patches\n\nv3.1.1\n\n### Workarounds\n\n* modify `bleach.clean` calls to not whitelist `noscript` and one or more of the following raw tags:\n\n```\ntitle\ntextarea\nscript\nstyle\nnoembed\nnoframes\niframe\nxmp\n```\n\n* A strong [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) without `unsafe-inline` and `unsafe-eval` [`script-src`s](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src)) will also help mitigate the risk.",
+      "vuln_id": "GHSA-q65m-pv3f-wr5r"
+     },
+     {
+      "id": "GHSA-m6xf-fq7q-8743#0",
+      "score": 0.851,
+      "text": "GHSA-m6xf-fq7q-8743 (CVE-2020-6816)\npackage: bleach\nsummary: Bleach vulnerable to mutation XSS via whitelisted math or svg and raw tag\naffected: >=0, <3.1.2",
+      "vuln_id": "GHSA-m6xf-fq7q-8743"
+     },
+     {
+      "id": "GHSA-m6xf-fq7q-8743#1",
+      "score": 0.846,
+      "text": "GHSA-m6xf-fq7q-8743 (bleach) details:\n### Impact\n\nA [mutation XSS](https://cure53.de/fp170.pdf) affects users calling `bleach.clean` with all of:\n\n* the `svg` or `math` in the allowed/whitelisted tags\n* an RCDATA tag (see below) in the allowed/whitelisted tags\n* the keyword argument `strip=False`\n\n### Patches\n\nUsers are encouraged to upgrade to bleach v3.1.2 or greater.\n\n### Workarounds\n\n* modify `bleach.clean` calls to use `strip=True`, or not whitelist `math` or `svg` tags and one or more of the following tags:\n\n```\nscript\nnoscript\nstyle\nnoframes\nxmp\nnoembed\niframe\n```\n\n* A strong [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) without `unsafe-inline` and `unsafe-eval` [`script-src`s](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src)) will also help mitigate the risk.",
+      "vuln_id": "GHSA-m6xf-fq7q-8743"
+     }
+    ],
+    "symbols": [
+     "bleach.clean",
+     "noscript"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.6,
+   "output": {
+    "package": "bleach",
+    "import_names": [
+     "bleach"
+    ],
+    "symbols": [
+     "bleach.clean",
+     "noscript"
+    ],
+    "imported": true,
+    "import_locations": [
+     "notes/render.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3,
+    "vulnerable_call_sites": [
+     {
+      "file": "notes/render.py",
+      "line": 10,
+      "code": "return bleach.clean(html, tags=TAGS, attributes=ATTRS, strip=False)",
+      "resolved": "bleach.clean",
+      "function": "notes.render:render_note",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "notes.web:save",
+       "notes.render:render_note"
+      ],
+      "callers": 1,
+      "snippet": "    7  \n    8  def render_note(source: str) -> str:\n    9      html = markdown.markdown(source)\n   10      return bleach.clean(html, tags=TAGS, attributes=ATTRS, strip=False)"
+     }
+    ],
+    "config_references": [
+     {
+      "location": "notes/render.py:4",
+      "value": "noscript",
+      "symbol": "noscript",
+      "in_test": false
+     }
+    ],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "notes/render.py:10",
+      "code": "return bleach.clean(html, tags=TAGS, attributes=ATTRS, strip=False)",
+      "function": "notes.render:render_note",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 2,
+    "paths": [
+     [
+      "notes.web:save",
+      "notes.render:render_note"
+     ]
+    ],
+    "summary": "bleach: imported in 1 non-test location(s); 3 package call/reference site(s); named vulnerable symbols ['bleach.clean', 'noscript']; 1 production call site(s) of those symbols, 1 with a path from an entry point; 1 config/string reference(s)"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 25.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:notes/render.py:10",
+      "score": 1.0,
+      "file": "notes/render.py",
+      "start": 10,
+      "qualname": "notes.render:render_note",
+      "text": "# notes/render.py around line 10\n    7  \n    8  def render_note(source: str) -> str:\n    9      html = markdown.markdown(source)\n   10      return bleach.clean(html, tags=TAGS, attributes=ATTRS, strip=False)"
+     },
+     {
+      "id": "bench/notes-app:notes/render.py:module",
+      "score": 0.721,
+      "text": "# notes/render.py (module level)\nimport bleach\nimport markdown\nTAGS = [\"p\", \"a\", \"b\", \"i\", \"ul\", \"ol\", \"li\", \"code\", \"pre\", \"noscript\", \"style\", \"h1\", \"h2\", \"h3\"]\nATTRS = {\"a\": [\"href\", \"title\"]}",
+      "file": "notes/render.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/notes-app:notes/render.py:8",
+      "score": 0.637,
+      "text": "# notes/render.py:8-10  render_note\ndef render_note(source: str) -> str:\n    html = markdown.markdown(source)\n    return bleach.clean(html, tags=TAGS, attributes=ATTRS, strip=False)",
+      "file": "notes/render.py",
+      "start": 8,
+      "qualname": "render_note"
+     },
+     {
+      "id": "bench/notes-app:notes/web.py:10",
+      "score": 0.533,
+      "text": "# notes/web.py:10-12  save\ndef save(slug):\n    NOTES[slug] = render_note(request.get_data(as_text=True))\n    return {\"ok\": True}",
+      "file": "notes/web.py",
+      "start": 10,
+      "qualname": "save"
+     },
+     {
+      "id": "bench/notes-app:notes/web.py:16",
+      "score": 0.528,
+      "text": "# notes/web.py:16-17  show\ndef show(slug):\n    return NOTES.get(slug, \"\")",
+      "file": "notes/web.py",
+      "start": 16,
+      "qualname": "show"
+     },
+     {
+      "id": "bench/notes-app:notes/web.py:module",
+      "score": 0.521,
+      "text": "# notes/web.py (module level)\nfrom flask import Flask, request\nfrom notes.render import render_note\napp = Flask(__name__)\nNOTES = {}\n@app.put(\"/notes/<slug>\")\n@app.get(\"/notes/<slug>\")",
+      "file": "notes/web.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 27989.7,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 1.0,
+    "vulnerable_symbols": [
+     "bleach.clean",
+     "noscript"
+    ],
+    "reasoning": "The application uses the vulnerable `bleach.clean` function with `strip=False` and includes 'noscript' in the allowed tags. The `render_note` function, which calls `bleach.clean`, is reachable from the entry point `save` in `notes/web.py`. An outside party can influence the input to this path through HTTP requests.",
+    "evidence": [
+     {
+      "location": "notes/render.py:10",
+      "explanation": "The vulnerable `bleach.clean` function is called with `strip=False` and includes 'noscript' in the allowed tags."
+     },
+     {
+      "location": "notes/web.py:10-12",
+      "explanation": "The `save` function, which calls `render_note`, is an entry point reachable via HTTP PUT requests."
+     }
+    ]
+   },
+   "tokens_in": 1912,
+   "tokens_out": 216,
+   "llm_calls": 1,
+   "llm_seconds": 28.0,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"reachable\",\n  \"confidence\": 1,\n  \"vulnerable_symbols\": [\"bleach.clean\", \"noscript\"],\n  \"reasoning\": \"The application uses the vulnerable `bleach.clean` function with `strip=False` and includes 'noscript' in the allowed tags. The `render_note` function, which calls `bleach.clean`, is reachable from the entry point `save` in `notes/web.py`. An outside party can influence the input to this path through HTTP requests.\",\n  \"evidence\": [\n    {\n      \"location\": \"notes/render.py:10\",\n      \"explanation\": \"The vulnerable `bleach.clean` function is called with `strip=False` and includes 'noscript' in the allowed tags.\"\n    },\n    {\n      \"location\": \"notes/web.py:10-12\",\n      \"explanation\": \"The `save` function, which calls `render_note`, is an entry point reachable via HTTP PUT requests.\"\n    }\n  ]\n}\n```",
+     "in": 1912,
+     "out": 216,
+     "s": 28.0,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 21668.4,
+   "output": {
+    "critique": "The application does not whitelist any raw tags other than 'noscript' and 'style', which are not considered RCDATA tags. Additionally, the advisory specifically mentions that the vulnerability requires both 'noscript' and one or more of the following raw tags to be whitelisted: title, textarea, script, style, noembed, noframes, iframe, xmp. Since none of these raw tags are included in the allowed tags list, the application does not meet the advisory's preconditions for the vulnerability.",
+    "agrees": false,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 1.0
+   },
+   "tokens_in": 1707,
+   "tokens_out": 149,
+   "llm_calls": 1,
+   "llm_seconds": 21.66,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"critique\": \"The application does not whitelist any raw tags other than 'noscript' and 'style', which are not considered RCDATA tags. Additionally, the advisory specifically mentions that the vulnerability requires both 'noscript' and one or more of the following raw tags to be whitelisted: title, textarea, script, style, noembed, noframes, iframe, xmp. Since none of these raw tags are included in the allowed tags list, the application does not meet the advisory's preconditions for the vulnerability.\",\n  \"agrees\": false,\n  \"retry\": false,\n  \"final_verdict\": \"not_reachable\",\n  \"confidence\": 1.0\n}\n```",
+     "in": 1707,
+     "out": 149,
+     "s": 21.66,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 1.0,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": true,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3619,
+  "tokens_out": 365,
+  "cost_usd_est": 0.0,
+  "seconds": 49.72
+ },
+ "created": "2026-11-10T22:43:17+00:00",
+ "code_version": "ea5880b"
+}

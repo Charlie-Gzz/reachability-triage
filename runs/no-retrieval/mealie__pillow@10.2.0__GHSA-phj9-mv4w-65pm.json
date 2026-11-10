@@ -1,0 +1,311 @@
+{
+ "finding_id": "mealie/pillow@10.2.0/GHSA-phj9-mv4w-65pm",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-55380",
+   "GHSA-phj9-mv4w-65pm",
+   "PYSEC-2026-2256"
+  ],
+  "cves": [
+   "CVE-2026-55380"
+  ],
+  "cwes": [
+   "CWE-789"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/pillow@10.2.0/GHSA-phj9-mv4w-65pm",
+  "first_fixed_above_installed": "12.3.0",
+  "fixed_versions": [
+   "12.3.0"
+  ],
+  "max_cvss": "7.5",
+  "package": "pillow",
+  "published": "2026-07-20T21:13:35Z",
+  "summary": "Pillow `GdImageFile._open()`: image dimensions accepted without `_decompression_bomb_check()`",
+  "target": "mealie",
+  "version": "10.2.0",
+  "vuln_id": "GHSA-phj9-mv4w-65pm"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.78,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.72,
+  "vulnerable_symbols": [
+   "GdImageFile._open",
+   "_decompression_bomb_check"
+  ],
+  "reasoning": "The advisory concerns Pillow's GdImageFile plugin (GD-format images), which lacks a magic-number signature and therefore is not part of the format-autodetection chain used by generic Image.open() calls; it must be invoked explicitly as GdImageFile.open(fp). The application only calls the generic Image.open(image) (mealie/pkgs/img/minify.py:15, 68, 120) on user-supplied image files for thumbnail/minify purposes, and the AST scan found zero references to GdImageFile, its _open method, or _decompression_bomb_check anywhere in first-party code. Since nothing in the app imports or calls GdImageFile directly, and Image.open() won't route to it without an explicit GD signature/invocation, the vulnerable code path is not exercised by production code. This is a case where the package is used only for unaffected functionality (standard raster formats like JPEG/PNG), so the vulnerable component is effectively dead from the app's perspective.",
+  "evidence": [
+   {
+    "location": "mealie/pkgs/img/minify.py:15",
+    "explanation": "Generic Image.open() call, which does not dispatch to GdImageFile without an explicit GD signature or direct call."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:68",
+    "explanation": "Same generic Image.open() usage pattern for a different image path."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:120",
+    "explanation": "Same generic Image.open() usage; no format-specific or GD-specific handling present."
+   },
+   {
+    "location": "advisory",
+    "explanation": "0 production call sites of GdImageFile, _open, or _decompression_bomb_check found in 322 scanned first-party files."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that Image.open() performs format autodetection across all registered plugins, so if GdImageFile's _open were reachable via that generic dispatch, the vulnerability would be live despite no explicit GdImageFile reference in first-party code. However, this does not hold: Pillow's GD plugin is a known exception in the plugin registry \u2014 GD images have no magic-byte signature, so GdImageFile is deliberately excluded from the format-sniffing chain used by Image.open(). It can only be reached by explicitly importing GdImageFile and calling GdImageFile.open(fp), or by forcing formats=['GD'] in Image.open(), neither of which appears anywhere in the 322 scanned first-party files or the cited minify.py call sites (all plain Image.open(file) with no formats argument). The AST evidence (0 call sites of GdImageFile/_open/_decompression_bomb_check, 0 entry-point paths) is consistent with this architectural fact rather than being an incomplete/misleading signal. I don't see evidence of dynamic format strings derived from user input that could smuggle 'GD' into a formats list, so there's no overlooked wrapper/dispatch path. The verdict's reasoning correctly reflects Pillow's actual plugin dispatch behavior rather than misreading the evidence.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.78
+ },
+ "symbols": [
+  "GdImageFile._open",
+  "_decompression_bomb_check",
+  "_open",
+  "GdImageFile"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pillow@10.2.0/GHSA-phj9-mv4w-65pm",
+    "package": "pillow",
+    "version": "10.2.0",
+    "vuln_id": "GHSA-phj9-mv4w-65pm",
+    "aliases": [
+     "CVE-2026-55380",
+     "GHSA-phj9-mv4w-65pm",
+     "PYSEC-2026-2256"
+    ],
+    "summary": "Pillow `GdImageFile._open()`: image dimensions accepted without `_decompression_bomb_check()`",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "12.3.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.1,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "GdImageFile._open",
+     "_decompression_bomb_check",
+     "_open",
+     "GdImageFile"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 34.8,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [
+     "GdImageFile._open",
+     "_decompression_bomb_check",
+     "_open",
+     "GdImageFile"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/pkgs/img/minify.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 10,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "code": "img = Image.open(image)",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pillow: imported in 1 non-test location(s); 10 package call/reference site(s); named vulnerable symbols ['GdImageFile._open', '_decompression_bomb_check', '_open', 'GdImageFile']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 14859.3,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.72,
+    "vulnerable_symbols": [
+     "GdImageFile._open",
+     "_decompression_bomb_check"
+    ],
+    "reasoning": "The advisory concerns Pillow's GdImageFile plugin (GD-format images), which lacks a magic-number signature and therefore is not part of the format-autodetection chain used by generic Image.open() calls; it must be invoked explicitly as GdImageFile.open(fp). The application only calls the generic Image.open(image) (mealie/pkgs/img/minify.py:15, 68, 120) on user-supplied image files for thumbnail/minify purposes, and the AST scan found zero references to GdImageFile, its _open method, or _decompression_bomb_check anywhere in first-party code. Since nothing in the app imports or calls GdImageFile directly, and Image.open() won't route to it without an explicit GD signature/invocation, the vulnerable code path is not exercised by production code. This is a case where the package is used only for unaffected functionality (standard raster formats like JPEG/PNG), so the vulnerable component is effectively dead from the app's perspective.",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "explanation": "Generic Image.open() call, which does not dispatch to GdImageFile without an explicit GD signature or direct call."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "explanation": "Same generic Image.open() usage pattern for a different image path."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "explanation": "Same generic Image.open() usage; no format-specific or GD-specific handling present."
+     },
+     {
+      "location": "advisory",
+      "explanation": "0 production call sites of GdImageFile, _open, or _decompression_bomb_check found in 322 scanned first-party files."
+     }
+    ]
+   },
+   "tokens_in": 2169,
+   "tokens_out": 1137,
+   "llm_calls": 1,
+   "llm_seconds": 14.84,
+   "cost_usd_est": 0.023562,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"not_reachable\", \"confidence\": 0.72, \"vulnerable_symbols\": [\"GdImageFile._open\", \"_decompression_bomb_check\"], \"reasoning\": \"The advisory concerns Pillow's GdImageFile plugin (GD-format images), which lacks a magic-number signature and therefore is not part of the format-autodetection chain used by generic Image.open() calls; it must be invoked explicitly as GdImageFile.open(fp). The application only calls the generic Image.open(image) (mealie/pkgs/img/minify.py:15, 68, 120) on user-supplied image files for thumbnail/minify purposes, and the AST scan found zero references to GdImageFile, its _open method, or _decompression_bomb_check anywhere in first-party code. Since nothing in the app imports or calls GdImageFile directly, and Image.open() won't route to it without an explicit GD signature/invocation, the vulnerable code path is not exercised by production code. This is a case where the package is used only for unaffected functionality (standard raster formats like JPEG/PNG), so the vulnerable component is effectively dead from the app's perspective.\", \"evidence\": [{\"location\": \"mealie/pkgs/img/minify.py:15\", \"explanation\": \"Generic Image.open() call, which does not dispatch to GdImageFile without an explicit GD signature or direct call.\"}, {\"location\": \"mealie/pkgs/img/minify.py:68\", \"explanation\": \"Same generic Image.open() usage pattern for a different image path.\"}, {\"location\": \"mealie/pkgs/img/minify.py:120\", \"explanation\": \"Same generic Image.open() usage; no format-specific or GD-specific handling present.\"}, {\"location\": \"advisory\", \"explanation\": \"0 production call sites of GdImageFile, _open, or _decompression_bomb_check found in 322 scanned first-party files.\"}]}",
+     "in": 2169,
+     "out": 1137,
+     "s": 14.84,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 17477.3,
+   "output": {
+    "critique": "The strongest counter-argument is that Image.open() performs format autodetection across all registered plugins, so if GdImageFile's _open were reachable via that generic dispatch, the vulnerability would be live despite no explicit GdImageFile reference in first-party code. However, this does not hold: Pillow's GD plugin is a known exception in the plugin registry \u2014 GD images have no magic-byte signature, so GdImageFile is deliberately excluded from the format-sniffing chain used by Image.open(). It can only be reached by explicitly importing GdImageFile and calling GdImageFile.open(fp), or by forcing formats=['GD'] in Image.open(), neither of which appears anywhere in the 322 scanned first-party files or the cited minify.py call sites (all plain Image.open(file) with no formats argument). The AST evidence (0 call sites of GdImageFile/_open/_decompression_bomb_check, 0 entry-point paths) is consistent with this architectural fact rather than being an incomplete/misleading signal. I don't see evidence of dynamic format strings derived from user input that could smuggle 'GD' into a formats list, so there's no overlooked wrapper/dispatch path. The verdict's reasoning correctly reflects Pillow's actual plugin dispatch behavior rather than misreading the evidence.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.78
+   },
+   "tokens_in": 2142,
+   "tokens_out": 1398,
+   "llm_calls": 1,
+   "llm_seconds": 17.47,
+   "cost_usd_est": 0.027396,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument is that Image.open() performs format autodetection across all registered plugins, so if GdImageFile's _open were reachable via that generic dispatch, the vulnerability would be live despite no explicit GdImageFile reference in first-party code. However, this does not hold: Pillow's GD plugin is a known exception in the plugin registry \u2014 GD images have no magic-byte signature, so GdImageFile is deliberately excluded from the format-sniffing chain used by Image.open(). It can only be reached by explicitly importing GdImageFile and calling GdImageFile.open(fp), or by forcing formats=['GD'] in Image.open(), neither of which appears anywhere in the 322 scanned first-party files or the cited minify.py call sites (all plain Image.open(file) with no formats argument). The AST evidence (0 call sites of GdImageFile/_open/_decompression_bomb_check, 0 entry-point paths) is consistent with this architectural fact rather than being an incomplete/misleading signal. I don't see evidence of dynamic format strings derived from user input that could smuggle 'GD' into a formats list, so there's no overlooked wrapper/dispatch path. The verdict's reasoning correctly reflects Pillow's actual plugin dispatch behavior rather than misreading the evidence.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.78}",
+     "in": 2142,
+     "out": 1398,
+     "s": 17.47,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.78,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4311,
+  "tokens_out": 2535,
+  "cost_usd_est": 0.050958,
+  "seconds": 32.38
+ },
+ "created": "2026-11-10T20:10:47+00:00",
+ "code_version": "225d357"
+}

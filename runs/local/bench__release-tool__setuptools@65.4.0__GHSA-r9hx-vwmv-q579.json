@@ -1,0 +1,355 @@
+{
+ "finding_id": "bench/release-tool/setuptools@65.4.0/GHSA-r9hx-vwmv-q579",
+ "config": "local",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/release-tool",
+ "provider": "local",
+ "model": "qwen2.5-coder-14b-instruct",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-40897",
+   "GHSA-r9hx-vwmv-q579",
+   "PYSEC-2022-43012"
+  ],
+  "cves": [
+   "CVE-2022-40897"
+  ],
+  "cwes": [
+   "CWE-1333"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/release-tool/setuptools@65.4.0/GHSA-r9hx-vwmv-q579",
+  "first_fixed_above_installed": "65.5.1",
+  "fixed_versions": [
+   "65.5.1",
+   "43a9c9bfa6aa626ec2a22540bea28d2ca77964be"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+  "package": "setuptools",
+  "published": "2022-12-23T00:30:23Z",
+  "split": "test",
+  "summary": "pypa/setuptools vulnerable to Regular Expression Denial of Service (ReDoS)",
+  "target": "bench/release-tool",
+  "version": "65.4.0",
+  "vuln_id": "GHSA-r9hx-vwmv-q579"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 1.0,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 1.0,
+  "vulnerable_symbols": [
+   "package_index",
+   "PyPA",
+   "PackageIndex"
+  ],
+  "reasoning": "The application does not use the vulnerable symbols 'package_index', 'PyPA', or 'PackageIndex'. The only uses of setuptools are in setup.py and release/cli.py, which do not involve the vulnerable functionality. The application's production code does not exercise the vulnerable function, feature, or configuration described in the advisory.",
+  "evidence": [
+   {
+    "location": "setup.py:1",
+    "explanation": "Setuptools is imported but not used in a way that involves the vulnerable symbols."
+   },
+   {
+    "location": "release/cli.py:3",
+    "explanation": "Setuptools is imported but not used in a way that involves the vulnerable symbols."
+   },
+   {
+    "location": "release/cli.py:12",
+    "explanation": "The only use of setuptools is to get the distribution version, which does not involve the vulnerable functionality."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The application does not use the vulnerable symbols 'package_index', 'PyPA', or 'PackageIndex'. The only uses of setuptools are in setup.py and release/cli.py, which do not involve the vulnerable functionality. The application's production code does not exercise the vulnerable function, feature, or configuration described in the advisory.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 1.0
+ },
+ "symbols": [
+  "package_index",
+  "PyPA",
+  "PackageIndex"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/release-tool/setuptools@65.4.0/GHSA-r9hx-vwmv-q579",
+    "package": "setuptools",
+    "version": "65.4.0",
+    "vuln_id": "GHSA-r9hx-vwmv-q579",
+    "aliases": [
+     "CVE-2022-40897",
+     "GHSA-r9hx-vwmv-q579",
+     "PYSEC-2022-43012"
+    ],
+    "summary": "pypa/setuptools vulnerable to Regular Expression Denial of Service (ReDoS)",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+    "fixed_versions": [
+     "65.5.1",
+     "43a9c9bfa6aa626ec2a22540bea28d2ca77964be"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 26.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-r9hx-vwmv-q579#0",
+      "score": 0.905,
+      "text": "GHSA-r9hx-vwmv-q579 (CVE-2022-40897)\npackage: setuptools\nsummary: pypa/setuptools vulnerable to Regular Expression Denial of Service (ReDoS)\naffected: >=0, <65.5.1",
+      "vuln_id": "GHSA-r9hx-vwmv-q579"
+     },
+     {
+      "id": "GHSA-r9hx-vwmv-q579#1",
+      "score": 0.853,
+      "text": "GHSA-r9hx-vwmv-q579 (setuptools) details:\nPython Packaging Authority (PyPA)'s setuptools is a library designed to facilitate packaging Python projects. Setuptools version 65.5.0 and earlier could allow remote attackers to cause a denial of service by fetching malicious HTML from a PyPI package or custom PackageIndex page due to a vulnerable Regular Expression in `package_index`. This has been patched in version 65.5.1.",
+      "vuln_id": "GHSA-r9hx-vwmv-q579"
+     },
+     {
+      "id": "GHSA-cx63-2mw6-8hw5#1",
+      "score": 0.868,
+      "text": "GHSA-cx63-2mw6-8hw5 (setuptools) details:\nA vulnerability in the `package_index` module of pypa/setuptools versions up to 69.1.1 allows for remote code execution via its download functions. These functions, which are used to download packages from URLs provided by users or retrieved from package index servers, are susceptible to code injection. If these functions are exposed to user-controlled inputs, such as package URLs, they can execute arbitrary commands on the system. The issue is fixed in version 70.0.",
+      "vuln_id": "GHSA-cx63-2mw6-8hw5"
+     },
+     {
+      "id": "GHSA-cx63-2mw6-8hw5#0",
+      "score": 0.851,
+      "text": "GHSA-cx63-2mw6-8hw5 (CVE-2024-6345)\npackage: setuptools\nsummary: setuptools vulnerable to Command Injection via package URL\naffected: >=0, <70.0.0",
+      "vuln_id": "GHSA-cx63-2mw6-8hw5"
+     }
+    ],
+    "symbols": [
+     "package_index",
+     "PyPA",
+     "PackageIndex"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.8,
+   "output": {
+    "package": "setuptools",
+    "import_names": [
+     "pkg_resources",
+     "setuptools"
+    ],
+    "symbols": [
+     "package_index",
+     "PyPA",
+     "PackageIndex"
+    ],
+    "imported": true,
+    "import_locations": [
+     "release/cli.py:3",
+     "setup.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "release/cli.py:12",
+      "code": "current = pkg_resources.get_distribution(\"release-tool\").version",
+      "function": "release.cli:main",
+      "in_test": false
+     },
+     {
+      "location": "setup.py:3",
+      "code": "setup(name=\"release-tool\", version=\"1.4.0\", packages=find_packages(), entry_points={",
+      "function": "setup:<module>",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 4,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [],
+    "summary": "setuptools: imported in 2 non-test location(s); 6 package call/reference site(s); named vulnerable symbols ['package_index', 'PyPA', 'PackageIndex']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 23.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "bench/release-tool:setup.py:module",
+      "score": 0.724,
+      "text": "# setup.py (module level)\nfrom setuptools import find_packages, setup\nsetup(name=\"release-tool\", version=\"1.4.0\", packages=find_packages(), entry_points={\n    \"console_scripts\": [\"release=release.cli:main\"]})",
+      "file": "setup.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/release-tool:release/cli.py:8",
+      "score": 0.645,
+      "text": "# release/cli.py:8-13  main\ndef main():\n    p = argparse.ArgumentParser()\n    p.add_argument(\"part\", choices=[\"major\", \"minor\", \"patch\"])\n    args = p.parse_args()\n    current = pkg_resources.get_distribution(\"release-tool\").version\n    print(bump(current, args.part))",
+      "file": "release/cli.py",
+      "start": 8,
+      "qualname": "main"
+     },
+     {
+      "id": "bench/release-tool:release/cli.py:module",
+      "score": 0.645,
+      "text": "# release/cli.py (module level)\nimport argparse\nimport pkg_resources\nfrom release.bump import bump\nif __name__ == \"__main__\":\n    main()",
+      "file": "release/cli.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/release-tool:release/bump.py:1",
+      "score": 0.572,
+      "text": "# release/bump.py:1-7  bump\ndef bump(version: str, part: str) -> str:\n    major, minor, patch = (int(x) for x in version.split(\".\"))\n    if part == \"major\":\n        return f\"{major + 1}.0.0\"\n    if part == \"minor\":\n        return f\"{major}.{minor + 1}.0\"\n    return f\"{major}.{minor}.{patch + 1}\"",
+      "file": "release/bump.py",
+      "start": 1,
+      "qualname": "bump"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 27136.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 1.0,
+    "vulnerable_symbols": [
+     "package_index",
+     "PyPA",
+     "PackageIndex"
+    ],
+    "reasoning": "The application does not use the vulnerable symbols 'package_index', 'PyPA', or 'PackageIndex'. The only uses of setuptools are in setup.py and release/cli.py, which do not involve the vulnerable functionality. The application's production code does not exercise the vulnerable function, feature, or configuration described in the advisory.",
+    "evidence": [
+     {
+      "location": "setup.py:1",
+      "explanation": "Setuptools is imported but not used in a way that involves the vulnerable symbols."
+     },
+     {
+      "location": "release/cli.py:3",
+      "explanation": "Setuptools is imported but not used in a way that involves the vulnerable symbols."
+     },
+     {
+      "location": "release/cli.py:12",
+      "explanation": "The only use of setuptools is to get the distribution version, which does not involve the vulnerable functionality."
+     }
+    ]
+   },
+   "tokens_in": 1651,
+   "tokens_out": 235,
+   "llm_calls": 1,
+   "llm_seconds": 27.14,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"not_reachable\",\n  \"confidence\": 1,\n  \"vulnerable_symbols\": [\"package_index\", \"PyPA\", \"PackageIndex\"],\n  \"reasoning\": \"The application does not use the vulnerable symbols 'package_index', 'PyPA', or 'PackageIndex'. The only uses of setuptools are in setup.py and release/cli.py, which do not involve the vulnerable functionality. The application's production code does not exercise the vulnerable function, feature, or configuration described in the advisory.\",\n  \"evidence\": [\n    {\n      \"location\": \"setup.py:1\",\n      \"explanation\": \"Setuptools is imported but not used in a way that involves the vulnerable symbols.\"\n    },\n    {\n      \"location\": \"release/cli.py:3\",\n      \"explanation\": \"Setuptools is imported but not used in a way that involves the vulnerable symbols.\"\n    },\n    {\n      \"location\": \"release/cli.py:12\",\n      \"explanation\": \"The only use of setuptools is to get the distribution version, which does not involve the vulnerable functionality.\"\n    }\n  ]\n}\n```",
+     "in": 1651,
+     "out": 235,
+     "s": 27.14,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 16227.5,
+   "output": {
+    "critique": "The application does not use the vulnerable symbols 'package_index', 'PyPA', or 'PackageIndex'. The only uses of setuptools are in setup.py and release/cli.py, which do not involve the vulnerable functionality. The application's production code does not exercise the vulnerable function, feature, or configuration described in the advisory.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 1.0
+   },
+   "tokens_in": 1448,
+   "tokens_out": 110,
+   "llm_calls": 1,
+   "llm_seconds": 16.22,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"critique\": \"The application does not use the vulnerable symbols 'package_index', 'PyPA', or 'PackageIndex'. The only uses of setuptools are in setup.py and release/cli.py, which do not involve the vulnerable functionality. The application's production code does not exercise the vulnerable function, feature, or configuration described in the advisory.\",\n  \"agrees\": true,\n  \"retry\": false,\n  \"final_verdict\": \"not_reachable\",\n  \"confidence\": 1.0\n}\n```",
+     "in": 1448,
+     "out": 110,
+     "s": 16.22,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 1.0,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3099,
+  "tokens_out": 345,
+  "cost_usd_est": 0.0,
+  "seconds": 43.42
+ },
+ "created": "2026-11-10T22:45:49+00:00",
+ "code_version": "ea5880b"
+}

@@ -1,0 +1,323 @@
+{
+ "finding_id": "mealie/idna@3.4/GHSA-65pc-fj4g-8rjx",
+ "config": "no-reflection",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": false,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-45409",
+   "GHSA-65pc-fj4g-8rjx",
+   "PYSEC-2026-215"
+  ],
+  "cves": [
+   "CVE-2026-45409"
+  ],
+  "cwes": [
+   "CWE-1333"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/idna@3.4/GHSA-65pc-fj4g-8rjx",
+  "first_fixed_above_installed": "3.15",
+  "fixed_versions": [
+   "3.15"
+  ],
+  "max_cvss": "6.9",
+  "package": "idna",
+  "published": "2026-05-19T14:34:32Z",
+  "summary": "Internationalized Domain Names in Applications (IDNA): Specially crafted inputs to idna.encode() can bypass CVE-2024-3651 fix",
+  "target": "mealie",
+  "version": "3.4",
+  "vuln_id": "GHSA-65pc-fj4g-8rjx"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "idna.encode",
+   "valid_contexto",
+   "encode"
+  ],
+  "reasoning": "The advisory concerns idna.encode() and the internal valid_contexto() function being vulnerable to resource exhaustion from crafted long inputs. Static analysis found idna is a transitive dependency not directly imported anywhere in the application's 322 first-party Python files, with zero call/reference sites to idna.encode, valid_contexto, or encode, and zero paths from entry points. The retrieved application code (URL validation, locale validation, i18n provider) has no relation to IDNA/domain-name encoding and does not invoke idna at all. Since there is no evidence the application ever calls idna.encode() directly or indirectly through first-party code, and no entry point exercises this path, the vulnerable feature appears unused. This is a transitive dependency likely pulled in by another library (e.g. requests/urllib3) but nothing in the first-party code shows it being invoked on attacker-controlled long strings.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "Vulnerability requires a call to idna.encode() with a crafted long string; no such call exists in the app."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 production call sites of idna.encode/valid_contexto/encode across all first-party files, with 0 import sites."
+   },
+   {
+    "location": "mealie/services/recipe/recipe_data_service.py:105-116",
+    "explanation": "URL validation here is a simple domain blocklist check, not related to idna encoding."
+   },
+   {
+    "location": "mealie/schema/_mealie/validators.py:1-38",
+    "explanation": "Locale validation uses a static set membership check, unrelated to IDNA domain encoding."
+   }
+  ]
+ },
+ "reflection": null,
+ "symbols": [
+  "idna.encode",
+  "valid_contexto",
+  "encode"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/idna@3.4/GHSA-65pc-fj4g-8rjx",
+    "package": "idna",
+    "version": "3.4",
+    "vuln_id": "GHSA-65pc-fj4g-8rjx",
+    "aliases": [
+     "CVE-2026-45409",
+     "GHSA-65pc-fj4g-8rjx",
+     "PYSEC-2026-215"
+    ],
+    "summary": "Internationalized Domain Names in Applications (IDNA): Specially crafted inputs to idna.encode() can bypass CVE-2024-3651 fix",
+    "max_cvss": "6.9",
+    "fixed_versions": [
+     "3.15"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 33.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-65pc-fj4g-8rjx#0",
+      "score": 0.893,
+      "text": "GHSA-65pc-fj4g-8rjx (CVE-2026-45409)\npackage: idna\nsummary: Internationalized Domain Names in Applications (IDNA): Specially crafted inputs to idna.encode() can bypass CVE-2024-3651 fix\naffected: >=0, <3.15",
+      "vuln_id": "GHSA-65pc-fj4g-8rjx"
+     },
+     {
+      "id": "GHSA-65pc-fj4g-8rjx#1",
+      "score": 0.787,
+      "text": "GHSA-65pc-fj4g-8rjx (idna) details:\nThis is the same issue as CVE-2024-3651, however the original remediation in 2024 was not a complete fix. Payloads such as `\"\\u0660\" * N` or `\"\\u30fb\" * N + \"\\u6f22\"` utilize the `valid_contexto` function prior to length rejection, and for high values of `N` will take a long time to process.\n\n### Impact\nA specially crafted argument to the `idna.encode()` function could consume significant resources. This may lead to a denial-of-service.\n\n### Patches\nStarting in version 3.14, the function rejects long inputs as soon as practicable prior to any further processing to minimize resource consumption. In version 3.15, this approach was extended to lesser used alternate functions (i.e. per-label conversions and codec support).",
+      "vuln_id": "GHSA-65pc-fj4g-8rjx"
+     },
+     {
+      "id": "GHSA-65pc-fj4g-8rjx#2",
+      "score": 0.778,
+      "text": "GHSA-65pc-fj4g-8rjx (idna) details:\n### Workarounds\nDomain names cannot exceed 253 characters in length, if this length limit is enforced prior to passing the domain to the `idna.encode()` function it should no longer consume significant resources. This is triggered by arbitrarily large inputs that would not occur in normal usage, but may be passed to the library assuming there is no preliminary input validation by the higher-level application.",
+      "vuln_id": "GHSA-65pc-fj4g-8rjx"
+     },
+     {
+      "id": "GHSA-jjg7-2v4v-x38h#0",
+      "score": 0.861,
+      "text": "GHSA-jjg7-2v4v-x38h (CVE-2024-3651)\npackage: idna\nsummary: Internationalized Domain Names in Applications (IDNA) vulnerable to denial of service from specially crafted inputs to idna.encode\naffected: >=0, <3.7",
+      "vuln_id": "GHSA-jjg7-2v4v-x38h"
+     },
+     {
+      "id": "GHSA-jjg7-2v4v-x38h#1",
+      "score": 0.791,
+      "text": "GHSA-jjg7-2v4v-x38h (idna) details:\n### Impact\nA specially crafted argument to the `idna.encode()` function could consume significant resources. This may lead to a denial-of-service.\n\n### Patches\nThe function has been refined to reject such strings without the associated resource consumption in version 3.7.\n\n### Workarounds\nDomain names cannot exceed 253 characters in length, if this length limit is enforced prior to passing the domain to the `idna.encode()` function it should no longer consume significant resources. This is triggered by arbitrarily large inputs that would not occur in normal usage, but may be passed to the library assuming there is no preliminary input validation by the higher-level application.",
+      "vuln_id": "GHSA-jjg7-2v4v-x38h"
+     }
+    ],
+    "symbols": [
+     "idna.encode",
+     "valid_contexto",
+     "encode"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 425.9,
+   "output": {
+    "package": "idna",
+    "import_names": [
+     "idna"
+    ],
+    "symbols": [
+     "idna.encode",
+     "valid_contexto",
+     "encode"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "idna: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['idna.encode', 'valid_contexto', 'encode']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 38.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:105",
+      "score": 0.685,
+      "text": "# mealie/services/recipe/recipe_data_service.py:105-116  RecipeDataService._validate_image_url\n    def _validate_image_url(url: str) -> bool:\n        # sourcery skip: invert-any-all, use-any\n        \"\"\"\n        Validates that the URL is of an allowed source and restricts certain sources to prevent\n        malicious images from being downloaded.\n        \"\"\"\n        invalid_domains = {\"127.0.0.1\", \"localhost\"}\n        for domain in invalid_domains:\n            if domain in url:\n                return False\n\n        return True",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 105,
+      "qualname": "RecipeDataService._validate_image_url"
+     },
+     {
+      "id": "mealie:mealie/schema/user/registration.py:22",
+      "score": 0.683,
+      "text": "# mealie/schema/user/registration.py:22-25  CreateUserRegistration.valid_locale\n    def valid_locale(cls, v, values, **kwargs):\n        if not validate_locale(v):\n            raise ValueError(\"invalid locale\")\n        return v",
+      "file": "mealie/schema/user/registration.py",
+      "start": 22,
+      "qualname": "CreateUserRegistration.valid_locale"
+     },
+     {
+      "id": "mealie:mealie/schema/group/group_seeder.py:11",
+      "score": 0.676,
+      "text": "# mealie/schema/group/group_seeder.py:11-14  SeederConfig.valid_locale\n    def valid_locale(cls, v, values, **kwargs):\n        if not validate_locale(v):\n            raise ValueError(\"invalid locale\")\n        return v",
+      "file": "mealie/schema/group/group_seeder.py",
+      "start": 11,
+      "qualname": "SeederConfig.valid_locale"
+     },
+     {
+      "id": "mealie:mealie/schema/_mealie/validators.py:1",
+      "score": 0.653,
+      "text": "# mealie/schema/_mealie/validators.py:1-38  validate_locale\ndef validate_locale(locale: str) -> bool:\n    valid = {\n        \"el-GR\",\n        \"it-IT\",\n        \"ko-KR\",\n        \"es-ES\",\n        \"ja-JP\",\n        \"zh-CN\",\n        \"tr-TR\",\n        \"ar-SA\",\n        \"hu-HU\",\n        \"pt-PT\",\n        \"no-NO\",\n        \"sv-SE\",\n        \"ro-RO\",\n        \"sk-SK\",\n        \"uk-UA\",\n        \"fr-CA\",\n        \"pl-PL\",\n        \"da-DK\",\n        \"pt-BR\",\n        \"de-DE\",\n        \"ca-ES\",\n        \"sr-SP\",\n        \"cs-CZ\",\n        \"fr-FR\",\n        \"zh-TW\",\n        \"af-ZA\",\n        \"ru-RU\",\n        \"he-IL\",\n        \"nl-NL\",\n        \"en-US\",\n        \"en-GB\",\n        \"fi-FI\",\n        \"vi-VN\",\n    }\n\n    return locale in valid",
+      "file": "mealie/schema/_mealie/validators.py",
+      "start": 1,
+      "qualname": "validate_locale"
+     },
+     {
+      "id": "mealie:mealie/pkgs/i18n/provider_factory.py:module",
+      "score": 0.65,
+      "text": "# mealie/pkgs/i18n/provider_factory.py (module level)\nfrom dataclasses import dataclass, field\nfrom pathlib import Path\nfrom .json_provider import JsonProvider\n@dataclass(slots=True)\nclass InUseProvider:\n    provider: JsonProvider\n    locks: int\n@dataclass(slots=True)\nclass ProviderFactory:\n    directory: Path\n    fallback_locale: str = \"en-US\"\n    filename_format = \"{locale}.{format}\"\n    _store: dict[str, InUseProvider] = field(default_factory=dict)\n    @property",
+      "file": "mealie/pkgs/i18n/provider_factory.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 8520.2,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "idna.encode",
+     "valid_contexto",
+     "encode"
+    ],
+    "reasoning": "The advisory concerns idna.encode() and the internal valid_contexto() function being vulnerable to resource exhaustion from crafted long inputs. Static analysis found idna is a transitive dependency not directly imported anywhere in the application's 322 first-party Python files, with zero call/reference sites to idna.encode, valid_contexto, or encode, and zero paths from entry points. The retrieved application code (URL validation, locale validation, i18n provider) has no relation to IDNA/domain-name encoding and does not invoke idna at all. Since there is no evidence the application ever calls idna.encode() directly or indirectly through first-party code, and no entry point exercises this path, the vulnerable feature appears unused. This is a transitive dependency likely pulled in by another library (e.g. requests/urllib3) but nothing in the first-party code shows it being invoked on attacker-controlled long strings.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Vulnerability requires a call to idna.encode() with a crafted long string; no such call exists in the app."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 production call sites of idna.encode/valid_contexto/encode across all first-party files, with 0 import sites."
+     },
+     {
+      "location": "mealie/services/recipe/recipe_data_service.py:105-116",
+      "explanation": "URL validation here is a simple domain blocklist check, not related to idna encoding."
+     },
+     {
+      "location": "mealie/schema/_mealie/validators.py:1-38",
+      "explanation": "Locale validation uses a static set membership check, unrelated to IDNA domain encoding."
+     }
+    ]
+   },
+   "tokens_in": 3777,
+   "tokens_out": 623,
+   "llm_calls": 1,
+   "llm_seconds": 8.52,
+   "cost_usd_est": 0.020676,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"not_reachable\",\n  \"confidence\": 0.85,\n  \"vulnerable_symbols\": [\"idna.encode\", \"valid_contexto\", \"encode\"],\n  \"reasoning\": \"The advisory concerns idna.encode() and the internal valid_contexto() function being vulnerable to resource exhaustion from crafted long inputs. Static analysis found idna is a transitive dependency not directly imported anywhere in the application's 322 first-party Python files, with zero call/reference sites to idna.encode, valid_contexto, or encode, and zero paths from entry points. The retrieved application code (URL validation, locale validation, i18n provider) has no relation to IDNA/domain-name encoding and does not invoke idna at all. Since there is no evidence the application ever calls idna.encode() directly or indirectly through first-party code, and no entry point exercises this path, the vulnerable feature appears unused. This is a transitive dependency likely pulled in by another library (e.g. requests/urllib3) but nothing in the first-party code shows it being invoked on attacker-controlled long strings.\",\n  \"evidence\": [\n    {\"location\": \"advisory\", \"explanation\": \"Vulnerability requires a call to idna.encode() with a crafted long string; no such call exists in the app.\"},\n    {\"location\": \"static evidence summary\", \"explanation\": \"0 production call sites of idna.encode/valid_contexto/encode across all first-party files, with 0 import sites.\"},\n    {\"location\": \"mealie/services/recipe/recipe_data_service.py:105-116\", \"explanation\": \"URL validation here is a simple domain blocklist check, not related to idna encoding.\"},\n    {\"location\": \"mealie/schema/_mealie/validators.py:1-38\", \"explanation\": \"Locale validation uses a static set membership check, unrelated to IDNA domain encoding.\"}\n  ]\n}\n```",
+     "in": 3777,
+     "out": 623,
+     "s": 8.52,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 1,
+  "tokens_in": 3777,
+  "tokens_out": 623,
+  "cost_usd_est": 0.020676,
+  "seconds": 9.02
+ },
+ "created": "2026-11-10T20:34:03+00:00",
+ "code_version": "ea5880b"
+}

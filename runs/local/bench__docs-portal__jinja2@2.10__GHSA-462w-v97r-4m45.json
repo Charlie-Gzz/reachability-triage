@@ -1,0 +1,358 @@
+{
+ "finding_id": "bench/docs-portal/jinja2@2.10/GHSA-462w-v97r-4m45",
+ "config": "local",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/docs-portal",
+ "provider": "local",
+ "model": "qwen2.5-coder-14b-instruct",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2019-10906",
+   "GHSA-462w-v97r-4m45",
+   "PYSEC-2019-217"
+  ],
+  "cves": [
+   "CVE-2019-10906"
+  ],
+  "cwes": [
+   "CWE-693"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/docs-portal/jinja2@2.10/GHSA-462w-v97r-4m45",
+  "first_fixed_above_installed": "2.10.1",
+  "fixed_versions": [
+   "2.10.1"
+  ],
+  "max_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N",
+  "package": "jinja2",
+  "published": "2019-04-10T14:30:24Z",
+  "split": "test",
+  "summary": "Jinja2 sandbox escape via string formatting",
+  "target": "bench/docs-portal",
+  "version": "2.10",
+  "vuln_id": "GHSA-462w-v97r-4m45"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.9,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 1.0,
+  "vulnerable_symbols": [
+   "str.format_map",
+   "str.format",
+   "format_map",
+   "is_safe_attribute"
+  ],
+  "reasoning": "The application uses Jinja2 to render templates, but the vulnerable symbols ('str.format_map', 'str.format', 'format_map', 'is_safe_attribute') are not directly called or referenced in the provided code. The only usage of Jinja2 is in setting up the environment and rendering pages, which does not involve the specific vulnerable methods.",
+  "evidence": [
+   {
+    "location": "portal/render.py:3",
+    "explanation": "Jinja2 is imported but not used to call any vulnerable symbols."
+   },
+   {
+    "location": "portal/render.py:5",
+    "explanation": "The Jinja2 environment is set up with autoescape enabled, which mitigates the risk of sandbox escape vulnerabilities."
+   },
+   {
+    "location": "portal/render.py:13-18",
+    "explanation": "The 'build' function uses Jinja2 to render pages but does not call any vulnerable methods."
+   },
+   {
+    "location": "portal/__main__.py",
+    "explanation": "The '__main__' module calls the 'build' function, which uses Jinja2 for rendering but does not involve the vulnerable symbols."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The application uses Jinja2 to render templates, but the provided code does not directly call or reference the vulnerable symbols ('str.format_map', 'str.format', 'format_map', 'is_safe_attribute'). The only usage of Jinja2 is in setting up the environment and rendering pages, which does not involve the specific vulnerable methods. However, the static evidence analysis did not search for any custom filters that might indirectly call these methods, which could potentially lead to a sandbox escape vulnerability.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.9
+ },
+ "symbols": [
+  "str.format_map",
+  "str.format",
+  "format_map",
+  "is_safe_attribute"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/docs-portal/jinja2@2.10/GHSA-462w-v97r-4m45",
+    "package": "jinja2",
+    "version": "2.10",
+    "vuln_id": "GHSA-462w-v97r-4m45",
+    "aliases": [
+     "CVE-2019-10906",
+     "GHSA-462w-v97r-4m45",
+     "PYSEC-2019-217"
+    ],
+    "summary": "Jinja2 sandbox escape via string formatting",
+    "max_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N",
+    "fixed_versions": [
+     "2.10.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-462w-v97r-4m45#0",
+      "score": 0.874,
+      "text": "GHSA-462w-v97r-4m45 (CVE-2019-10906)\npackage: jinja2\nsummary: Jinja2 sandbox escape via string formatting\naffected: >=0, <2.10.1",
+      "vuln_id": "GHSA-462w-v97r-4m45"
+     },
+     {
+      "id": "GHSA-462w-v97r-4m45#1",
+      "score": 0.837,
+      "text": "GHSA-462w-v97r-4m45 (jinja2) details:\nIn Pallets Jinja before 2.10.1, `str.format_map` allows a sandbox escape.\n\nThe sandbox is used to restrict what code can be evaluated when rendering untrusted, user-provided templates. Due to the way string formatting works in Python, the `str.format_map` method could be used to escape the sandbox.\n\nThis issue was previously addressed for the `str.format` method in Jinja 2.8.1, which discusses the issue in detail. However, the less-common `str.format_map` method was overlooked. This release applies the same sandboxing to both methods.\n\nIf you cannot upgrade Jinja, you can override the `is_safe_attribute` method on the sandbox and explicitly disallow the `format_map` method on string objects.",
+      "vuln_id": "GHSA-462w-v97r-4m45"
+     },
+     {
+      "id": "GHSA-q2x7-8rv6-6q7h#1",
+      "score": 0.86,
+      "text": "GHSA-q2x7-8rv6-6q7h (jinja2) details:\nAn oversight in how the Jinja sandboxed environment detects calls to `str.format` allows an attacker that controls the content of a template to execute arbitrary Python code.\n\nTo exploit the vulnerability, an attacker needs to control the content of a template. Whether that is the case depends on the type of application using Jinja. This vulnerability impacts users of applications which execute untrusted templates.\n\nJinja's sandbox does catch calls to `str.format` and ensures they don't escape the sandbox. However, it's possible to store a reference to a malicious string's `format` method, then pass that to a filter that calls it. No such filters are built-in to Jinja, but could be present through custom filters in an application. After the fix, such indirect calls are also handled by the sandbox.",
+      "vuln_id": "GHSA-q2x7-8rv6-6q7h"
+     },
+     {
+      "id": "GHSA-hj2j-77xm-mc5v#0",
+      "score": 0.829,
+      "text": "GHSA-hj2j-77xm-mc5v (CVE-2016-10745)\npackage: jinja2\nsummary: Jinja2 sandbox escape vulnerability\naffected: >=0, <2.8.1",
+      "vuln_id": "GHSA-hj2j-77xm-mc5v"
+     }
+    ],
+    "symbols": [
+     "str.format_map",
+     "str.format",
+     "format_map",
+     "is_safe_attribute"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 4.1,
+   "output": {
+    "package": "jinja2",
+    "import_names": [
+     "jinja2"
+    ],
+    "symbols": [
+     "str.format_map",
+     "str.format",
+     "format_map",
+     "is_safe_attribute"
+    ],
+    "imported": true,
+    "import_locations": [
+     "portal/render.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "portal/render.py:5",
+      "code": "env = Environment(loader=FileSystemLoader(\"theme\"), autoescape=select_autoescape([\"html\"]))",
+      "function": "portal.render:<module>",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [],
+    "summary": "jinja2: imported in 1 non-test location(s); 3 package call/reference site(s); named vulnerable symbols ['str.format_map', 'str.format', 'format_map', 'is_safe_attribute']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 31.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "bench/docs-portal:portal/render.py:module",
+      "score": 0.681,
+      "text": "# portal/render.py (module level)\nfrom pathlib import Path\nfrom jinja2 import Environment, FileSystemLoader, select_autoescape\nenv = Environment(loader=FileSystemLoader(\"theme\"), autoescape=select_autoescape([\"html\"]))",
+      "file": "portal/render.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/docs-portal:portal/render.py:13",
+      "score": 0.605,
+      "text": "# portal/render.py:13-18  build\ndef build(pages: list, out_dir: str = \"public\") -> None:\n    out = Path(out_dir)\n    out.mkdir(exist_ok=True)\n    nav = [{\"title\": p[\"title\"], \"slug\": p[\"slug\"]} for p in pages]\n    for page in pages:\n        (out / f\"{page['slug']}.html\").write_text(render_page(page, nav))",
+      "file": "portal/render.py",
+      "start": 13,
+      "qualname": "build"
+     },
+     {
+      "id": "bench/docs-portal:portal/__main__.py:module",
+      "score": 0.598,
+      "text": "# portal/__main__.py (module level)\nimport json\nimport sys\nfrom portal.render import build\nif __name__ == \"__main__\":\n    build(json.load(open(sys.argv[1])))",
+      "file": "portal/__main__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/docs-portal:portal/render.py:8",
+      "score": 0.561,
+      "text": "# portal/render.py:8-10  render_page\ndef render_page(page: dict, nav: list) -> str:\n    template = env.get_template(page.get(\"layout\", \"page.html\"))\n    return template.render(page=page, nav=nav)",
+      "file": "portal/render.py",
+      "start": 8,
+      "qualname": "render_page"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 34871.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 1.0,
+    "vulnerable_symbols": [
+     "str.format_map",
+     "str.format",
+     "format_map",
+     "is_safe_attribute"
+    ],
+    "reasoning": "The application uses Jinja2 to render templates, but the vulnerable symbols ('str.format_map', 'str.format', 'format_map', 'is_safe_attribute') are not directly called or referenced in the provided code. The only usage of Jinja2 is in setting up the environment and rendering pages, which does not involve the specific vulnerable methods.",
+    "evidence": [
+     {
+      "location": "portal/render.py:3",
+      "explanation": "Jinja2 is imported but not used to call any vulnerable symbols."
+     },
+     {
+      "location": "portal/render.py:5",
+      "explanation": "The Jinja2 environment is set up with autoescape enabled, which mitigates the risk of sandbox escape vulnerabilities."
+     },
+     {
+      "location": "portal/render.py:13-18",
+      "explanation": "The 'build' function uses Jinja2 to render pages but does not call any vulnerable methods."
+     },
+     {
+      "location": "portal/__main__.py",
+      "explanation": "The '__main__' module calls the 'build' function, which uses Jinja2 for rendering but does not involve the vulnerable symbols."
+     }
+    ]
+   },
+   "tokens_in": 1716,
+   "tokens_out": 304,
+   "llm_calls": 1,
+   "llm_seconds": 34.86,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"not_reachable\",\n  \"confidence\": 1,\n  \"vulnerable_symbols\": [\"str.format_map\", \"str.format\", \"format_map\", \"is_safe_attribute\"],\n  \"reasoning\": \"The application uses Jinja2 to render templates, but the vulnerable symbols ('str.format_map', 'str.format', 'format_map', 'is_safe_attribute') are not directly called or referenced in the provided code. The only usage of Jinja2 is in setting up the environment and rendering pages, which does not involve the specific vulnerable methods.\",\n  \"evidence\": [\n    {\n      \"location\": \"portal/render.py:3\",\n      \"explanation\": \"Jinja2 is imported but not used to call any vulnerable symbols.\"\n    },\n    {\n      \"location\": \"portal/render.py:5\",\n      \"explanation\": \"The Jinja2 environment is set up with autoescape enabled, which mitigates the risk of sandbox escape vulnerabilities.\"\n    },\n    {\n      \"location\": \"portal/render.py:13-18\",\n      \"explanation\": \"The 'build' function uses Jinja2 to render pages but does not call any vulnerable methods.\"\n    },\n    {\n      \"location\": \"portal/__main__.py\",\n      \"explanation\": \"The '__main__' module calls the 'build' function, which uses Jinja2 for rendering but does not involve the vulnerable symbols.\"\n    }\n  ]\n}\n```",
+     "in": 1716,
+     "out": 304,
+     "s": 34.86,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 22221.4,
+   "output": {
+    "critique": "The application uses Jinja2 to render templates, but the provided code does not directly call or reference the vulnerable symbols ('str.format_map', 'str.format', 'format_map', 'is_safe_attribute'). The only usage of Jinja2 is in setting up the environment and rendering pages, which does not involve the specific vulnerable methods. However, the static evidence analysis did not search for any custom filters that might indirectly call these methods, which could potentially lead to a sandbox escape vulnerability.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.9
+   },
+   "tokens_in": 1562,
+   "tokens_out": 143,
+   "llm_calls": 1,
+   "llm_seconds": 22.2,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"critique\": \"The application uses Jinja2 to render templates, but the provided code does not directly call or reference the vulnerable symbols ('str.format_map', 'str.format', 'format_map', 'is_safe_attribute'). The only usage of Jinja2 is in setting up the environment and rendering pages, which does not involve the specific vulnerable methods. However, the static evidence analysis did not search for any custom filters that might indirectly call these methods, which could potentially lead to a sandbox escape vulnerability.\",\n  \"agrees\": true,\n  \"retry\": false,\n  \"final_verdict\": \"not_reachable\",\n  \"confidence\": 0.9\n}\n```",
+     "in": 1562,
+     "out": 143,
+     "s": 22.2,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.9,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3278,
+  "tokens_out": 447,
+  "cost_usd_est": 0.0,
+  "seconds": 57.16
+ },
+ "created": "2026-11-10T22:32:54+00:00",
+ "code_version": "ea5880b"
+}

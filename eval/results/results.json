@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-10T03:27:57+00:00",
+  "generated": "2026-11-10T23:12:15+00:00",
   "configs": {
     "full": {
       "bench-test": {
@@ -88,52 +88,679 @@
         "errors": []
       },
       "real-eval": {
-        "n": 1,
-        "true_reachable": 0,
+        "n": 19,
+        "true_reachable": 5,
+        "tp": 2,
+        "predicted_reachable": 4,
+        "false_suppressions": 1,
+        "precision": 0.5,
+        "recall": 0.4,
+        "false_suppression_rate": 0.2,
+        "noise_reduction": 0.579,
+        "uncertain_rate": 0.158,
+        "suppressed_rate": 0.632,
+        "accuracy": 0.684,
+        "precision_ci95": [
+          0.0,
+          1.0
+        ],
+        "recall_ci95": [
+          0.0,
+          1.0
+        ],
+        "false_suppression_rate_ci95": [
+          0.0,
+          0.667
+        ],
+        "noise_reduction_ci95": [
+          0.368,
+          0.789
+        ],
+        "uncertain_rate_ci95": [
+          0.0,
+          0.316
+        ],
+        "findings_run": 50,
+        "excluded_truth_uncertain": 31,
+        "labels_reviewed": 50,
+        "provisional": false,
+        "predictions": {
+          "uncertain": 9,
+          "not_reachable": 32,
+          "reachable": 9
+        },
+        "llm_calls_per_finding": 2.28,
+        "tokens_in_per_finding": 9968,
+        "tokens_out_per_finding": 3603,
+        "cost_usd_est_per_finding": 0.0839,
+        "seconds_per_finding_p50": 35.7,
+        "seconds_per_finding_mean": 44.9,
+        "parse_errors": 0,
+        "changed_by_reflection": 2,
+        "errors": [
+          {
+            "finding_id": "ctfd/certifi@2020.11.8/GHSA-43fp-rhv2-5gv8",
+            "truth": "reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2023-221",
+            "truth": "not_reachable",
+            "predicted": "reachable"
+          },
+          {
+            "finding_id": "healthchecks/urllib3@1.26.20/GHSA-38jv-5279-wg99",
+            "truth": "not_reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "mealie/python-multipart@0.0.6/GHSA-59g5-xgcq-4qw3",
+            "truth": "not_reachable",
+            "predicted": "reachable"
+          },
+          {
+            "finding_id": "mealie/python-multipart@0.0.6/GHSA-5rvq-cxj2-64vf",
+            "truth": "reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "mealie/urllib3@1.26.14/GHSA-v845-jxx5-vc9f",
+            "truth": "reachable",
+            "predicted": "not_reachable"
+          }
+        ]
+      },
+      "provider": "claude-code",
+      "model": "claude-sonnet-5"
+    },
+    "no-retrieval": {
+      "bench-test": {
+        "n": 20,
+        "true_reachable": 10,
+        "tp": 6,
+        "predicted_reachable": 7,
+        "false_suppressions": 2,
+        "precision": 0.857,
+        "recall": 0.6,
+        "false_suppression_rate": 0.2,
+        "noise_reduction": 0.4,
+        "uncertain_rate": 0.15,
+        "suppressed_rate": 0.5,
+        "accuracy": 0.7,
+        "precision_ci95": [
+          0.5,
+          1.0
+        ],
+        "recall_ci95": [
+          0.286,
+          0.889
+        ],
+        "false_suppression_rate_ci95": [
+          0.0,
+          0.5
+        ],
+        "noise_reduction_ci95": [
+          0.2,
+          0.6
+        ],
+        "uncertain_rate_ci95": [
+          0.0,
+          0.3
+        ],
+        "findings_run": 20,
+        "excluded_truth_uncertain": 0,
+        "labels_reviewed": 20,
+        "provisional": false,
+        "predictions": {
+          "not_reachable": 10,
+          "reachable": 7,
+          "uncertain": 3
+        },
+        "llm_calls_per_finding": 2.2,
+        "tokens_in_per_finding": 4471,
+        "tokens_out_per_finding": 2434,
+        "cost_usd_est_per_finding": 0.0499,
+        "seconds_per_finding_p50": 31.0,
+        "seconds_per_finding_mean": 32.5,
+        "parse_errors": 0,
+        "changed_by_reflection": 0,
+        "by_category": {
+          "direct_call": {
+            "n": 6,
+            "correct": 3
+          },
+          "config_disabled": {
+            "n": 4,
+            "correct": 3
+          },
+          "config_enabled": {
+            "n": 2,
+            "correct": 1
+          },
+          "test_only": {
+            "n": 1,
+            "correct": 1
+          },
+          "safe_api_only": {
+            "n": 3,
+            "correct": 3
+          },
+          "dead_code": {
+            "n": 1,
+            "correct": 1
+          },
+          "indirect_call": {
+            "n": 2,
+            "correct": 2
+          },
+          "imported_not_called": {
+            "n": 1,
+            "correct": 0
+          }
+        },
+        "errors": [
+          {
+            "finding_id": "bench/article-api/django@3.2.0/GHSA-xpfp-f569-q3p2",
+            "truth": "reachable",
+            "predicted": "not_reachable"
+          },
+          {
+            "finding_id": "bench/comments-hub/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+            "truth": "not_reachable",
+            "predicted": "reachable"
+          },
+          {
+            "finding_id": "bench/newsletter-render/jinja2@2.10/GHSA-h5c8-rqwp-cp95",
+            "truth": "reachable",
+            "predicted": "not_reachable"
+          },
+          {
+            "finding_id": "bench/notes-app/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+            "truth": "reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "bench/repo-mirror/gitpython@3.1.29/GHSA-hcpj-qp55-gfph",
+            "truth": "reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "bench/ssh-inventory/paramiko@2.9.2/GHSA-f8q4-jwww-x3wv",
+            "truth": "not_reachable",
+            "predicted": "uncertain"
+          }
+        ]
+      },
+      "real-eval": {
+        "n": 19,
+        "true_reachable": 5,
+        "tp": 0,
+        "predicted_reachable": 1,
+        "false_suppressions": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "false_suppression_rate": 0.0,
+        "noise_reduction": 0.474,
+        "uncertain_rate": 0.474,
+        "suppressed_rate": 0.474,
+        "accuracy": 0.474,
+        "precision_ci95": [
+          0.0,
+          0.0
+        ],
+        "recall_ci95": [
+          0.0,
+          0.0
+        ],
+        "false_suppression_rate_ci95": [
+          0.0,
+          0.0
+        ],
+        "noise_reduction_ci95": [
+          0.263,
+          0.684
+        ],
+        "uncertain_rate_ci95": [
+          0.263,
+          0.684
+        ],
+        "findings_run": 50,
+        "excluded_truth_uncertain": 31,
+        "labels_reviewed": 50,
+        "provisional": false,
+        "predictions": {
+          "uncertain": 23,
+          "not_reachable": 22,
+          "reachable": 5
+        },
+        "llm_calls_per_finding": 2.88,
+        "tokens_in_per_finding": 6420,
+        "tokens_out_per_finding": 4199,
+        "cost_usd_est_per_finding": 0.0822,
+        "seconds_per_finding_p50": 50.4,
+        "seconds_per_finding_mean": 53.5,
+        "parse_errors": 0,
+        "changed_by_reflection": 4,
+        "errors": [
+          {
+            "finding_id": "ctfd/certifi@2020.11.8/GHSA-43fp-rhv2-5gv8",
+            "truth": "reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "ctfd/requests@2.23.0/GHSA-gc5v-m9x4-r6x2",
+            "truth": "not_reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2022-203",
+            "truth": "not_reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2023-221",
+            "truth": "not_reachable",
+            "predicted": "reachable"
+          },
+          {
+            "finding_id": "healthchecks/urllib3@1.26.20/GHSA-2xpw-w6gg-jr37",
+            "truth": "reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "healthchecks/urllib3@1.26.20/GHSA-38jv-5279-wg99",
+            "truth": "not_reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "mealie/python-multipart@0.0.6/GHSA-59g5-xgcq-4qw3",
+            "truth": "not_reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "mealie/python-multipart@0.0.6/GHSA-5rvq-cxj2-64vf",
+            "truth": "reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "mealie/starlette@0.27.0/GHSA-2c2j-9gv5-cj73",
+            "truth": "reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "mealie/urllib3@1.26.14/GHSA-v845-jxx5-vc9f",
+            "truth": "reachable",
+            "predicted": "uncertain"
+          }
+        ]
+      },
+      "provider": "claude-code",
+      "model": "claude-sonnet-5"
+    },
+    "no-reflection": {
+      "bench-test": {
+        "n": 20,
+        "true_reachable": 10,
+        "tp": 10,
+        "predicted_reachable": 11,
+        "false_suppressions": 0,
+        "precision": 0.909,
+        "recall": 1.0,
+        "false_suppression_rate": 0.0,
+        "noise_reduction": 0.45,
+        "uncertain_rate": 0.0,
+        "suppressed_rate": 0.45,
+        "accuracy": 0.95,
+        "precision_ci95": [
+          0.714,
+          1.0
+        ],
+        "recall_ci95": [
+          1.0,
+          1.0
+        ],
+        "false_suppression_rate_ci95": [
+          0.0,
+          0.0
+        ],
+        "noise_reduction_ci95": [
+          0.25,
+          0.65
+        ],
+        "uncertain_rate_ci95": [
+          0.0,
+          0.0
+        ],
+        "findings_run": 20,
+        "excluded_truth_uncertain": 0,
+        "labels_reviewed": 20,
+        "provisional": false,
+        "predictions": {
+          "reachable": 11,
+          "not_reachable": 9
+        },
+        "llm_calls_per_finding": 1,
+        "tokens_in_per_finding": 3377,
+        "tokens_out_per_finding": 882,
+        "cost_usd_est_per_finding": 0.0234,
+        "seconds_per_finding_p50": 9.3,
+        "seconds_per_finding_mean": 11.3,
+        "parse_errors": 0,
+        "changed_by_reflection": 0,
+        "by_category": {
+          "direct_call": {
+            "n": 6,
+            "correct": 6
+          },
+          "config_disabled": {
+            "n": 4,
+            "correct": 3
+          },
+          "config_enabled": {
+            "n": 2,
+            "correct": 2
+          },
+          "test_only": {
+            "n": 1,
+            "correct": 1
+          },
+          "safe_api_only": {
+            "n": 3,
+            "correct": 3
+          },
+          "dead_code": {
+            "n": 1,
+            "correct": 1
+          },
+          "indirect_call": {
+            "n": 2,
+            "correct": 2
+          },
+          "imported_not_called": {
+            "n": 1,
+            "correct": 1
+          }
+        },
+        "errors": [
+          {
+            "finding_id": "bench/comments-hub/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+            "truth": "not_reachable",
+            "predicted": "reachable"
+          }
+        ]
+      },
+      "real-eval": {
+        "n": 19,
+        "true_reachable": 5,
+        "tp": 2,
+        "predicted_reachable": 4,
+        "false_suppressions": 2,
+        "precision": 0.5,
+        "recall": 0.4,
+        "false_suppression_rate": 0.4,
+        "noise_reduction": 0.632,
+        "uncertain_rate": 0.053,
+        "suppressed_rate": 0.737,
+        "accuracy": 0.737,
+        "precision_ci95": [
+          0.0,
+          1.0
+        ],
+        "recall_ci95": [
+          0.0,
+          1.0
+        ],
+        "false_suppression_rate_ci95": [
+          0.0,
+          1.0
+        ],
+        "noise_reduction_ci95": [
+          0.421,
+          0.842
+        ],
+        "uncertain_rate_ci95": [
+          0.0,
+          0.158
+        ],
+        "findings_run": 50,
+        "excluded_truth_uncertain": 31,
+        "labels_reviewed": 50,
+        "provisional": false,
+        "predictions": {
+          "uncertain": 2,
+          "not_reachable": 39,
+          "reachable": 9
+        },
+        "llm_calls_per_finding": 1,
+        "tokens_in_per_finding": 4288,
+        "tokens_out_per_finding": 1295,
+        "cost_usd_est_per_finding": 0.0323,
+        "seconds_per_finding_p50": 13.5,
+        "seconds_per_finding_mean": 15.9,
+        "parse_errors": 0,
+        "changed_by_reflection": 0,
+        "errors": [
+          {
+            "finding_id": "ctfd/certifi@2020.11.8/GHSA-43fp-rhv2-5gv8",
+            "truth": "reachable",
+            "predicted": "uncertain"
+          },
+          {
+            "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2023-221",
+            "truth": "not_reachable",
+            "predicted": "reachable"
+          },
+          {
+            "finding_id": "mealie/python-multipart@0.0.6/GHSA-59g5-xgcq-4qw3",
+            "truth": "not_reachable",
+            "predicted": "reachable"
+          },
+          {
+            "finding_id": "mealie/python-multipart@0.0.6/GHSA-5rvq-cxj2-64vf",
+            "truth": "reachable",
+            "predicted": "not_reachable"
+          },
+          {
+            "finding_id": "mealie/urllib3@1.26.14/GHSA-v845-jxx5-vc9f",
+            "truth": "reachable",
+            "predicted": "not_reachable"
+          }
+        ]
+      },
+      "provider": "claude-code",
+      "model": "claude-sonnet-5"
+    },
+    "local": {
+      "bench-test": {
+        "n": 20,
+        "true_reachable": 10,
+        "tp": 8,
+        "predicted_reachable": 11,
+        "false_suppressions": 2,
+        "precision": 0.727,
+        "recall": 0.8,
+        "false_suppression_rate": 0.2,
+        "noise_reduction": 0.35,
+        "uncertain_rate": 0.0,
+        "suppressed_rate": 0.45,
+        "accuracy": 0.75,
+        "precision_ci95": [
+          0.444,
+          1.0
+        ],
+        "recall_ci95": [
+          0.5,
+          1.0
+        ],
+        "false_suppression_rate_ci95": [
+          0.0,
+          0.5
+        ],
+        "noise_reduction_ci95": [
+          0.15,
+          0.55
+        ],
+        "uncertain_rate_ci95": [
+          0.0,
+          0.0
+        ],
+        "findings_run": 20,
+        "excluded_truth_uncertain": 0,
+        "labels_reviewed": 20,
+        "provisional": false,
+        "predictions": {
+          "reachable": 11,
+          "not_reachable": 9
+        },
+        "llm_calls_per_finding": 2.1,
+        "tokens_in_per_finding": 3674,
+        "tokens_out_per_finding": 350,
+        "cost_usd_est_per_finding": 0.0,
+        "seconds_per_finding_p50": 43.4,
+        "seconds_per_finding_mean": 47.4,
+        "parse_errors": 0,
+        "changed_by_reflection": 1,
+        "by_category": {
+          "direct_call": {
+            "n": 6,
+            "correct": 5
+          },
+          "config_disabled": {
+            "n": 4,
+            "correct": 1
+          },
+          "config_enabled": {
+            "n": 2,
+            "correct": 1
+          },
+          "test_only": {
+            "n": 1,
+            "correct": 1
+          },
+          "safe_api_only": {
+            "n": 3,
+            "correct": 3
+          },
+          "dead_code": {
+            "n": 1,
+            "correct": 1
+          },
+          "indirect_call": {
+            "n": 2,
+            "correct": 2
+          },
+          "imported_not_called": {
+            "n": 1,
+            "correct": 1
+          }
+        },
+        "errors": [
+          {
+            "finding_id": "bench/comments-hub/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+            "truth": "not_reachable",
+            "predicted": "reachable"
+          },
+          {
+            "finding_id": "bench/inventory-api/django@3.2.0/GHSA-xpfp-f569-q3p2",
+            "truth": "not_reachable",
+            "predicted": "reachable"
+          },
+          {
+            "finding_id": "bench/newsletter-render/jinja2@2.10/GHSA-h5c8-rqwp-cp95",
+            "truth": "reachable",
+            "predicted": "not_reachable"
+          },
+          {
+            "finding_id": "bench/notes-app/bleach@3.1.0/GHSA-q65m-pv3f-wr5r",
+            "truth": "reachable",
+            "predicted": "not_reachable"
+          },
+          {
+            "finding_id": "bench/session-service/pyjwt@1.7.1/GHSA-ffqj-6fqr-9h24",
+            "truth": "not_reachable",
+            "predicted": "reachable"
+          }
+        ]
+      },
+      "real-eval": {
+        "n": 6,
+        "true_reachable": 2,
         "tp": 0,
         "predicted_reachable": 0,
-        "false_suppressions": 0,
+        "false_suppressions": 2,
         "precision": null,
-        "recall": null,
-        "false_suppression_rate": null,
-        "noise_reduction": 1.0,
+        "recall": 0.0,
+        "false_suppression_rate": 1.0,
+        "noise_reduction": 0.667,
         "uncertain_rate": 0.0,
         "suppressed_rate": 1.0,
-        "accuracy": 1.0,
+        "accuracy": 0.667,
         "precision_ci95": null,
-        "recall_ci95": null,
-        "false_suppression_rate_ci95": null,
-        "noise_reduction_ci95": [
+        "recall_ci95": [
+          0.0,
+          0.0
+        ],
+        "false_suppression_rate_ci95": [
           1.0,
+          1.0
+        ],
+        "noise_reduction_ci95": [
+          0.333,
           1.0
         ],
         "uncertain_rate_ci95": [
           0.0,
           0.0
         ],
-        "findings_run": 2,
-        "excluded_truth_uncertain": 1,
-        "labels_reviewed": 0,
-        "provisional": true,
+        "findings_run": 20,
+        "excluded_truth_uncertain": 14,
+        "labels_reviewed": 20,
+        "provisional": false,
         "predictions": {
-          "not_reachable": 1,
-          "reachable": 1
+          "not_reachable": 19,
+          "uncertain": 1
         },
-        "llm_calls_per_finding": 2,
-        "tokens_in_per_finding": 9034,
-        "tokens_out_per_finding": 4092,
-        "cost_usd_est_per_finding": 0.0885,
-        "seconds_per_finding_p50": 48.2,
-        "seconds_per_finding_mean": 48.2,
+        "llm_calls_per_finding": 2.6,
+        "tokens_in_per_finding": 6125,
+        "tokens_out_per_finding": 503,
+        "cost_usd_est_per_finding": 0.0,
+        "seconds_per_finding_p50": 76.8,
+        "seconds_per_finding_mean": 75.9,
         "parse_errors": 0,
-        "changed_by_reflection": 0,
-        "errors": []
+        "changed_by_reflection": 2,
+        "errors": [
+          {
+            "finding_id": "ctfd/certifi@2020.11.8/GHSA-43fp-rhv2-5gv8",
+            "truth": "reachable",
+            "predicted": "not_reachable"
+          },
+          {
+            "finding_id": "healthchecks/urllib3@1.26.20/GHSA-2xpw-w6gg-jr37",
+            "truth": "reachable",
+            "predicted": "not_reachable"
+          }
+        ]
       },
-      "provider": "claude-code",
-      "model": "claude-sonnet-5"
+      "provider": "local",
+      "model": "qwen2.5-coder-14b-instruct"
     }
   },
-  "remediation": null,
+  "remediation": {
+    "attempted": 9,
+    "failing_test_written": 3,
+    "fixed": 1,
+    "fixed_by": {
+      "upgrade": 1
+    },
+    "failure_reasons": {
+      "patch_failed": 2,
+      "no_failing_test": 6
+    },
+    "llm_calls": 21,
+    "fixed_ids": [
+      "healthchecks/urllib3@1.26.20/GHSA-2xpw-w6gg-jr37"
+    ]
+  },
   "retrieval": {
     "embed_model": "BAAI/bge-small-en-v1.5",
     "advisory": {
@@ -205,14 +832,14 @@
   },
   "labels": {
     "real_total": 50,
-    "real_reviewed": 0,
-    "real_pending": 50,
+    "real_reviewed": 50,
+    "real_pending": 0,
     "real_label_counts": {
-      "uncertain": 29,
-      "not_reachable": 13,
-      "reachable": 8
+      "reachable": 5,
+      "uncertain": 31,
+      "not_reachable": 14
     }
   },
-  "claude_calls_total": 82,
-  "headline": "Suppresses 50% of scanner noise with a 0% false-suppression rate (benchmark test split), and fixed 0 real vulnerabilities test-first."
+  "claude_calls_total": 472,
+  "headline": "Suppresses 58% of scanner noise (19 graded findings) while suppressing 1 of 5 truly reachable ones (real set), and fixed 1 real vulnerability test-first."
 }

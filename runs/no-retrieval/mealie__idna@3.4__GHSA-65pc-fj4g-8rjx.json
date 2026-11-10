@@ -1,0 +1,339 @@
+{
+ "finding_id": "mealie/idna@3.4/GHSA-65pc-fj4g-8rjx",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-45409",
+   "GHSA-65pc-fj4g-8rjx",
+   "PYSEC-2026-215"
+  ],
+  "cves": [
+   "CVE-2026-45409"
+  ],
+  "cwes": [
+   "CWE-1333"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/idna@3.4/GHSA-65pc-fj4g-8rjx",
+  "first_fixed_above_installed": "3.15",
+  "fixed_versions": [
+   "3.15"
+  ],
+  "max_cvss": "6.9",
+  "package": "idna",
+  "published": "2026-05-19T14:34:32Z",
+  "summary": "Internationalized Domain Names in Applications (IDNA): Specially crafted inputs to idna.encode() can bypass CVE-2024-3651 fix",
+  "target": "mealie",
+  "version": "3.4",
+  "vuln_id": "GHSA-65pc-fj4g-8rjx"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.55,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.5,
+  "vulnerable_symbols": [
+   "idna.encode",
+   "encode"
+  ],
+  "reasoning": "idna.encode() is vulnerable to a ReDoS-style bypass of the CVE-2024-3651 fix; the static scan correctly shows zero first-party call sites, but idna is a transitive dependency (commonly pulled in by requests/urllib3) and the vulnerable call typically lives inside that wrapper's host-encoding logic rather than in application code, so an absence of first-party symbol references does not by itself prove the path is dead. The evidence provided does not identify which package actually depends on idna in this project, nor does it show whether the application makes outbound HTTP/network calls where the hostname portion of a URL can be influenced by an external party (e.g., user-submitted URLs, webhooks, SSRF-prone fetchers, proxy configs). Without that information we cannot confirm the trigger condition (attacker-controlled non-ASCII/malformed hostname reaching idna.encode via a dependency like requests) is met, but we also cannot rule it out given the package is present in the dependency tree. This matches the 'uncertain' case: the vulnerable behavior sits inside a dependency the app may rely on indirectly, and the available evidence (first-party-only AST scan) cannot settle whether that path is exercised.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "idna.encode() is the named vulnerable symbol; exploitation requires attacker-influenced hostname/domain input reaching it."
+   },
+   {
+    "location": "static evidence",
+    "explanation": "Scan found 0 imports/call sites of idna or idna.encode in 322 first-party files, ruling out *direct* first-party use."
+   },
+   {
+    "location": "not scanned",
+    "explanation": "No evidence was collected on whether requests/urllib3 (idna's typical dependent) is used by the app to make outbound HTTP calls to externally-influenced hostnames, which is the realistic trigger path per the reviewer critique."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that the reviewer's own evidence (0 imports, 0 call sites, 0 package references to idna/encode across all 322 first-party files) is actually fairly strong negative evidence, and one could argue this should tip toward not_reachable rather than uncertain. However, this argument does not hold: the scan explicitly covers only first-party code and the literal symbol 'idna'/'encode', while the realistic exploitation path is idna.encode() being invoked transitively inside urllib3/requests' hostname-encoding logic whenever the app issues outbound HTTP(S) requests to an externally-influenced hostname. The scan provides no data on whether the app uses requests/urllib3 at all, nor whether any URL/hostname passed to such calls can be attacker-influenced (e.g., webhook URLs, user-submitted links, SSRF-prone fetchers). Absence of first-party references to the raw symbol name is expected for a transitive dependency and does not establish that the host-encoding code path is dead, since it would run inside the dependency's own source, which was not scanned. The verdict already acknowledges this gap transparently rather than ignoring it, correctly distinguishing 'no direct first-party use' (confirmed) from 'no HTTP path with attacker-controlled hostnames' (unconfirmed). This is a legitimate basis for uncertain rather than a misreading of the evidence.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.55
+ },
+ "symbols": [
+  "idna.encode",
+  "encode"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/idna@3.4/GHSA-65pc-fj4g-8rjx",
+    "package": "idna",
+    "version": "3.4",
+    "vuln_id": "GHSA-65pc-fj4g-8rjx",
+    "aliases": [
+     "CVE-2026-45409",
+     "GHSA-65pc-fj4g-8rjx",
+     "PYSEC-2026-215"
+    ],
+    "summary": "Internationalized Domain Names in Applications (IDNA): Specially crafted inputs to idna.encode() can bypass CVE-2024-3651 fix",
+    "max_cvss": "6.9",
+    "fixed_versions": [
+     "3.15"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.1,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "idna.encode",
+     "encode"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 377.4,
+   "output": {
+    "package": "idna",
+    "import_names": [
+     "idna"
+    ],
+    "symbols": [
+     "idna.encode",
+     "encode"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "idna: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['idna.encode', 'encode']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 9027.2,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.9,
+    "vulnerable_symbols": [
+     "idna.encode",
+     "encode"
+    ],
+    "reasoning": "The advisory concerns idna.encode() being bypassable to produce malformed/invalid IDNA-encoded output, which matters only if application code (or an unaffected-but-dependent library) calls idna.encode() directly or indirectly on attacker-controlled hostnames. Static analysis found zero imports of idna in non-test first-party code, zero call sites of idna.encode or encode referencing the package, and no production path from any entry point reaching the vulnerable symbol. idna is present only as a transitive dependency (likely pulled in by requests/urllib3 for IDNA host encoding), but the app itself never invokes the vulnerable function, and no evidence shows a first-party code path exercising domain-name encoding through idna. Since the evidence positively shows no usage in production code, this qualifies as not_reachable rather than uncertain.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Vulnerability is specifically in idna.encode() allowing a bypass of a prior security fix for crafted inputs."
+     },
+     {
+      "location": "static-evidence",
+      "explanation": "0 non-test imports of idna and 0 call sites of idna.encode/encode across 322 first-party Python files means no first-party code exercises the vulnerable function."
+     },
+     {
+      "location": "static-evidence",
+      "explanation": "0 production call sites with a path from an entry point confirms no route/view/task reaches the vulnerable symbol, satisfying the dead-code criterion for not_reachable."
+     }
+    ]
+   },
+   "tokens_in": 1967,
+   "tokens_out": 530,
+   "llm_calls": 1,
+   "llm_seconds": 9.03,
+   "cost_usd_est": 0.013851,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.9,\"vulnerable_symbols\":[\"idna.encode\",\"encode\"],\"reasoning\":\"The advisory concerns idna.encode() being bypassable to produce malformed/invalid IDNA-encoded output, which matters only if application code (or an unaffected-but-dependent library) calls idna.encode() directly or indirectly on attacker-controlled hostnames. Static analysis found zero imports of idna in non-test first-party code, zero call sites of idna.encode or encode referencing the package, and no production path from any entry point reaching the vulnerable symbol. idna is present only as a transitive dependency (likely pulled in by requests/urllib3 for IDNA host encoding), but the app itself never invokes the vulnerable function, and no evidence shows a first-party code path exercising domain-name encoding through idna. Since the evidence positively shows no usage in production code, this qualifies as not_reachable rather than uncertain.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"Vulnerability is specifically in idna.encode() allowing a bypass of a prior security fix for crafted inputs.\"},{\"location\":\"static-evidence\",\"explanation\":\"0 non-test imports of idna and 0 call sites of idna.encode/encode across 322 first-party Python files means no first-party code exercises the vulnerable function.\"},{\"location\":\"static-evidence\",\"explanation\":\"0 production call sites with a path from an entry point confirms no route/view/task reaches the vulnerable symbol, satisfying the dead-code criterion for not_reachable.\"}]}",
+     "in": 1967,
+     "out": 530,
+     "s": 9.03,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 31532.7,
+   "output": {
+    "critique": "The verdict's static evidence only confirms that first-party code never imports or directly calls idna.encode() across 322 files. But idna is a *transitive* dependency most likely pulled in by requests/urllib3, and requests itself depends on and calls idna.encode() internally (e.g., PreparedRequest host-encoding logic encodes non-ASCII hostnames via idna.encode()) whenever a URL with an internationalized hostname is processed. That call site lives inside the requests package, not in the 322 first-party files that were scanned, so a 'zero call sites in first-party code' result cannot rule out reachability through this common wrapper. The scanner evidence never establishes (a) which package actually pulls in idna, or (b) whether the application makes outbound HTTP requests to user-supplied or attacker-influenced URLs/hostnames via that package. Declaring not_reachable with 0.9 confidence treats absence of *first-party* symbol references as proof of absence of *any* path, which is the exact false-suppression risk the review process is meant to catch \u2014 the real vulnerable call is typically buried in the dependency's own code, invoked indirectly whenever the app does any networking with externally influenced hostnames. Without evidence about (1) which library actually depends on idna and (2) whether attacker-controlled hostnames ever flow into an HTTP client, the claim of dead code is unsupported.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 1872,
+   "tokens_out": 2746,
+   "llm_calls": 1,
+   "llm_seconds": 31.53,
+   "cost_usd_est": 0.046806,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's static evidence only confirms that first-party code never imports or directly calls idna.encode() across 322 files. But idna is a *transitive* dependency most likely pulled in by requests/urllib3, and requests itself depends on and calls idna.encode() internally (e.g., PreparedRequest host-encoding logic encodes non-ASCII hostnames via idna.encode()) whenever a URL with an internationalized hostname is processed. That call site lives inside the requests package, not in the 322 first-party files that were scanned, so a 'zero call sites in first-party code' result cannot rule out reachability through this common wrapper. The scanner evidence never establishes (a) which package actually pulls in idna, or (b) whether the application makes outbound HTTP requests to user-supplied or attacker-influenced URLs/hostnames via that package. Declaring not_reachable with 0.9 confidence treats absence of *first-party* symbol references as proof of absence of *any* path, which is the exact false-suppression risk the review process is meant to catch \u2014 the real vulnerable call is typically buried in the dependency's own code, invoked indirectly whenever the app does any networking with externally influenced hostnames. Without evidence about (1) which library actually depends on idna and (2) whether attacker-controlled hostnames ever flow into an HTTP client, the claim of dead code is unsupported.\",\"agrees\":false,\"retry\":true,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 1872,
+     "out": 2746,
+     "s": 31.53,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 16971.4,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.5,
+    "vulnerable_symbols": [
+     "idna.encode",
+     "encode"
+    ],
+    "reasoning": "idna.encode() is vulnerable to a ReDoS-style bypass of the CVE-2024-3651 fix; the static scan correctly shows zero first-party call sites, but idna is a transitive dependency (commonly pulled in by requests/urllib3) and the vulnerable call typically lives inside that wrapper's host-encoding logic rather than in application code, so an absence of first-party symbol references does not by itself prove the path is dead. The evidence provided does not identify which package actually depends on idna in this project, nor does it show whether the application makes outbound HTTP/network calls where the hostname portion of a URL can be influenced by an external party (e.g., user-submitted URLs, webhooks, SSRF-prone fetchers, proxy configs). Without that information we cannot confirm the trigger condition (attacker-controlled non-ASCII/malformed hostname reaching idna.encode via a dependency like requests) is met, but we also cannot rule it out given the package is present in the dependency tree. This matches the 'uncertain' case: the vulnerable behavior sits inside a dependency the app may rely on indirectly, and the available evidence (first-party-only AST scan) cannot settle whether that path is exercised.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "idna.encode() is the named vulnerable symbol; exploitation requires attacker-influenced hostname/domain input reaching it."
+     },
+     {
+      "location": "static evidence",
+      "explanation": "Scan found 0 imports/call sites of idna or idna.encode in 322 first-party files, ruling out *direct* first-party use."
+     },
+     {
+      "location": "not scanned",
+      "explanation": "No evidence was collected on whether requests/urllib3 (idna's typical dependent) is used by the app to make outbound HTTP calls to externally-influenced hostnames, which is the realistic trigger path per the reviewer critique."
+     }
+    ]
+   },
+   "tokens_in": 2440,
+   "tokens_out": 1352,
+   "llm_calls": 1,
+   "llm_seconds": 16.97,
+   "cost_usd_est": 0.0276,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"uncertain\",\"confidence\":0.5,\"vulnerable_symbols\":[\"idna.encode\",\"encode\"],\"reasoning\":\"idna.encode() is vulnerable to a ReDoS-style bypass of the CVE-2024-3651 fix; the static scan correctly shows zero first-party call sites, but idna is a transitive dependency (commonly pulled in by requests/urllib3) and the vulnerable call typically lives inside that wrapper's host-encoding logic rather than in application code, so an absence of first-party symbol references does not by itself prove the path is dead. The evidence provided does not identify which package actually depends on idna in this project, nor does it show whether the application makes outbound HTTP/network calls where the hostname portion of a URL can be influenced by an external party (e.g., user-submitted URLs, webhooks, SSRF-prone fetchers, proxy configs). Without that information we cannot confirm the trigger condition (attacker-controlled non-ASCII/malformed hostname reaching idna.encode via a dependency like requests) is met, but we also cannot rule it out given the package is present in the dependency tree. This matches the 'uncertain' case: the vulnerable behavior sits inside a dependency the app may rely on indirectly, and the available evidence (first-party-only AST scan) cannot settle whether that path is exercised.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"idna.encode() is the named vulnerable symbol; exploitation requires attacker-influenced hostname/domain input reaching it.\"},{\"location\":\"static evidence\",\"explanation\":\"Scan found 0 imports/call sites of idna or idna.encode in 322 first-party files, ruling out *direct* first-party use.\"},{\"location\":\"not scanned\",\"explanation\":\"No evidence was collected on whether requests/urllib3 (idna's typical dependent) is used by the app to make outbound HTTP calls to externally-influenced hostnames, which is the realistic trigger path per the reviewer critique.\"}]}",
+     "in": 2440,
+     "out": 1352,
+     "s": 16.97,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 26624.4,
+   "output": {
+    "critique": "The strongest counter-argument is that the reviewer's own evidence (0 imports, 0 call sites, 0 package references to idna/encode across all 322 first-party files) is actually fairly strong negative evidence, and one could argue this should tip toward not_reachable rather than uncertain. However, this argument does not hold: the scan explicitly covers only first-party code and the literal symbol 'idna'/'encode', while the realistic exploitation path is idna.encode() being invoked transitively inside urllib3/requests' hostname-encoding logic whenever the app issues outbound HTTP(S) requests to an externally-influenced hostname. The scan provides no data on whether the app uses requests/urllib3 at all, nor whether any URL/hostname passed to such calls can be attacker-influenced (e.g., webhook URLs, user-submitted links, SSRF-prone fetchers). Absence of first-party references to the raw symbol name is expected for a transitive dependency and does not establish that the host-encoding code path is dead, since it would run inside the dependency's own source, which was not scanned. The verdict already acknowledges this gap transparently rather than ignoring it, correctly distinguishing 'no direct first-party use' (confirmed) from 'no HTTP path with attacker-controlled hostnames' (unconfirmed). This is a legitimate basis for uncertain rather than a misreading of the evidence.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 2011,
+   "tokens_out": 2134,
+   "llm_calls": 1,
+   "llm_seconds": 26.62,
+   "cost_usd_est": 0.038043,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument is that the reviewer's own evidence (0 imports, 0 call sites, 0 package references to idna/encode across all 322 first-party files) is actually fairly strong negative evidence, and one could argue this should tip toward not_reachable rather than uncertain. However, this argument does not hold: the scan explicitly covers only first-party code and the literal symbol 'idna'/'encode', while the realistic exploitation path is idna.encode() being invoked transitively inside urllib3/requests' hostname-encoding logic whenever the app issues outbound HTTP(S) requests to an externally-influenced hostname. The scan provides no data on whether the app uses requests/urllib3 at all, nor whether any URL/hostname passed to such calls can be attacker-influenced (e.g., webhook URLs, user-submitted links, SSRF-prone fetchers). Absence of first-party references to the raw symbol name is expected for a transitive dependency and does not establish that the host-encoding code path is dead, since it would run inside the dependency's own source, which was not scanned. The verdict already acknowledges this gap transparently rather than ignoring it, correctly distinguishing 'no direct first-party use' (confirmed) from 'no HTTP path with attacker-controlled hostnames' (unconfirmed). This is a legitimate basis for uncertain rather than a misreading of the evidence.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 2011,
+     "out": 2134,
+     "s": 26.62,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.55,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 8290,
+  "tokens_out": 6762,
+  "cost_usd_est": 0.1263,
+  "seconds": 84.54
+ },
+ "created": "2026-11-10T16:30:44+00:00",
+ "code_version": "225d357"
+}

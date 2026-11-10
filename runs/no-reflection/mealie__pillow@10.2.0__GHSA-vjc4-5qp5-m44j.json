@@ -1,0 +1,443 @@
+{
+ "finding_id": "mealie/pillow@10.2.0/GHSA-vjc4-5qp5-m44j",
+ "config": "no-reflection",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": false,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-59204",
+   "GHSA-vjc4-5qp5-m44j",
+   "PYSEC-2026-3496"
+  ],
+  "cves": [
+   "CVE-2026-59204"
+  ],
+  "cwes": [
+   "CWE-770",
+   "CWE-789"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/pillow@10.2.0/GHSA-vjc4-5qp5-m44j",
+  "first_fixed_above_installed": "12.3.0",
+  "fixed_versions": [
+   "12.3.0"
+  ],
+  "max_cvss": "8.7",
+  "package": "pillow",
+  "published": "2026-07-20T23:18:32Z",
+  "summary": "Pillow JPEG2000 tiled decode retains a growing scratch buffer and can be used for denial of service",
+  "target": "mealie",
+  "version": "10.2.0",
+  "vuln_id": "GHSA-vjc4-5qp5-m44j"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.72,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.72,
+  "vulnerable_symbols": [
+   "Jpeg2KDecode.c total_component_width accumulation",
+   "state->buffer realloc",
+   "Image.open(...).load() JPEG2000 decode path"
+  ],
+  "reasoning": "The advisory's vulnerable path is exercised whenever Pillow decodes pixel data from a JPEG2000 (.jp2) file via Image.open(...).load()/.save(). The application has a reachable entry point (UserImageController.update_user_image) that calls PillowMinifier.to_webp (mealie/pkgs/img/minify.py:68) and PillowMinifier.minify (mealie/pkgs/img/minify.py:120), both of which do img = Image.open(image_file) followed by operations (img.save(...), crop_center then save) that force Pillow to fully decode the pixel data, not just parse metadata. Pillow determines decoder by file content/magic bytes, not by the file extension the user supplies, so an attacker uploading a crafted multi-tile JPEG2000 image as a 'profile image' could reach the vulnerable Jpeg2KDecode.c tile-accumulation/realloc path and exhaust memory. No evidence was shown that the upload route restricts formats to exclude JPEG2000 or validates magic bytes before calling Image.open, so the attacker-controlled input requirement of the advisory is plausibly satisfied. The one call site at minify.py:15 (get_format) is dead code (no callers), but the two call sites reachable from update_user_image are sufficient to mark this reachable rather than not_reachable.",
+  "evidence": [
+   {
+    "location": "mealie/pkgs/img/minify.py:68",
+    "explanation": "Image.open(image_file) followed by img.save(...) forces full pixel decode of a user-supplied image file, reachable from UserImageController.update_user_image."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:120",
+    "explanation": "Image.open on the user-supplied file followed by crop_center/save also forces full decode, same entry point."
+   },
+   {
+    "location": "advisory",
+    "explanation": "States the vulnerable accumulation in Jpeg2KDecode.c is reached during normal Image.open(...).load() decoding of a crafted tiled JPEG2000 file."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:15",
+    "explanation": "get_format's Image.open call has no callers in the project, so it does not contribute to reachability."
+   }
+  ]
+ },
+ "reflection": null,
+ "symbols": [
+  "total_component_width",
+  "tile_bytes",
+  "realloc",
+  "tile_info.data_size",
+  "Image.open",
+  "load",
+  "Jpeg2KDecode.c",
+  "Jpeg2KDecode"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pillow@10.2.0/GHSA-vjc4-5qp5-m44j",
+    "package": "pillow",
+    "version": "10.2.0",
+    "vuln_id": "GHSA-vjc4-5qp5-m44j",
+    "aliases": [
+     "CVE-2026-59204",
+     "GHSA-vjc4-5qp5-m44j",
+     "PYSEC-2026-3496"
+    ],
+    "summary": "Pillow JPEG2000 tiled decode retains a growing scratch buffer and can be used for denial of service",
+    "max_cvss": "8.7",
+    "fixed_versions": [
+     "12.3.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 36.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-vjc4-5qp5-m44j#0",
+      "score": 0.905,
+      "text": "GHSA-vjc4-5qp5-m44j (CVE-2026-59204)\npackage: pillow\nsummary: Pillow JPEG2000 tiled decode retains a growing scratch buffer and can be used for denial of service\naffected: >=8.2.0, <12.3.0",
+      "vuln_id": "GHSA-vjc4-5qp5-m44j"
+     },
+     {
+      "id": "GHSA-vjc4-5qp5-m44j#1",
+      "score": 0.797,
+      "text": "GHSA-vjc4-5qp5-m44j (pillow) details:\n### Summary\n`src/libImaging/Jpeg2KDecode.c:853` accumulates `total_component_width` across every tile in a JPEG2000 image instead of recomputing it per tile. That accumulated value is then used in the `tile_bytes` calculation at `src/libImaging/Jpeg2KDecode.c:868`, which can make the decoder grow `state->buffer` via `realloc` at `src/libImaging/Jpeg2KDecode.c:876` up to roughly one full image's decompressed size even when each tile is small. A crafted tiled JPEG2000 file can therefore force substantially higher transient memory usage and trigger out-of-memory failures during decoding. Based on current evidence, the supported impact is denial of service, not memory corruption.",
+      "vuln_id": "GHSA-vjc4-5qp5-m44j"
+     },
+     {
+      "id": "GHSA-vjc4-5qp5-m44j#2",
+      "score": 0.739,
+      "text": "GHSA-vjc4-5qp5-m44j (pillow) details:\n### Details\n- Location: `src/libImaging/Jpeg2KDecode.c:853`\n- Root cause: `total_component_width` is initialized only once before the tile loop and keeps growing across tiles. It is then used to derive `tile_bytes`, so later tiles are treated as if they had the combined component width of all earlier tiles.\n- Dangerous operation: `tile_bytes` is promoted into `tile_info.data_size`, then `state->buffer` is grown with `realloc` at `src/libImaging/Jpeg2KDecode.c:876`.\n- Reachability: any attacker-controlled JPEG2000 image with many tiles reaches this path during normal `Image.open(...).load()` decoding.\n\n### PoC\nThe attached helper script and testcase were used:\n[exercise_j2k_tile_realloc.zip](https://github.com/user-attachments/files/28099912/exercise_j2k_tile_realloc.zip)\n\nGenerate the testcase:",
+      "vuln_id": "GHSA-vjc4-5qp5-m44j"
+     },
+     {
+      "id": "GHSA-vjc4-5qp5-m44j#3",
+      "score": 0.734,
+      "text": "GHSA-vjc4-5qp5-m44j (pillow) details:\n```bash\npythonexercise_j2k_tile_realloc.py make poc_3664_rgba_tile1832.jp2 \\\n  --size 3664 --tile 1832\n```\n\nExpected geometry from the helper:\n\n- image size: `3664 x 3664`\n- mode: `RGBA`\n- tile size: `1832 x 1832` (`2x2` tiles)\n- `image_bytes=53699584`\n- uncapped RSS observed:\n  - vulnerable build: `maxrss_kb=180264`\n  - fixed comparison build: `maxrss_kb=138404`\n\nLoad it with the current vulnerable build:\n\n```bash\npython exercise_j2k_tile_realloc.py load poc_3664_rgba_tile1832.jp2\n```\n\nLoad it again under a 160 MB address-space cap:\n\n```bash\npython exercise_j2k_tile_realloc.py load poc_3664_rgba_tile1832.jp2 --limit-mb 160\n```\n\n### Impact\nConservative impact: denial of service through memory exhaustion during JPEG2000 decoding.",
+      "vuln_id": "GHSA-vjc4-5qp5-m44j"
+     },
+     {
+      "id": "GHSA-j6f7-g425-4gmx#0",
+      "score": 0.858,
+      "text": "GHSA-j6f7-g425-4gmx (CVE-2014-3598)\npackage: pillow\nsummary: Pillow is vulnerable to Denial of Service (DOS) in the Jpeg2KImagePlugin\naffected: >=0, <2.5.3",
+      "vuln_id": "GHSA-j6f7-g425-4gmx"
+     },
+     {
+      "id": "GHSA-v9pc-9mvp-x87g#1",
+      "score": 0.85,
+      "text": "GHSA-v9pc-9mvp-x87g (pillow) details:\nHeap-based buffer overflow in the j2k_encode_entry function in Pillow 2.5.0 through 3.1.1 allows remote attackers to cause a denial of service (memory corruption) via a crafted Jpeg2000 file.",
+      "vuln_id": "GHSA-v9pc-9mvp-x87g"
+     }
+    ],
+    "symbols": [
+     "total_component_width",
+     "tile_bytes",
+     "realloc",
+     "tile_info.data_size",
+     "Image.open",
+     "load",
+     "Jpeg2KDecode.c",
+     "Jpeg2KDecode"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 85.7,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [
+     "total_component_width",
+     "tile_bytes",
+     "realloc",
+     "tile_info.data_size",
+     "Image.open",
+     "load",
+     "Jpeg2KDecode.c",
+     "Jpeg2KDecode"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/pkgs/img/minify.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 10,
+    "vulnerable_call_sites": [
+     {
+      "file": "mealie/pkgs/img/minify.py",
+      "line": 15,
+      "code": "img = Image.open(image)",
+      "resolved": "PIL.Image.open",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": false,
+      "path": [],
+      "callers": 0,
+      "snippet": "   12  \n   13  \n   14  def get_format(image: Path) -> str:\n   15      img = Image.open(image)\n   16      return img.format\n   17  \n   18  "
+     },
+     {
+      "file": "mealie/pkgs/img/minify.py",
+      "line": 68,
+      "code": "img = Image.open(image_file)",
+      "resolved": "PIL.Image.open",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.users.images:UserImageController.update_user_image",
+       "mealie.pkgs.img.minify:PillowMinifier.to_webp"
+      ],
+      "callers": 3,
+      "snippet": "   65          Converts an image to the webp format in-place. The original image is not\n   66          removed By default, the quality is set to 100.\n   67          \"\"\"\n   68          img = Image.open(image_file)\n   69  \n   70          dest = dest or image_file.with_suffix(WEBP)\n   71          img.save(dest, FORMAT, quality=quality)"
+     },
+     {
+      "file": "mealie/pkgs/img/minify.py",
+      "line": 120,
+      "code": "img = Image.open(image_file)",
+      "resolved": "PIL.Image.open",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.users.images:UserImageController.update_user_image",
+       "mealie.pkgs.img.minify:PillowMinifier.minify"
+      ],
+      "callers": 3,
+      "snippet": "  117              if not force and tiny_dest.exists():\n  118                  self._logger.info(f\"{image_file.name} already minified\")\n  119              else:\n  120                  img = Image.open(image_file)\n  121                  tiny_image = PillowMinifier.crop_center(img)\n  122                  tiny_image.save(tiny_dest, FORMAT, quality=70)\n  123                  self._logger.info(\"Tiny image saved\")"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "code": "img = Image.open(image)",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [
+     [
+      "mealie.routes.users.images:UserImageController.update_user_image",
+      "mealie.pkgs.img.minify:PillowMinifier.to_webp"
+     ],
+     [
+      "mealie.routes.users.images:UserImageController.update_user_image",
+      "mealie.pkgs.img.minify:PillowMinifier.minify"
+     ]
+    ],
+    "summary": "pillow: imported in 1 non-test location(s); 10 package call/reference site(s); named vulnerable symbols ['total_component_width', 'tile_bytes', 'realloc', 'tile_info.data_size', 'Image.open', 'load', 'Jpeg2KDecode.c', 'Jpeg2KDecode']; 3 production call site(s) of those symbols, 2 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 46.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:mealie/pkgs/img/minify.py:120",
+      "score": 1.0,
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 120,
+      "qualname": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "text": "# mealie/pkgs/img/minify.py around line 120\n  117              if not force and tiny_dest.exists():\n  118                  self._logger.info(f\"{image_file.name} already minified\")\n  119              else:\n  120                  img = Image.open(image_file)\n  121                  tiny_image = PillowMinifier.crop_center(img)\n  122                  tiny_image.save(tiny_dest, FORMAT, quality=70)\n  123                  self._logger.info(\"Tiny image saved\")"
+     },
+     {
+      "id": "site:mealie/pkgs/img/minify.py:68",
+      "score": 1.0,
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 68,
+      "qualname": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "text": "# mealie/pkgs/img/minify.py around line 68\n   65          Converts an image to the webp format in-place. The original image is not\n   66          removed By default, the quality is set to 100.\n   67          \"\"\"\n   68          img = Image.open(image_file)\n   69  \n   70          dest = dest or image_file.with_suffix(WEBP)\n   71          img.save(dest, FORMAT, quality=quality)"
+     },
+     {
+      "id": "site:mealie/pkgs/img/minify.py:15",
+      "score": 1.0,
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 15,
+      "qualname": "mealie.pkgs.img.minify:get_format",
+      "text": "# mealie/pkgs/img/minify.py around line 15\n   12  \n   13  \n   14  def get_format(image: Path) -> str:\n   15      img = Image.open(image)\n   16      return img.format\n   17  \n   18  "
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:87",
+      "score": 0.713,
+      "text": "# mealie/pkgs/img/minify.py:87-127  PillowMinifier.minify\n    def minify(self, image_file: Path, force=True):\n        if not image_file.exists():\n            raise FileNotFoundError(f\"{image_file.name} does not exist\")\n\n        org_dest = image_file.parent.joinpath(\"original.webp\")\n        min_dest = image_file.parent.joinpath(\"min-original.webp\")\n        tiny_dest = image_file.parent.joinpath(\"tiny-original.webp\")\n\n        if not force and min_dest.exists() and tiny_dest.exists() and org_dest.exists():\n            self._logger.info(f\"{image_file.name} already minified\")\n            return\n\n        success = False\n\n        if self._opts.original:\n            if not force and org_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, org_dest, quality=70)\n                success = True\n\n        if self._opts.miniature:\n            if not force and min_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, min_dest, quality=70)\n                self._logger.info(f\"{image_file.name} minified\")\n                success = True\n\n        if self._opts.tiny:\n            if not force and tiny_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                img = Image.open(image_file)\n                tiny_image = PillowMinifier.crop_center(img)\n                tiny_image.save(tiny_dest, FORMAT, quality=70)\n                self._logger.info(\"Tiny image saved\")\n                success = True\n\n        if self._purge and success:\n            self.purge(image_file)",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 87,
+      "qualname": "PillowMinifier.minify"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:19",
+      "score": 0.712,
+      "text": "# mealie/pkgs/img/minify.py:19-27  sizeof_fmt\ndef sizeof_fmt(file_path: Path, decimal_places=2):\n    if not file_path.exists():\n        return \"(File Not Found)\"\n    size: int | float = file_path.stat().st_size\n    for unit in [\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\"]:\n        if size < 1024 or unit == \"PiB\":\n            break\n        size /= 1024\n    return f\"{size:.{decimal_places}f} {unit}\"",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 19,
+      "qualname": "sizeof_fmt"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:63",
+      "score": 0.686,
+      "text": "# mealie/pkgs/img/minify.py:63-73  PillowMinifier.to_webp\n    def to_webp(image_file: Path, dest: Path | None = None, quality: int = 100) -> Path:\n        \"\"\"\n        Converts an image to the webp format in-place. The original image is not\n        removed By default, the quality is set to 100.\n        \"\"\"\n        img = Image.open(image_file)\n\n        dest = dest or image_file.with_suffix(WEBP)\n        img.save(dest, FORMAT, quality=quality)\n\n        return dest",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 63,
+      "qualname": "PillowMinifier.to_webp"
+     },
+     {
+      "id": "mealie:mealie/pkgs/stats/fs_stats.py:8",
+      "score": 0.681,
+      "text": "# mealie/pkgs/stats/fs_stats.py:8-22  pretty_size\ndef pretty_size(size: int) -> str:\n    \"\"\"\n    Pretty size takes in a integer value of a file size and returns the most applicable\n    file unit and the size.\n    \"\"\"\n    if size < 1024:\n        return f\"{size} bytes\"\n    elif size < 1024**2:\n        return f\"{round(size / 1024, 2)} KB\"\n    elif size < 1024**2 * 1024:\n        return f\"{round(size / 1024 / 1024, 2)} MB\"\n    elif size < 1024**2 * 1024 * 1024:\n        return f\"{round(size / 1024 / 1024 / 1024, 2)} GB\"\n    else:\n        return f\"{round(size / 1024 / 1024 / 1024 / 1024, 2)} TB\"",
+      "file": "mealie/pkgs/stats/fs_stats.py",
+      "start": 8,
+      "qualname": "pretty_size"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 17770.2,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.72,
+    "vulnerable_symbols": [
+     "Jpeg2KDecode.c total_component_width accumulation",
+     "state->buffer realloc",
+     "Image.open(...).load() JPEG2000 decode path"
+    ],
+    "reasoning": "The advisory's vulnerable path is exercised whenever Pillow decodes pixel data from a JPEG2000 (.jp2) file via Image.open(...).load()/.save(). The application has a reachable entry point (UserImageController.update_user_image) that calls PillowMinifier.to_webp (mealie/pkgs/img/minify.py:68) and PillowMinifier.minify (mealie/pkgs/img/minify.py:120), both of which do img = Image.open(image_file) followed by operations (img.save(...), crop_center then save) that force Pillow to fully decode the pixel data, not just parse metadata. Pillow determines decoder by file content/magic bytes, not by the file extension the user supplies, so an attacker uploading a crafted multi-tile JPEG2000 image as a 'profile image' could reach the vulnerable Jpeg2KDecode.c tile-accumulation/realloc path and exhaust memory. No evidence was shown that the upload route restricts formats to exclude JPEG2000 or validates magic bytes before calling Image.open, so the attacker-controlled input requirement of the advisory is plausibly satisfied. The one call site at minify.py:15 (get_format) is dead code (no callers), but the two call sites reachable from update_user_image are sufficient to mark this reachable rather than not_reachable.",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "explanation": "Image.open(image_file) followed by img.save(...) forces full pixel decode of a user-supplied image file, reachable from UserImageController.update_user_image."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "explanation": "Image.open on the user-supplied file followed by crop_center/save also forces full decode, same entry point."
+     },
+     {
+      "location": "advisory",
+      "explanation": "States the vulnerable accumulation in Jpeg2KDecode.c is reached during normal Image.open(...).load() decoding of a crafted tiled JPEG2000 file."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "explanation": "get_format's Image.open call has no callers in the project, so it does not contribute to reachability."
+     }
+    ]
+   },
+   "tokens_in": 5316,
+   "tokens_out": 1557,
+   "llm_calls": 1,
+   "llm_seconds": 17.75,
+   "cost_usd_est": 0.039303,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\": \"reachable\", \"confidence\": 0.72, \"vulnerable_symbols\": [\"Jpeg2KDecode.c total_component_width accumulation\", \"state->buffer realloc\", \"Image.open(...).load() JPEG2000 decode path\"], \"reasoning\": \"The advisory's vulnerable path is exercised whenever Pillow decodes pixel data from a JPEG2000 (.jp2) file via Image.open(...).load()/.save(). The application has a reachable entry point (UserImageController.update_user_image) that calls PillowMinifier.to_webp (mealie/pkgs/img/minify.py:68) and PillowMinifier.minify (mealie/pkgs/img/minify.py:120), both of which do img = Image.open(image_file) followed by operations (img.save(...), crop_center then save) that force Pillow to fully decode the pixel data, not just parse metadata. Pillow determines decoder by file content/magic bytes, not by the file extension the user supplies, so an attacker uploading a crafted multi-tile JPEG2000 image as a 'profile image' could reach the vulnerable Jpeg2KDecode.c tile-accumulation/realloc path and exhaust memory. No evidence was shown that the upload route restricts formats to exclude JPEG2000 or validates magic bytes before calling Image.open, so the attacker-controlled input requirement of the advisory is plausibly satisfied. The one call site at minify.py:15 (get_format) is dead code (no callers), but the two call sites reachable from update_user_image are sufficient to mark this reachable rather than not_reachable.\", \"evidence\": [{\"location\": \"mealie/pkgs/img/minify.py:68\", \"explanation\": \"Image.open(image_file) followed by img.save(...) forces full pixel decode of a user-supplied image file, reachable from UserImageController.update_user_image.\"}, {\"location\": \"mealie/pkgs/img/minify.py:120\", \"explanation\": \"Image.open on the user-supplied file followed by crop_center/save also forces full decode, same entry point.\"}, {\"location\": \"advisory\", \"explanation\": \"States the vulnerable accumulation in Jpeg2KDecode.c is reached during normal Image.open(...).load() decoding of a crafted tiled JPEG2000 file.\"}, {\"location\": \"mealie/pkgs/img/minify.py:15\", \"explanation\": \"get_format's Image.open call has no callers in the project, so it does not contribute to reachability.\"}]}",
+     "in": 5316,
+     "out": 1557,
+     "s": 17.75,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.72,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 1,
+  "tokens_in": 5316,
+  "tokens_out": 1557,
+  "cost_usd_est": 0.039303,
+  "seconds": 17.94
+ },
+ "created": "2026-11-10T20:36:34+00:00",
+ "code_version": "ea5880b"
+}

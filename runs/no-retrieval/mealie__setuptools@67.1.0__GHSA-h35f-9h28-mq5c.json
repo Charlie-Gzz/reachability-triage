@@ -1,0 +1,269 @@
+{
+ "finding_id": "mealie/setuptools@67.1.0/GHSA-h35f-9h28-mq5c",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-59890",
+   "GHSA-h35f-9h28-mq5c",
+   "PYSEC-2026-3447"
+  ],
+  "cves": [
+   "CVE-2026-59890"
+  ],
+  "cwes": [
+   "CWE-176",
+   "CWE-697"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/setuptools@67.1.0/GHSA-h35f-9h28-mq5c",
+  "first_fixed_above_installed": "83.0.0",
+  "fixed_versions": [
+   "83.0.0"
+  ],
+  "max_cvss": "6.1",
+  "package": "setuptools",
+  "published": "2026-07-21T19:09:21Z",
+  "summary": "setuptools: MANIFEST.in exclusion bypass in sdist via Unicode normalization collision (NFC/NFD) on macOS APFS/HFS+",
+  "target": "mealie",
+  "version": "67.1.0",
+  "vuln_id": "GHSA-h35f-9h28-mq5c"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.75,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.92,
+  "vulnerable_symbols": [
+   "MANIFEST.in",
+   "sdist build/exclusion logic"
+  ],
+  "reasoning": "The advisory describes a flaw in setuptools' sdist-building process, where Unicode NFC/NFD filename collisions on macOS can cause files meant to be excluded via MANIFEST.in to be included anyway. This only matters to code that invokes setuptools' packaging/sdist machinery (e.g. `python setup.py sdist`, build backends, or packaging scripts) on a case-insensitive/normalizing filesystem. Static analysis found zero non-test imports of setuptools, zero call/reference sites, and zero production call sites touching MANIFEST.in or sdist logic anywhere in the 322 scanned first-party files. setuptools is present only as a transitive build-time dependency (likely pulled in by pip/wheel tooling) and is not invoked by this application's runtime code, routes, tasks, or entry points. Since the vulnerable packaging pathway is never exercised by the application itself, the exclusion-bypass issue has no attacker-reachable surface here.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "Vulnerability is specific to setuptools' sdist/MANIFEST.in file-inclusion logic during package building, a build-time, not run-time, concern."
+   },
+   {
+    "location": "static-evidence summary",
+    "explanation": "0 non-test imports and 0 call sites of setuptools across 322 first-party files means no application code path invokes setuptools at all."
+   },
+   {
+    "location": "static-evidence summary",
+    "explanation": "0 production call sites of the named symbol 'MANIFEST.in' confirms the app does not define or process a MANIFEST.in via setuptools at runtime."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that this CVE is a supply-chain/build-time flaw, not a runtime API-call flaw, so 'zero imports/call-sites of setuptools in application code' is the wrong signal to rule it out. The real question is whether this project (or its CI/release pipeline) ever builds its own sdist (e.g. via `python setup.py sdist`, `python -m build`, `pip install .` from source, or a packaging workflow) while possessing a MANIFEST.in with exclusion rules \u2014 none of which would appear as a Python 'import setuptools' or a call to a symbol named 'MANIFEST.in', since MANIFEST.in is a static config file, not a Python symbol. Treating it as a searchable AST symbol is a category error that produces a trivial zero-match regardless of actual exposure. However, the evidence also shows setuptools is purely transitive (not a direct build dependency pinned by this repo) and there's no indication this is a published/distributed package with its own MANIFEST.in at all \u2014 it looks like an application, not a library being packaged for PyPI. Given that, the build-time attack surface (a malicious contributor sneaking NFC/NFD-colliding filenames into the sdist to smuggle files past exclusion rules) is plausible only if this repo's own packaging config matters, which the evidence doesn't rule in or out definitively \u2014 but the scanner's silence on setup.py/pyproject/MANIFEST.in usage combined with setuptools being transitive (not authored-package tooling) makes reachable exploitation unlikely for THIS application. The critique has some force (the analysis method is mismatched to a build-time CWE) but doesn't flip the verdict absent evidence that this repo is actually packaged/distributed via sdist.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.75
+ },
+ "symbols": [
+  "MANIFEST.in"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/setuptools@67.1.0/GHSA-h35f-9h28-mq5c",
+    "package": "setuptools",
+    "version": "67.1.0",
+    "vuln_id": "GHSA-h35f-9h28-mq5c",
+    "aliases": [
+     "CVE-2026-59890",
+     "GHSA-h35f-9h28-mq5c",
+     "PYSEC-2026-3447"
+    ],
+    "summary": "setuptools: MANIFEST.in exclusion bypass in sdist via Unicode normalization collision (NFC/NFD) on macOS APFS/HFS+",
+    "max_cvss": "6.1",
+    "fixed_versions": [
+     "83.0.0"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.1,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "MANIFEST.in"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 15.6,
+   "output": {
+    "package": "setuptools",
+    "import_names": [
+     "pkg_resources",
+     "setuptools"
+    ],
+    "symbols": [
+     "MANIFEST.in"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "setuptools: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['MANIFEST.in']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 11001.6,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.92,
+    "vulnerable_symbols": [
+     "MANIFEST.in",
+     "sdist build/exclusion logic"
+    ],
+    "reasoning": "The advisory describes a flaw in setuptools' sdist-building process, where Unicode NFC/NFD filename collisions on macOS can cause files meant to be excluded via MANIFEST.in to be included anyway. This only matters to code that invokes setuptools' packaging/sdist machinery (e.g. `python setup.py sdist`, build backends, or packaging scripts) on a case-insensitive/normalizing filesystem. Static analysis found zero non-test imports of setuptools, zero call/reference sites, and zero production call sites touching MANIFEST.in or sdist logic anywhere in the 322 scanned first-party files. setuptools is present only as a transitive build-time dependency (likely pulled in by pip/wheel tooling) and is not invoked by this application's runtime code, routes, tasks, or entry points. Since the vulnerable packaging pathway is never exercised by the application itself, the exclusion-bypass issue has no attacker-reachable surface here.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Vulnerability is specific to setuptools' sdist/MANIFEST.in file-inclusion logic during package building, a build-time, not run-time, concern."
+     },
+     {
+      "location": "static-evidence summary",
+      "explanation": "0 non-test imports and 0 call sites of setuptools across 322 first-party files means no application code path invokes setuptools at all."
+     },
+     {
+      "location": "static-evidence summary",
+      "explanation": "0 production call sites of the named symbol 'MANIFEST.in' confirms the app does not define or process a MANIFEST.in via setuptools at runtime."
+     }
+    ]
+   },
+   "tokens_in": 1981,
+   "tokens_out": 839,
+   "llm_calls": 1,
+   "llm_seconds": 11.0,
+   "cost_usd_est": 0.018528,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.92,\"vulnerable_symbols\":[\"MANIFEST.in\",\"sdist build/exclusion logic\"],\"reasoning\":\"The advisory describes a flaw in setuptools' sdist-building process, where Unicode NFC/NFD filename collisions on macOS can cause files meant to be excluded via MANIFEST.in to be included anyway. This only matters to code that invokes setuptools' packaging/sdist machinery (e.g. `python setup.py sdist`, build backends, or packaging scripts) on a case-insensitive/normalizing filesystem. Static analysis found zero non-test imports of setuptools, zero call/reference sites, and zero production call sites touching MANIFEST.in or sdist logic anywhere in the 322 scanned first-party files. setuptools is present only as a transitive build-time dependency (likely pulled in by pip/wheel tooling) and is not invoked by this application's runtime code, routes, tasks, or entry points. Since the vulnerable packaging pathway is never exercised by the application itself, the exclusion-bypass issue has no attacker-reachable surface here.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"Vulnerability is specific to setuptools' sdist/MANIFEST.in file-inclusion logic during package building, a build-time, not run-time, concern.\"},{\"location\":\"static-evidence summary\",\"explanation\":\"0 non-test imports and 0 call sites of setuptools across 322 first-party files means no application code path invokes setuptools at all.\"},{\"location\":\"static-evidence summary\",\"explanation\":\"0 production call sites of the named symbol 'MANIFEST.in' confirms the app does not define or process a MANIFEST.in via setuptools at runtime.\"}]}",
+     "in": 1981,
+     "out": 839,
+     "s": 11.0,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 28412.0,
+   "output": {
+    "critique": "The strongest counter-argument is that this CVE is a supply-chain/build-time flaw, not a runtime API-call flaw, so 'zero imports/call-sites of setuptools in application code' is the wrong signal to rule it out. The real question is whether this project (or its CI/release pipeline) ever builds its own sdist (e.g. via `python setup.py sdist`, `python -m build`, `pip install .` from source, or a packaging workflow) while possessing a MANIFEST.in with exclusion rules \u2014 none of which would appear as a Python 'import setuptools' or a call to a symbol named 'MANIFEST.in', since MANIFEST.in is a static config file, not a Python symbol. Treating it as a searchable AST symbol is a category error that produces a trivial zero-match regardless of actual exposure. However, the evidence also shows setuptools is purely transitive (not a direct build dependency pinned by this repo) and there's no indication this is a published/distributed package with its own MANIFEST.in at all \u2014 it looks like an application, not a library being packaged for PyPI. Given that, the build-time attack surface (a malicious contributor sneaking NFC/NFD-colliding filenames into the sdist to smuggle files past exclusion rules) is plausible only if this repo's own packaging config matters, which the evidence doesn't rule in or out definitively \u2014 but the scanner's silence on setup.py/pyproject/MANIFEST.in usage combined with setuptools being transitive (not authored-package tooling) makes reachable exploitation unlikely for THIS application. The critique has some force (the analysis method is mismatched to a build-time CWE) but doesn't flip the verdict absent evidence that this repo is actually packaged/distributed via sdist.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.75
+   },
+   "tokens_in": 1940,
+   "tokens_out": 2219,
+   "llm_calls": 1,
+   "llm_seconds": 28.41,
+   "cost_usd_est": 0.039105,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument is that this CVE is a supply-chain/build-time flaw, not a runtime API-call flaw, so 'zero imports/call-sites of setuptools in application code' is the wrong signal to rule it out. The real question is whether this project (or its CI/release pipeline) ever builds its own sdist (e.g. via `python setup.py sdist`, `python -m build`, `pip install .` from source, or a packaging workflow) while possessing a MANIFEST.in with exclusion rules \u2014 none of which would appear as a Python 'import setuptools' or a call to a symbol named 'MANIFEST.in', since MANIFEST.in is a static config file, not a Python symbol. Treating it as a searchable AST symbol is a category error that produces a trivial zero-match regardless of actual exposure. However, the evidence also shows setuptools is purely transitive (not a direct build dependency pinned by this repo) and there's no indication this is a published/distributed package with its own MANIFEST.in at all \u2014 it looks like an application, not a library being packaged for PyPI. Given that, the build-time attack surface (a malicious contributor sneaking NFC/NFD-colliding filenames into the sdist to smuggle files past exclusion rules) is plausible only if this repo's own packaging config matters, which the evidence doesn't rule in or out definitively \u2014 but the scanner's silence on setup.py/pyproject/MANIFEST.in usage combined with setuptools being transitive (not authored-package tooling) makes reachable exploitation unlikely for THIS application. The critique has some force (the analysis method is mismatched to a build-time CWE) but doesn't flip the verdict absent evidence that this repo is actually packaged/distributed via sdist.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.75}",
+     "in": 1940,
+     "out": 2219,
+     "s": 28.41,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.75,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3921,
+  "tokens_out": 3058,
+  "cost_usd_est": 0.057633,
+  "seconds": 39.43
+ },
+ "created": "2026-11-10T20:17:55+00:00",
+ "code_version": "225d357"
+}

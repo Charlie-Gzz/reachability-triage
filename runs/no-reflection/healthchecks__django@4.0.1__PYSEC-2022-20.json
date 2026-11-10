@@ -1,0 +1,423 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-20",
+ "config": "no-reflection",
+ "dataset": "real",
+ "split": null,
+ "target": "healthchecks",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": false,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-23833",
+   "GHSA-6cw3-g6wv-c2xv",
+   "PYSEC-2022-20"
+  ],
+  "cves": [
+   "CVE-2022-23833"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-20",
+  "first_fixed_above_installed": "4.0.2",
+  "fixed_versions": [
+   "2.2.27",
+   "3.2.12",
+   "4.0.2"
+  ],
+  "max_cvss": null,
+  "package": "django",
+  "published": "2022-02-03T02:15:00Z",
+  "summary": "An issue was discovered in MultiPartParser in Django 2.2 before 2.2.27, 3.2 before 3.2.12, and 4.0 before 4.0.2. Passing certain inputs to multipart forms could result in an infinite loop when parsing",
+  "target": "healthchecks",
+  "version": "4.0.1",
+  "vuln_id": "PYSEC-2022-20"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.75,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.75,
+  "vulnerable_symbols": [
+   "MultiPartParser"
+  ],
+  "reasoning": "MultiPartParser is Django's built-in handler that is automatically invoked by HttpRequest whenever a request arrives with Content-Type: multipart/form-data and the view (or middleware) accesses request.POST/request.FILES; it is not something application code calls by name, so the 0-call-site AST result is expected and not evidence of non-use. This app (Healthchecks 'hc') exposes multiple POST-accepting endpoints (e.g. api/v1/checks/, ping/<uuid:code>/... with action=fail/start, pause endpoint) per hc/api/urls.py, and Django forms (hc/api/forms.py, hc/payments/forms.py) are processed via the standard request pipeline that uses MultiPartParser for any multipart-encoded POST. Since Django is pinned at 4.0.1 (vulnerable range <4.0.2) and nothing in the evidence shows the app disables multipart parsing, restricts Content-Type, or front-ends these views with a parser that bypasses Django's default MultiPartParser, an external client can send a crafted multipart body to any of these POST endpoints to trigger the infinite loop described in the advisory. This matches the rule that core-framework request-parsing paths are considered used unless proven otherwise, and no such proof is present here.",
+  "evidence": [
+   {
+    "location": "hc/api/urls.py (POST-handling paths like 'api/v1/checks/', 'ping/<uuid:code>/fail','start')",
+    "explanation": "Multiple externally reachable endpoints accept POST requests, which Django will parse with MultiPartParser if the client sends multipart/form-data."
+   },
+   {
+    "location": "hc/api/forms.py:1-8",
+    "explanation": "Application defines Django forms processed via the standard request-parsing pipeline that includes MultiPartParser for file/multipart data."
+   },
+   {
+    "location": "advisory",
+    "explanation": "CVE-2022-23833 states the vulnerable code path is triggered by Django's internal MultiPartParser during multipart form/file parsing, which occurs automatically on any multipart POST regardless of explicit application calls."
+   },
+   {
+    "location": "Static evidence summary",
+    "explanation": "0 call sites is expected because MultiPartParser is invoked internally by Django's request object, not called by name in application code, so absence of a named call site does not indicate non-use."
+   }
+  ]
+ },
+ "reflection": null,
+ "symbols": [
+  "MultiPartParser"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-20",
+    "package": "django",
+    "version": "4.0.1",
+    "vuln_id": "PYSEC-2022-20",
+    "aliases": [
+     "CVE-2022-23833",
+     "GHSA-6cw3-g6wv-c2xv",
+     "PYSEC-2022-20"
+    ],
+    "summary": "An issue was discovered in MultiPartParser in Django 2.2 before 2.2.27, 3.2 before 3.2.12, and 4.0 before 4.0.2. Passing certain inputs to multipart forms could result in an infinite loop when parsing",
+    "max_cvss": null,
+    "fixed_versions": [
+     "2.2.27",
+     "3.2.12",
+     "4.0.2"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 117.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-6cw3-g6wv-c2xv#1",
+      "score": 0.86,
+      "text": "GHSA-6cw3-g6wv-c2xv (django) details:\nAn issue was discovered in MultiPartParser in Django 2.2 before 2.2.27, 3.2 before 3.2.12, and 4.0 before 4.0.2. Passing certain inputs to multipart forms could result in an infinite loop when parsing files.",
+      "vuln_id": "GHSA-6cw3-g6wv-c2xv"
+     },
+     {
+      "id": "GHSA-6cw3-g6wv-c2xv#0",
+      "score": 0.748,
+      "text": "GHSA-6cw3-g6wv-c2xv (CVE-2022-23833)\npackage: django\nsummary: Infinite Loop in Django\naffected: >=2.2, <2.2.27; >=3.2, <3.2.12; >=4.0, <4.0.2",
+      "vuln_id": "GHSA-6cw3-g6wv-c2xv"
+     },
+     {
+      "id": "GHSA-5mf9-h53q-7mhq#1",
+      "score": 0.834,
+      "text": "GHSA-5mf9-h53q-7mhq (django) details:\nAn issue was discovered in 6.0 before 6.0.4, 5.2 before 5.2.13, and 4.2 before 4.2.30. `MultiPartParser` allows remote attackers to degrade performance by submitting multipart uploads with `Content-Transfer-Encoding: base64` including excessive whitespace.\n\nEarlier, unsupported Django series (such as 5.0.x, 4.1.x, and 3.2.x) were not evaluated and may also be affected.\nDjango would like to thank Seokchan Yoon for reporting this issue.",
+      "vuln_id": "GHSA-5mf9-h53q-7mhq"
+     },
+     {
+      "id": "GHSA-2hrw-hx67-34x6#1",
+      "score": 0.829,
+      "text": "GHSA-2hrw-hx67-34x6 (django) details:\nAn issue was discovered in the Multipart Request Parser in Django 3.2 before 3.2.18, 4.0 before 4.0.10, and 4.1 before 4.1.7. Passing certain inputs (e.g., an excessive number of parts) to multipart forms could result in too many open files or memory exhaustion, and provided a potential vector for a denial-of-service attack.",
+      "vuln_id": "GHSA-2hrw-hx67-34x6"
+     }
+    ],
+    "symbols": [
+     "MultiPartParser"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 105.9,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "MultiPartParser"
+    ],
+    "imported": true,
+    "import_locations": [
+     "hc/accounts/admin.py:1",
+     "hc/accounts/admin.py:2",
+     "hc/accounts/admin.py:3",
+     "hc/accounts/admin.py:4",
+     "hc/accounts/admin.py:5",
+     "hc/accounts/admin.py:6",
+     "hc/accounts/admin.py:7",
+     "hc/accounts/admin.py:8",
+     "hc/accounts/admin.py:9",
+     "hc/accounts/admin.py:10",
+     "hc/accounts/backends.py:1",
+     "hc/accounts/backends.py:2",
+     "hc/accounts/decorators.py:4",
+     "hc/accounts/decorators.py:5",
+     "hc/accounts/forms.py:5",
+     "hc/accounts/forms.py:6",
+     "hc/accounts/forms.py:7",
+     "hc/accounts/forms.py:8",
+     "hc/accounts/management/commands/createsuperuser.py:3",
+     "hc/accounts/management/commands/pruneusers.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3118,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "hc/accounts/admin.py:14",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:_format_usage",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:75",
+      "code": "class NumChecksFilter(admin.SimpleListFilter):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:99",
+      "code": "class ProfileAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:133",
+      "code": "qs = qs.annotate(num_members=Count(\"user__project__member\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:134",
+      "code": "qs = qs.annotate(num_checks=Count(\"user__project__check\", distinct=True))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:135",
+      "code": "qs = qs.annotate(plan=F(\"user__subscription__plan_name\"))",
+      "function": "hc.accounts.admin:ProfileAdmin.get_queryset",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:140",
+      "code": "s = escape(obj.user.email)",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:138",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.email",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:151",
+      "code": "return render_to_string(\"admin/profile_list_projects.html\", {\"profile\": obj})",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:149",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.projects",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:153",
+      "code": "@mark_safe",
+      "function": "hc.accounts.admin:ProfileAdmin.checks",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:168",
+      "code": "auth_login(request, profile.user, \"hc.accounts.backends.EmailBackend\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:169",
+      "code": "return redirect(\"hc-index\")",
+      "function": "hc.accounts.admin:ProfileAdmin.login",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:98",
+      "code": "@admin.register(Profile)",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     },
+     {
+      "location": "hc/accounts/admin.py:173",
+      "code": "class ProjectAdmin(admin.ModelAdmin):",
+      "function": "hc.accounts.admin:<module>",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 229,
+     "template_dirs": [
+      "templates"
+     ],
+     "template_files": 199
+    },
+    "entry_points": 339,
+    "paths": [],
+    "summary": "django: imported in 159 non-test location(s) and 159 test location(s); 3118 package call/reference site(s); named vulnerable symbols ['MultiPartParser']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 85.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "healthchecks:hc/api/urls.py:module",
+      "score": 0.678,
+      "text": "# hc/api/urls.py (module level)\nfrom urllib.parse import quote, unquote\nfrom django.urls import include, path, register_converter\nfrom hc.api import views\nclass QuoteConverter:\n    regex = r\"[\\w%~_.-]+\"\nclass SHA1Converter:\n    regex = \"[A-z0-9]{40}\"\nregister_converter(QuoteConverter, \"quoted\")\nregister_converter(SHA1Converter, \"sha1\")\nuuid_urls = [\n    path(\"\", views.ping),\n    path(\"fail\", views.ping, {\"action\": \"fail\"}),\n    path(\"start\", views.ping, {\"action\": \"start\"}),\n    path(\"<int:exitstatus>\", views.ping),\n]\nslug_urls = [\n    path(\"fail\", views.ping_by_slug, {\"action\": \"fail\"}),\n    path(\"start\", views.ping_by_slug, {\"action\": \"start\"}),\n    path(\"<int:exitstatus>\", views.ping_by_slug),\n]\nurlpatterns = [\n    path(\"ping/<uuid:code>\", views.ping),\n    path(\"ping/<uuid:code>/\", include(uuid_urls)),\n    path(\"ping/<slug:ping_key>/<slug:slug>\", views.ping_by_slug),\n    path(\"ping/<slug:ping_key>/<slug:slug>/\", include(slug_urls)),\n    path(\"api/v1/checks/\", views.checks),\n    path(\"api/v1/checks/<uuid:code>\", views.single, name=\"hc-api-single\"),\n    path(\"api/v1/checks/<sha1:unique_key>\", views.get_check_by_unique_key),\n    path(\"api/v1/checks/<uuid:code>/pause\", views.pause, name=\"hc-api-pause\"),\n    path(\n        \"api/v1/notifications/<uuid:code>/status\",\n        views.notification_status,\n        name=\"hc-api-notification-status\",\n    ),\n    path(\"api/v1/checks/<uuid:code>/pings/\", views.pings, name=\"hc-api-pings\"),\n    path(\"api/v1/checks/<uuid:code>/flips/\", views.flips_by_uuid, name=\"hc-api-flips\"),\n    path(\"api/v1/checks/<sha1:unique_key>/flips/\", views.flips_by_unique_key),\n    path(\"api/v1/channels/\", views.channels),\n    path(\"api/v1/badges/\", views.badges),\n    path(\n        \"badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.<slug:fmt>\",\n        views.badge,\n        name=\"hc-badge\",\n    ),\n    path(\n        \"badge/<slug:badge_key>/<slug:signature>.<slug:fmt>\",\n        views.badge,\n        {\"tag\": \"*\"},\n        name=\"hc-badge-all\",\n    ),\n    path(\"api/v1/metrics/\", views.metrics),\n    path(\"api/v1/status/\", views.status),\n]",
+      "file": "hc/api/urls.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/api/forms.py:module",
+      "score": 0.671,
+      "text": "# hc/api/forms.py (module level)\nfrom datetime import datetime as dt, timezone\nfrom django import forms\nfrom django.core.exceptions import ValidationError\nclass TimestampField(forms.Field):\nclass FlipsFiltersForm(forms.Form):\n    start = TimestampField(required=False)\n    end = TimestampField(required=False)\n    seconds = forms.IntegerField(required=False, min_value=0, max_value=31536000)",
+      "file": "hc/api/forms.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/front/templatetags/hc_extras.py:module",
+      "score": 0.671,
+      "text": "# hc/front/templatetags/hc_extras.py (module level)\nimport re\nfrom django import template\nfrom django.conf import settings\nfrom django.templatetags.static import static\nfrom django.utils.html import escape\nfrom django.utils.safestring import mark_safe\nfrom django.utils.timezone import now\nfrom hc.lib.date import format_duration, format_approx_duration, format_hms\nregister = template.Library()\n@register.filter\n@register.filter\n@register.filter\n@register.simple_tag\n@register.simple_tag\n@register.filter\n@register.simple_tag\n@register.simple_tag\n@register.simple_tag\n@register.simple_tag\n@register.filter\n@register.filter\n@register.filter\n@register.filter\n@register.filter\n@register.filter\n@register.simple_tag\n@register.filter\nFORMATTED_PING_ENDPOINT = (\n    f\"\"\"<span class=\"base hidden-md\">{settings.PING_ENDPOINT}</span>\"\"\"\n)\n@register.filter\n@register.filter",
+      "file": "hc/front/templatetags/hc_extras.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/lib/emails.py:module",
+      "score": 0.666,
+      "text": "# hc/lib/emails.py (module level)\nfrom smtplib import SMTPServerDisconnected, SMTPDataError\nfrom threading import Thread\nimport time\nfrom django.conf import settings\nfrom django.core.mail import EmailMultiAlternatives\nfrom django.template.loader import render_to_string as render\nclass EmailThread(Thread):\n    MAX_TRIES = 3",
+      "file": "hc/lib/emails.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "healthchecks:hc/payments/forms.py:module",
+      "score": 0.659,
+      "text": "# hc/payments/forms.py (module level)\nfrom django import forms\nfrom hc.accounts.forms import LowercaseEmailField\nclass InvoiceEmailingForm(forms.Form):\n    send_invoices = forms.IntegerField(min_value=0, max_value=2)\n    invoice_email = LowercaseEmailField(required=False)",
+      "file": "hc/payments/forms.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 18656.6,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.75,
+    "vulnerable_symbols": [
+     "MultiPartParser"
+    ],
+    "reasoning": "MultiPartParser is Django's built-in handler that is automatically invoked by HttpRequest whenever a request arrives with Content-Type: multipart/form-data and the view (or middleware) accesses request.POST/request.FILES; it is not something application code calls by name, so the 0-call-site AST result is expected and not evidence of non-use. This app (Healthchecks 'hc') exposes multiple POST-accepting endpoints (e.g. api/v1/checks/, ping/<uuid:code>/... with action=fail/start, pause endpoint) per hc/api/urls.py, and Django forms (hc/api/forms.py, hc/payments/forms.py) are processed via the standard request pipeline that uses MultiPartParser for any multipart-encoded POST. Since Django is pinned at 4.0.1 (vulnerable range <4.0.2) and nothing in the evidence shows the app disables multipart parsing, restricts Content-Type, or front-ends these views with a parser that bypasses Django's default MultiPartParser, an external client can send a crafted multipart body to any of these POST endpoints to trigger the infinite loop described in the advisory. This matches the rule that core-framework request-parsing paths are considered used unless proven otherwise, and no such proof is present here.",
+    "evidence": [
+     {
+      "location": "hc/api/urls.py (POST-handling paths like 'api/v1/checks/', 'ping/<uuid:code>/fail','start')",
+      "explanation": "Multiple externally reachable endpoints accept POST requests, which Django will parse with MultiPartParser if the client sends multipart/form-data."
+     },
+     {
+      "location": "hc/api/forms.py:1-8",
+      "explanation": "Application defines Django forms processed via the standard request-parsing pipeline that includes MultiPartParser for file/multipart data."
+     },
+     {
+      "location": "advisory",
+      "explanation": "CVE-2022-23833 states the vulnerable code path is triggered by Django's internal MultiPartParser during multipart form/file parsing, which occurs automatically on any multipart POST regardless of explicit application calls."
+     },
+     {
+      "location": "Static evidence summary",
+      "explanation": "0 call sites is expected because MultiPartParser is invoked internally by Django's request object, not called by name in application code, so absence of a named call site does not indicate non-use."
+     }
+    ]
+   },
+   "tokens_in": 4599,
+   "tokens_out": 1579,
+   "llm_calls": 1,
+   "llm_seconds": 18.64,
+   "cost_usd_est": 0.037482,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"reachable\",\"confidence\":0.75,\"vulnerable_symbols\":[\"MultiPartParser\"],\"reasoning\":\"MultiPartParser is Django's built-in handler that is automatically invoked by HttpRequest whenever a request arrives with Content-Type: multipart/form-data and the view (or middleware) accesses request.POST/request.FILES; it is not something application code calls by name, so the 0-call-site AST result is expected and not evidence of non-use. This app (Healthchecks 'hc') exposes multiple POST-accepting endpoints (e.g. api/v1/checks/, ping/<uuid:code>/... with action=fail/start, pause endpoint) per hc/api/urls.py, and Django forms (hc/api/forms.py, hc/payments/forms.py) are processed via the standard request pipeline that uses MultiPartParser for any multipart-encoded POST. Since Django is pinned at 4.0.1 (vulnerable range <4.0.2) and nothing in the evidence shows the app disables multipart parsing, restricts Content-Type, or front-ends these views with a parser that bypasses Django's default MultiPartParser, an external client can send a crafted multipart body to any of these POST endpoints to trigger the infinite loop described in the advisory. This matches the rule that core-framework request-parsing paths are considered used unless proven otherwise, and no such proof is present here.\",\"evidence\":[{\"location\":\"hc/api/urls.py (POST-handling paths like 'api/v1/checks/', 'ping/<uuid:code>/fail','start')\",\"explanation\":\"Multiple externally reachable endpoints accept POST requests, which Django will parse with MultiPartParser if the client sends multipart/form-data.\"},{\"location\":\"hc/api/forms.py:1-8\",\"explanation\":\"Application defines Django forms processed via the standard request-parsing pipeline that includes MultiPartParser for file/multipart data.\"},{\"location\":\"advisory\",\"explanation\":\"CVE-2022-23833 states the vulnerable code path is triggered by Django's internal MultiPartParser during multipart form/file parsing, which occurs automatically on any multipart POST regardless of explicit application calls.\"},{\"location\":\"Static evidence summary\",\"explanation\":\"0 call sites is expected because MultiPartParser is invoked internally by Django's request object, not called by name in application code, so absence of a named call site does not indicate non-use.\"}]}",
+     "in": 4599,
+     "out": 1579,
+     "s": 18.64,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.75,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 1,
+  "tokens_in": 4599,
+  "tokens_out": 1579,
+  "cost_usd_est": 0.037482,
+  "seconds": 18.97
+ },
+ "created": "2026-11-10T20:27:17+00:00",
+ "code_version": "ea5880b"
+}

@@ -1,0 +1,328 @@
+{
+ "finding_id": "mealie/pillow@10.2.0/GHSA-wjx4-4jcj-g98j",
+ "config": "no-reflection",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": false,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-42308",
+   "GHSA-wjx4-4jcj-g98j",
+   "PYSEC-2026-165"
+  ],
+  "cves": [
+   "CVE-2026-42308"
+  ],
+  "cwes": [
+   "CWE-190"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/pillow@10.2.0/GHSA-wjx4-4jcj-g98j",
+  "first_fixed_above_installed": "12.2.0",
+  "fixed_versions": [
+   "12.2.0"
+  ],
+  "max_cvss": "5.5",
+  "package": "pillow",
+  "published": "2026-05-04T20:18:45Z",
+  "summary": "Pillow has an integer overflow when processing fonts",
+  "target": "mealie",
+  "version": "10.2.0",
+  "vuln_id": "GHSA-wjx4-4jcj-g98j"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.88,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.88,
+  "vulnerable_symbols": [
+   "PIL.ImageFont (font glyph advance/position tracking)"
+  ],
+  "reasoning": "The advisory describes an integer overflow specifically in Pillow's font-processing code path (ImageFont glyph advance/position tracking), not in general image decoding/resizing. The application's only use of Pillow is in mealie/pkgs/img/minify.py, which calls Image.open, crop_center, and basic resize/save operations on uploaded images (lines 15, 68, 76, 120) \u2014 there is no import or use of PIL.ImageFont, no font loading, and no text-rendering functionality anywhere in the first-party codebase (0 call sites found for any font-related symbols). Since the vulnerable glyph-advance code path is never invoked by this application, the overflow condition cannot be triggered through any application-controlled flow. This is a narrow, feature-specific CVE (unlike broad decoder-level overflows), and the evidence positively shows the font subsystem is unused.",
+  "evidence": [
+   {
+    "location": "mealie/pkgs/img/minify.py:6",
+    "explanation": "Only import of Pillow in the codebase."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:15,68,120",
+    "explanation": "All Pillow usage is Image.open for raster image minification, not font/text rendering."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:76",
+    "explanation": "crop_center operates on pixel dimensions, unrelated to font glyph advance tracking."
+   },
+   {
+    "location": "advisory",
+    "explanation": "CVE text scopes the bug to font glyph position/advance accumulation inside ImageFont, a module never imported here."
+   }
+  ]
+ },
+ "reflection": null,
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pillow@10.2.0/GHSA-wjx4-4jcj-g98j",
+    "package": "pillow",
+    "version": "10.2.0",
+    "vuln_id": "GHSA-wjx4-4jcj-g98j",
+    "aliases": [
+     "CVE-2026-42308",
+     "GHSA-wjx4-4jcj-g98j",
+     "PYSEC-2026-165"
+    ],
+    "summary": "Pillow has an integer overflow when processing fonts",
+    "max_cvss": "5.5",
+    "fixed_versions": [
+     "12.2.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-wjx4-4jcj-g98j#0",
+      "score": 0.881,
+      "text": "GHSA-wjx4-4jcj-g98j (CVE-2026-42308)\npackage: pillow\nsummary: Pillow has an integer overflow when processing fonts\naffected: >=0, <12.2.0",
+      "vuln_id": "GHSA-wjx4-4jcj-g98j"
+     },
+     {
+      "id": "GHSA-wjx4-4jcj-g98j#1",
+      "score": 0.797,
+      "text": "GHSA-wjx4-4jcj-g98j (pillow) details:\nIf a font advances for each glyph by an exceeding large amount, when Pillow keeps track of the current position, it may lead to an integer overflow. This has been fixed.",
+      "vuln_id": "GHSA-wjx4-4jcj-g98j"
+     },
+     {
+      "id": "GHSA-vcqg-3p29-xw73#0",
+      "score": 0.84,
+      "text": "GHSA-vcqg-3p29-xw73 (CVE-2020-5310)\npackage: pillow\nsummary: Integer overflow in Pillow\naffected: >=0, <6.2.2",
+      "vuln_id": "GHSA-vcqg-3p29-xw73"
+     },
+     {
+      "id": "GHSA-hvr8-466p-75rh#0",
+      "score": 0.83,
+      "text": "GHSA-hvr8-466p-75rh (CVE-2016-4009)\npackage: pillow\nsummary: Pillow Integer overflow in ImagingResampleHorizontal\naffected: >=0, <3.1.1",
+      "vuln_id": "GHSA-hvr8-466p-75rh"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 11.7,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "mealie/pkgs/img/minify.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 10,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "code": "img = Image.open(image)",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pillow: imported in 1 non-test location(s); 10 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 30.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:118",
+      "score": 0.672,
+      "text": "# mealie/services/recipe/recipe_data_service.py:118-167  RecipeDataService.scrape_image\n    async def scrape_image(self, image_url) -> None:\n        self.logger.info(f\"Image URL: {image_url}\")\n\n        if not self._validate_image_url(image_url):\n            self.logger.error(f\"Invalid image URL: {image_url}\")\n            raise InvalidDomainError(f\"Invalid domain: {image_url}\")\n\n        if isinstance(image_url, str):  # Handles String Types\n            pass\n\n        elif isinstance(image_url, list):  # Handles List Types\n            # Multiple images have been defined in the schema - usually different resolutions\n            # Typically would be in smallest->biggest order, but can't be certain so test each.\n            # 'Google will pick the best image to display in Search results based on the aspect ratio and resolution.'\n            image_url, _ = await largest_content_len(image_url)\n\n        elif isinstance(image_url, dict):  # Handles Dictionary Types\n            for key in image_url:\n                if key == \"url\":\n                    image_url = image_url.get(\"url\")\n\n        ext = image_url.split(\".\")[-1]\n\n        if ext not in img.IMAGE_EXTENSIONS:\n            ext = \"jpg\"  # Guess the extension\n\n        file_name = f\"{str(self.recipe_id)}.{ext}\"\n        file_path = Recipe.directory_from_id(self.recipe_id).joinpath(\"images\", file_name)\n\n        async with AsyncClient() as client:\n            try:\n                r = await client.get(image_url, headers={\"User-Agent\": _FIREFOX_UA})\n            except Exception:\n                self.logger.exception(\"Fatal Image Request Exception\")\n                return None\n\n            if r.status_code != 200:\n                # TODO: Probably should throw an exception in this case as well, but before these changes\n                # we were returning None if it failed anyways.\n                return None\n\n            content_type = r.headers.get(\"content-type\", \"\")\n\n            if \"image\" not in content_type:\n                self.logger.error(f\"Content-Type: {content_type} is not an image\")\n                raise NotAnImageError(f\"Content-Type {content_type} is not an image\")\n\n            self.logger.debug(f\"File Name Suffix {file_path.suffix}\")\n            self.write_image(r.read(), file_path.suffix)\n            file_path.unlink(missing_ok=True)",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 118,
+      "qualname": "RecipeDataService.scrape_image"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/pre_processor.py:module",
+      "score": 0.655,
+      "text": "# mealie/services/parser_services/crfpp/pre_processor.py (module level)\nimport re\nimport unicodedata\nreplace_abbreviations = {\n    \"cup\": \" cup \",\n    \"g\": \" gram \",\n    \"kg\": \" kilogram \",\n    \"lb\": \" pound \",\n    \"ml\": \" milliliter \",\n    \"oz\": \" ounce \",\n    \"pint\": \" pint \",\n    \"qt\": \" quart \",\n    \"tbsp\": \" tablespoon \",\n    \"tbs\": \" tablespoon \",  # Order Matters!, 'tsb' must come after 'tbsp' in case of duplicate matches\n    \"tsp\": \" teaspoon \",\n}",
+      "file": "mealie/services/parser_services/crfpp/pre_processor.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/brute/process.py:module",
+      "score": 0.649,
+      "text": "# mealie/services/parser_services/brute/process.py (module level)\nimport string\nimport unicodedata\nfrom pydantic import BaseModel\nfrom .._helpers import check_char, move_parens_to_end\nclass BruteParsedIngredient(BaseModel):\n    food: str = \"\"\n    note: str = \"\"\n    amount: float = 1.0\n    unit: str = \"\"\n    class Config:\n        anystr_strip_whitespace = True",
+      "file": "mealie/services/parser_services/brute/process.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/schema/_mealie/types.py:module",
+      "score": 0.649,
+      "text": "# mealie/schema/_mealie/types.py (module level)\nNoneFloat = float | None",
+      "file": "mealie/schema/_mealie/types.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/services/parser_services/crfpp/tokenizer.py:4",
+      "score": 0.646,
+      "text": "# mealie/services/parser_services/crfpp/tokenizer.py:4-13  clumpFractions\ndef clumpFractions(s):\n    \"\"\"\n    Replaces the whitespace between the integer and fractional part of a quantity\n    with a dollar sign, so it's interpreted as a single token. The rest of the\n    string is left alone.\n        clumpFractions(\"aaa 1 2/3 bbb\")\n        # => \"aaa 1$2/3 bbb\"\n    \"\"\"\n\n    return re.sub(r\"(\\d+)\\s+(\\d)/(\\d)\", r\"\\1$\\2/\\3\", s)",
+      "file": "mealie/services/parser_services/crfpp/tokenizer.py",
+      "start": 4,
+      "qualname": "clumpFractions"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 9738.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "vulnerable_symbols": [
+     "PIL.ImageFont (font glyph advance/position tracking)"
+    ],
+    "reasoning": "The advisory describes an integer overflow specifically in Pillow's font-processing code path (ImageFont glyph advance/position tracking), not in general image decoding/resizing. The application's only use of Pillow is in mealie/pkgs/img/minify.py, which calls Image.open, crop_center, and basic resize/save operations on uploaded images (lines 15, 68, 76, 120) \u2014 there is no import or use of PIL.ImageFont, no font loading, and no text-rendering functionality anywhere in the first-party codebase (0 call sites found for any font-related symbols). Since the vulnerable glyph-advance code path is never invoked by this application, the overflow condition cannot be triggered through any application-controlled flow. This is a narrow, feature-specific CVE (unlike broad decoder-level overflows), and the evidence positively shows the font subsystem is unused.",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:6",
+      "explanation": "Only import of Pillow in the codebase."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:15,68,120",
+      "explanation": "All Pillow usage is Image.open for raster image minification, not font/text rendering."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "explanation": "crop_center operates on pixel dimensions, unrelated to font glyph advance tracking."
+     },
+     {
+      "location": "advisory",
+      "explanation": "CVE text scopes the bug to font glyph position/advance accumulation inside ImageFont, a module never imported here."
+     }
+    ]
+   },
+   "tokens_in": 3587,
+   "tokens_out": 693,
+   "llm_calls": 1,
+   "llm_seconds": 9.72,
+   "cost_usd_est": 0.021156,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.88,\"vulnerable_symbols\":[\"PIL.ImageFont (font glyph advance/position tracking)\"],\"reasoning\":\"The advisory describes an integer overflow specifically in Pillow's font-processing code path (ImageFont glyph advance/position tracking), not in general image decoding/resizing. The application's only use of Pillow is in mealie/pkgs/img/minify.py, which calls Image.open, crop_center, and basic resize/save operations on uploaded images (lines 15, 68, 76, 120) \u2014 there is no import or use of PIL.ImageFont, no font loading, and no text-rendering functionality anywhere in the first-party codebase (0 call sites found for any font-related symbols). Since the vulnerable glyph-advance code path is never invoked by this application, the overflow condition cannot be triggered through any application-controlled flow. This is a narrow, feature-specific CVE (unlike broad decoder-level overflows), and the evidence positively shows the font subsystem is unused.\",\"evidence\":[{\"location\":\"mealie/pkgs/img/minify.py:6\",\"explanation\":\"Only import of Pillow in the codebase.\"},{\"location\":\"mealie/pkgs/img/minify.py:15,68,120\",\"explanation\":\"All Pillow usage is Image.open for raster image minification, not font/text rendering.\"},{\"location\":\"mealie/pkgs/img/minify.py:76\",\"explanation\":\"crop_center operates on pixel dimensions, unrelated to font glyph advance tracking.\"},{\"location\":\"advisory\",\"explanation\":\"CVE text scopes the bug to font glyph position/advance accumulation inside ImageFont, a module never imported here.\"}]}",
+     "in": 3587,
+     "out": 693,
+     "s": 9.72,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 1,
+  "tokens_in": 3587,
+  "tokens_out": 693,
+  "cost_usd_est": 0.021156,
+  "seconds": 9.81
+ },
+ "created": "2026-11-10T20:36:44+00:00",
+ "code_version": "ea5880b"
+}

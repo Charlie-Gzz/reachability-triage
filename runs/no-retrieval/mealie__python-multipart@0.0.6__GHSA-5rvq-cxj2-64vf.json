@@ -1,0 +1,331 @@
+{
+ "finding_id": "mealie/python-multipart@0.0.6/GHSA-5rvq-cxj2-64vf",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-53539",
+   "GHSA-5rvq-cxj2-64vf",
+   "PYSEC-2026-3036"
+  ],
+  "cves": [
+   "CVE-2026-53539"
+  ],
+  "cwes": [
+   "CWE-400",
+   "CWE-407"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/python-multipart@0.0.6/GHSA-5rvq-cxj2-64vf",
+  "first_fixed_above_installed": "0.0.30",
+  "fixed_versions": [
+   "0.0.30"
+  ],
+  "max_cvss": "7.5",
+  "package": "python-multipart",
+  "published": "2026-06-15T20:24:09Z",
+  "summary": "python-multipart: Quadratic-time querystring parsing with semicolon separators causes CPU denial of service",
+  "target": "mealie",
+  "version": "0.0.6",
+  "vuln_id": "GHSA-5rvq-cxj2-64vf"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.6,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.55,
+  "vulnerable_symbols": [
+   "QuerystringParser",
+   "multipart.parse_options_header / form parsing with semicolon-separated querystrings"
+  ],
+  "reasoning": "python-multipart is rarely imported by name even when it is the active vulnerability path: Starlette/FastAPI invoke it internally whenever a route declares Form(...)/File(...)/UploadFile parameters or calls request.form(). The static evidence only confirms zero direct imports and zero direct references to python-multipart's internal symbols in first-party code \u2014 it does not check for FastAPI/Starlette Form, File, UploadFile usage or request.form()/request.body() calls, which is the actual trigger condition the advisory requires. Since python-multipart is listed as a direct dependency, there is a non-trivial prior it was deliberately installed to support multipart form/file uploads somewhere in the app, which the current search would not have detected. Without evidence either confirming or ruling out such Form/File/UploadFile/request.form() entry points, the reachability question posed by the advisory (quadratic-time querystring parsing with semicolon separators) remains unresolved. This should not be marked not_reachable on the basis of absent evidence for the wrong search target.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "Vulnerability triggers when multipart/form-urlencoded bodies with many semicolon-separated fields are parsed by python-multipart's querystring parser."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "Search covered direct imports/symbol references to python-multipart, not FastAPI/Starlette Form(...), File(...), UploadFile, or request.form()/request.body() call sites, which is how the library is actually invoked transitively."
+   },
+   {
+    "location": "dependency manifest",
+    "explanation": "python-multipart==0.0.6 is declared as a direct dependency, suggesting deliberate installation for form/file handling rather than an incidental transitive pull."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that the static scan found zero references to python-multipart anywhere in 322 first-party files, which could be read as strong evidence of non-reachability (not_reachable) rather than uncertainty \u2014 if the package were truly wired into the app via FastAPI/Starlette Form/File/UploadFile, surely something would show up. But this argument fails: FastAPI/Starlette route handlers almost never reference 'python-multipart' by name \u2014 they use `fastapi.Form`, `fastapi.File`, `UploadFile`, or call `await request.form()`, all of which invoke python-multipart's parser internally without any lexical trace of the vulnerable package. The scan explicitly searched for python-multipart imports/symbols, not these FastAPI/Starlette entry points, so a genuine reachable path through Form/File/UploadFile would produce exactly the same 'zero matches' result the scan reported. The verdict correctly identifies this blind spot rather than ignoring or misreading evidence \u2014 it is flagging that the evidence collected does not address the actual trigger condition. Given python-multipart is a declared *direct* dependency (not transitive), the prior that it is deliberately installed for multipart/form parsing is non-trivial, and the absence of a targeted search for Form/File/UploadFile/request.form() leaves genuine ambiguity. The verdict does not overreach into reachable (it doesn't claim confirmed usage) nor incorrectly collapse to not_reachable (it doesn't ignore the direct-dependency signal), so it holds as the best-supported position given the evidence gap.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.6
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/python-multipart@0.0.6/GHSA-5rvq-cxj2-64vf",
+    "package": "python-multipart",
+    "version": "0.0.6",
+    "vuln_id": "GHSA-5rvq-cxj2-64vf",
+    "aliases": [
+     "CVE-2026-53539",
+     "GHSA-5rvq-cxj2-64vf",
+     "PYSEC-2026-3036"
+    ],
+    "summary": "python-multipart: Quadratic-time querystring parsing with semicolon separators causes CPU denial of service",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "0.0.30"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 9.3,
+   "output": {
+    "package": "python-multipart",
+    "import_names": [
+     "multipart"
+    ],
+    "symbols": [],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "python-multipart: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 8532.6,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.9,
+    "vulnerable_symbols": [
+     "python_multipart.parse_options_header",
+     "multipart.parse_qs (semicolon-separated querystring parsing)"
+    ],
+    "reasoning": "The advisory concerns python-multipart's quadratic-time parsing of querystrings using semicolon separators. Static analysis found zero imports of python-multipart in any non-test first-party file, zero package call/reference sites, and zero matches for the vulnerable symbols across 322 Python files and all templates. Although it is a direct dependency (likely pulled in transitively via FastAPI/Starlette for multipart form handling), there is no evidence the application code itself invokes the vulnerable parsing path, and even framework-level usage would only matter if multipart form bodies are parsed \u2014 no evidence of that is shown either. Since the evidence positively shows no usage sites (not just absence of search), this meets the bar for not_reachable rather than uncertain. If the dependency is actually loaded transitively by an untouched framework entry point (e.g., FastAPI's File/Form handling), that would flip this to reachable, but no such call sites were found in the first-party code.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "CVE describes quadratic-time cost parsing semicolon-delimited querystrings in python-multipart versions <0.0.30."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test imports, 0 package call/reference sites, and 0 production call sites of the named vulnerable symbols were found across all 322 first-party Python files."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "No HTML templates reference any related filter/symbol, ruling out indirect template-driven usage."
+     }
+    ]
+   },
+   "tokens_in": 1952,
+   "tokens_out": 579,
+   "llm_calls": 1,
+   "llm_seconds": 8.53,
+   "cost_usd_est": 0.014541,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.9,\"vulnerable_symbols\":[\"python_multipart.parse_options_header\",\"multipart.parse_qs (semicolon-separated querystring parsing)\"],\"reasoning\":\"The advisory concerns python-multipart's quadratic-time parsing of querystrings using semicolon separators. Static analysis found zero imports of python-multipart in any non-test first-party file, zero package call/reference sites, and zero matches for the vulnerable symbols across 322 Python files and all templates. Although it is a direct dependency (likely pulled in transitively via FastAPI/Starlette for multipart form handling), there is no evidence the application code itself invokes the vulnerable parsing path, and even framework-level usage would only matter if multipart form bodies are parsed \u2014 no evidence of that is shown either. Since the evidence positively shows no usage sites (not just absence of search), this meets the bar for not_reachable rather than uncertain. If the dependency is actually loaded transitively by an untouched framework entry point (e.g., FastAPI's File/Form handling), that would flip this to reachable, but no such call sites were found in the first-party code.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"CVE describes quadratic-time cost parsing semicolon-delimited querystrings in python-multipart versions <0.0.30.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 non-test imports, 0 package call/reference sites, and 0 production call sites of the named vulnerable symbols were found across all 322 first-party Python files.\"},{\"location\":\"static evidence summary\",\"explanation\":\"No HTML templates reference any related filter/symbol, ruling out indirect template-driven usage.\"}]}\n```",
+     "in": 1952,
+     "out": 579,
+     "s": 8.53,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 18396.3,
+   "output": {
+    "critique": "The verdict's own reasoning undermines its confidence: it admits 'even framework-level usage would only matter if multipart form bodies are parsed \u2014 no evidence of that is shown either,' but the static evidence cited never actually searched for that condition. python-multipart is almost never imported directly by first-party code \u2014 it's invoked transitively by Starlette/FastAPI whenever an endpoint declares `File(...)`, `Form(...)`, or `UploadFile` parameters, or calls `request.form()`. The scanner searched for 'python-multipart' imports and named vulnerable symbols (e.g., QuerystringParser) in first-party files \u2014 but that is the wrong search target for a transitively-invoked parsing library. A false negative here is highly plausible: any FastAPI route with `Form`/`File`/`UploadFile` params, or any Starlette app calling `.form()`, would reach the vulnerable parser without ever importing python-multipart by name. The evidence presented does not establish absence of such usage; it only establishes absence of *direct* references to the library itself, which is nearly always true for this dependency even in vulnerable apps. Given that python-multipart is listed as a *direct* dependency (not transitive), there's also a nontrivial prior that it's deliberately installed for form/file upload handling. The verdict should not claim 0.9 confidence not_reachable when the actual reachability question (does any entry point parse multipart/form or urlencoded-with-semicolon bodies) was never queried.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "uncertain",
+    "confidence": 0.6
+   },
+   "tokens_in": 1877,
+   "tokens_out": 1516,
+   "llm_calls": 1,
+   "llm_seconds": 18.39,
+   "cost_usd_est": 0.028371,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's own reasoning undermines its confidence: it admits 'even framework-level usage would only matter if multipart form bodies are parsed \u2014 no evidence of that is shown either,' but the static evidence cited never actually searched for that condition. python-multipart is almost never imported directly by first-party code \u2014 it's invoked transitively by Starlette/FastAPI whenever an endpoint declares `File(...)`, `Form(...)`, or `UploadFile` parameters, or calls `request.form()`. The scanner searched for 'python-multipart' imports and named vulnerable symbols (e.g., QuerystringParser) in first-party files \u2014 but that is the wrong search target for a transitively-invoked parsing library. A false negative here is highly plausible: any FastAPI route with `Form`/`File`/`UploadFile` params, or any Starlette app calling `.form()`, would reach the vulnerable parser without ever importing python-multipart by name. The evidence presented does not establish absence of such usage; it only establishes absence of *direct* references to the library itself, which is nearly always true for this dependency even in vulnerable apps. Given that python-multipart is listed as a *direct* dependency (not transitive), there's also a nontrivial prior that it's deliberately installed for form/file upload handling. The verdict should not claim 0.9 confidence not_reachable when the actual reachability question (does any entry point parse multipart/form or urlencoded-with-semicolon bodies) was never queried.\",\"agrees\":false,\"retry\":true,\"final_verdict\":\"uncertain\",\"confidence\":0.6}",
+     "in": 1877,
+     "out": 1516,
+     "s": 18.39,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 10405.9,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.55,
+    "vulnerable_symbols": [
+     "QuerystringParser",
+     "multipart.parse_options_header / form parsing with semicolon-separated querystrings"
+    ],
+    "reasoning": "python-multipart is rarely imported by name even when it is the active vulnerability path: Starlette/FastAPI invoke it internally whenever a route declares Form(...)/File(...)/UploadFile parameters or calls request.form(). The static evidence only confirms zero direct imports and zero direct references to python-multipart's internal symbols in first-party code \u2014 it does not check for FastAPI/Starlette Form, File, UploadFile usage or request.form()/request.body() calls, which is the actual trigger condition the advisory requires. Since python-multipart is listed as a direct dependency, there is a non-trivial prior it was deliberately installed to support multipart form/file uploads somewhere in the app, which the current search would not have detected. Without evidence either confirming or ruling out such Form/File/UploadFile/request.form() entry points, the reachability question posed by the advisory (quadratic-time querystring parsing with semicolon separators) remains unresolved. This should not be marked not_reachable on the basis of absent evidence for the wrong search target.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Vulnerability triggers when multipart/form-urlencoded bodies with many semicolon-separated fields are parsed by python-multipart's querystring parser."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "Search covered direct imports/symbol references to python-multipart, not FastAPI/Starlette Form(...), File(...), UploadFile, or request.form()/request.body() call sites, which is how the library is actually invoked transitively."
+     },
+     {
+      "location": "dependency manifest",
+      "explanation": "python-multipart==0.0.6 is declared as a direct dependency, suggesting deliberate installation for form/file handling rather than an incidental transitive pull."
+     }
+    ]
+   },
+   "tokens_in": 2459,
+   "tokens_out": 817,
+   "llm_calls": 1,
+   "llm_seconds": 10.39,
+   "cost_usd_est": 0.019632,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"uncertain\",\"confidence\":0.55,\"vulnerable_symbols\":[\"QuerystringParser\",\"multipart.parse_options_header / form parsing with semicolon-separated querystrings\"],\"reasoning\":\"python-multipart is rarely imported by name even when it is the active vulnerability path: Starlette/FastAPI invoke it internally whenever a route declares Form(...)/File(...)/UploadFile parameters or calls request.form(). The static evidence only confirms zero direct imports and zero direct references to python-multipart's internal symbols in first-party code \u2014 it does not check for FastAPI/Starlette Form, File, UploadFile usage or request.form()/request.body() calls, which is the actual trigger condition the advisory requires. Since python-multipart is listed as a direct dependency, there is a non-trivial prior it was deliberately installed to support multipart form/file uploads somewhere in the app, which the current search would not have detected. Without evidence either confirming or ruling out such Form/File/UploadFile/request.form() entry points, the reachability question posed by the advisory (quadratic-time querystring parsing with semicolon separators) remains unresolved. This should not be marked not_reachable on the basis of absent evidence for the wrong search target.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"Vulnerability triggers when multipart/form-urlencoded bodies with many semicolon-separated fields are parsed by python-multipart's querystring parser.\"},{\"location\":\"static evidence summary\",\"explanation\":\"Search covered direct imports/symbol references to python-multipart, not FastAPI/Starlette Form(...), File(...), UploadFile, or request.form()/request.body() call sites, which is how the library is actually invoked transitively.\"},{\"location\":\"dependency manifest\",\"explanation\":\"python-multipart==0.0.6 is declared as a direct dependency, suggesting deliberate installation for form/file handling rather than an incidental transitive pull.\"}]}",
+     "in": 2459,
+     "out": 817,
+     "s": 10.39,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 29303.7,
+   "output": {
+    "critique": "The strongest counter-argument is that the static scan found zero references to python-multipart anywhere in 322 first-party files, which could be read as strong evidence of non-reachability (not_reachable) rather than uncertainty \u2014 if the package were truly wired into the app via FastAPI/Starlette Form/File/UploadFile, surely something would show up. But this argument fails: FastAPI/Starlette route handlers almost never reference 'python-multipart' by name \u2014 they use `fastapi.Form`, `fastapi.File`, `UploadFile`, or call `await request.form()`, all of which invoke python-multipart's parser internally without any lexical trace of the vulnerable package. The scan explicitly searched for python-multipart imports/symbols, not these FastAPI/Starlette entry points, so a genuine reachable path through Form/File/UploadFile would produce exactly the same 'zero matches' result the scan reported. The verdict correctly identifies this blind spot rather than ignoring or misreading evidence \u2014 it is flagging that the evidence collected does not address the actual trigger condition. Given python-multipart is a declared *direct* dependency (not transitive), the prior that it is deliberately installed for multipart/form parsing is non-trivial, and the absence of a targeted search for Form/File/UploadFile/request.form() leaves genuine ambiguity. The verdict does not overreach into reachable (it doesn't claim confirmed usage) nor incorrectly collapse to not_reachable (it doesn't ignore the direct-dependency signal), so it holds as the best-supported position given the evidence gap.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.6
+   },
+   "tokens_in": 1960,
+   "tokens_out": 2602,
+   "llm_calls": 1,
+   "llm_seconds": 29.3,
+   "cost_usd_est": 0.04491,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument is that the static scan found zero references to python-multipart anywhere in 322 first-party files, which could be read as strong evidence of non-reachability (not_reachable) rather than uncertainty \u2014 if the package were truly wired into the app via FastAPI/Starlette Form/File/UploadFile, surely something would show up. But this argument fails: FastAPI/Starlette route handlers almost never reference 'python-multipart' by name \u2014 they use `fastapi.Form`, `fastapi.File`, `UploadFile`, or call `await request.form()`, all of which invoke python-multipart's parser internally without any lexical trace of the vulnerable package. The scan explicitly searched for python-multipart imports/symbols, not these FastAPI/Starlette entry points, so a genuine reachable path through Form/File/UploadFile would produce exactly the same 'zero matches' result the scan reported. The verdict correctly identifies this blind spot rather than ignoring or misreading evidence \u2014 it is flagging that the evidence collected does not address the actual trigger condition. Given python-multipart is a declared *direct* dependency (not transitive), the prior that it is deliberately installed for multipart/form parsing is non-trivial, and the absence of a targeted search for Form/File/UploadFile/request.form() leaves genuine ambiguity. The verdict does not overreach into reachable (it doesn't claim confirmed usage) nor incorrectly collapse to not_reachable (it doesn't ignore the direct-dependency signal), so it holds as the best-supported position given the evidence gap.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.6}",
+     "in": 1960,
+     "out": 2602,
+     "s": 29.3,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.6,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 8248,
+  "tokens_out": 5514,
+  "cost_usd_est": 0.107454,
+  "seconds": 66.65
+ },
+ "created": "2026-11-10T20:15:26+00:00",
+ "code_version": "225d357"
+}

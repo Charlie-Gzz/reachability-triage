@@ -1,0 +1,311 @@
+{
+ "finding_id": "ctfd/idna@2.10/GHSA-jjg7-2v4v-x38h",
+ "config": "no-reflection",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": false,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-3651",
+   "GHSA-jjg7-2v4v-x38h"
+  ],
+  "cves": [
+   "CVE-2024-3651"
+  ],
+  "cwes": [
+   "CWE-1333",
+   "CWE-400"
+  ],
+  "direct_dependency": false,
+  "finding_id": "ctfd/idna@2.10/GHSA-jjg7-2v4v-x38h",
+  "first_fixed_above_installed": "3.7",
+  "fixed_versions": [
+   "3.7"
+  ],
+  "max_cvss": "6.9",
+  "package": "idna",
+  "published": "2024-04-11T21:32:40Z",
+  "summary": "Internationalized Domain Names in Applications (IDNA) vulnerable to denial of service from specially crafted inputs to idna.encode",
+  "target": "ctfd",
+  "version": "2.10",
+  "vuln_id": "GHSA-jjg7-2v4v-x38h"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.55,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.55,
+  "vulnerable_symbols": [
+   "idna.encode"
+  ],
+  "reasoning": "idna 2.10 is listed only as a transitive dependency; the AST scan found zero imports, zero attribute/call references, and zero call sites of idna.encode anywhere in CTFd's 142 first-party Python files or 87 templates. That rules out any direct first-party usage of the vulnerable function. However, idna is almost certainly pulled in as a sub-dependency of `requests`/`urllib3`, which CTFd likely uses for outbound HTTP integrations (e.g. webhook notifications, OAuth provider calls). Those libraries invoke idna.encode() internally when a hostname requires IDNA processing, and the static analysis here only covers first-party source, not what requests/urllib3 do internally with any admin- or attacker-influenced hostname strings. Without evidence of whether CTFd passes externally-influenced hostnames into such outbound requests (and without confirmation that length limits are enforced beforehand), reachability can't be confirmed or ruled out from the given evidence; this is the 'vulnerable behavior sits deep inside a library the app relies on' case the rules call uncertain.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "CVE-2024-3651 requires a caller to pass an attacker-controlled, arbitrarily long string into idna.encode() to trigger resource exhaustion."
+   },
+   {
+    "location": "CTFd/utils/encoding/__init__.py:1-48 and CTFd/utils/crypto/__init__.py:16-19",
+    "explanation": "Retrieved first-party code using base64/hex/sha256 encoding shows no relation to idna or domain-name processing, confirming it's not the reachable path."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 non-test imports and 0 production call sites of idna.encode were found in first-party code, meaning no direct app-level use of the vulnerable function."
+   },
+   {
+    "location": "advisory",
+    "explanation": "idna is typically pulled in transitively via requests/urllib3 for IDNA hostname encoding during outbound HTTP calls, a path not covered by the first-party-only AST scan."
+   }
+  ]
+ },
+ "reflection": null,
+ "symbols": [
+  "idna.encode",
+  "encode"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/idna@2.10/GHSA-jjg7-2v4v-x38h",
+    "package": "idna",
+    "version": "2.10",
+    "vuln_id": "GHSA-jjg7-2v4v-x38h",
+    "aliases": [
+     "CVE-2024-3651",
+     "GHSA-jjg7-2v4v-x38h"
+    ],
+    "summary": "Internationalized Domain Names in Applications (IDNA) vulnerable to denial of service from specially crafted inputs to idna.encode",
+    "max_cvss": "6.9",
+    "fixed_versions": [
+     "3.7"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 26.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-jjg7-2v4v-x38h#0",
+      "score": 0.868,
+      "text": "GHSA-jjg7-2v4v-x38h (CVE-2024-3651)\npackage: idna\nsummary: Internationalized Domain Names in Applications (IDNA) vulnerable to denial of service from specially crafted inputs to idna.encode\naffected: >=0, <3.7",
+      "vuln_id": "GHSA-jjg7-2v4v-x38h"
+     },
+     {
+      "id": "GHSA-jjg7-2v4v-x38h#1",
+      "score": 0.791,
+      "text": "GHSA-jjg7-2v4v-x38h (idna) details:\n### Impact\nA specially crafted argument to the `idna.encode()` function could consume significant resources. This may lead to a denial-of-service.\n\n### Patches\nThe function has been refined to reject such strings without the associated resource consumption in version 3.7.\n\n### Workarounds\nDomain names cannot exceed 253 characters in length, if this length limit is enforced prior to passing the domain to the `idna.encode()` function it should no longer consume significant resources. This is triggered by arbitrarily large inputs that would not occur in normal usage, but may be passed to the library assuming there is no preliminary input validation by the higher-level application.",
+      "vuln_id": "GHSA-jjg7-2v4v-x38h"
+     },
+     {
+      "id": "GHSA-65pc-fj4g-8rjx#0",
+      "score": 0.827,
+      "text": "GHSA-65pc-fj4g-8rjx (CVE-2026-45409)\npackage: idna\nsummary: Internationalized Domain Names in Applications (IDNA): Specially crafted inputs to idna.encode() can bypass CVE-2024-3651 fix\naffected: >=0, <3.15",
+      "vuln_id": "GHSA-65pc-fj4g-8rjx"
+     },
+     {
+      "id": "GHSA-65pc-fj4g-8rjx#1",
+      "score": 0.77,
+      "text": "GHSA-65pc-fj4g-8rjx (idna) details:\nThis is the same issue as CVE-2024-3651, however the original remediation in 2024 was not a complete fix. Payloads such as `\"\\u0660\" * N` or `\"\\u30fb\" * N + \"\\u6f22\"` utilize the `valid_contexto` function prior to length rejection, and for high values of `N` will take a long time to process.\n\n### Impact\nA specially crafted argument to the `idna.encode()` function could consume significant resources. This may lead to a denial-of-service.\n\n### Patches\nStarting in version 3.14, the function rejects long inputs as soon as practicable prior to any further processing to minimize resource consumption. In version 3.15, this approach was extended to lesser used alternate functions (i.e. per-label conversions and codec support).",
+      "vuln_id": "GHSA-65pc-fj4g-8rjx"
+     }
+    ],
+    "symbols": [
+     "idna.encode",
+     "encode"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 55.4,
+   "output": {
+    "package": "idna",
+    "import_names": [
+     "idna"
+    ],
+    "symbols": [
+     "idna.encode",
+     "encode"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "idna: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['idna.encode', 'encode']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 26.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/encoding/__init__.py:27",
+      "score": 0.597,
+      "text": "# CTFd/utils/encoding/__init__.py:27-36  base64encode\ndef base64encode(s):\n    if isinstance(s, string_types):\n        s = s.encode(\"utf-8\")\n\n    encoded = base64.urlsafe_b64encode(s).rstrip(b\"\\n=\")\n    try:\n        encoded = encoded.decode(\"utf-8\")\n    except UnicodeDecodeError:\n        pass\n    return encoded",
+      "file": "CTFd/utils/encoding/__init__.py",
+      "start": 27,
+      "qualname": "base64encode"
+     },
+     {
+      "id": "ctfd:CTFd/utils/encoding/__init__.py:7",
+      "score": 0.583,
+      "text": "# CTFd/utils/encoding/__init__.py:7-15  hexencode\ndef hexencode(s):\n    if isinstance(s, string_types):\n        s = s.encode(\"utf-8\")\n    encoded = codecs.encode(s, \"hex\")\n    try:\n        encoded = encoded.decode(\"utf-8\")\n    except UnicodeDecodeError:\n        pass\n    return encoded",
+      "file": "CTFd/utils/encoding/__init__.py",
+      "start": 7,
+      "qualname": "hexencode"
+     },
+     {
+      "id": "ctfd:CTFd/utils/encoding/__init__.py:39",
+      "score": 0.582,
+      "text": "# CTFd/utils/encoding/__init__.py:39-48  base64decode\ndef base64decode(s):\n    if isinstance(s, string_types):\n        s = s.encode(\"utf-8\")\n\n    decoded = base64.urlsafe_b64decode(s.ljust(len(s) + len(s) % 4, b\"=\"))\n    try:\n        decoded = decoded.decode(\"utf-8\")\n    except UnicodeDecodeError:\n        pass\n    return decoded",
+      "file": "CTFd/utils/encoding/__init__.py",
+      "start": 39,
+      "qualname": "base64decode"
+     },
+     {
+      "id": "ctfd:CTFd/utils/crypto/__init__.py:16",
+      "score": 0.575,
+      "text": "# CTFd/utils/crypto/__init__.py:16-19  sha256\ndef sha256(p):\n    if isinstance(p, string_types):\n        p = p.encode(\"utf-8\")\n    return hashlib.sha256(p).hexdigest()",
+      "file": "CTFd/utils/crypto/__init__.py",
+      "start": 16,
+      "qualname": "sha256"
+     },
+     {
+      "id": "ctfd:CTFd/models/__init__.py:792",
+      "score": 0.574,
+      "text": "# CTFd/models/__init__.py:792-793  Submissions.__repr__\n    def __repr__(self):\n        return f\"<Submission id={self.id}, challenge_id={self.challenge_id}, ip={self.ip}, provided={self.provided}>\"",
+      "file": "CTFd/models/__init__.py",
+      "start": 792,
+      "qualname": "Submissions.__repr__"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 28290.3,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.55,
+    "vulnerable_symbols": [
+     "idna.encode"
+    ],
+    "reasoning": "idna 2.10 is listed only as a transitive dependency; the AST scan found zero imports, zero attribute/call references, and zero call sites of idna.encode anywhere in CTFd's 142 first-party Python files or 87 templates. That rules out any direct first-party usage of the vulnerable function. However, idna is almost certainly pulled in as a sub-dependency of `requests`/`urllib3`, which CTFd likely uses for outbound HTTP integrations (e.g. webhook notifications, OAuth provider calls). Those libraries invoke idna.encode() internally when a hostname requires IDNA processing, and the static analysis here only covers first-party source, not what requests/urllib3 do internally with any admin- or attacker-influenced hostname strings. Without evidence of whether CTFd passes externally-influenced hostnames into such outbound requests (and without confirmation that length limits are enforced beforehand), reachability can't be confirmed or ruled out from the given evidence; this is the 'vulnerable behavior sits deep inside a library the app relies on' case the rules call uncertain.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "CVE-2024-3651 requires a caller to pass an attacker-controlled, arbitrarily long string into idna.encode() to trigger resource exhaustion."
+     },
+     {
+      "location": "CTFd/utils/encoding/__init__.py:1-48 and CTFd/utils/crypto/__init__.py:16-19",
+      "explanation": "Retrieved first-party code using base64/hex/sha256 encoding shows no relation to idna or domain-name processing, confirming it's not the reachable path."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test imports and 0 production call sites of idna.encode were found in first-party code, meaning no direct app-level use of the vulnerable function."
+     },
+     {
+      "location": "advisory",
+      "explanation": "idna is typically pulled in transitively via requests/urllib3 for IDNA hostname encoding during outbound HTTP calls, a path not covered by the first-party-only AST scan."
+     }
+    ]
+   },
+   "tokens_in": 3314,
+   "tokens_out": 2368,
+   "llm_calls": 1,
+   "llm_seconds": 28.28,
+   "cost_usd_est": 0.045462,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"uncertain\",\"confidence\":0.55,\"vulnerable_symbols\":[\"idna.encode\"],\"reasoning\":\"idna 2.10 is listed only as a transitive dependency; the AST scan found zero imports, zero attribute/call references, and zero call sites of idna.encode anywhere in CTFd's 142 first-party Python files or 87 templates. That rules out any direct first-party usage of the vulnerable function. However, idna is almost certainly pulled in as a sub-dependency of `requests`/`urllib3`, which CTFd likely uses for outbound HTTP integrations (e.g. webhook notifications, OAuth provider calls). Those libraries invoke idna.encode() internally when a hostname requires IDNA processing, and the static analysis here only covers first-party source, not what requests/urllib3 do internally with any admin- or attacker-influenced hostname strings. Without evidence of whether CTFd passes externally-influenced hostnames into such outbound requests (and without confirmation that length limits are enforced beforehand), reachability can't be confirmed or ruled out from the given evidence; this is the 'vulnerable behavior sits deep inside a library the app relies on' case the rules call uncertain.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"CVE-2024-3651 requires a caller to pass an attacker-controlled, arbitrarily long string into idna.encode() to trigger resource exhaustion.\"},{\"location\":\"CTFd/utils/encoding/__init__.py:1-48 and CTFd/utils/crypto/__init__.py:16-19\",\"explanation\":\"Retrieved first-party code using base64/hex/sha256 encoding shows no relation to idna or domain-name processing, confirming it's not the reachable path.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 non-test imports and 0 production call sites of idna.encode were found in first-party code, meaning no direct app-level use of the vulnerable function.\"},{\"location\":\"advisory\",\"explanation\":\"idna is typically pulled in transitively via requests/urllib3 for IDNA hostname encoding during outbound HTTP calls, a path not covered by the first-party-only AST scan.\"}]}",
+     "in": 3314,
+     "out": 2368,
+     "s": 28.28,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.55,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 1,
+  "tokens_in": 3314,
+  "tokens_out": 2368,
+  "cost_usd_est": 0.045462,
+  "seconds": 28.4
+ },
+ "created": "2026-11-10T20:31:21+00:00",
+ "code_version": "ea5880b"
+}

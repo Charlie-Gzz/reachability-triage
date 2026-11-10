@@ -86,3 +86,10 @@ uv run rt review          # label review page (http://127.0.0.1:8765)
   case header shows the resolved model. No Claude eval calls spent; eval still to resume.
 - 2026-11-10 11:30: status at ~90% of the session window: `full` done on bench test + real (50), `no-retrieval`
   bench done, real at 23/50; ledger 300 calls. 0/50 labels reviewed yet. Label criteria written to LABEL_GUIDE.md.
+- 2026-11-10 11:35: `no-retrieval` stopped on a usage/credit limit after 31 new findings (0 cached). Rerun the same command to resume.
+- 2026-11-10 12:05: `no-retrieval` stopped on a usage/credit limit after 0 new findings (31 cached). Rerun the same command to resume.
+- 2026-11-10 12:35: `no-retrieval` stopped on a usage/credit limit after 0 new findings (31 cached). Rerun the same command to resume.
+- 2026-11-10 13:05: `no-retrieval` stopped on a usage/credit limit after 0 new findings (31 cached). Rerun the same command to resume.
+- 2026-11-10 13:36: `no-retrieval` stopped on a usage/credit limit after 0 new findings (31 cached). Rerun the same command to resume.
+- 2026-11-10 14:06: `no-retrieval` stopped on a usage/credit limit after 0 new findings (31 cached). Rerun the same command to resume.
+- 2026-11-10 14:36: `no-retrieval` stopped on a usage/credit limit after 0 new findings (31 cached). Rerun the same command to resume.

@@ -1,0 +1,41 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/PYSEC-2022-20",
+ "target": "healthchecks",
+ "package": "django",
+ "from": "4.0.1",
+ "to": "4.0.2",
+ "status": "failed",
+ "reason": "no_failing_test",
+ "steps": [
+  {
+   "node": "write_test",
+   "ms": 170777,
+   "attempt": 1,
+   "test_path": "hc/api/tests/test_rt_multipartparser_infinite_loop.py",
+   "test_id": "hc.api.tests.test_rt_multipartparser_infinite_loop.MultiPartParserInfiniteLoopTestCase.test_it_does_not_hang_on_truncated_multipart_body",
+   "code": "import threading\n\nfrom hc.test import BaseTestCase\n\n\nclass MultiPartParserInfiniteLoopTestCase(BaseTestCase):\n    \"\"\"\n    Regression test for PYSEC-2022-20 / GHSA-6cw3-g6wv-c2xv:\n    Django's MultiPartParser could loop forever when parsing certain\n    multipart/form-data bodies (fixed in Django 4.0.2).\n\n    The healthchecks login view builds an AuthenticationForm with\n    ``data=request.POST``, so posting a malformed multipart body to it\n    exercises Django's MultiPartParser through the application's own\n    code path, exactly like any other POST-accepting view in this app.\n\n    This test sends a multipart body whose part headers never reach the\n    terminating CRLFCRLF before the stream hits EOF. On the vulnerable\n    Django version the parser re-reads from the exhausted stream\n    forever instead of detecting EOF, so request handling never\n    returns and the worker thread below never finishes within the\n    timeout. On the fixed version the parser detects the truncated\n    input and the request completes (with a normal HTTP response)\n    almost immediately.\n    \"\"\"\n\n    def test_it_does_not_hang_on_truncated_multipart_body(self):\n        boundary = \"x\" * 10\n        # A multipart part whose headers are never terminated with\n        # \"\\r\\n\\r\\n\" and whose stream simply ends (no closing boundary).\n        body = (\n            f\"--{boundary}\\r\\n\"\n            'Content-Disposition: form-data; name=\"username\"; filename=\"a.txt\"\\r\\n'\n            \"Content-Type: text/plain\\r\\n\"\n        ).encode()\n\n        result = {}\n\n        def do_request():\n            response = self.client.post(\n                \"/accounts/login/\",\n                data=body,\n                content_type=f\"multipart/form-data; boundary={boundary}\",\n            )\n            result[\"status_code\"] = response.status_code\n\n        thread = threading.Thread(target=do_request, daemon=True)\n        thread.start()\n        thread.join(timeout=5)\n\n        self.assertFalse(\n            thread.is_alive(),\n            \"POST /accounts/login/ with a truncated multipart body did not \"\n            \"return within 5 seconds -- Django's MultiPartParser appears to \"\n            \"be stuck in an infinite loop while parsing the malformed \"\n            \"request body (PYSEC-2022-20 / GHSA-6cw3-g6wv-c2xv). Upgrade \"\n            \"Django to >=4.0.2 to fix this denial-of-service issue.\",\n        )\n",
+   "rationale": "The vulnerability is in Django's MultiPartParser, which is only reached lazily when application code touches request.POST/request.FILES on a multipart request. The healthchecks login view does this via AuthenticationForm(data=request.POST), so POSTing to /accounts/login/ with a crafted body exercises the exact app code path the reachability analysis flagged, without calling Django internals directly. The malformed body supplies multipart part headers that never reach the CRLFCRLF terminator before the stream is exhausted (EOF) -- the exact class of input that caused the parser to spin forever re-reading an exhausted stream on Django <4.0.2. Because an actual infinite loop cannot be awaited synchronously in a deterministic test, the request is run in a daemon thread with a 5s join timeout: on django==4.0.1 the thread is still alive after the timeout (assertFalse fails with a clear message), while on the patched django>=4.0.2 the parser detects the truncated/invalid input, the view returns a normal response quickly, and the thread finishes well within the timeout, so the assertion passes. No network access or extra tooling is used -- only Django's built-in test client already used throughout the project's test suite.",
+   "run": {
+    "outcome": "passes_before_fix",
+    "runner": "django",
+    "total": 1,
+    "failed": 0,
+    "passed": 1,
+    "failing": [],
+    "seconds": 28.1,
+    "output": "Found 1 test(s).\nSystem check identified no issues (0 silenced).\nCreating test database for alias 'default'...\n/opt/venv/lib/python3.10/site-packages/whitenoise/base.py:115: UserWarning: No directory at: /app/static-collected/\n  warnings.warn(u\"No directory at: {}\".format(root))\n.\n----------------------------------------------------------------------\nRan 1 test in 0.047s\n\nOK\nDestroying test database for alias 'default'...\n"
+   }
+  },
+  {
+   "node": "write_test",
+   "ms": 600127,
+   "attempt": 2,
+   "error": "provider_error: claude -p timed out after 300s"
+  }
+ ],
+ "llm_calls": 1,
+ "tokens_in": 2097,
+ "tokens_out": 12998,
+ "seconds": 771.6,
+ "created": "2026-11-10T20:52:45+00:00"
+}

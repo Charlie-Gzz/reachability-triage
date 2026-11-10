@@ -1,0 +1,484 @@
+{
+ "finding_id": "ctfd/flask-restx@0.2.0/GHSA-3q6g-vf58-7m4g",
+ "config": "local",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "local",
+ "model": "qwen2.5-coder-14b-instruct",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-32838",
+   "GHSA-3q6g-vf58-7m4g",
+   "PYSEC-2021-325"
+  ],
+  "cves": [
+   "CVE-2021-32838"
+  ],
+  "cwes": [
+   "CWE-1333",
+   "CWE-400"
+  ],
+  "direct_dependency": true,
+  "finding_id": "ctfd/flask-restx@0.2.0/GHSA-3q6g-vf58-7m4g",
+  "first_fixed_above_installed": "0.5.1",
+  "fixed_versions": [
+   "0.5.1",
+   "bab31e085f355dd73858fd3715f7ed71849656da"
+  ],
+  "max_cvss": "8.7",
+  "package": "flask-restx",
+  "published": "2021-09-08T15:41:15Z",
+  "summary": "Regular Expression Denial of Service in flask-restx",
+  "target": "ctfd",
+  "version": "0.2.0",
+  "vuln_id": "GHSA-3q6g-vf58-7m4g"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 1.0,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": true,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 1.0,
+  "vulnerable_symbols": [
+   "email_regex"
+  ],
+  "reasoning": "The application uses the vulnerable 'email_regex' from flask-restx in the CTFd/plugins/flags/__init__.py file within the CTFdRegexFlag.compare method. This indicates that the vulnerable regex is indeed used in the production code, making the vulnerability reachable.",
+  "evidence": [
+   {
+    "location": "CTFd/plugins/flags/__init__.py:56-69",
+    "explanation": "The 'email_regex' from flask-restx is used within the CTFdRegexFlag.compare method to match user-provided input against a regular expression."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The evidence provided does not show that the vulnerable 'email_regex' from flask-restx is actually used in the production code. The CTFd/plugins/flags/__init__.py file uses a different regex pattern defined locally within the application, not the one from flask-restx. Therefore, the vulnerability is not reachable based on the given evidence.",
+  "agrees": false,
+  "retry": true,
+  "final_verdict": "not_reachable",
+  "confidence": 1.0
+ },
+ "symbols": [
+  "email_regex"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/flask-restx@0.2.0/GHSA-3q6g-vf58-7m4g",
+    "package": "flask-restx",
+    "version": "0.2.0",
+    "vuln_id": "GHSA-3q6g-vf58-7m4g",
+    "aliases": [
+     "CVE-2021-32838",
+     "GHSA-3q6g-vf58-7m4g",
+     "PYSEC-2021-325"
+    ],
+    "summary": "Regular Expression Denial of Service in flask-restx",
+    "max_cvss": "8.7",
+    "fixed_versions": [
+     "0.5.1",
+     "bab31e085f355dd73858fd3715f7ed71849656da"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 25.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-3q6g-vf58-7m4g#0",
+      "score": 0.889,
+      "text": "GHSA-3q6g-vf58-7m4g (CVE-2021-32838)\npackage: flask-restx\nsummary: Regular Expression Denial of Service in flask-restx\naffected: >=0, <0.5.1",
+      "vuln_id": "GHSA-3q6g-vf58-7m4g"
+     },
+     {
+      "id": "GHSA-3q6g-vf58-7m4g#1",
+      "score": 0.877,
+      "text": "GHSA-3q6g-vf58-7m4g (flask-restx) details:\nFlask RESTX contains a regular expression that is vulnerable to [ReDoS](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS) (Regular Expression Denial of Service) in `email_regex`.",
+      "vuln_id": "GHSA-3q6g-vf58-7m4g"
+     }
+    ],
+    "symbols": [
+     "email_regex"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 41.8,
+   "output": {
+    "package": "flask-restx",
+    "import_names": [
+     "flask_restx"
+    ],
+    "symbols": [
+     "email_regex"
+    ],
+    "imported": true,
+    "import_locations": [
+     "CTFd/api/__init__.py:2",
+     "CTFd/api/v1/awards.py:4",
+     "CTFd/api/v1/challenges.py:5",
+     "CTFd/api/v1/comments.py:4",
+     "CTFd/api/v1/config.py:4",
+     "CTFd/api/v1/files.py:4",
+     "CTFd/api/v1/flags.py:4",
+     "CTFd/api/v1/hints.py:4",
+     "CTFd/api/v1/notifications.py:4",
+     "CTFd/api/v1/pages.py:4",
+     "CTFd/api/v1/scoreboard.py:3",
+     "CTFd/api/v1/statistics/__init__.py:1",
+     "CTFd/api/v1/statistics/challenges.py:1",
+     "CTFd/api/v1/statistics/scores.py:3",
+     "CTFd/api/v1/statistics/submissions.py:1",
+     "CTFd/api/v1/statistics/teams.py:1",
+     "CTFd/api/v1/statistics/users.py:1",
+     "CTFd/api/v1/submissions.py:3",
+     "CTFd/api/v1/tags.py:4",
+     "CTFd/api/v1/teams.py:5"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 19,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/api/__init__.py:29",
+      "code": "CTFd_API_v1 = Api(api, version=\"v1\", doc=current_app.config.get(\"SWAGGER_UI_ENDPOINT\"))",
+      "function": "CTFd.api:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/awards.py:17",
+      "code": "awards_namespace = Namespace(\"awards\", description=\"Endpoint to retrieve Awards\")",
+      "function": "CTFd.api.v1.awards:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/challenges.py:53",
+      "code": "challenges_namespace = Namespace(",
+      "function": "CTFd.api.v1.challenges:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/comments.py:22",
+      "code": "comments_namespace = Namespace(\"comments\", description=\"Endpoint to retrieve Comments\")",
+      "function": "CTFd.api.v1.comments:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/config.py:18",
+      "code": "configs_namespace = Namespace(\"configs\", description=\"Endpoint to retrieve Configs\")",
+      "function": "CTFd.api.v1.config:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/files.py:16",
+      "code": "files_namespace = Namespace(\"files\", description=\"Endpoint to retrieve Files\")",
+      "function": "CTFd.api.v1.files:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/flags.py:16",
+      "code": "flags_namespace = Namespace(\"flags\", description=\"Endpoint to retrieve Flags\")",
+      "function": "CTFd.api.v1.flags:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/hints.py:16",
+      "code": "hints_namespace = Namespace(\"hints\", description=\"Endpoint to retrieve Hints\")",
+      "function": "CTFd.api.v1.hints:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/notifications.py:15",
+      "code": "notifications_namespace = Namespace(",
+      "function": "CTFd.api.v1.notifications:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/pages.py:16",
+      "code": "pages_namespace = Namespace(\"pages\", description=\"Endpoint to retrieve Pages\")",
+      "function": "CTFd.api.v1.pages:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/scoreboard.py:17",
+      "code": "scoreboard_namespace = Namespace(",
+      "function": "CTFd.api.v1.scoreboard:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/statistics/__init__.py:3",
+      "code": "statistics_namespace = Namespace(",
+      "function": "CTFd.api.v1.statistics:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/submissions.py:18",
+      "code": "submissions_namespace = Namespace(",
+      "function": "CTFd.api.v1.submissions:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/tags.py:15",
+      "code": "tags_namespace = Namespace(\"tags\", description=\"Endpoint to retrieve Tags\")",
+      "function": "CTFd.api.v1.tags:<module>",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/api/v1/teams.py:28",
+      "code": "teams_namespace = Namespace(\"teams\", description=\"Endpoint to retrieve Teams\")",
+      "function": "CTFd.api.v1.teams:<module>",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "flask-restx: imported in 24 non-test location(s); 19 package call/reference site(s); named vulnerable symbols ['email_regex']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 26.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:module",
+      "score": 0.718,
+      "text": "# CTFd/utils/validators/__init__.py (module level)\nimport re\nfrom urllib.parse import urljoin, urlparse\nfrom flask import request\nfrom marshmallow import ValidationError\nfrom CTFd.models import Users\nfrom CTFd.utils.countries import lookup_country_code\nfrom CTFd.utils.user import get_current_user, is_admin\nEMAIL_REGEX = r\"(^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$)\"",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:24",
+      "score": 0.7,
+      "text": "# CTFd/utils/validators/__init__.py:24-25  validate_email\ndef validate_email(email):\n    return bool(re.match(EMAIL_REGEX, email))",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 24,
+      "qualname": "validate_email"
+     },
+     {
+      "id": "ctfd:CTFd/plugins/flags/__init__.py:56",
+      "score": 0.691,
+      "text": "# CTFd/plugins/flags/__init__.py:56-69  CTFdRegexFlag.compare\n    def compare(chal_key_obj, provided):\n        saved = chal_key_obj.content\n        data = chal_key_obj.data\n\n        try:\n            if data == \"case_insensitive\":\n                res = re.match(saved, provided, re.IGNORECASE)\n            else:\n                res = re.match(saved, provided)\n        # TODO: this needs plugin improvements. See #1425.\n        except re.error as e:\n            raise FlagException(\"Regex parse error occured\") from e\n\n        return res and res.group() == provided",
+      "file": "CTFd/plugins/flags/__init__.py",
+      "start": 56,
+      "qualname": "CTFdRegexFlag.compare"
+     },
+     {
+      "id": "ctfd:CTFd/schemas/users.py:101",
+      "score": 0.672,
+      "text": "# CTFd/schemas/users.py:101-159  UserSchema.validate_email\n    def validate_email(self, data):\n        email = data.get(\"email\")\n        if email is None:\n            return\n        email = email.strip()\n\n        existing_user = Users.query.filter_by(email=email).first()\n        current_user = get_current_user()\n        if is_admin():\n            user_id = data.get(\"id\")\n            if user_id:\n                if existing_user and existing_user.id != user_id:\n                    raise ValidationError(\n                        \"Email address has already been used\", field_names=[\"email\"]\n                    )\n            else:\n                if existing_user:\n                    if current_user:\n                        if current_user.id != existing_user.id:\n                            raise ValidationError(\n                                \"Email address has already been used\",\n                                field_names=[\"email\"],\n                            )\n                    else:\n                        raise ValidationError(\n                            \"Email address has already been used\", field_names=[\"email\"]\n                        )\n        else:\n            if email == current_user.email:\n                return data\n            else:\n                confirm = data.get(\"confirm\")\n\n                if bool(confirm) is False:\n                    raise ValidationError(\n                        \"Please confirm your current password\", field_names=[\"confirm\"]\n                    )\n\n                test = verify_password(\n                    plaintext=confirm, ciphertext=current_user.password\n                )\n                if test is False:\n                    raise ValidationError(\n                        \"Your previous password is incorrect\", field_names=[\"confirm\"]\n                    )\n\n                if existing_user:\n                    raise ValidationError(\n                        \"Email address has already been used\", field_names=[\"email\"]\n                    )\n                if check_email_is_whitelisted(email) is False:\n                    raise ValidationError(\n                        \"Only email addresses under {domains} may register\".format(\n                            domains=get_config(\"domain_whitelist\")\n                        ),\n                        field_names=[\"email\"],\n                    )\n                if get_config(\"verify_emails\"):\n                    current_user.verified = False",
+      "file": "CTFd/schemas/users.py",
+      "start": 101,
+      "qualname": "UserSchema.validate_email"
+     },
+     {
+      "id": "ctfd:CTFd/utils/decorators/__init__.py:53",
+      "score": 0.669,
+      "text": "# CTFd/utils/decorators/__init__.py:53-74  require_verified_emails\ndef require_verified_emails(f):\n    \"\"\"\n    Decorator to restrict an endpoint to users with confirmed active email addresses\n    :param f:\n    :return:\n    \"\"\"\n\n    @functools.wraps(f)\n    def _require_verified_emails(*args, **kwargs):\n        if get_config(\"verify_emails\"):\n            if current_user.authed():\n                if (\n                    current_user.is_admin() is False\n                    and current_user.is_verified() is False\n                ):  # User is not confirmed\n                    if request.content_type == \"application/json\":\n                        abort(403)\n                    else:\n                        return redirect(url_for(\"auth.confirm\"))\n        return f(*args, **kwargs)\n\n    return _require_verified_emails",
+      "file": "CTFd/utils/decorators/__init__.py",
+      "start": 53,
+      "qualname": "require_verified_emails"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 30268.1,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 1.0,
+    "vulnerable_symbols": [
+     "email_regex"
+    ],
+    "reasoning": "The vulnerable 'email_regex' from flask-restx is not used in the application's production code. The application defines its own EMAIL_REGEX pattern and uses it for email validation, which does not involve the vulnerable regex from flask-restx.",
+    "evidence": [
+     {
+      "location": "CTFd/utils/validators/__init__.py:24-25",
+      "explanation": "The application defines its own EMAIL_REGEX pattern and uses it for email validation."
+     },
+     {
+      "location": "advisory",
+      "explanation": "The advisory mentions a vulnerable 'email_regex' in flask-restx, which is not used by the application."
+     }
+    ]
+   },
+   "tokens_in": 2284,
+   "tokens_out": 182,
+   "llm_calls": 1,
+   "llm_seconds": 30.26,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"not_reachable\",\n  \"confidence\": 1,\n  \"vulnerable_symbols\": [\"email_regex\"],\n  \"reasoning\": \"The vulnerable 'email_regex' from flask-restx is not used in the application's production code. The application defines its own EMAIL_REGEX pattern and uses it for email validation, which does not involve the vulnerable regex from flask-restx.\",\n  \"evidence\": [\n    {\n      \"location\": \"CTFd/utils/validators/__init__.py:24-25\",\n      \"explanation\": \"The application defines its own EMAIL_REGEX pattern and uses it for email validation.\"\n    },\n    {\n      \"location\": \"advisory\",\n      \"explanation\": \"The advisory mentions a vulnerable 'email_regex' in flask-restx, which is not used by the application.\"\n    }\n  ]\n}\n```",
+     "in": 2284,
+     "out": 182,
+     "s": 30.26,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 20794.3,
+   "output": {
+    "critique": "The application uses the vulnerable 'email_regex' from flask-restx in the CTFd/plugins/flags/__init__.py file within the CTFdRegexFlag.compare method. This indicates that the vulnerable regex is indeed used in the production code, making the vulnerability reachable.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "reachable",
+    "confidence": 1.0
+   },
+   "tokens_in": 2049,
+   "tokens_out": 99,
+   "llm_calls": 1,
+   "llm_seconds": 20.78,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"critique\": \"The application uses the vulnerable 'email_regex' from flask-restx in the CTFd/plugins/flags/__init__.py file within the CTFdRegexFlag.compare method. This indicates that the vulnerable regex is indeed used in the production code, making the vulnerability reachable.\",\n  \"agrees\": false,\n  \"retry\": true,\n  \"final_verdict\": \"reachable\",\n  \"confidence\": 1.0\n}\n```",
+     "in": 2049,
+     "out": 99,
+     "s": 20.78,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 17969.1,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 1.0,
+    "vulnerable_symbols": [
+     "email_regex"
+    ],
+    "reasoning": "The application uses the vulnerable 'email_regex' from flask-restx in the CTFd/plugins/flags/__init__.py file within the CTFdRegexFlag.compare method. This indicates that the vulnerable regex is indeed used in the production code, making the vulnerability reachable.",
+    "evidence": [
+     {
+      "location": "CTFd/plugins/flags/__init__.py:56-69",
+      "explanation": "The 'email_regex' from flask-restx is used within the CTFdRegexFlag.compare method to match user-provided input against a regular expression."
+     }
+    ]
+   },
+   "tokens_in": 2351,
+   "tokens_out": 163,
+   "llm_calls": 1,
+   "llm_seconds": 17.95,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"reachable\",\n  \"confidence\": 1,\n  \"vulnerable_symbols\": [\"email_regex\"],\n  \"reasoning\": \"The application uses the vulnerable 'email_regex' from flask-restx in the CTFd/plugins/flags/__init__.py file within the CTFdRegexFlag.compare method. This indicates that the vulnerable regex is indeed used in the production code, making the vulnerability reachable.\",\n  \"evidence\": [\n    {\n      \"location\": \"CTFd/plugins/flags/__init__.py:56-69\",\n      \"explanation\": \"The 'email_regex' from flask-restx is used within the CTFdRegexFlag.compare method to match user-provided input against a regular expression.\"\n    }\n  ]\n}\n```",
+     "in": 2351,
+     "out": 163,
+     "s": 17.95,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 13438.4,
+   "output": {
+    "critique": "The evidence provided does not show that the vulnerable 'email_regex' from flask-restx is actually used in the production code. The CTFd/plugins/flags/__init__.py file uses a different regex pattern defined locally within the application, not the one from flask-restx. Therefore, the vulnerability is not reachable based on the given evidence.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "not_reachable",
+    "confidence": 1.0
+   },
+   "tokens_in": 2046,
+   "tokens_out": 115,
+   "llm_calls": 1,
+   "llm_seconds": 13.45,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"critique\": \"The evidence provided does not show that the vulnerable 'email_regex' from flask-restx is actually used in the production code. The CTFd/plugins/flags/__init__.py file uses a different regex pattern defined locally within the application, not the one from flask-restx. Therefore, the vulnerability is not reachable based on the given evidence.\",\n  \"agrees\": false,\n  \"retry\": true,\n  \"final_verdict\": \"not_reachable\",\n  \"confidence\": 1.0\n}\n```",
+     "in": 2046,
+     "out": 115,
+     "s": 13.45,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 1.0,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": true,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 8730,
+  "tokens_out": 559,
+  "cost_usd_est": 0.0,
+  "seconds": 82.57
+ },
+ "created": "2026-11-10T23:03:35+00:00",
+ "code_version": "ea5880b"
+}

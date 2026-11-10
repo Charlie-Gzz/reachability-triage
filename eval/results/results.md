@@ -1,10 +1,8 @@
 # Results
 
-_Generated 2026-11-10T03:27:57+00:00 by `rt eval` from `runs/` (no LLM calls)._
+_Generated 2026-11-10T23:12:15+00:00 by `rt eval` from `runs/` (no LLM calls)._
 
-**Suppresses 50% of scanner noise with a 0% false-suppression rate (benchmark test split), and fixed 0 real vulnerabilities test-first.**
-
-> Real-set numbers are **provisional**: 50 of 50 real labels are machine-drafted and still pending human review (`rt review`). Ground-truth `uncertain` labels are excluded from graded metrics.
+**Suppresses 58% of scanner noise (19 graded findings) while suppressing 1 of 5 truly reachable ones (real set), and fixed 1 real vulnerability test-first.**
 
 Brackets are 95% bootstrap confidence intervals. With samples this small, differences inside the intervals are noise.
 
@@ -13,12 +11,22 @@ Brackets are 95% bootstrap confidence intervals. With samples this small, differ
 | Config | Model | n graded | False-suppression | Precision | Recall | Noise reduction | Uncertain | Calls/finding | Tokens in/out | Est. $/finding | p50 s |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | `full` | claude-sonnet-5 | 20 | 0% [0–0] | 100% [100–100] | 100% [100–100] | 50% [30–70] | 0% | 2 | 6723/2037 | 0.0507 | 19.7 |
+| `no-retrieval` | claude-sonnet-5 | 20 | 20% [0–50] | 86% [50–100] | 60% [29–89] | 40% [20–60] | 15% | 2.2 | 4471/2434 | 0.0499 | 31.0 |
+| `no-reflection` | claude-sonnet-5 | 20 | 0% [0–0] | 91% [71–100] | 100% [100–100] | 45% [25–65] | 0% | 1 | 3377/882 | 0.0234 | 9.3 |
+| `local` | qwen2.5-coder-14b-instruct | 20 | 20% [0–50] | 73% [44–100] | 80% [50–100] | 35% [15–55] | 0% | 2.1 | 3674/350 | 0.0 | 43.4 |
 
 ## Real-repo eval set (50 findings)
 
 | Config | Model | n graded | False-suppression | Precision | Recall | Noise reduction | Uncertain | Calls/finding | Tokens in/out | Est. $/finding | p50 s |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| `full` | claude-sonnet-5 | 1 | n/a | n/a | n/a | 100% [100–100] | 0% | 2 | 9034/4092 | 0.0885 | 48.2 |
+| `full` | claude-sonnet-5 | 19 | 20% [0–67] | 50% [0–100] | 40% [0–100] | 58% [37–79] | 16% | 2.28 | 9968/3603 | 0.0839 | 35.7 |
+| `no-retrieval` | claude-sonnet-5 | 19 | 0% [0–0] | 0% [0–0] | 0% [0–0] | 47% [26–68] | 47% | 2.88 | 6420/4199 | 0.0822 | 50.4 |
+| `no-reflection` | claude-sonnet-5 | 19 | 40% [0–100] | 50% [0–100] | 40% [0–100] | 63% [42–84] | 5% | 1 | 4288/1295 | 0.0323 | 13.5 |
+| `local` | qwen2.5-coder-14b-instruct | 6 | 100% [100–100] | n/a | 0% [0–0] | 67% [33–100] | 0% | 2.6 | 6125/503 | 0.0 | 76.8 |
+
+## Test-first remediation
+
+9 reachable findings attempted → 3 with a failing (red) test → **1 fixed green with the suite intact** ({'upgrade': 1}). Failure reasons: {'patch_failed': 2, 'no_failing_test': 6}.
 
 ## Retrieval (Chroma vs FAISS, same embeddings)
 
@@ -29,5 +37,5 @@ Brackets are 95% bootstrap confidence intervals. With samples this small, differ
 | code | chroma | 22 | 0.50 | 1.00 | 0.70 | 4.02 |
 | code | faiss | 22 | 0.50 | 1.00 | 0.70 | 9.75 |
 
-Claude calls used in total (all runs, incl. development): 82 of the 1,500 cap.
+Claude calls used in total (all runs, incl. development): 472 of the 1,500 cap.
 Cost is an API-list-price **estimate**; runs used a Claude subscription via `claude -p`.

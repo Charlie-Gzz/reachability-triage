@@ -53,11 +53,16 @@ if (R.labels && R.labels.real_pending) {
 const tile = (label, v, ci, sub) => `<div class="panel"><div class="eyebrow">${label}</div>
   <div class="stat">${v}</div><div class="ci">${ci || "&nbsp;"}</div><div class="muted" style="font-size:13px;margin-top:6px">${sub}</div></div>`;
 const rem = R.remediation;
+// Every benchmark tile also states the real-repo result, as counts (too few reachable findings for a bare rate).
+const realLine = (txt) => real ? `<div style="margin-top:6px;color:var(--text)">Real repos: ${txt}</div>` : "";
 document.getElementById("stats").innerHTML = bench ? [
   tile("False-suppression rate", pct(bench.false_suppression_rate), ciTxt(bench.false_suppression_rate_ci95),
-       `real issues wrongly suppressed · benchmark test split, n=${bench.n}`),
-  tile("Noise reduction", pct(bench.noise_reduction), ciTxt(bench.noise_reduction_ci95), "findings safely suppressed · benchmark"),
-  tile("Recall on reachable", pct(bench.recall), ciTxt(bench.recall_ci95), `precision ${pct(bench.precision)} · benchmark`),
+       `real issues wrongly suppressed · benchmark test split, n=${bench.n}`
+       + realLine(real && `${real.false_suppressions} of ${real.true_reachable} reachable suppressed`)),
+  tile("Noise reduction", pct(bench.noise_reduction), ciTxt(bench.noise_reduction_ci95), "findings safely suppressed · benchmark"
+       + realLine(real && `${pct(real.noise_reduction)} of ${real.n} graded`)),
+  tile("Recall on reachable", pct(bench.recall), ciTxt(bench.recall_ci95), `precision ${pct(bench.precision)} · benchmark`
+       + realLine(real && `caught ${real.tp} of ${real.true_reachable}, ${real.true_reachable - real.tp - real.false_suppressions} flagged uncertain`)),
   tile("Fixed test-first", rem ? `${rem.fixed}<span class="muted" style="font-size:22px"> / ${rem.attempted}</span>` : "–", "",
        "red → green with the existing suite intact"),
 ].join("") : `<div class="panel">No results yet. Run <code>rt eval</code>.</div>`;

@@ -1,0 +1,327 @@
+{
+ "finding_id": "bench/thumbnailer/pillow@8.0.0/GHSA-8vj2-vxx3-667w",
+ "config": "no-reflection",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/thumbnailer",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": false,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-22817",
+   "GHSA-8vj2-vxx3-667w",
+   "PYSEC-2022-10"
+  ],
+  "cves": [
+   "CVE-2022-22817"
+  ],
+  "cwes": [
+   "CWE-74"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/thumbnailer/pillow@8.0.0/GHSA-8vj2-vxx3-667w",
+  "first_fixed_above_installed": "9.0.0",
+  "fixed_versions": [
+   "9.0.0",
+   "9.0.1"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "pillow",
+  "published": "2022-01-12T20:07:33Z",
+  "split": "test",
+  "summary": "Arbitrary expression injection in Pillow",
+  "target": "bench/thumbnailer",
+  "version": "8.0.0",
+  "vuln_id": "GHSA-8vj2-vxx3-667w"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.95,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.95,
+  "vulnerable_symbols": [
+   "PIL.ImageMath.eval",
+   "ImageMath.eval"
+  ],
+  "reasoning": "The advisory concerns PIL.ImageMath.eval() allowing arbitrary expression/code execution via crafted expression strings. The application only imports PIL.Image and uses Image.open, img.thumbnail, img.convert, and img.save to generate thumbnails from uploaded image bytes (thumbs/worker.py:3,11-14). There is no import of PIL.ImageMath and no call to ImageMath.eval anywhere in the first-party code, and the static analysis found zero call sites of the named vulnerable symbols with zero paths from any entry point. The Flask route /thumbnails only feeds raw bytes into Image.open/thumbnail, never into ImageMath.eval, so the vulnerable feature is never exercised by production code. Since the only path to the vulnerability requires calling ImageMath.eval with attacker-controlled expression text, and that function is never invoked, the vulnerable code is unused dead functionality for this app.",
+  "evidence": [
+   {
+    "location": "thumbs/worker.py:3",
+    "explanation": "Only 'from PIL import Image' is imported; ImageMath is never imported."
+   },
+   {
+    "location": "thumbs/worker.py:11-14",
+    "explanation": "Image.open/thumbnail/convert/save are the only PIL APIs used, none of which invoke ImageMath.eval."
+   },
+   {
+    "location": "thumbs/app.py:9-11",
+    "explanation": "The only entry point (POST /thumbnails) passes raw upload bytes to make_thumbnails, which never reaches ImageMath.eval."
+   },
+   {
+    "location": "advisory",
+    "explanation": "Static evidence reports 0 production call sites of ImageMath.eval/eval/exit and 0 paths from an entry point."
+   }
+  ]
+ },
+ "reflection": null,
+ "symbols": [
+  "PIL.ImageMath.eval",
+  "ImageMath.eval",
+  "eval",
+  "exit",
+  "ImageMath"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/thumbnailer/pillow@8.0.0/GHSA-8vj2-vxx3-667w",
+    "package": "pillow",
+    "version": "8.0.0",
+    "vuln_id": "GHSA-8vj2-vxx3-667w",
+    "aliases": [
+     "CVE-2022-22817",
+     "GHSA-8vj2-vxx3-667w",
+     "PYSEC-2022-10"
+    ],
+    "summary": "Arbitrary expression injection in Pillow",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "9.0.0",
+     "9.0.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 22.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-8vj2-vxx3-667w#0",
+      "score": 0.858,
+      "text": "GHSA-8vj2-vxx3-667w (CVE-2022-22817)\npackage: pillow\nsummary: Arbitrary expression injection in Pillow\naffected: >=0, <9.0.1",
+      "vuln_id": "GHSA-8vj2-vxx3-667w"
+     },
+     {
+      "id": "GHSA-8vj2-vxx3-667w#1",
+      "score": 0.75,
+      "text": "GHSA-8vj2-vxx3-667w (pillow) details:\n`PIL.ImageMath.eval` in Pillow before 9.0.0 allows evaluation of arbitrary expressions, such as ones that use the Python exec method `ImageMath.eval(\"exec(exit())\")`.\n\nWhile Pillow 9.0.0 restricted top-level builtins available to PIL.ImageMath.eval(), it did not prevent builtins available to lambda expressions. These are now also restricted in 9.0.1.",
+      "vuln_id": "GHSA-8vj2-vxx3-667w"
+     },
+     {
+      "id": "GHSA-3f63-hfp8-52jq#0",
+      "score": 0.807,
+      "text": "GHSA-3f63-hfp8-52jq (CVE-2023-50447)\npackage: pillow\nsummary: Arbitrary Code Execution in Pillow\naffected: >=0, <10.2.0",
+      "vuln_id": "GHSA-3f63-hfp8-52jq"
+     },
+     {
+      "id": "GHSA-j6f7-g425-4gmx#0",
+      "score": 0.803,
+      "text": "GHSA-j6f7-g425-4gmx (CVE-2014-3598)\npackage: pillow\nsummary: Pillow is vulnerable to Denial of Service (DOS) in the Jpeg2KImagePlugin\naffected: >=0, <2.5.3",
+      "vuln_id": "GHSA-j6f7-g425-4gmx"
+     }
+    ],
+    "symbols": [
+     "PIL.ImageMath.eval",
+     "ImageMath.eval",
+     "eval",
+     "exit",
+     "ImageMath"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 4.1,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [
+     "PIL.ImageMath.eval",
+     "ImageMath.eval",
+     "eval",
+     "exit",
+     "ImageMath"
+    ],
+    "imported": true,
+    "import_locations": [
+     "thumbs/worker.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "thumbs/worker.py:11",
+      "code": "img = Image.open(io.BytesIO(raw))",
+      "function": "thumbs.worker:make_thumbnails",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [],
+    "summary": "pillow: imported in 1 non-test location(s); 3 package call/reference site(s); named vulnerable symbols ['PIL.ImageMath.eval', 'ImageMath.eval', 'eval', 'exit', 'ImageMath']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 31.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "bench/thumbnailer:thumbs/worker.py:module",
+      "score": 0.669,
+      "text": "# thumbs/worker.py (module level)\nimport io\nfrom PIL import Image\nSIZES = {\"sm\": (128, 128), \"md\": (512, 512)}",
+      "file": "thumbs/worker.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/thumbnailer:thumbs/app.py:module",
+      "score": 0.607,
+      "text": "# thumbs/app.py (module level)\nfrom flask import Flask, request\nfrom thumbs.worker import make_thumbnails\napp = Flask(__name__)\n@app.post(\"/thumbnails\")",
+      "file": "thumbs/app.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/thumbnailer:thumbs/worker.py:8",
+      "score": 0.603,
+      "text": "# thumbs/worker.py:8-16  make_thumbnails\ndef make_thumbnails(raw: bytes) -> dict:\n    out = {}\n    for name, size in SIZES.items():\n        img = Image.open(io.BytesIO(raw))\n        img.thumbnail(size)\n        buf = io.BytesIO()\n        img.convert(\"RGB\").save(buf, format=\"JPEG\", quality=85)\n        out[name] = buf.getvalue()\n    return out",
+      "file": "thumbs/worker.py",
+      "start": 8,
+      "qualname": "make_thumbnails"
+     },
+     {
+      "id": "bench/thumbnailer:thumbs/app.py:9",
+      "score": 0.561,
+      "text": "# thumbs/app.py:9-11  thumbnails\ndef thumbnails():\n    sizes = make_thumbnails(request.files[\"image\"].read())\n    return {k: len(v) for k, v in sizes.items()}",
+      "file": "thumbs/app.py",
+      "start": 9,
+      "qualname": "thumbnails"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 8437.4,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.95,
+    "vulnerable_symbols": [
+     "PIL.ImageMath.eval",
+     "ImageMath.eval"
+    ],
+    "reasoning": "The advisory concerns PIL.ImageMath.eval() allowing arbitrary expression/code execution via crafted expression strings. The application only imports PIL.Image and uses Image.open, img.thumbnail, img.convert, and img.save to generate thumbnails from uploaded image bytes (thumbs/worker.py:3,11-14). There is no import of PIL.ImageMath and no call to ImageMath.eval anywhere in the first-party code, and the static analysis found zero call sites of the named vulnerable symbols with zero paths from any entry point. The Flask route /thumbnails only feeds raw bytes into Image.open/thumbnail, never into ImageMath.eval, so the vulnerable feature is never exercised by production code. Since the only path to the vulnerability requires calling ImageMath.eval with attacker-controlled expression text, and that function is never invoked, the vulnerable code is unused dead functionality for this app.",
+    "evidence": [
+     {
+      "location": "thumbs/worker.py:3",
+      "explanation": "Only 'from PIL import Image' is imported; ImageMath is never imported."
+     },
+     {
+      "location": "thumbs/worker.py:11-14",
+      "explanation": "Image.open/thumbnail/convert/save are the only PIL APIs used, none of which invoke ImageMath.eval."
+     },
+     {
+      "location": "thumbs/app.py:9-11",
+      "explanation": "The only entry point (POST /thumbnails) passes raw upload bytes to make_thumbnails, which never reaches ImageMath.eval."
+     },
+     {
+      "location": "advisory",
+      "explanation": "Static evidence reports 0 production call sites of ImageMath.eval/eval/exit and 0 paths from an entry point."
+     }
+    ]
+   },
+   "tokens_in": 2826,
+   "tokens_out": 629,
+   "llm_calls": 1,
+   "llm_seconds": 8.44,
+   "cost_usd_est": 0.017913,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.95,\"vulnerable_symbols\":[\"PIL.ImageMath.eval\",\"ImageMath.eval\"],\"reasoning\":\"The advisory concerns PIL.ImageMath.eval() allowing arbitrary expression/code execution via crafted expression strings. The application only imports PIL.Image and uses Image.open, img.thumbnail, img.convert, and img.save to generate thumbnails from uploaded image bytes (thumbs/worker.py:3,11-14). There is no import of PIL.ImageMath and no call to ImageMath.eval anywhere in the first-party code, and the static analysis found zero call sites of the named vulnerable symbols with zero paths from any entry point. The Flask route /thumbnails only feeds raw bytes into Image.open/thumbnail, never into ImageMath.eval, so the vulnerable feature is never exercised by production code. Since the only path to the vulnerability requires calling ImageMath.eval with attacker-controlled expression text, and that function is never invoked, the vulnerable code is unused dead functionality for this app.\",\"evidence\":[{\"location\":\"thumbs/worker.py:3\",\"explanation\":\"Only 'from PIL import Image' is imported; ImageMath is never imported.\"},{\"location\":\"thumbs/worker.py:11-14\",\"explanation\":\"Image.open/thumbnail/convert/save are the only PIL APIs used, none of which invoke ImageMath.eval.\"},{\"location\":\"thumbs/app.py:9-11\",\"explanation\":\"The only entry point (POST /thumbnails) passes raw upload bytes to make_thumbnails, which never reaches ImageMath.eval.\"},{\"location\":\"advisory\",\"explanation\":\"Static evidence reports 0 production call sites of ImageMath.eval/eval/exit and 0 paths from an entry point.\"}]}\n```",
+     "in": 2826,
+     "out": 629,
+     "s": 8.44,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.95,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 1,
+  "tokens_in": 2826,
+  "tokens_out": 629,
+  "cost_usd_est": 0.017913,
+  "seconds": 8.5
+ },
+ "created": "2026-11-10T20:23:39+00:00",
+ "code_version": "ea5880b"
+}

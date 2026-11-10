@@ -179,8 +179,10 @@ def run_eval(quiet: bool = False) -> dict:
     src = fr if use_real else fb
     if src:
         tag = (" (real set, provisional labels)" if fr["provisional"] else " (real set)") if use_real else " (benchmark test split)"
-        results["headline"] = (f"Suppresses {_pct(src['noise_reduction'])} of scanner noise with a "
-                               f"{_pct(src['false_suppression_rate'])} false-suppression rate{tag}, and fixed "
+        # Counts, not just rates: with a handful of truly reachable findings a bare percentage overstates precision.
+        results["headline"] = (f"Suppresses {_pct(src['noise_reduction'])} of scanner noise "
+                               f"({src['n']} graded findings) while suppressing {src['false_suppressions']} of "
+                               f"{src['true_reachable']} truly reachable ones{tag}, and fixed "
                                f"{fixed} real vulnerabilit{'y' if fixed == 1 else 'ies'} test-first.")
     out = EVAL / "results"
     out.mkdir(parents=True, exist_ok=True)

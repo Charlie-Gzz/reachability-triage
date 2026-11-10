@@ -1,0 +1,349 @@
+{
+ "finding_id": "mealie/python-multipart@0.0.6/GHSA-v9pg-7xvm-68hf",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-53540",
+   "GHSA-v9pg-7xvm-68hf",
+   "PYSEC-2026-3040"
+  ],
+  "cves": [
+   "CVE-2026-53540"
+  ],
+  "cwes": [
+   "CWE-1284"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/python-multipart@0.0.6/GHSA-v9pg-7xvm-68hf",
+  "first_fixed_above_installed": "0.0.31",
+  "fixed_versions": [
+   "0.0.31"
+  ],
+  "max_cvss": "3.7",
+  "package": "python-multipart",
+  "published": "2026-06-15T20:23:45Z",
+  "summary": "python-multipart: Negative Content-Length in parse_form buffers the entire body in memory",
+  "target": "mealie",
+  "version": "0.0.6",
+  "vuln_id": "GHSA-v9pg-7xvm-68hf"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.6,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": true,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.4,
+  "vulnerable_symbols": [
+   "parse_form"
+  ],
+  "reasoning": "The advisory is scoped to the specific `parse_form` convenience function in python-multipart, not the package generally. Static evidence shows zero first-party call sites of `parse_form` and zero direct imports of python-multipart, which is consistent with non-use but was never cross-checked against FastAPI/Starlette entry points (e.g. `UploadFile`, `Form(...)` route parameters) that would indirectly exercise the library \u2014 a real gap in the search pattern as the reviewer notes. However, that gap cuts both ways: even if the app heavily uses FastAPI multipart/form-data handling, Starlette's `starlette/formparsers.py` historically instantiates python-multipart's `MultipartParser`/`QuerystringParser` classes directly rather than calling the top-level `parse_form` wrapper named in this advisory, so framework-mediated multipart usage does not reliably reach the vulnerable symbol. The direct-dependency pin is suspicious and worth a follow-up grep for `UploadFile|Form(` in route files and a check of the installed Starlette version's formparsers.py, but absent that confirmation we cannot place this confidently in either reachable or not_reachable. Given the CWE-1284 (improper handling of length) nature of the bug and that wrongly dismissing it is costly, I default to uncertain rather than not_reachable, but confidence is capped because the only concrete static evidence (zero calls to the named symbol) argues against reachability.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "Names `parse_form` specifically as the vulnerable function, not the package's internal parser classes."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 production call sites of parse_form and 0 imports of python-multipart in 322 first-party files scanned."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "Search pattern only covered python-multipart symbol names, not FastAPI/Starlette entry points like UploadFile or Form(...) that would indirectly pull in the dependency."
+   },
+   {
+    "location": "advisory / Starlette source (general knowledge)",
+    "explanation": "Starlette's formparsers.py historically calls MultipartParser/QuerystringParser classes directly rather than the top-level parse_form function, so even confirmed multipart usage via FastAPI may not hit the named vulnerable symbol."
+   },
+   {
+    "location": "dependency manifest",
+    "explanation": "python-multipart is a direct (not transitive) dependency, which is atypical if genuinely unused and warrants the grep follow-up noted above before downgrading to not_reachable."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict's own analysis undercuts its 'uncertain' conclusion. It correctly notes that even where FastAPI/Starlette handles multipart forms, Starlette's formparsers.py implements its own MultipartParser/QuerystringParser logic and does not call python-multipart's top-level parse_form function targeted by this advisory. Combined with the static evidence that there are zero imports of python-multipart anywhere in 322 first-party files (not just zero calls to parse_form), the 'gap' about unchecked FastAPI entry points is largely closed by the reviewer's own reasoning: no first-party code path exists to the package, and even framework-mediated multipart handling is unlikely to invoke the specific vulnerable symbol. The 'direct dependency is suspicious' point is weak \u2014 python-multipart is commonly pinned directly by apps using fastapi[all]/python-multipart as an unused leftover or transitive-pin-promoted-to-direct, which doesn't establish usage. Given zero imports, zero call sites, and the advisory's narrow scope to a function the framework doesn't even call, the evidence leans toward not_reachable rather than uncertain. This isn't a case of ignored evidence \u2014 the reviewer weighed it correctly but was overly conservative in the final label.",
+  "agrees": false,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "parse_form"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/python-multipart@0.0.6/GHSA-v9pg-7xvm-68hf",
+    "package": "python-multipart",
+    "version": "0.0.6",
+    "vuln_id": "GHSA-v9pg-7xvm-68hf",
+    "aliases": [
+     "CVE-2026-53540",
+     "GHSA-v9pg-7xvm-68hf",
+     "PYSEC-2026-3040"
+    ],
+    "summary": "python-multipart: Negative Content-Length in parse_form buffers the entire body in memory",
+    "max_cvss": "3.7",
+    "fixed_versions": [
+     "0.0.31"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.1,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "parse_form"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 15.1,
+   "output": {
+    "package": "python-multipart",
+    "import_names": [
+     "multipart"
+    ],
+    "symbols": [
+     "parse_form"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "python-multipart: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['parse_form']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 7775.2,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "vulnerable_symbols": [
+     "parse_form"
+    ],
+    "reasoning": "The advisory describes a vulnerability in python-multipart's parse_form function that mishandles negative Content-Length headers, causing unbounded memory buffering. Static analysis shows python-multipart is not imported anywhere in production (first-party, non-test) code, and there are zero call/reference sites of the package or the vulnerable parse_form symbol with a path from any entry point. Since the application never invokes python-multipart's form-parsing code directly (likely it's a transitive dependency of a framework like Starlette/FastAPI that may not even use this code path, or is unused), the vulnerable function is not exercised by production code. Per the rules, code that nothing in the project calls is dead code for reachability purposes, so this qualifies as not_reachable. If the package were pulled in indirectly via FastAPI's multipart form handling, that would need separate verification, but no such entry point or call site was found in this evidence.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "CVE describes parse_form buffering entire body in memory when Content-Length is negative."
+     },
+     {
+      "location": "static-analysis summary",
+      "explanation": "0 non-test imports of python-multipart and 0 production call sites of parse_form across 322 first-party files."
+     },
+     {
+      "location": "static-analysis summary",
+      "explanation": "0 call sites have a path from any entry point (route/view/task/CLI), confirming no reachable usage."
+     }
+    ]
+   },
+   "tokens_in": 1947,
+   "tokens_out": 503,
+   "llm_calls": 1,
+   "llm_seconds": 7.77,
+   "cost_usd_est": 0.013386,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.88,\"vulnerable_symbols\":[\"parse_form\"],\"reasoning\":\"The advisory describes a vulnerability in python-multipart's parse_form function that mishandles negative Content-Length headers, causing unbounded memory buffering. Static analysis shows python-multipart is not imported anywhere in production (first-party, non-test) code, and there are zero call/reference sites of the package or the vulnerable parse_form symbol with a path from any entry point. Since the application never invokes python-multipart's form-parsing code directly (likely it's a transitive dependency of a framework like Starlette/FastAPI that may not even use this code path, or is unused), the vulnerable function is not exercised by production code. Per the rules, code that nothing in the project calls is dead code for reachability purposes, so this qualifies as not_reachable. If the package were pulled in indirectly via FastAPI's multipart form handling, that would need separate verification, but no such entry point or call site was found in this evidence.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"CVE describes parse_form buffering entire body in memory when Content-Length is negative.\"},{\"location\":\"static-analysis summary\",\"explanation\":\"0 non-test imports of python-multipart and 0 production call sites of parse_form across 322 first-party files.\"},{\"location\":\"static-analysis summary\",\"explanation\":\"0 call sites have a path from any entry point (route/view/task/CLI), confirming no reachable usage.\"}]}\n```",
+     "in": 1947,
+     "out": 503,
+     "s": 7.77,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 29015.2,
+   "output": {
+    "critique": "The verdict's own reasoning flags the critical gap and then dismisses it without evidence: python-multipart is declared as a DIRECT dependency, not transitive. It is highly unusual for a project to directly pin this package yet never touch it \u2014 the far more likely explanation is that the app uses FastAPI/Starlette's multipart form handling (UploadFile/Form parameters in route handlers), which calls into python-multipart internally. The static analysis only scanned first-party files for imports/calls of 'python-multipart' and 'parse_form' directly \u2014 it would NOT detect reachability via 'from fastapi import UploadFile' or 'Form(...)' route parameters, which is the realistic entry point for this dependency in a typical app. The analysis never reports checking for these framework-level multipart entry points, so the 'zero reachability' conclusion is based on an incomplete search pattern, not proof of non-use. Separately, there's a technical nuance that cuts the other way: Starlette's formparsers.py historically calls the MultipartParser/QuerystringParser classes directly, not the top-level parse_form convenience function named in the advisory \u2014 so even if the app does heavy multipart/form-data handling via FastAPI, it may still never hit the specifically vulnerable parse_form symbol. This nuance was not addressed at all. Given both the unexplained direct-dependency anomaly and the unverified framework call path to the specific vulnerable symbol, the verdict's high confidence (0.88) is not justified by the evidence presented.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 1828,
+   "tokens_out": 2517,
+   "llm_calls": 1,
+   "llm_seconds": 29.0,
+   "cost_usd_est": 0.043239,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's own reasoning flags the critical gap and then dismisses it without evidence: python-multipart is declared as a DIRECT dependency, not transitive. It is highly unusual for a project to directly pin this package yet never touch it \u2014 the far more likely explanation is that the app uses FastAPI/Starlette's multipart form handling (UploadFile/Form parameters in route handlers), which calls into python-multipart internally. The static analysis only scanned first-party files for imports/calls of 'python-multipart' and 'parse_form' directly \u2014 it would NOT detect reachability via 'from fastapi import UploadFile' or 'Form(...)' route parameters, which is the realistic entry point for this dependency in a typical app. The analysis never reports checking for these framework-level multipart entry points, so the 'zero reachability' conclusion is based on an incomplete search pattern, not proof of non-use. Separately, there's a technical nuance that cuts the other way: Starlette's formparsers.py historically calls the MultipartParser/QuerystringParser classes directly, not the top-level parse_form convenience function named in the advisory \u2014 so even if the app does heavy multipart/form-data handling via FastAPI, it may still never hit the specifically vulnerable parse_form symbol. This nuance was not addressed at all. Given both the unexplained direct-dependency anomaly and the unverified framework call path to the specific vulnerable symbol, the verdict's high confidence (0.88) is not justified by the evidence presented.\",\"agrees\":false,\"retry\":true,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 1828,
+     "out": 2517,
+     "s": 29.0,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 24167.5,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.4,
+    "vulnerable_symbols": [
+     "parse_form"
+    ],
+    "reasoning": "The advisory is scoped to the specific `parse_form` convenience function in python-multipart, not the package generally. Static evidence shows zero first-party call sites of `parse_form` and zero direct imports of python-multipart, which is consistent with non-use but was never cross-checked against FastAPI/Starlette entry points (e.g. `UploadFile`, `Form(...)` route parameters) that would indirectly exercise the library \u2014 a real gap in the search pattern as the reviewer notes. However, that gap cuts both ways: even if the app heavily uses FastAPI multipart/form-data handling, Starlette's `starlette/formparsers.py` historically instantiates python-multipart's `MultipartParser`/`QuerystringParser` classes directly rather than calling the top-level `parse_form` wrapper named in this advisory, so framework-mediated multipart usage does not reliably reach the vulnerable symbol. The direct-dependency pin is suspicious and worth a follow-up grep for `UploadFile|Form(` in route files and a check of the installed Starlette version's formparsers.py, but absent that confirmation we cannot place this confidently in either reachable or not_reachable. Given the CWE-1284 (improper handling of length) nature of the bug and that wrongly dismissing it is costly, I default to uncertain rather than not_reachable, but confidence is capped because the only concrete static evidence (zero calls to the named symbol) argues against reachability.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Names `parse_form` specifically as the vulnerable function, not the package's internal parser classes."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 production call sites of parse_form and 0 imports of python-multipart in 322 first-party files scanned."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "Search pattern only covered python-multipart symbol names, not FastAPI/Starlette entry points like UploadFile or Form(...) that would indirectly pull in the dependency."
+     },
+     {
+      "location": "advisory / Starlette source (general knowledge)",
+      "explanation": "Starlette's formparsers.py historically calls MultipartParser/QuerystringParser classes directly rather than the top-level parse_form function, so even confirmed multipart usage via FastAPI may not hit the named vulnerable symbol."
+     },
+     {
+      "location": "dependency manifest",
+      "explanation": "python-multipart is a direct (not transitive) dependency, which is atypical if genuinely unused and warrants the grep follow-up noted above before downgrading to not_reachable."
+     }
+    ]
+   },
+   "tokens_in": 2462,
+   "tokens_out": 2178,
+   "llm_calls": 1,
+   "llm_seconds": 24.16,
+   "cost_usd_est": 0.040056,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"uncertain\",\n  \"confidence\": 0.4,\n  \"vulnerable_symbols\": [\"parse_form\"],\n  \"reasoning\": \"The advisory is scoped to the specific `parse_form` convenience function in python-multipart, not the package generally. Static evidence shows zero first-party call sites of `parse_form` and zero direct imports of python-multipart, which is consistent with non-use but was never cross-checked against FastAPI/Starlette entry points (e.g. `UploadFile`, `Form(...)` route parameters) that would indirectly exercise the library \u2014 a real gap in the search pattern as the reviewer notes. However, that gap cuts both ways: even if the app heavily uses FastAPI multipart/form-data handling, Starlette's `starlette/formparsers.py` historically instantiates python-multipart's `MultipartParser`/`QuerystringParser` classes directly rather than calling the top-level `parse_form` wrapper named in this advisory, so framework-mediated multipart usage does not reliably reach the vulnerable symbol. The direct-dependency pin is suspicious and worth a follow-up grep for `UploadFile|Form(` in route files and a check of the installed Starlette version's formparsers.py, but absent that confirmation we cannot place this confidently in either reachable or not_reachable. Given the CWE-1284 (improper handling of length) nature of the bug and that wrongly dismissing it is costly, I default to uncertain rather than not_reachable, but confidence is capped because the only concrete static evidence (zero calls to the named symbol) argues against reachability.\",\n  \"evidence\": [\n    {\"location\": \"advisory\", \"explanation\": \"Names `parse_form` specifically as the vulnerable function, not the package's internal parser classes.\"},\n    {\"location\": \"static evidence summary\", \"explanation\": \"0 production call sites of parse_form and 0 imports of python-multipart in 322 first-party files scanned.\"},\n    {\"location\": \"static evidence summary\", \"explanation\": \"Search pattern only covered python-multipart symbol names, not FastAPI/Starlette entry points like UploadFile or Form(...) that would indirectly pull in the dependency.\"},\n    {\"location\": \"advisory / Starlette source (general knowledge)\", \"explanation\": \"Starlette's formparsers.py historically calls MultipartParser/QuerystringParser classes directly rather than the top-level parse_form function, so even confirmed multipart usage via FastAPI may not hit the named vulnerable symbol.\"},\n    {\"location\": \"dependency manifest\", \"explanation\": \"python-multipart is a direct (not transitive) dependency, which is atypical if genuinely unused and warrants the grep follow-up noted above before downgrading to not_reachable.\"}\n  ]\n}\n```",
+     "in": 2462,
+     "out": 2178,
+     "s": 24.16,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 24398.2,
+   "output": {
+    "critique": "The verdict's own analysis undercuts its 'uncertain' conclusion. It correctly notes that even where FastAPI/Starlette handles multipart forms, Starlette's formparsers.py implements its own MultipartParser/QuerystringParser logic and does not call python-multipart's top-level parse_form function targeted by this advisory. Combined with the static evidence that there are zero imports of python-multipart anywhere in 322 first-party files (not just zero calls to parse_form), the 'gap' about unchecked FastAPI entry points is largely closed by the reviewer's own reasoning: no first-party code path exists to the package, and even framework-mediated multipart handling is unlikely to invoke the specific vulnerable symbol. The 'direct dependency is suspicious' point is weak \u2014 python-multipart is commonly pinned directly by apps using fastapi[all]/python-multipart as an unused leftover or transitive-pin-promoted-to-direct, which doesn't establish usage. Given zero imports, zero call sites, and the advisory's narrow scope to a function the framework doesn't even call, the evidence leans toward not_reachable rather than uncertain. This isn't a case of ignored evidence \u2014 the reviewer weighed it correctly but was overly conservative in the final label.",
+    "agrees": false,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 2200,
+   "tokens_out": 2087,
+   "llm_calls": 1,
+   "llm_seconds": 24.38,
+   "cost_usd_est": 0.037905,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict's own analysis undercuts its 'uncertain' conclusion. It correctly notes that even where FastAPI/Starlette handles multipart forms, Starlette's formparsers.py implements its own MultipartParser/QuerystringParser logic and does not call python-multipart's top-level parse_form function targeted by this advisory. Combined with the static evidence that there are zero imports of python-multipart anywhere in 322 first-party files (not just zero calls to parse_form), the 'gap' about unchecked FastAPI entry points is largely closed by the reviewer's own reasoning: no first-party code path exists to the package, and even framework-mediated multipart handling is unlikely to invoke the specific vulnerable symbol. The 'direct dependency is suspicious' point is weak \u2014 python-multipart is commonly pinned directly by apps using fastapi[all]/python-multipart as an unused leftover or transitive-pin-promoted-to-direct, which doesn't establish usage. Given zero imports, zero call sites, and the advisory's narrow scope to a function the framework doesn't even call, the evidence leans toward not_reachable rather than uncertain. This isn't a case of ignored evidence \u2014 the reviewer weighed it correctly but was overly conservative in the final label.\",\"agrees\":false,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.6}",
+     "in": 2200,
+     "out": 2087,
+     "s": 24.38,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.6,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": true,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 8437,
+  "tokens_out": 7285,
+  "cost_usd_est": 0.134586,
+  "seconds": 85.38
+ },
+ "created": "2026-11-10T20:16:51+00:00",
+ "code_version": "225d357"
+}

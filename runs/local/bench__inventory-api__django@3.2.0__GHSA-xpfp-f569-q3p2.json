@@ -1,0 +1,410 @@
+{
+ "finding_id": "bench/inventory-api/django@3.2.0/GHSA-xpfp-f569-q3p2",
+ "config": "local",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/inventory-api",
+ "provider": "local",
+ "model": "qwen2.5-coder-14b-instruct",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-35042",
+   "GHSA-xpfp-f569-q3p2",
+   "PYSEC-2021-109"
+  ],
+  "cves": [
+   "CVE-2021-35042"
+  ],
+  "cwes": [
+   "CWE-89"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/inventory-api/django@3.2.0/GHSA-xpfp-f569-q3p2",
+  "first_fixed_above_installed": "3.2.5",
+  "fixed_versions": [
+   "3.1.13",
+   "3.2.5"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "django",
+  "published": "2021-09-22T17:34:49Z",
+  "split": "test",
+  "summary": "SQL Injection in Django",
+  "target": "bench/inventory-api",
+  "version": "3.2.0",
+  "vuln_id": "GHSA-xpfp-f569-q3p2"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 1.0,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 1.0,
+  "vulnerable_symbols": [
+   "QuerySet.order_by"
+  ],
+  "reasoning": "The application uses the vulnerable 'order_by' method in the 'item_list' view, which is reachable from an entry point. The 'SORTABLE' dictionary maps user input to database fields used in the 'order_by' call.",
+  "evidence": [
+   {
+    "location": "stock/views.py:12",
+    "explanation": "The 'order_by' method is called with user-provided input, making it vulnerable to SQL injection."
+   },
+   {
+    "location": "stock/views.py:8-13",
+    "explanation": "The 'item_list' view is an entry point that handles HTTP requests and uses the vulnerable 'order_by' method."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The application uses the vulnerable 'order_by' method in the 'item_list' view, which is reachable from an entry point. The 'SORTABLE' dictionary maps user input to database fields used in the 'order_by' call.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 1.0
+ },
+ "symbols": [
+  "QuerySet.order_by",
+  "QuerySet",
+  "order_by"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/inventory-api/django@3.2.0/GHSA-xpfp-f569-q3p2",
+    "package": "django",
+    "version": "3.2.0",
+    "vuln_id": "GHSA-xpfp-f569-q3p2",
+    "aliases": [
+     "CVE-2021-35042",
+     "GHSA-xpfp-f569-q3p2",
+     "PYSEC-2021-109"
+    ],
+    "summary": "SQL Injection in Django",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "3.1.13",
+     "3.2.5"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 26.3,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-xpfp-f569-q3p2#0",
+      "score": 0.822,
+      "text": "GHSA-xpfp-f569-q3p2 (CVE-2021-35042)\npackage: django\nsummary: SQL Injection in Django\naffected: >=3.0a1, <3.1.13; >=3.2a1, <3.2.5",
+      "vuln_id": "GHSA-xpfp-f569-q3p2"
+     },
+     {
+      "id": "GHSA-xpfp-f569-q3p2#1",
+      "score": 0.729,
+      "text": "GHSA-xpfp-f569-q3p2 (django) details:\nDjango 3.1.x before 3.1.13 and 3.2.x before 3.2.5 allows QuerySet.order_by SQL injection if order_by is untrusted input from a client of a web application.",
+      "vuln_id": "GHSA-xpfp-f569-q3p2"
+     },
+     {
+      "id": "GHSA-p64x-8rxx-wf6q#0",
+      "score": 0.833,
+      "text": "GHSA-p64x-8rxx-wf6q (CVE-2022-34265)\npackage: django\nsummary: Django `Trunc()` and `Extract()` database functions vulnerable to SQL Injection\naffected: >=3.2a1, <3.2.14; >=4.0a1, <4.0.6",
+      "vuln_id": "GHSA-p64x-8rxx-wf6q"
+     },
+     {
+      "id": "GHSA-pv4p-cwwg-4rph#0",
+      "score": 0.824,
+      "text": "GHSA-pv4p-cwwg-4rph (CVE-2024-42005)\npackage: django\nsummary: Django SQL injection vulnerability\naffected: >=4.2, <4.2.15; >=5.0, <5.0.8",
+      "vuln_id": "GHSA-pv4p-cwwg-4rph"
+     }
+    ],
+    "symbols": [
+     "QuerySet.order_by",
+     "QuerySet",
+     "order_by"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 5.5,
+   "output": {
+    "package": "django",
+    "import_names": [
+     "django"
+    ],
+    "symbols": [
+     "QuerySet.order_by",
+     "QuerySet",
+     "order_by"
+    ],
+    "imported": true,
+    "import_locations": [
+     "manage.py:6",
+     "stock/models.py:1",
+     "stock/urls.py:1",
+     "stock/views.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 12,
+    "vulnerable_call_sites": [
+     {
+      "file": "stock/views.py",
+      "line": 12,
+      "code": "items = Item.objects.order_by(SORTABLE[key]).values(\"sku\", \"quantity\")",
+      "resolved": "stock.models.Item.objects.order_by",
+      "function": "stock.views:item_list",
+      "in_test": false,
+      "weak": true,
+      "reachable_from_entry": true,
+      "path": [
+       "stock.views:item_list"
+      ],
+      "callers": 1,
+      "snippet": "    9      key = request.GET.get(\"sort\", \"recent\")\n   10      if key not in SORTABLE:\n   11          key = \"recent\"\n   12      items = Item.objects.order_by(SORTABLE[key]).values(\"sku\", \"quantity\")\n   13      return JsonResponse({\"items\": list(items)})"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "manage.py:7",
+      "code": "execute_from_command_line(sys.argv)",
+      "function": "manage:<main>",
+      "in_test": false
+     },
+     {
+      "location": "stock/models.py:4",
+      "code": "class Item(models.Model):",
+      "function": "stock.models:<module>",
+      "in_test": false
+     },
+     {
+      "location": "stock/models.py:5",
+      "code": "sku = models.CharField(max_length=40, unique=True)",
+      "function": "stock.models:<module>",
+      "in_test": false
+     },
+     {
+      "location": "stock/models.py:6",
+      "code": "quantity = models.IntegerField()",
+      "function": "stock.models:<module>",
+      "in_test": false
+     },
+     {
+      "location": "stock/models.py:7",
+      "code": "updated = models.DateTimeField(auto_now=True)",
+      "function": "stock.models:<module>",
+      "in_test": false
+     },
+     {
+      "location": "stock/urls.py:5",
+      "code": "urlpatterns = [path(\"items/\", views.item_list)]",
+      "function": "stock.urls:<module>",
+      "in_test": false
+     },
+     {
+      "location": "stock/views.py:13",
+      "code": "return JsonResponse({\"items\": list(items)})",
+      "function": "stock.views:item_list",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 6,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 3,
+    "paths": [
+     [
+      "stock.views:item_list"
+     ]
+    ],
+    "summary": "django: imported in 4 non-test location(s); 12 package call/reference site(s); named vulnerable symbols ['QuerySet.order_by', 'QuerySet', 'order_by']; 0 production call site(s) of those symbols (+1 weak name-only), 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 23.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:stock/views.py:12",
+      "score": 1.0,
+      "file": "stock/views.py",
+      "start": 12,
+      "qualname": "stock.views:item_list",
+      "text": "# stock/views.py around line 12\n    9      key = request.GET.get(\"sort\", \"recent\")\n   10      if key not in SORTABLE:\n   11          key = \"recent\"\n   12      items = Item.objects.order_by(SORTABLE[key]).values(\"sku\", \"quantity\")\n   13      return JsonResponse({\"items\": list(items)})"
+     },
+     {
+      "id": "bench/inventory-api:stock/views.py:module",
+      "score": 0.685,
+      "text": "# stock/views.py (module level)\nfrom django.http import JsonResponse\nfrom stock.models import Item\nSORTABLE = {\"sku\": \"sku\", \"qty\": \"-quantity\", \"recent\": \"-updated\"}",
+      "file": "stock/views.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/inventory-api:stock/urls.py:module",
+      "score": 0.665,
+      "text": "# stock/urls.py (module level)\nfrom django.urls import path\nfrom stock import views\nurlpatterns = [path(\"items/\", views.item_list)]",
+      "file": "stock/urls.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/inventory-api:stock/models.py:module",
+      "score": 0.66,
+      "text": "# stock/models.py (module level)\nfrom django.db import models\nclass Item(models.Model):\n    sku = models.CharField(max_length=40, unique=True)\n    quantity = models.IntegerField()\n    updated = models.DateTimeField(auto_now=True)",
+      "file": "stock/models.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/inventory-api:stock/settings.py:module",
+      "score": 0.657,
+      "text": "# stock/settings.py (module level)\nSECRET_KEY = \"dev\"\nDEBUG = False\nALLOWED_HOSTS = [\"*\"]\nINSTALLED_APPS = [\"django.contrib.contenttypes\", \"django.contrib.auth\", \"stock\"]\nROOT_URLCONF = \"stock.urls\"\nDATABASES = {\"default\": {\"ENGINE\": \"django.db.backends.sqlite3\", \"NAME\": \"db.sqlite3\"}}",
+      "file": "stock/settings.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/inventory-api:stock/views.py:8",
+      "score": 0.646,
+      "text": "# stock/views.py:8-13  item_list\ndef item_list(request):\n    key = request.GET.get(\"sort\", \"recent\")\n    if key not in SORTABLE:\n        key = \"recent\"\n    items = Item.objects.order_by(SORTABLE[key]).values(\"sku\", \"quantity\")\n    return JsonResponse({\"items\": list(items)})",
+      "file": "stock/views.py",
+      "start": 8,
+      "qualname": "item_list"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 22261.2,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 1.0,
+    "vulnerable_symbols": [
+     "QuerySet.order_by"
+    ],
+    "reasoning": "The application uses the vulnerable 'order_by' method in the 'item_list' view, which is reachable from an entry point. The 'SORTABLE' dictionary maps user input to database fields used in the 'order_by' call.",
+    "evidence": [
+     {
+      "location": "stock/views.py:12",
+      "explanation": "The 'order_by' method is called with user-provided input, making it vulnerable to SQL injection."
+     },
+     {
+      "location": "stock/views.py:8-13",
+      "explanation": "The 'item_list' view is an entry point that handles HTTP requests and uses the vulnerable 'order_by' method."
+     }
+    ]
+   },
+   "tokens_in": 1834,
+   "tokens_out": 186,
+   "llm_calls": 1,
+   "llm_seconds": 22.26,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"reachable\",\n  \"confidence\": 1,\n  \"vulnerable_symbols\": [\"QuerySet.order_by\"],\n  \"reasoning\": \"The application uses the vulnerable 'order_by' method in the 'item_list' view, which is reachable from an entry point. The 'SORTABLE' dictionary maps user input to database fields used in the 'order_by' call.\",\n  \"evidence\": [\n    {\n      \"location\": \"stock/views.py:12\",\n      \"explanation\": \"The 'order_by' method is called with user-provided input, making it vulnerable to SQL injection.\"\n    },\n    {\n      \"location\": \"stock/views.py:8-13\",\n      \"explanation\": \"The 'item_list' view is an entry point that handles HTTP requests and uses the vulnerable 'order_by' method.\"\n    }\n  ]\n}\n```",
+     "in": 1834,
+     "out": 186,
+     "s": 22.26,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 14495.9,
+   "output": {
+    "critique": "The application uses the vulnerable 'order_by' method in the 'item_list' view, which is reachable from an entry point. The 'SORTABLE' dictionary maps user input to database fields used in the 'order_by' call.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 1.0
+   },
+   "tokens_in": 1602,
+   "tokens_out": 91,
+   "llm_calls": 1,
+   "llm_seconds": 14.5,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"critique\": \"The application uses the vulnerable 'order_by' method in the 'item_list' view, which is reachable from an entry point. The 'SORTABLE' dictionary maps user input to database fields used in the 'order_by' call.\",\n  \"agrees\": true,\n  \"retry\": false,\n  \"final_verdict\": \"reachable\",\n  \"confidence\": 1.0\n}\n```",
+     "in": 1602,
+     "out": 91,
+     "s": 14.5,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 1.0,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 3436,
+  "tokens_out": 277,
+  "cost_usd_est": 0.0,
+  "seconds": 36.82
+ },
+ "created": "2026-11-10T22:41:02+00:00",
+ "code_version": "ea5880b"
+}

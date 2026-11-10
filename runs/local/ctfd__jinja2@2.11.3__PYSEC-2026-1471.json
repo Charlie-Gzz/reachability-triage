@@ -1,0 +1,400 @@
+{
+ "finding_id": "ctfd/jinja2@2.11.3/PYSEC-2026-1471",
+ "config": "local",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "local",
+ "model": "qwen2.5-coder-14b-instruct",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-27516",
+   "GHSA-cpwx-vrp4-4pq7",
+   "PYSEC-2026-1471"
+  ],
+  "cves": [
+   "CVE-2025-27516"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "ctfd/jinja2@2.11.3/PYSEC-2026-1471",
+  "first_fixed_above_installed": "3.1.6",
+  "fixed_versions": [
+   "3.1.6"
+  ],
+  "max_cvss": "5.4",
+  "package": "jinja2",
+  "published": "2026-07-07T14:34:50.446969Z",
+  "summary": "Jinja2 vulnerable to sandbox breakout through attr filter selecting format method",
+  "target": "ctfd",
+  "version": "2.11.3",
+  "vuln_id": "PYSEC-2026-1471"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 1.0,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 1.0,
+  "vulnerable_symbols": [
+   "str.format"
+  ],
+  "reasoning": "The application uses Jinja2 but does not exercise the vulnerable `str.format` method. The static analysis shows no production call sites of these symbols, and the only use is in a sandboxed environment with no evidence of untrusted template execution.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "The advisory describes a vulnerability where an attacker can execute arbitrary Python code through the `|attr` filter selecting the format method."
+   },
+   {
+    "location": "CTFd/__init__.py:74",
+    "explanation": "SandboxedEnvironment is initialized with options, but there are no indications of untrusted template execution."
+   },
+   {
+    "location": "CTFd/__init__.py:127",
+    "explanation": "TemplateNotFound exception handling does not indicate untrusted template usage."
+   },
+   {
+    "location": "CTFd/views.py:262",
+    "explanation": "TemplateNotFound exception handling in views also does not indicate untrusted template usage."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The static analysis shows no production call sites of the vulnerable `str.format` method, and the only use is in a sandboxed environment with no evidence of untrusted template execution. However, the advisory describes a vulnerability where an attacker can execute arbitrary Python code through the `|attr` filter selecting the format method. The application uses Jinja2 but does not explicitly demonstrate any usage of the `|attr` filter or untrusted template execution. Therefore, there is no clear path to exploit the vulnerability as described in the advisory.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 1.0
+ },
+ "symbols": [
+  "str.format"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/jinja2@2.11.3/PYSEC-2026-1471",
+    "package": "jinja2",
+    "version": "2.11.3",
+    "vuln_id": "PYSEC-2026-1471",
+    "aliases": [
+     "CVE-2025-27516",
+     "GHSA-cpwx-vrp4-4pq7",
+     "PYSEC-2026-1471"
+    ],
+    "summary": "Jinja2 vulnerable to sandbox breakout through attr filter selecting format method",
+    "max_cvss": "5.4",
+    "fixed_versions": [
+     "3.1.6"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 29.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-cpwx-vrp4-4pq7#1",
+      "score": 0.887,
+      "text": "GHSA-cpwx-vrp4-4pq7 (jinja2) details:\nAn oversight in how the Jinja sandboxed environment interacts with the `|attr` filter allows an attacker that controls the content of a template to execute arbitrary Python code.\n\nTo exploit the vulnerability, an attacker needs to control the content of a template. Whether that is the case depends on the type of application using Jinja. This vulnerability impacts users of applications which execute untrusted templates.\n\nJinja's sandbox does catch calls to `str.format` and ensures they don't escape the sandbox. However, it's possible to use the `|attr` filter to get a reference to a string's plain format method, bypassing the sandbox. After the fix, the `|attr` filter no longer bypasses the environment's attribute lookup.",
+      "vuln_id": "GHSA-cpwx-vrp4-4pq7"
+     },
+     {
+      "id": "GHSA-cpwx-vrp4-4pq7#0",
+      "score": 0.883,
+      "text": "GHSA-cpwx-vrp4-4pq7 (CVE-2025-27516)\npackage: jinja2\nsummary: Jinja2 vulnerable to sandbox breakout through attr filter selecting format method\naffected: >=0, <3.1.6",
+      "vuln_id": "GHSA-cpwx-vrp4-4pq7"
+     },
+     {
+      "id": "GHSA-q2x7-8rv6-6q7h#1",
+      "score": 0.843,
+      "text": "GHSA-q2x7-8rv6-6q7h (jinja2) details:\nAn oversight in how the Jinja sandboxed environment detects calls to `str.format` allows an attacker that controls the content of a template to execute arbitrary Python code.\n\nTo exploit the vulnerability, an attacker needs to control the content of a template. Whether that is the case depends on the type of application using Jinja. This vulnerability impacts users of applications which execute untrusted templates.\n\nJinja's sandbox does catch calls to `str.format` and ensures they don't escape the sandbox. However, it's possible to store a reference to a malicious string's `format` method, then pass that to a filter that calls it. No such filters are built-in to Jinja, but could be present through custom filters in an application. After the fix, such indirect calls are also handled by the sandbox.",
+      "vuln_id": "GHSA-q2x7-8rv6-6q7h"
+     },
+     {
+      "id": "GHSA-q2x7-8rv6-6q7h#0",
+      "score": 0.804,
+      "text": "GHSA-q2x7-8rv6-6q7h (CVE-2024-56326)\npackage: jinja2\nsummary: Jinja has a sandbox breakout through indirect reference to format method\naffected: >=0, <3.1.5",
+      "vuln_id": "GHSA-q2x7-8rv6-6q7h"
+     }
+    ],
+    "symbols": [
+     "str.format"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 42.9,
+   "output": {
+    "package": "jinja2",
+    "import_names": [
+     "jinja2"
+    ],
+    "symbols": [
+     "str.format"
+    ],
+    "imported": true,
+    "import_locations": [
+     "CTFd/__init__.py:7",
+     "CTFd/__init__.py:11",
+     "CTFd/__init__.py:12",
+     "CTFd/errors.py:1",
+     "CTFd/views.py:7"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 25,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/__init__.py:74",
+      "code": "SandboxedEnvironment.__init__(self, **options)",
+      "function": "CTFd:SandboxedBaseEnvironment.__init__",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:127",
+      "code": "raise jinja2.TemplateNotFound(template)",
+      "function": "CTFd:ThemeLoader.get_source",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:161",
+      "code": "loaders.append(jinja2.DictLoader(app.overridden_templates))",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:173",
+      "code": "loaders.append(jinja2.PrefixLoader(prefix_loader_dict))",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:180",
+      "code": "plugin_loader = jinja2.FileSystemLoader(",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:183",
+      "code": "loaders.append(jinja2.PrefixLoader({\"plugins\": plugin_loader}))",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:185",
+      "code": "app.jinja_loader = jinja2.ChoiceLoader(loaders)",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:19",
+      "code": "except jinja2.exceptions.TemplateNotFound:",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/views.py:262",
+      "code": "except TemplateNotFound:",
+      "function": "CTFd.views:setup",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "jinja2: imported in 5 non-test location(s); 25 package call/reference site(s); named vulnerable symbols ['str.format']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 24.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/constants/config.py:module",
+      "score": 0.704,
+      "text": "# CTFd/constants/config.py (module level)\nimport json\nfrom flask import url_for\nfrom CTFd.constants import JinjaEnum, RawEnum\nfrom CTFd.utils import get_config\nclass ConfigTypes(str, RawEnum):\n    CHALLENGE_VISIBILITY = \"challenge_visibility\"\n    SCORE_VISIBILITY = \"score_visibility\"\n    ACCOUNT_VISIBILITY = \"account_visibility\"\n    REGISTRATION_VISIBILITY = \"registration_visibility\"\n@JinjaEnum\nclass UserModeTypes(str, RawEnum):\n    USERS = \"users\"\n    TEAMS = \"teams\"\n@JinjaEnum\nclass ChallengeVisibilityTypes(str, RawEnum):\n    PUBLIC = \"public\"\n    PRIVATE = \"private\"\n    ADMINS = \"admins\"\n@JinjaEnum\nclass ScoreVisibilityTypes(str, RawEnum):\n    PUBLIC = \"public\"\n    PRIVATE = \"private\"\n    HIDDEN = \"hidden\"\n    ADMINS = \"admins\"\n@JinjaEnum\nclass AccountVisibilityTypes(str, RawEnum):\n    PUBLIC = \"public\"\n    PRIVATE = \"private\"\n    ADMINS = \"admins\"\n@JinjaEnum\nclass RegistrationVisibilityTypes(str, RawEnum):\n    PUBLIC = \"public\"\n    PRIVATE = \"private\"\nclass _ConfigsWrapper:\n    @property\n    @property\n    @property\n    @property\n    @property\n    @property\n    @property\n    @property\nConfigs = _ConfigsWrapper()",
+      "file": "CTFd/constants/config.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/formatters/__init__.py:4",
+      "score": 0.692,
+      "text": "# CTFd/utils/formatters/__init__.py:4-11  safe_format\ndef safe_format(fmt, **kwargs):\n    \"\"\"\n    Function that safely formats strings with arbitrary potentially user-supplied format strings\n    Looks for interpolation placeholders like {target} or {{ target }}\n    \"\"\"\n    return re.sub(\n        r\"\\{?\\{([^{}]*)\\}\\}?\", lambda m: kwargs.get(m.group(1).strip(), m.group(0)), fmt\n    )",
+      "file": "CTFd/utils/formatters/__init__.py",
+      "start": 4,
+      "qualname": "safe_format"
+     },
+     {
+      "id": "ctfd:CTFd/__init__.py:71",
+      "score": 0.691,
+      "text": "# CTFd/__init__.py:71-75  SandboxedBaseEnvironment.__init__\n    def __init__(self, app, **options):\n        if \"loader\" not in options:\n            options[\"loader\"] = app.create_global_jinja_loader()\n        SandboxedEnvironment.__init__(self, **options)\n        self.app = app",
+      "file": "CTFd/__init__.py",
+      "start": 71,
+      "qualname": "SandboxedBaseEnvironment.__init__"
+     },
+     {
+      "id": "ctfd:CTFd/constants/__init__.py:55",
+      "score": 0.689,
+      "text": "# CTFd/constants/__init__.py:55-66  JinjaEnum\ndef JinjaEnum(cls):\n    \"\"\"\n    This is a decorator used to inject the decorated Enum into Jinja globals\n    which allows you to access it from the front end. If you need to access\n    an Enum from JS, a better tool to use is the JSEnum decorator.\n    \"\"\"\n    if cls.__name__ not in current_app.jinja_env.globals:\n        current_app.jinja_env.globals[cls.__name__] = cls\n        JINJA_ENUMS[cls.__name__] = cls\n    else:\n        raise KeyError(\"{} was already defined as a JinjaEnum\".format(cls.__name__))\n    return cls",
+      "file": "CTFd/constants/__init__.py",
+      "start": 55,
+      "qualname": "JinjaEnum"
+     },
+     {
+      "id": "ctfd:CTFd/__init__.py:50",
+      "score": 0.684,
+      "text": "# CTFd/__init__.py:50-61  CTFdFlask.__init__\n    def __init__(self, *args, **kwargs):\n        \"\"\"Overriden Jinja constructor setting a custom jinja_environment\"\"\"\n        self.jinja_environment = SandboxedBaseEnvironment\n        self.session_interface = CachingSessionInterface(key_prefix=\"session\")\n        self.request_class = CTFdRequest\n\n        # Store server start time\n        self.start_time = datetime.datetime.utcnow()\n\n        # Create generally unique run identifier\n        self.run_id = sha256(str(self.start_time))[0:8]\n        Flask.__init__(self, *args, **kwargs)",
+      "file": "CTFd/__init__.py",
+      "start": 50,
+      "qualname": "CTFdFlask.__init__"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 38445.4,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 1.0,
+    "vulnerable_symbols": [
+     "str.format"
+    ],
+    "reasoning": "The application uses Jinja2 but does not exercise the vulnerable `str.format` method. The static analysis shows no production call sites of these symbols, and the only use is in a sandboxed environment with no evidence of untrusted template execution.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "The advisory describes a vulnerability where an attacker can execute arbitrary Python code through the `|attr` filter selecting the format method."
+     },
+     {
+      "location": "CTFd/__init__.py:74",
+      "explanation": "SandboxedEnvironment is initialized with options, but there are no indications of untrusted template execution."
+     },
+     {
+      "location": "CTFd/__init__.py:127",
+      "explanation": "TemplateNotFound exception handling does not indicate untrusted template usage."
+     },
+     {
+      "location": "CTFd/views.py:262",
+      "explanation": "TemplateNotFound exception handling in views also does not indicate untrusted template usage."
+     }
+    ]
+   },
+   "tokens_in": 2511,
+   "tokens_out": 263,
+   "llm_calls": 1,
+   "llm_seconds": 38.45,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"not_reachable\",\n  \"confidence\": 1,\n  \"vulnerable_symbols\": [\"str.format\"],\n  \"reasoning\": \"The application uses Jinja2 but does not exercise the vulnerable `str.format` method. The static analysis shows no production call sites of these symbols, and the only use is in a sandboxed environment with no evidence of untrusted template execution.\",\n  \"evidence\": [\n    {\n      \"location\": \"advisory\",\n      \"explanation\": \"The advisory describes a vulnerability where an attacker can execute arbitrary Python code through the `|attr` filter selecting the format method.\"\n    },\n    {\n      \"location\": \"CTFd/__init__.py:74\",\n      \"explanation\": \"SandboxedEnvironment is initialized with options, but there are no indications of untrusted template execution.\"\n    },\n    {\n      \"location\": \"CTFd/__init__.py:127\",\n      \"explanation\": \"TemplateNotFound exception handling does not indicate untrusted template usage.\"\n    },\n    {\n      \"location\": \"CTFd/views.py:262\",\n      \"explanation\": \"TemplateNotFound exception handling in views also does not indicate untrusted template usage.\"\n    }\n  ]\n}\n```",
+     "in": 2511,
+     "out": 263,
+     "s": 38.45,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 27808.6,
+   "output": {
+    "critique": "The static analysis shows no production call sites of the vulnerable `str.format` method, and the only use is in a sandboxed environment with no evidence of untrusted template execution. However, the advisory describes a vulnerability where an attacker can execute arbitrary Python code through the `|attr` filter selecting the format method. The application uses Jinja2 but does not explicitly demonstrate any usage of the `|attr` filter or untrusted template execution. Therefore, there is no clear path to exploit the vulnerability as described in the advisory.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 1.0
+   },
+   "tokens_in": 2330,
+   "tokens_out": 152,
+   "llm_calls": 1,
+   "llm_seconds": 27.81,
+   "cost_usd_est": 0.0,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"critique\": \"The static analysis shows no production call sites of the vulnerable `str.format` method, and the only use is in a sandboxed environment with no evidence of untrusted template execution. However, the advisory describes a vulnerability where an attacker can execute arbitrary Python code through the `|attr` filter selecting the format method. The application uses Jinja2 but does not explicitly demonstrate any usage of the `|attr` filter or untrusted template execution. Therefore, there is no clear path to exploit the vulnerability as described in the advisory.\",\n  \"agrees\": true,\n  \"retry\": false,\n  \"final_verdict\": \"not_reachable\",\n  \"confidence\": 1.0\n}\n```",
+     "in": 2330,
+     "out": 152,
+     "s": 27.81,
+     "model": "qwen2.5-coder-14b-instruct"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 1.0,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4841,
+  "tokens_out": 415,
+  "cost_usd_est": 0.0,
+  "seconds": 66.35
+ },
+ "created": "2026-11-10T23:06:08+00:00",
+ "code_version": "ea5880b"
+}

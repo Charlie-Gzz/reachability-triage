@@ -1,0 +1,341 @@
+{
+ "finding_id": "mealie/urllib3@1.26.14/GHSA-v845-jxx5-vc9f",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2023-43804",
+   "GHSA-v845-jxx5-vc9f"
+  ],
+  "cves": [
+   "CVE-2023-43804"
+  ],
+  "cwes": [
+   "CWE-200"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/urllib3@1.26.14/GHSA-v845-jxx5-vc9f",
+  "first_fixed_above_installed": "1.26.17",
+  "fixed_versions": [
+   "1.26.17",
+   "2.0.6"
+  ],
+  "max_cvss": "7.4",
+  "package": "urllib3",
+  "published": "2023-10-02T23:27:05Z",
+  "summary": "`Cookie` HTTP header isn't stripped on cross-origin redirects",
+  "target": "mealie",
+  "version": "1.26.14",
+  "vuln_id": "GHSA-v845-jxx5-vc9f"
+ },
+ "final": {
+  "verdict": "uncertain",
+  "confidence": 0.6,
+  "action": "flag_for_human",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "uncertain",
+  "confidence": 0.55,
+  "vulnerable_symbols": [
+   "HTTPConnectionPool._make_request / redirect handling that fails to strip Cookie/Authorization headers on cross-origin redirect"
+  ],
+  "reasoning": "The CVE is about urllib3's internal redirect logic not stripping the Cookie header when a redirect crosses origins; it is not triggered by any app-level symbol literally named 'Cookie', so the static search for that symbol is not meaningful evidence either way. urllib3 is listed as a transitive dependency, meaning some first-party or other dependency code must be pulling it in, most plausibly via `requests` (Session, requests.get/post, allow_redirects=True) which wraps urllib3's PoolManager and is subject to the same flaw. The provided static evidence only checked for literal `urllib3` imports and the nonsensical 'Cookie' symbol across 322 files - it did not search for `requests`, `Session`, cookie-jar usage, or redirect-following HTTP calls, so it cannot confirm or rule out that the app makes outbound HTTP requests with cookies set that could hit a cross-origin redirect. Per the rules, absence of evidence about requests usage (rather than positive evidence that the vulnerable path is unused) should not be treated as proof of non-reachability, especially given the high cost of false negatives on CWE-200 cookie leakage. Without evidence specifically covering how any higher-level HTTP client is used in this codebase, the reachability of the redirect/cookie-stripping path cannot be settled from what was given.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "CVE-2023-43804: urllib3 fails to strip the Cookie header when a redirect response points to a different origin, risking cross-origin cookie leakage."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 non-test imports of urllib3 and 0 call sites of the literal 'Cookie' symbol were found across 322 first-party files, but this search never covered `requests`, Session objects, or redirect-following HTTP calls that would indirectly exercise urllib3's vulnerable redirect path."
+   },
+   {
+    "location": "dependency graph",
+    "explanation": "urllib3 is a transitive dependency, meaning some other library (most plausibly `requests`) in the dependency tree pulls it in and is likely used by application code to make outbound HTTP calls."
+   },
+   {
+    "location": "missing evidence",
+    "explanation": "No evidence was collected on whether app code sets cookies on outbound requests and allows redirects (default allow_redirects=True in requests), which is the condition needed for this CVE to be exploitable."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument is that the AST tool reported '0 package call/reference site(s)' for urllib3 across all 322 first-party files, which could be read as evidence that urllib3's functionality (even indirectly) is never exercised by application code. But this reading doesn't actually hold up: urllib3 is a transitive dependency pulled in by something like requests, and an AST scan for the literal name 'urllib3' or 'Cookie' would not detect usage patterns like `requests.Session().get(url, cookies=..., allow_redirects=True)`, since requests abstracts urllib3 away entirely. The verdict correctly flags that the search for 'Cookie' as a symbol is a red herring (CWE-200 here is about an internal header-stripping omission inside urllib3's redirect handling, not an app-level 'Cookie' reference) and that no search was performed for requests/Session/cookie-jar/redirect-following call sites, which is the actual precondition surface for this CVE. Given that the evidence is silent on whether the app makes outbound HTTP calls with cookies attached and redirects enabled, there is no basis in what's provided to confidently call this not_reachable, nor is there positive evidence of a reachable call site to call it reachable. The verdict neither ignored nor misread the evidence \u2014 it correctly identified the evidence's scope gap and declined to overclaim in either direction, which is the appropriate response for a CWE-200 cookie-leak CVE on a transitive dependency with no direct imports found.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "uncertain",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "Cookie"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/urllib3@1.26.14/GHSA-v845-jxx5-vc9f",
+    "package": "urllib3",
+    "version": "1.26.14",
+    "vuln_id": "GHSA-v845-jxx5-vc9f",
+    "aliases": [
+     "CVE-2023-43804",
+     "GHSA-v845-jxx5-vc9f"
+    ],
+    "summary": "`Cookie` HTTP header isn't stripped on cross-origin redirects",
+    "max_cvss": "7.4",
+    "fixed_versions": [
+     "1.26.17",
+     "2.0.6"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "Cookie"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 14.4,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "Cookie"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['Cookie']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 9362.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.72,
+    "vulnerable_symbols": [
+     "Cookie"
+    ],
+    "reasoning": "The CVE requires the application to use urllib3's redirect-following behavior across cross-origin hosts while relying on Cookie headers being stripped; this is an inherent property of urllib3's HTTP client whenever redirects are followed with cookies set. Static analysis shows urllib3 is not imported anywhere in first-party production code (0 non-test import locations, 0 call sites), meaning the application never directly drives urllib3's request/redirect logic itself. Since it's a transitive dependency with zero direct usage and zero references to the Cookie symbol in application code, there's no application-level entry point that exercises the vulnerable redirect-cookie path. Without evidence that a higher-level HTTP client (e.g., requests) built on urllib3 is used with cross-origin redirects and cookies, there is no demonstrated reachable path in this codebase. Marking not_reachable rather than uncertain because the evidence positively shows zero usage of the package in production code.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "CVE-2023-43804: urllib3 does not strip the Cookie header on cross-origin redirects, risking credential leakage to a different host."
+     },
+     {
+      "location": "static-evidence",
+      "explanation": "0 non-test imports of urllib3 and 0 production call sites of the Cookie symbol across 322 first-party files indicates the package's HTTP client surface is unused directly."
+     },
+     {
+      "location": "static-evidence",
+      "explanation": "0 call sites with a path from an entry point confirms no route/view/task reaches urllib3's redirect-handling code."
+     }
+    ]
+   },
+   "tokens_in": 1938,
+   "tokens_out": 561,
+   "llm_calls": 1,
+   "llm_seconds": 9.36,
+   "cost_usd_est": 0.014229,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.72,\"vulnerable_symbols\":[\"Cookie\"],\"reasoning\":\"The CVE requires the application to use urllib3's redirect-following behavior across cross-origin hosts while relying on Cookie headers being stripped; this is an inherent property of urllib3's HTTP client whenever redirects are followed with cookies set. Static analysis shows urllib3 is not imported anywhere in first-party production code (0 non-test import locations, 0 call sites), meaning the application never directly drives urllib3's request/redirect logic itself. Since it's a transitive dependency with zero direct usage and zero references to the Cookie symbol in application code, there's no application-level entry point that exercises the vulnerable redirect-cookie path. Without evidence that a higher-level HTTP client (e.g., requests) built on urllib3 is used with cross-origin redirects and cookies, there is no demonstrated reachable path in this codebase. Marking not_reachable rather than uncertain because the evidence positively shows zero usage of the package in production code.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"CVE-2023-43804: urllib3 does not strip the Cookie header on cross-origin redirects, risking credential leakage to a different host.\"},{\"location\":\"static-evidence\",\"explanation\":\"0 non-test imports of urllib3 and 0 production call sites of the Cookie symbol across 322 first-party files indicates the package's HTTP client surface is unused directly.\"},{\"location\":\"static-evidence\",\"explanation\":\"0 call sites with a path from an entry point confirms no route/view/task reaches urllib3's redirect-handling code.\"}]}",
+     "in": 1938,
+     "out": 561,
+     "s": 9.36,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 14478.7,
+   "output": {
+    "critique": "The verdict conflates 'urllib3 not imported directly' with 'urllib3's redirect/cookie logic is unreachable,' but urllib3 is almost never used directly in application code\u2014it's nearly always invoked indirectly through `requests` (requests.Session, requests.get/post with cookies, allow_redirects=True) or other libraries built on urllib3's PoolManager. The static evidence never searched for `requests` usage, Session objects, cookie jars, or redirect-following HTTP calls in the 322 first-party files\u2014it only checked for literal urllib3 imports and a nonsensical 'Cookie' symbol match (the CVE is about an internal header-stripping omission during redirects, not an app-level 'Cookie' call site). Since urllib3 is listed as a transitive dependency, something must be pulling it in (likely requests), and that something's usage pattern was never actually examined. The verdict's own text admits 'without evidence that a higher-level HTTP client is used...there is no demonstrated reachable path'\u2014this is an absence-of-evidence situation, not evidence-of-absence, which should map to uncertain rather than not_reachable. The analysis as described cannot rule out a session making outbound requests with cookies set that could be redirected cross-origin.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "uncertain",
+    "confidence": 0.55
+   },
+   "tokens_in": 1878,
+   "tokens_out": 1152,
+   "llm_calls": 1,
+   "llm_seconds": 14.47,
+   "cost_usd_est": 0.022914,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict conflates 'urllib3 not imported directly' with 'urllib3's redirect/cookie logic is unreachable,' but urllib3 is almost never used directly in application code\u2014it's nearly always invoked indirectly through `requests` (requests.Session, requests.get/post with cookies, allow_redirects=True) or other libraries built on urllib3's PoolManager. The static evidence never searched for `requests` usage, Session objects, cookie jars, or redirect-following HTTP calls in the 322 first-party files\u2014it only checked for literal urllib3 imports and a nonsensical 'Cookie' symbol match (the CVE is about an internal header-stripping omission during redirects, not an app-level 'Cookie' call site). Since urllib3 is listed as a transitive dependency, something must be pulling it in (likely requests), and that something's usage pattern was never actually examined. The verdict's own text admits 'without evidence that a higher-level HTTP client is used...there is no demonstrated reachable path'\u2014this is an absence-of-evidence situation, not evidence-of-absence, which should map to uncertain rather than not_reachable. The analysis as described cannot rule out a session making outbound requests with cookies set that could be redirected cross-origin.\",\"agrees\":false,\"retry\":true,\"final_verdict\":\"uncertain\",\"confidence\":0.55}",
+     "in": 1878,
+     "out": 1152,
+     "s": 14.47,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 17494.2,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.55,
+    "vulnerable_symbols": [
+     "HTTPConnectionPool._make_request / redirect handling that fails to strip Cookie/Authorization headers on cross-origin redirect"
+    ],
+    "reasoning": "The CVE is about urllib3's internal redirect logic not stripping the Cookie header when a redirect crosses origins; it is not triggered by any app-level symbol literally named 'Cookie', so the static search for that symbol is not meaningful evidence either way. urllib3 is listed as a transitive dependency, meaning some first-party or other dependency code must be pulling it in, most plausibly via `requests` (Session, requests.get/post, allow_redirects=True) which wraps urllib3's PoolManager and is subject to the same flaw. The provided static evidence only checked for literal `urllib3` imports and the nonsensical 'Cookie' symbol across 322 files - it did not search for `requests`, `Session`, cookie-jar usage, or redirect-following HTTP calls, so it cannot confirm or rule out that the app makes outbound HTTP requests with cookies set that could hit a cross-origin redirect. Per the rules, absence of evidence about requests usage (rather than positive evidence that the vulnerable path is unused) should not be treated as proof of non-reachability, especially given the high cost of false negatives on CWE-200 cookie leakage. Without evidence specifically covering how any higher-level HTTP client is used in this codebase, the reachability of the redirect/cookie-stripping path cannot be settled from what was given.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "CVE-2023-43804: urllib3 fails to strip the Cookie header when a redirect response points to a different origin, risking cross-origin cookie leakage."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test imports of urllib3 and 0 call sites of the literal 'Cookie' symbol were found across 322 first-party files, but this search never covered `requests`, Session objects, or redirect-following HTTP calls that would indirectly exercise urllib3's vulnerable redirect path."
+     },
+     {
+      "location": "dependency graph",
+      "explanation": "urllib3 is a transitive dependency, meaning some other library (most plausibly `requests`) in the dependency tree pulls it in and is likely used by application code to make outbound HTTP calls."
+     },
+     {
+      "location": "missing evidence",
+      "explanation": "No evidence was collected on whether app code sets cookies on outbound requests and allows redirects (default allow_redirects=True in requests), which is the condition needed for this CVE to be exploitable."
+     }
+    ]
+   },
+   "tokens_in": 2371,
+   "tokens_out": 1365,
+   "llm_calls": 1,
+   "llm_seconds": 17.48,
+   "cost_usd_est": 0.027588,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"uncertain\",\"confidence\":0.55,\"vulnerable_symbols\":[\"HTTPConnectionPool._make_request / redirect handling that fails to strip Cookie/Authorization headers on cross-origin redirect\"],\"reasoning\":\"The CVE is about urllib3's internal redirect logic not stripping the Cookie header when a redirect crosses origins; it is not triggered by any app-level symbol literally named 'Cookie', so the static search for that symbol is not meaningful evidence either way. urllib3 is listed as a transitive dependency, meaning some first-party or other dependency code must be pulling it in, most plausibly via `requests` (Session, requests.get/post, allow_redirects=True) which wraps urllib3's PoolManager and is subject to the same flaw. The provided static evidence only checked for literal `urllib3` imports and the nonsensical 'Cookie' symbol across 322 files - it did not search for `requests`, `Session`, cookie-jar usage, or redirect-following HTTP calls, so it cannot confirm or rule out that the app makes outbound HTTP requests with cookies set that could hit a cross-origin redirect. Per the rules, absence of evidence about requests usage (rather than positive evidence that the vulnerable path is unused) should not be treated as proof of non-reachability, especially given the high cost of false negatives on CWE-200 cookie leakage. Without evidence specifically covering how any higher-level HTTP client is used in this codebase, the reachability of the redirect/cookie-stripping path cannot be settled from what was given.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"CVE-2023-43804: urllib3 fails to strip the Cookie header when a redirect response points to a different origin, risking cross-origin cookie leakage.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 non-test imports of urllib3 and 0 call sites of the literal 'Cookie' symbol were found across 322 first-party files, but this search never covered `requests`, Session objects, or redirect-following HTTP calls that would indirectly exercise urllib3's vulnerable redirect path.\"},{\"location\":\"dependency graph\",\"explanation\":\"urllib3 is a transitive dependency, meaning some other library (most plausibly `requests`) in the dependency tree pulls it in and is likely used by application code to make outbound HTTP calls.\"},{\"location\":\"missing evidence\",\"explanation\":\"No evidence was collected on whether app code sets cookies on outbound requests and allows redirects (default allow_redirects=True in requests), which is the condition needed for this CVE to be exploitable.\"}]}",
+     "in": 2371,
+     "out": 1365,
+     "s": 17.48,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 21763.0,
+   "output": {
+    "critique": "The strongest counter-argument is that the AST tool reported '0 package call/reference site(s)' for urllib3 across all 322 first-party files, which could be read as evidence that urllib3's functionality (even indirectly) is never exercised by application code. But this reading doesn't actually hold up: urllib3 is a transitive dependency pulled in by something like requests, and an AST scan for the literal name 'urllib3' or 'Cookie' would not detect usage patterns like `requests.Session().get(url, cookies=..., allow_redirects=True)`, since requests abstracts urllib3 away entirely. The verdict correctly flags that the search for 'Cookie' as a symbol is a red herring (CWE-200 here is about an internal header-stripping omission inside urllib3's redirect handling, not an app-level 'Cookie' reference) and that no search was performed for requests/Session/cookie-jar/redirect-following call sites, which is the actual precondition surface for this CVE. Given that the evidence is silent on whether the app makes outbound HTTP calls with cookies attached and redirects enabled, there is no basis in what's provided to confidently call this not_reachable, nor is there positive evidence of a reachable call site to call it reachable. The verdict neither ignored nor misread the evidence \u2014 it correctly identified the evidence's scope gap and declined to overclaim in either direction, which is the appropriate response for a CWE-200 cookie-leak CVE on a transitive dependency with no direct imports found.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "uncertain",
+    "confidence": 0.6
+   },
+   "tokens_in": 2146,
+   "tokens_out": 1779,
+   "llm_calls": 1,
+   "llm_seconds": 21.75,
+   "cost_usd_est": 0.033123,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument is that the AST tool reported '0 package call/reference site(s)' for urllib3 across all 322 first-party files, which could be read as evidence that urllib3's functionality (even indirectly) is never exercised by application code. But this reading doesn't actually hold up: urllib3 is a transitive dependency pulled in by something like requests, and an AST scan for the literal name 'urllib3' or 'Cookie' would not detect usage patterns like `requests.Session().get(url, cookies=..., allow_redirects=True)`, since requests abstracts urllib3 away entirely. The verdict correctly flags that the search for 'Cookie' as a symbol is a red herring (CWE-200 here is about an internal header-stripping omission inside urllib3's redirect handling, not an app-level 'Cookie' reference) and that no search was performed for requests/Session/cookie-jar/redirect-following call sites, which is the actual precondition surface for this CVE. Given that the evidence is silent on whether the app makes outbound HTTP calls with cookies attached and redirects enabled, there is no basis in what's provided to confidently call this not_reachable, nor is there positive evidence of a reachable call site to call it reachable. The verdict neither ignored nor misread the evidence \u2014 it correctly identified the evidence's scope gap and declined to overclaim in either direction, which is the appropriate response for a CWE-200 cookie-leak CVE on a transitive dependency with no direct imports found.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"uncertain\",\"confidence\":0.6}",
+     "in": 2146,
+     "out": 1779,
+     "s": 21.75,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "flag_for_human",
+   "ms": 0.0,
+   "output": {
+    "verdict": "uncertain",
+    "confidence": 0.6,
+    "action": "flag_for_human",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 8333,
+  "tokens_out": 4857,
+  "cost_usd_est": 0.097854,
+  "seconds": 63.12
+ },
+ "created": "2026-11-10T20:22:53+00:00",
+ "code_version": "ea5880b"
+}

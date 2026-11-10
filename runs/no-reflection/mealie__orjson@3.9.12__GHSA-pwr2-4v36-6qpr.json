@@ -1,0 +1,321 @@
+{
+ "finding_id": "mealie/orjson@3.9.12/GHSA-pwr2-4v36-6qpr",
+ "config": "no-reflection",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": false,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-27454",
+   "GHSA-pwr2-4v36-6qpr"
+  ],
+  "cves": [
+   "CVE-2024-27454"
+  ],
+  "cwes": [
+   "CWE-674"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/orjson@3.9.12/GHSA-pwr2-4v36-6qpr",
+  "first_fixed_above_installed": "3.9.15",
+  "fixed_versions": [
+   "3.9.15"
+  ],
+  "max_cvss": "7.5",
+  "package": "orjson",
+  "published": "2024-02-26T18:30:31Z",
+  "summary": "orjson does not limit recursion for deeply nested JSON documents",
+  "target": "mealie",
+  "version": "3.9.12",
+  "vuln_id": "GHSA-pwr2-4v36-6qpr"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.88,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.88,
+  "vulnerable_symbols": [
+   "orjson.loads"
+  ],
+  "reasoning": "This specific advisory (GHSA-pwr2-4v36-6qpr / CVE-2024-27454) concerns unbounded recursion in orjson.loads, not orjson.dumps. Static analysis found orjson imported in only two files, both calling orjson.dumps for serializing pagination responses, and zero production call sites of orjson.loads anywhere in the 322 scanned first-party files. The other JSON parsing seen in the codebase (json_provider.py, seeders.py) uses the stdlib `json.loads`, not orjson, so it is unrelated to this advisory. Since the vulnerable symbol orjson.loads is never invoked by the application, there is no path for an attacker-supplied deeply-nested JSON document to reach the vulnerable recursive parser via this app's code. A separate, different CVE affects orjson.dumps recursion, but that is not the alert being triaged here.",
+  "evidence": [
+   {
+    "location": "mealie/routes/explore/controller_public_recipes.py:73",
+    "explanation": "Only orjson.dumps is called here, not the vulnerable orjson.loads."
+   },
+   {
+    "location": "mealie/routes/recipe/recipe_crud_routes.py:274",
+    "explanation": "Only orjson.dumps is called here, not the vulnerable orjson.loads."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 production call sites of orjson.loads found across 322 first-party files, with 0 paths from any entry point."
+   },
+   {
+    "location": "mealie/repos/seed/seeders.py:55",
+    "explanation": "This JSON parsing uses stdlib json.loads, not orjson, and is thus irrelevant to this orjson-specific advisory."
+   }
+  ]
+ },
+ "reflection": null,
+ "symbols": [
+  "orjson.loads"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/orjson@3.9.12/GHSA-pwr2-4v36-6qpr",
+    "package": "orjson",
+    "version": "3.9.12",
+    "vuln_id": "GHSA-pwr2-4v36-6qpr",
+    "aliases": [
+     "CVE-2024-27454",
+     "GHSA-pwr2-4v36-6qpr"
+    ],
+    "summary": "orjson does not limit recursion for deeply nested JSON documents",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "3.9.15"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-pwr2-4v36-6qpr#0",
+      "score": 0.872,
+      "text": "GHSA-pwr2-4v36-6qpr (CVE-2024-27454)\npackage: orjson\nsummary: orjson does not limit recursion for deeply nested JSON documents\naffected: >=0, <3.9.15",
+      "vuln_id": "GHSA-pwr2-4v36-6qpr"
+     },
+     {
+      "id": "GHSA-pwr2-4v36-6qpr#1",
+      "score": 0.822,
+      "text": "GHSA-pwr2-4v36-6qpr (orjson) details:\norjson.loads in orjson before 3.9.15 does not limit recursion for deeply nested JSON documents.",
+      "vuln_id": "GHSA-pwr2-4v36-6qpr"
+     },
+     {
+      "id": "GHSA-hx9q-6w63-j58v#0",
+      "score": 0.87,
+      "text": "GHSA-hx9q-6w63-j58v (CVE-2025-67221)\npackage: orjson\nsummary: orjson does not limit recursion for deeply nested JSON documents\naffected: >=0, <3.11.6",
+      "vuln_id": "GHSA-hx9q-6w63-j58v"
+     },
+     {
+      "id": "GHSA-hx9q-6w63-j58v#1",
+      "score": 0.828,
+      "text": "GHSA-hx9q-6w63-j58v (orjson) details:\nThe orjson.dumps function in orjson before 3.11.6 does not limit recursion for deeply nested JSON documents.",
+      "vuln_id": "GHSA-hx9q-6w63-j58v"
+     }
+    ],
+    "symbols": [
+     "orjson.loads"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 20.2,
+   "output": {
+    "package": "orjson",
+    "import_names": [
+     "orjson"
+    ],
+    "symbols": [
+     "orjson.loads"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/routes/explore/controller_public_recipes.py:1",
+     "mealie/routes/recipe/recipe_crud_routes.py:5"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/routes/explore/controller_public_recipes.py:73",
+      "code": "json_compatible_response = orjson.dumps(pagination_response.dict(by_alias=True))",
+      "function": "mealie.routes.explore.controller_public_recipes:PublicRecipesController.get_all",
+      "in_test": false
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:274",
+      "code": "json_compatible_response = orjson.dumps(pagination_response.dict(by_alias=True))",
+      "function": "mealie.routes.recipe.recipe_crud_routes:RecipeController.get_all",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "orjson: imported in 2 non-test location(s); 6 package call/reference site(s); named vulnerable symbols ['orjson.loads']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 35.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/pkgs/i18n/provider_factory.py:25",
+      "score": 0.693,
+      "text": "# mealie/pkgs/i18n/provider_factory.py:25-29  ProviderFactory._load\n    def _load(self, locale: str) -> JsonProvider:\n        filename = self.filename_format.format(locale=locale, format=\"json\")\n        path = self.directory / filename\n\n        return JsonProvider(path) if path.exists() else JsonProvider(self.fallback_file)",
+      "file": "mealie/pkgs/i18n/provider_factory.py",
+      "start": 25,
+      "qualname": "ProviderFactory._load"
+     },
+     {
+      "id": "mealie:mealie/pkgs/i18n/json_provider.py:10",
+      "score": 0.689,
+      "text": "# mealie/pkgs/i18n/json_provider.py:10-14  JsonProvider.__init__\n    def __init__(self, path: Path | dict):\n        if isinstance(path, Path):\n            self.translations = json.loads(path.read_text())\n        else:\n            self.translations = path",
+      "file": "mealie/pkgs/i18n/json_provider.py",
+      "start": 10,
+      "qualname": "JsonProvider.__init__"
+     },
+     {
+      "id": "mealie:mealie/pkgs/i18n/json_provider.py:16",
+      "score": 0.656,
+      "text": "# mealie/pkgs/i18n/json_provider.py:16-38  JsonProvider.t\n    def t(self, key: str, default=None, **kwargs) -> str:\n        keys = key.split(\".\")\n\n        translation_value: dict | str = self.translations\n        last = len(keys) - 1\n\n        for i, k in enumerate(keys):\n            if k not in translation_value:\n                break\n\n            try:\n                translation_value = translation_value[k]  # type: ignore\n            except Exception:\n                break\n\n            if i == last:\n                for key, value in kwargs.items():\n                    if not value:\n                        value = \"\"\n                    translation_value = translation_value.replace(\"{\" + key + \"}\", value)\n                return translation_value\n\n        return default or key",
+      "file": "mealie/pkgs/i18n/json_provider.py",
+      "start": 16,
+      "qualname": "JsonProvider.t"
+     },
+     {
+      "id": "mealie:mealie/pkgs/i18n/json_provider.py:module",
+      "score": 0.654,
+      "text": "# mealie/pkgs/i18n/json_provider.py (module level)\nimport json\nfrom dataclasses import dataclass\nfrom pathlib import Path\n@dataclass(slots=True)\nclass JsonProvider:\n    translations: dict",
+      "file": "mealie/pkgs/i18n/json_provider.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "mealie:mealie/repos/seed/seeders.py:51",
+      "score": 0.639,
+      "text": "# mealie/repos/seed/seeders.py:51-65  IngredientUnitsSeeder.load_data\n    def load_data(self, locale: str | None = None) -> Generator[SaveIngredientUnit, None, None]:\n        file = self.get_file(locale)\n\n        seen_unit_names = set()\n        for unit in json.loads(file.read_text(encoding=\"utf-8\")).values():\n            if unit[\"name\"] in seen_unit_names:\n                continue\n\n            seen_unit_names.add(unit[\"name\"])\n            yield SaveIngredientUnit(\n                group_id=self.group_id,\n                name=unit[\"name\"],\n                description=unit[\"description\"],\n                abbreviation=unit[\"abbreviation\"],\n            )",
+      "file": "mealie/repos/seed/seeders.py",
+      "start": 51,
+      "qualname": "IngredientUnitsSeeder.load_data"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 12288.3,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "vulnerable_symbols": [
+     "orjson.loads"
+    ],
+    "reasoning": "This specific advisory (GHSA-pwr2-4v36-6qpr / CVE-2024-27454) concerns unbounded recursion in orjson.loads, not orjson.dumps. Static analysis found orjson imported in only two files, both calling orjson.dumps for serializing pagination responses, and zero production call sites of orjson.loads anywhere in the 322 scanned first-party files. The other JSON parsing seen in the codebase (json_provider.py, seeders.py) uses the stdlib `json.loads`, not orjson, so it is unrelated to this advisory. Since the vulnerable symbol orjson.loads is never invoked by the application, there is no path for an attacker-supplied deeply-nested JSON document to reach the vulnerable recursive parser via this app's code. A separate, different CVE affects orjson.dumps recursion, but that is not the alert being triaged here.",
+    "evidence": [
+     {
+      "location": "mealie/routes/explore/controller_public_recipes.py:73",
+      "explanation": "Only orjson.dumps is called here, not the vulnerable orjson.loads."
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:274",
+      "explanation": "Only orjson.dumps is called here, not the vulnerable orjson.loads."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 production call sites of orjson.loads found across 322 first-party files, with 0 paths from any entry point."
+     },
+     {
+      "location": "mealie/repos/seed/seeders.py:55",
+      "explanation": "This JSON parsing uses stdlib json.loads, not orjson, and is thus irrelevant to this orjson-specific advisory."
+     }
+    ]
+   },
+   "tokens_in": 3220,
+   "tokens_out": 923,
+   "llm_calls": 1,
+   "llm_seconds": 12.27,
+   "cost_usd_est": 0.023505,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.88,\"vulnerable_symbols\":[\"orjson.loads\"],\"reasoning\":\"This specific advisory (GHSA-pwr2-4v36-6qpr / CVE-2024-27454) concerns unbounded recursion in orjson.loads, not orjson.dumps. Static analysis found orjson imported in only two files, both calling orjson.dumps for serializing pagination responses, and zero production call sites of orjson.loads anywhere in the 322 scanned first-party files. The other JSON parsing seen in the codebase (json_provider.py, seeders.py) uses the stdlib `json.loads`, not orjson, so it is unrelated to this advisory. Since the vulnerable symbol orjson.loads is never invoked by the application, there is no path for an attacker-supplied deeply-nested JSON document to reach the vulnerable recursive parser via this app's code. A separate, different CVE affects orjson.dumps recursion, but that is not the alert being triaged here.\",\"evidence\":[{\"location\":\"mealie/routes/explore/controller_public_recipes.py:73\",\"explanation\":\"Only orjson.dumps is called here, not the vulnerable orjson.loads.\"},{\"location\":\"mealie/routes/recipe/recipe_crud_routes.py:274\",\"explanation\":\"Only orjson.dumps is called here, not the vulnerable orjson.loads.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 production call sites of orjson.loads found across 322 first-party files, with 0 paths from any entry point.\"},{\"location\":\"mealie/repos/seed/seeders.py:55\",\"explanation\":\"This JSON parsing uses stdlib json.loads, not orjson, and is thus irrelevant to this orjson-specific advisory.\"}]}",
+     "in": 3220,
+     "out": 923,
+     "s": 12.27,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 1,
+  "tokens_in": 3220,
+  "tokens_out": 923,
+  "cost_usd_est": 0.023505,
+  "seconds": 12.38
+ },
+ "created": "2026-11-10T20:35:42+00:00",
+ "code_version": "ea5880b"
+}

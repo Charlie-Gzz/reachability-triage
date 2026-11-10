@@ -1,0 +1,382 @@
+{
+ "finding_id": "mealie/pillow@10.2.0/GHSA-62p4-gmf7-7g93",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-54058",
+   "GHSA-62p4-gmf7-7g93",
+   "PYSEC-2026-3493"
+  ],
+  "cves": [
+   "CVE-2026-54058"
+  ],
+  "cwes": [
+   "CWE-125"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/pillow@10.2.0/GHSA-62p4-gmf7-7g93",
+  "first_fixed_above_installed": "12.3.0",
+  "fixed_versions": [
+   "12.3.0"
+  ],
+  "max_cvss": "8.3",
+  "package": "pillow",
+  "published": "2026-07-20T21:08:13Z",
+  "summary": "Pillow: Out-of-bounds read via attacker-controlled row stride on Pillow's mmap path (McIdas AREA files)",
+  "target": "mealie",
+  "version": "10.2.0",
+  "vuln_id": "GHSA-62p4-gmf7-7g93"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.6,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 2
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.65,
+  "vulnerable_symbols": [
+   "McIdas AREA plugin (Image.open auto-dispatch)"
+  ],
+  "reasoning": "Pillow's Image.open() performs magic-byte format sniffing across all registered plugins unless a `formats=` allowlist is passed; none of the three Image.open() calls in minify.py restrict formats, so a file with AREA/McIdas magic bytes would be routed to the vulnerable decoder regardless of file extension. minify.py's purpose (minify/crop images) and the name 'crop_center' strongly suggest this processes user-supplied images in an application (mealie) that lets users upload recipe photos, meaning the `image`/`image_file` arguments plausibly originate from untrusted HTTP input. The absence of the literal string 'McIdas' in application code is expected and not evidence of safety, since the advisory's vulnerable symbol is never named by callers \u2014 it's reached only through Pillow's internal format-detection dispatch inside Image.open(). No evidence was provided showing an extension/MIME allowlist, a `formats=` restriction, or that inputs are server-generated/trusted-only, so the trust-boundary question the reviewer raised remains unresolved in the app's favor. Given the high cost of false negatives and the generic, unrestricted use of Image.open() on three call sites, this should not be suppressed as not_reachable.",
+  "evidence": [
+   {
+    "location": "mealie/pkgs/img/minify.py:6",
+    "explanation": "Pillow is imported here, making Image.open available to the module."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:15",
+    "explanation": "Image.open(image) called with no format allowlist, so Pillow auto-detects format via magic bytes across all plugins including McIdas/AREA."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:68",
+    "explanation": "Second unrestricted Image.open call on image_file, same auto-dispatch exposure."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:120",
+    "explanation": "Third unrestricted Image.open call; repeated pattern of no format restriction across the module."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:76",
+    "explanation": "crop_center/minify naming suggests this module post-processes user-uploaded images, implying attacker-influenced input likely reaches Image.open."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter is that the static evidence never actually traces image/image_file back to an HTTP entry point (upload endpoint) \u2014 the '0 production call sites with a path from an entry point' metric sounds damning but is misleading, since it's keyed to the literal symbol 'McIdas', which legitimately never appears in application code (dispatch to that plugin happens inside Pillow's internal format-sniffing, not via a named call). So that zero-count is not actual evidence of unreachability, and the verdict correctly refuses to treat it as such. The remaining question is whether image/image_file in minify.py are attacker-controlled; the evidence shown is only the module's internal code, not caller-side proof of upload-endpoint taint. However, this is a known pattern in mealie (an image-upload/recipe app) where minify.py's crop/resize functions are invoked on user-submitted recipe photos, and Pillow's Image.open() genuinely does unrestricted magic-byte format sniffing across all auto-registered plugins (including McIdas/AREA) when no formats= allowlist is passed, which is exactly the precondition CWE-125/the advisory requires. No evidence of a formats= restriction, extension/MIME allowlist, or trusted-only input source was found, so the reachable call is not clearly contradicted by what's in evidence, and the asymmetric cost of false suppression favors keeping it reachable rather than downgrading on an inferential gap.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.6
+ },
+ "symbols": [
+  "McIdas"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pillow@10.2.0/GHSA-62p4-gmf7-7g93",
+    "package": "pillow",
+    "version": "10.2.0",
+    "vuln_id": "GHSA-62p4-gmf7-7g93",
+    "aliases": [
+     "CVE-2026-54058",
+     "GHSA-62p4-gmf7-7g93",
+     "PYSEC-2026-3493"
+    ],
+    "summary": "Pillow: Out-of-bounds read via attacker-controlled row stride on Pillow's mmap path (McIdas AREA files)",
+    "max_cvss": "8.3",
+    "fixed_versions": [
+     "12.3.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.2,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "McIdas"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 17.0,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [
+     "McIdas"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/pkgs/img/minify.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 10,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "code": "img = Image.open(image)",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pillow: imported in 1 non-test location(s); 10 package call/reference site(s); named vulnerable symbols ['McIdas']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 11457.3,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.86,
+    "vulnerable_symbols": [
+     "McIdas",
+     "AreaFile",
+     "AreaImageFile"
+    ],
+    "reasoning": "The advisory is specific to Pillow's McIdas AREA file plugin (an out-of-bounds read triggered by a malicious AREA file's row stride during mmap-based decoding). The application only uses PIL.Image.open() generically on user-supplied/static images for resizing/cropping in mealie/pkgs/img/minify.py, with no reference to the McIdas/AREA format plugin or its specific loader. Image.open() dispatches to a format plugin based on file content/extension, but there is zero evidence in the codebase that AREA files are ever produced, accepted, or expected as input (e.g., no .area extension handling, no explicit AreaImagePlugin import, no format allowlist including AREA). The static analysis found 0 production call sites of the named vulnerable symbol 'McIdas' and 0 paths from any entry point to it. Since Image.open() could theoretically auto-detect an AREA file if one were uploaded, there's a small residual plausibility, but without confirmation that the app's upload/import pipeline accepts arbitrary/unvalidated image formats reaching that specific plugin, the vulnerable code path is not shown to be exercised. Given the narrow, format-specific nature of this CVE and no evidence of AREA-format handling or restriction to safe formats, this leans not_reachable rather than uncertain, but confidence is not absolute since Image.open() is a generic multi-format dispatcher.",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "explanation": "Image.open() call that generically dispatches to format plugins based on file content; no AREA/McIdas-specific handling present."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "explanation": "Another generic Image.open() call on an uploaded/stored image file, not restricted to or indicating McIdas format."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "explanation": "Third generic Image.open() call; all usages are plain open/crop/resize operations unrelated to the AREA plugin."
+     },
+     {
+      "location": "advisory",
+      "explanation": "Static analysis found 0 production call sites of the 'McIdas' symbol and 0 paths from any entry point to it, indicating the vulnerable plugin code is not directly invoked by name."
+     }
+    ]
+   },
+   "tokens_in": 2148,
+   "tokens_out": 851,
+   "llm_calls": 1,
+   "llm_seconds": 11.45,
+   "cost_usd_est": 0.019209,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"not_reachable\",\n  \"confidence\": 0.86,\n  \"vulnerable_symbols\": [\"McIdas\", \"AreaFile\", \"AreaImageFile\"],\n  \"reasoning\": \"The advisory is specific to Pillow's McIdas AREA file plugin (an out-of-bounds read triggered by a malicious AREA file's row stride during mmap-based decoding). The application only uses PIL.Image.open() generically on user-supplied/static images for resizing/cropping in mealie/pkgs/img/minify.py, with no reference to the McIdas/AREA format plugin or its specific loader. Image.open() dispatches to a format plugin based on file content/extension, but there is zero evidence in the codebase that AREA files are ever produced, accepted, or expected as input (e.g., no .area extension handling, no explicit AreaImagePlugin import, no format allowlist including AREA). The static analysis found 0 production call sites of the named vulnerable symbol 'McIdas' and 0 paths from any entry point to it. Since Image.open() could theoretically auto-detect an AREA file if one were uploaded, there's a small residual plausibility, but without confirmation that the app's upload/import pipeline accepts arbitrary/unvalidated image formats reaching that specific plugin, the vulnerable code path is not shown to be exercised. Given the narrow, format-specific nature of this CVE and no evidence of AREA-format handling or restriction to safe formats, this leans not_reachable rather than uncertain, but confidence is not absolute since Image.open() is a generic multi-format dispatcher.\",\n  \"evidence\": [\n    {\"location\": \"mealie/pkgs/img/minify.py:15\", \"explanation\": \"Image.open() call that generically dispatches to format plugins based on file content; no AREA/McIdas-specific handling present.\"},\n    {\"location\": \"mealie/pkgs/img/minify.py:68\", \"explanation\": \"Another generic Image.open() call on an uploaded/stored image file, not restricted to or indicating McIdas format.\"},\n    {\"location\": \"mealie/pkgs/img/minify.py:120\", \"explanation\": \"Third generic Image.open() call; all usages are plain open/crop/resize operations unrelated to the AREA plugin.\"},\n    {\"location\": \"advisory\", \"explanation\": \"Static analysis found 0 production call sites of the 'McIdas' symbol and 0 paths from any entry point to it, indicating the vulnerable plugin code is not directly invoked by name.\"}\n  ]\n}\n```",
+     "in": 2148,
+     "out": 851,
+     "s": 11.45,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 19832.3,
+   "output": {
+    "critique": "The verdict treats absence of literal 'McIdas' references as decisive, but that misunderstands how Pillow's format dispatch works: Image.open() auto-detects file format from magic bytes across ALL registered plugins (including McIdas/AREA) unless a `formats=` allowlist is explicitly passed. None of the three Image.open() calls in minify.py pass such a restriction, so they are exactly the generic dispatch/wrapper the review guidance calls out as a path into vulnerable plugins. A scanner looking for named symbol usage will always show 0 hits for this CVE class, since no application code ever calls 'McIdas' directly \u2014 that's not evidence of unreachability, it's an inherent blind spot of the detection method. The real question is whether attacker-controlled file bytes reach any of these Image.open() calls (e.g., via a recipe image upload endpoint). The evidence doesn't establish that image/image_file originates from trusted-only sources, nor does it show any format allowlist, extension validation, or MIME-type restriction that would prevent an uploaded file with AREA magic bytes from being auto-sniffed and parsed by the McIdas plugin. The verdict's own reasoning even flags this residual risk ('Image.open() could theoretically auto-detect an AREA file... small residual plausibility') yet still assigns 0.86 confidence to not_reachable, which is inconsistent. Without evidence of input-source trust boundaries or format restrictions, this should not be confidently suppressed.",
+    "agrees": false,
+    "retry": true,
+    "final_verdict": "uncertain",
+    "confidence": 0.6
+   },
+   "tokens_in": 2320,
+   "tokens_out": 1565,
+   "llm_calls": 1,
+   "llm_seconds": 19.81,
+   "cost_usd_est": 0.030435,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict treats absence of literal 'McIdas' references as decisive, but that misunderstands how Pillow's format dispatch works: Image.open() auto-detects file format from magic bytes across ALL registered plugins (including McIdas/AREA) unless a `formats=` allowlist is explicitly passed. None of the three Image.open() calls in minify.py pass such a restriction, so they are exactly the generic dispatch/wrapper the review guidance calls out as a path into vulnerable plugins. A scanner looking for named symbol usage will always show 0 hits for this CVE class, since no application code ever calls 'McIdas' directly \u2014 that's not evidence of unreachability, it's an inherent blind spot of the detection method. The real question is whether attacker-controlled file bytes reach any of these Image.open() calls (e.g., via a recipe image upload endpoint). The evidence doesn't establish that image/image_file originates from trusted-only sources, nor does it show any format allowlist, extension validation, or MIME-type restriction that would prevent an uploaded file with AREA magic bytes from being auto-sniffed and parsed by the McIdas plugin. The verdict's own reasoning even flags this residual risk ('Image.open() could theoretically auto-detect an AREA file... small residual plausibility') yet still assigns 0.86 confidence to not_reachable, which is inconsistent. Without evidence of input-source trust boundaries or format restrictions, this should not be confidently suppressed.\",\"agrees\":false,\"retry\":true,\"final_verdict\":\"uncertain\",\"confidence\":0.6}",
+     "in": 2320,
+     "out": 1565,
+     "s": 19.81,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "verdict",
+   "ms": 17564.5,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.65,
+    "vulnerable_symbols": [
+     "McIdas AREA plugin (Image.open auto-dispatch)"
+    ],
+    "reasoning": "Pillow's Image.open() performs magic-byte format sniffing across all registered plugins unless a `formats=` allowlist is passed; none of the three Image.open() calls in minify.py restrict formats, so a file with AREA/McIdas magic bytes would be routed to the vulnerable decoder regardless of file extension. minify.py's purpose (minify/crop images) and the name 'crop_center' strongly suggest this processes user-supplied images in an application (mealie) that lets users upload recipe photos, meaning the `image`/`image_file` arguments plausibly originate from untrusted HTTP input. The absence of the literal string 'McIdas' in application code is expected and not evidence of safety, since the advisory's vulnerable symbol is never named by callers \u2014 it's reached only through Pillow's internal format-detection dispatch inside Image.open(). No evidence was provided showing an extension/MIME allowlist, a `formats=` restriction, or that inputs are server-generated/trusted-only, so the trust-boundary question the reviewer raised remains unresolved in the app's favor. Given the high cost of false negatives and the generic, unrestricted use of Image.open() on three call sites, this should not be suppressed as not_reachable.",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:6",
+      "explanation": "Pillow is imported here, making Image.open available to the module."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "explanation": "Image.open(image) called with no format allowlist, so Pillow auto-detects format via magic bytes across all plugins including McIdas/AREA."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "explanation": "Second unrestricted Image.open call on image_file, same auto-dispatch exposure."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "explanation": "Third unrestricted Image.open call; repeated pattern of no format restriction across the module."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "explanation": "crop_center/minify naming suggests this module post-processes user-uploaded images, implying attacker-influenced input likely reaches Image.open."
+     }
+    ]
+   },
+   "tokens_in": 2662,
+   "tokens_out": 1238,
+   "llm_calls": 1,
+   "llm_seconds": 17.56,
+   "cost_usd_est": 0.026556,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"reachable\",\"confidence\":0.65,\"vulnerable_symbols\":[\"McIdas AREA plugin (Image.open auto-dispatch)\"],\"reasoning\":\"Pillow's Image.open() performs magic-byte format sniffing across all registered plugins unless a `formats=` allowlist is passed; none of the three Image.open() calls in minify.py restrict formats, so a file with AREA/McIdas magic bytes would be routed to the vulnerable decoder regardless of file extension. minify.py's purpose (minify/crop images) and the name 'crop_center' strongly suggest this processes user-supplied images in an application (mealie) that lets users upload recipe photos, meaning the `image`/`image_file` arguments plausibly originate from untrusted HTTP input. The absence of the literal string 'McIdas' in application code is expected and not evidence of safety, since the advisory's vulnerable symbol is never named by callers \u2014 it's reached only through Pillow's internal format-detection dispatch inside Image.open(). No evidence was provided showing an extension/MIME allowlist, a `formats=` restriction, or that inputs are server-generated/trusted-only, so the trust-boundary question the reviewer raised remains unresolved in the app's favor. Given the high cost of false negatives and the generic, unrestricted use of Image.open() on three call sites, this should not be suppressed as not_reachable.\",\"evidence\":[{\"location\":\"mealie/pkgs/img/minify.py:6\",\"explanation\":\"Pillow is imported here, making Image.open available to the module.\"},{\"location\":\"mealie/pkgs/img/minify.py:15\",\"explanation\":\"Image.open(image) called with no format allowlist, so Pillow auto-detects format via magic bytes across all plugins including McIdas/AREA.\"},{\"location\":\"mealie/pkgs/img/minify.py:68\",\"explanation\":\"Second unrestricted Image.open call on image_file, same auto-dispatch exposure.\"},{\"location\":\"mealie/pkgs/img/minify.py:120\",\"explanation\":\"Third unrestricted Image.open call; repeated pattern of no format restriction across the module.\"},{\"location\":\"mealie/pkgs/img/minify.py:76\",\"explanation\":\"crop_center/minify naming suggests this module post-processes user-uploaded images, implying attacker-influenced input likely reaches Image.open.\"}]}",
+     "in": 2662,
+     "out": 1238,
+     "s": 17.56,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 2
+  },
+  {
+   "node": "reflection",
+   "ms": 29725.1,
+   "output": {
+    "critique": "The strongest counter is that the static evidence never actually traces image/image_file back to an HTTP entry point (upload endpoint) \u2014 the '0 production call sites with a path from an entry point' metric sounds damning but is misleading, since it's keyed to the literal symbol 'McIdas', which legitimately never appears in application code (dispatch to that plugin happens inside Pillow's internal format-sniffing, not via a named call). So that zero-count is not actual evidence of unreachability, and the verdict correctly refuses to treat it as such. The remaining question is whether image/image_file in minify.py are attacker-controlled; the evidence shown is only the module's internal code, not caller-side proof of upload-endpoint taint. However, this is a known pattern in mealie (an image-upload/recipe app) where minify.py's crop/resize functions are invoked on user-submitted recipe photos, and Pillow's Image.open() genuinely does unrestricted magic-byte format sniffing across all auto-registered plugins (including McIdas/AREA) when no formats= allowlist is passed, which is exactly the precondition CWE-125/the advisory requires. No evidence of a formats= restriction, extension/MIME allowlist, or trusted-only input source was found, so the reachable call is not clearly contradicted by what's in evidence, and the asymmetric cost of false suppression favors keeping it reachable rather than downgrading on an inferential gap.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.6
+   },
+   "tokens_in": 2285,
+   "tokens_out": 2296,
+   "llm_calls": 1,
+   "llm_seconds": 29.72,
+   "cost_usd_est": 0.041295,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter is that the static evidence never actually traces image/image_file back to an HTTP entry point (upload endpoint) \u2014 the '0 production call sites with a path from an entry point' metric sounds damning but is misleading, since it's keyed to the literal symbol 'McIdas', which legitimately never appears in application code (dispatch to that plugin happens inside Pillow's internal format-sniffing, not via a named call). So that zero-count is not actual evidence of unreachability, and the verdict correctly refuses to treat it as such. The remaining question is whether image/image_file in minify.py are attacker-controlled; the evidence shown is only the module's internal code, not caller-side proof of upload-endpoint taint. However, this is a known pattern in mealie (an image-upload/recipe app) where minify.py's crop/resize functions are invoked on user-submitted recipe photos, and Pillow's Image.open() genuinely does unrestricted magic-byte format sniffing across all auto-registered plugins (including McIdas/AREA) when no formats= allowlist is passed, which is exactly the precondition CWE-125/the advisory requires. No evidence of a formats= restriction, extension/MIME allowlist, or trusted-only input source was found, so the reachable call is not clearly contradicted by what's in evidence, and the asymmetric cost of false suppression favors keeping it reachable rather than downgrading on an inferential gap.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"reachable\",\"confidence\":0.6}",
+     "in": 2285,
+     "out": 2296,
+     "s": 29.72,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.6,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 2
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 4,
+  "tokens_in": 9415,
+  "tokens_out": 5950,
+  "cost_usd_est": 0.117495,
+  "seconds": 78.6
+ },
+ "created": "2026-11-10T20:10:14+00:00",
+ "code_version": "225d357"
+}

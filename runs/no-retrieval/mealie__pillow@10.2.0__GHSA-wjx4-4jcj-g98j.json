@@ -1,0 +1,294 @@
+{
+ "finding_id": "mealie/pillow@10.2.0/GHSA-wjx4-4jcj-g98j",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-42308",
+   "GHSA-wjx4-4jcj-g98j",
+   "PYSEC-2026-165"
+  ],
+  "cves": [
+   "CVE-2026-42308"
+  ],
+  "cwes": [
+   "CWE-190"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/pillow@10.2.0/GHSA-wjx4-4jcj-g98j",
+  "first_fixed_above_installed": "12.2.0",
+  "fixed_versions": [
+   "12.2.0"
+  ],
+  "max_cvss": "5.5",
+  "package": "pillow",
+  "published": "2026-05-04T20:18:45Z",
+  "summary": "Pillow has an integer overflow when processing fonts",
+  "target": "mealie",
+  "version": "10.2.0",
+  "vuln_id": "GHSA-wjx4-4jcj-g98j"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.82,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.75,
+  "vulnerable_symbols": [
+   "ImageFont font processing (integer overflow in font/glyph handling)"
+  ],
+  "reasoning": "The advisory concerns an integer overflow in Pillow's font-processing code (e.g., ImageFont/truetype glyph handling). The application's only use of Pillow is in mealie/pkgs/img/minify.py, which imports Image and uses Image.open(), crop_center(), and basic save/resize-type operations for image minification/cropping \u2014 there is no import or use of ImageFont, text rendering, or any font-loading API anywhere in the first-party codebase (0 call sites for the vulnerable symbols, 0 reachable from any entry point). Since font parsing is never invoked by this application's code paths, the vulnerable feature is not exercised even though Pillow itself is a direct dependency used on every image-processing request. This matches the not_reachable criteria: the vulnerable function/feature is never called by production code.",
+  "evidence": [
+   {
+    "location": "mealie/pkgs/img/minify.py:6",
+    "explanation": "Only import of PIL/Pillow in the codebase, scoped to image minification."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:15,68,120",
+    "explanation": "All usages are Image.open() for raster image loading/resizing, not font/text rendering."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:76",
+    "explanation": "crop_center operates on pixel dimensions, unrelated to font glyph processing."
+   },
+   {
+    "location": "advisory",
+    "explanation": "0 production call sites match the vulnerable font-processing symbols anywhere in the 322 scanned first-party files."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument would be that Pillow's font-overflow vulnerability could be triggered indirectly\u2014e.g., through Image.open() parsing a format that internally touches font/glyph tables (some PSD/ICO/FLI metadata, or PDF save with embedded text) rather than only via explicit ImageFont.truetype() calls. However, the CWE-190 overflow for this advisory is specifically scoped to ImageFont/FreeType glyph-size handling, which is only reachable through ImageFont APIs or text-drawing (ImageDraw.text) that invoke font rasterization. The evidence shows a thorough first-party scan (322 files) with zero imports of ImageFont, zero text-rendering calls, and the only Pillow usage is Image.open() for raster loading plus basic crop/resize\u2014none of which invoke the font subsystem. No wrapper, dispatch table, or dynamic string-based font loading is evident. The verdict correctly matches the advisory's actual trigger condition (font parsing) against the actual code paths (raster image minify/crop), and no overlooked evidence suggests otherwise.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.82
+ },
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pillow@10.2.0/GHSA-wjx4-4jcj-g98j",
+    "package": "pillow",
+    "version": "10.2.0",
+    "vuln_id": "GHSA-wjx4-4jcj-g98j",
+    "aliases": [
+     "CVE-2026-42308",
+     "GHSA-wjx4-4jcj-g98j",
+     "PYSEC-2026-165"
+    ],
+    "summary": "Pillow has an integer overflow when processing fonts",
+    "max_cvss": "5.5",
+    "fixed_versions": [
+     "12.2.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 7.7,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "mealie/pkgs/img/minify.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 10,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "code": "img = Image.open(image)",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "pillow: imported in 1 non-test location(s); 10 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 8677.5,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.75,
+    "vulnerable_symbols": [
+     "ImageFont font processing (integer overflow in font/glyph handling)"
+    ],
+    "reasoning": "The advisory concerns an integer overflow in Pillow's font-processing code (e.g., ImageFont/truetype glyph handling). The application's only use of Pillow is in mealie/pkgs/img/minify.py, which imports Image and uses Image.open(), crop_center(), and basic save/resize-type operations for image minification/cropping \u2014 there is no import or use of ImageFont, text rendering, or any font-loading API anywhere in the first-party codebase (0 call sites for the vulnerable symbols, 0 reachable from any entry point). Since font parsing is never invoked by this application's code paths, the vulnerable feature is not exercised even though Pillow itself is a direct dependency used on every image-processing request. This matches the not_reachable criteria: the vulnerable function/feature is never called by production code.",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:6",
+      "explanation": "Only import of PIL/Pillow in the codebase, scoped to image minification."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:15,68,120",
+      "explanation": "All usages are Image.open() for raster image loading/resizing, not font/text rendering."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "explanation": "crop_center operates on pixel dimensions, unrelated to font glyph processing."
+     },
+     {
+      "location": "advisory",
+      "explanation": "0 production call sites match the vulnerable font-processing symbols anywhere in the 322 scanned first-party files."
+     }
+    ]
+   },
+   "tokens_in": 2115,
+   "tokens_out": 598,
+   "llm_calls": 1,
+   "llm_seconds": 8.67,
+   "cost_usd_est": 0.015315,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"not_reachable\",\n  \"confidence\": 0.75,\n  \"vulnerable_symbols\": [\"ImageFont font processing (integer overflow in font/glyph handling)\"],\n  \"reasoning\": \"The advisory concerns an integer overflow in Pillow's font-processing code (e.g., ImageFont/truetype glyph handling). The application's only use of Pillow is in mealie/pkgs/img/minify.py, which imports Image and uses Image.open(), crop_center(), and basic save/resize-type operations for image minification/cropping \u2014 there is no import or use of ImageFont, text rendering, or any font-loading API anywhere in the first-party codebase (0 call sites for the vulnerable symbols, 0 reachable from any entry point). Since font parsing is never invoked by this application's code paths, the vulnerable feature is not exercised even though Pillow itself is a direct dependency used on every image-processing request. This matches the not_reachable criteria: the vulnerable function/feature is never called by production code.\",\n  \"evidence\": [\n    {\"location\": \"mealie/pkgs/img/minify.py:6\", \"explanation\": \"Only import of PIL/Pillow in the codebase, scoped to image minification.\"},\n    {\"location\": \"mealie/pkgs/img/minify.py:15,68,120\", \"explanation\": \"All usages are Image.open() for raster image loading/resizing, not font/text rendering.\"},\n    {\"location\": \"mealie/pkgs/img/minify.py:76\", \"explanation\": \"crop_center operates on pixel dimensions, unrelated to font glyph processing.\"},\n    {\"location\": \"advisory\", \"explanation\": \"0 production call sites match the vulnerable font-processing symbols anywhere in the 322 scanned first-party files.\"}\n  ]\n}\n```",
+     "in": 2115,
+     "out": 598,
+     "s": 8.67,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 12642.1,
+   "output": {
+    "critique": "The strongest counter-argument would be that Pillow's font-overflow vulnerability could be triggered indirectly\u2014e.g., through Image.open() parsing a format that internally touches font/glyph tables (some PSD/ICO/FLI metadata, or PDF save with embedded text) rather than only via explicit ImageFont.truetype() calls. However, the CWE-190 overflow for this advisory is specifically scoped to ImageFont/FreeType glyph-size handling, which is only reachable through ImageFont APIs or text-drawing (ImageDraw.text) that invoke font rasterization. The evidence shows a thorough first-party scan (322 files) with zero imports of ImageFont, zero text-rendering calls, and the only Pillow usage is Image.open() for raster loading plus basic crop/resize\u2014none of which invoke the font subsystem. No wrapper, dispatch table, or dynamic string-based font loading is evident. The verdict correctly matches the advisory's actual trigger condition (font parsing) against the actual code paths (raster image minify/crop), and no overlooked evidence suggests otherwise.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.82
+   },
+   "tokens_in": 2029,
+   "tokens_out": 902,
+   "llm_calls": 1,
+   "llm_seconds": 12.62,
+   "cost_usd_est": 0.019617,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument would be that Pillow's font-overflow vulnerability could be triggered indirectly\u2014e.g., through Image.open() parsing a format that internally touches font/glyph tables (some PSD/ICO/FLI metadata, or PDF save with embedded text) rather than only via explicit ImageFont.truetype() calls. However, the CWE-190 overflow for this advisory is specifically scoped to ImageFont/FreeType glyph-size handling, which is only reachable through ImageFont APIs or text-drawing (ImageDraw.text) that invoke font rasterization. The evidence shows a thorough first-party scan (322 files) with zero imports of ImageFont, zero text-rendering calls, and the only Pillow usage is Image.open() for raster loading plus basic crop/resize\u2014none of which invoke the font subsystem. No wrapper, dispatch table, or dynamic string-based font loading is evident. The verdict correctly matches the advisory's actual trigger condition (font parsing) against the actual code paths (raster image minify/crop), and no overlooked evidence suggests otherwise.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.82}",
+     "in": 2029,
+     "out": 902,
+     "s": 12.62,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.82,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4144,
+  "tokens_out": 1500,
+  "cost_usd_est": 0.034932,
+  "seconds": 21.33
+ },
+ "created": "2026-11-10T20:11:49+00:00",
+ "code_version": "225d357"
+}

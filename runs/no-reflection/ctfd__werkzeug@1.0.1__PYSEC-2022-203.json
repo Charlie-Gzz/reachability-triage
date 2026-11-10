@@ -1,0 +1,371 @@
+{
+ "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2022-203",
+ "config": "no-reflection",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": false,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-29361",
+   "PYSEC-2022-203"
+  ],
+  "cves": [
+   "CVE-2022-29361"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2022-203",
+  "first_fixed_above_installed": "2.1.1",
+  "fixed_versions": [
+   "2.1.1",
+   "9a3a981d70d2e9ec3344b5192f86fcaf3210cd85"
+  ],
+  "max_cvss": null,
+  "package": "werkzeug",
+  "published": "2022-05-25T01:15:00Z",
+  "summary": "** DISPUTED ** Improper parsing of HTTP requests in Pallets Werkzeug v2.1.0 and below allows attackers to perform HTTP Request Smuggling using a crafted HTTP request with multiple requests included in",
+  "target": "ctfd",
+  "version": "1.0.1",
+  "vuln_id": "PYSEC-2022-203"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.62,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.62,
+  "vulnerable_symbols": [
+   "Werkzeug dev server HTTP request body parsing (multiple requests in body)"
+  ],
+  "reasoning": "This advisory is explicitly disputed by Werkzeug's maintainers, who state the smuggling behavior only manifests when running Werkzeug's development server behind an external, non-Werkzeug HTTP server/proxy in an unsupported configuration \u2014 not a vulnerability in Werkzeug's WSGI request-parsing logic used in normal deployments. The static evidence shows werkzeug is used only for ProxyFix, DispatcherMiddleware, CallbackDict, secure_filename, and cached_property (CTFd/__init__.py:37,250,252; CTFd/utils/initialization/__init__.py:307; CTFd/utils/sessions/__init__.py:28; CTFd/utils/uploads/uploaders.py:57,105) \u2014 none of which touch the HTTP request-body/chunked parsing path the advisory concerns. There is no evidence the application runs Werkzeug's `run_simple`/dev server in production fronted by an external HTTP server that would reintroduce the smuggling scenario; no named vulnerable symbol was found at any call site. Given the vendor's stated unsupported-configuration caveat and the absence of any code exercising the disputed parsing path or running the dev server as a production front-end, the vulnerable behavior is not exercised by this application's architecture.",
+  "evidence": [
+   {
+    "location": "CTFd/__init__.py:250-252",
+    "explanation": "werkzeug.ProxyFix is applied to app.wsgi_app, unrelated to HTTP body request-smuggling parsing."
+   },
+   {
+    "location": "CTFd/utils/initialization/__init__.py:307",
+    "explanation": "DispatcherMiddleware mounts the app under a path prefix; does not involve the vulnerable body-parsing behavior."
+   },
+   {
+    "location": "CTFd/utils/sessions/__init__.py:6,28",
+    "explanation": "Only CallbackDict (a dict subclass) is used, not request parsing internals."
+   },
+   {
+    "location": "CTFd/utils/uploads/uploaders.py:57,105",
+    "explanation": "secure_filename is used for filename sanitization, unrelated to HTTP parsing."
+   },
+   {
+    "location": "advisory",
+    "explanation": "Vendor disputes the CVE, stating the issue only occurs in unsupported configs with the dev server behind an external HTTP server, which is not evidenced here."
+   }
+  ]
+ },
+ "reflection": null,
+ "symbols": [],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/werkzeug@1.0.1/PYSEC-2022-203",
+    "package": "werkzeug",
+    "version": "1.0.1",
+    "vuln_id": "PYSEC-2022-203",
+    "aliases": [
+     "CVE-2022-29361",
+     "PYSEC-2022-203"
+    ],
+    "summary": "** DISPUTED ** Improper parsing of HTTP requests in Pallets Werkzeug v2.1.0 and below allows attackers to perform HTTP Request Smuggling using a crafted HTTP request with multiple requests included in",
+    "max_cvss": null,
+    "fixed_versions": [
+     "2.1.1",
+     "9a3a981d70d2e9ec3344b5192f86fcaf3210cd85"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "PYSEC-2022-203#1",
+      "score": 0.925,
+      "text": "PYSEC-2022-203 (werkzeug) details:\n** DISPUTED ** Improper parsing of HTTP requests in Pallets Werkzeug v2.1.0 and below allows attackers to perform HTTP Request Smuggling using a crafted HTTP request with multiple requests included inside the body. NOTE: the vendor's position is that this behavior can only occur in unsupported configurations involving development mode and an HTTP server from outside the Werkzeug project.",
+      "vuln_id": "PYSEC-2022-203"
+     },
+     {
+      "id": "PYSEC-2022-203#0",
+      "score": 0.758,
+      "text": "PYSEC-2022-203 (CVE-2022-29361)\npackage: werkzeug\nsummary: \naffected: >=0, <2.1.1; >=0, <9a3a981d70d2e9ec3344b5192f86fcaf3210cd85",
+      "vuln_id": "PYSEC-2022-203"
+     },
+     {
+      "id": "GHSA-h2fp-xgx6-xh6f#1",
+      "score": 0.85,
+      "text": "GHSA-h2fp-xgx6-xh6f (werkzeug) details:\nCross-site scripting (XSS) vulnerability in the render_full function in debug/tbtools.py in the debugger in Pallets Werkzeug before 0.11.11 (as used in Pallets Flask and other products) allows remote attackers to inject arbitrary web script or HTML via a field that contains an exception message.",
+      "vuln_id": "GHSA-h2fp-xgx6-xh6f"
+     },
+     {
+      "id": "GHSA-j544-7q9p-6xp8#0",
+      "score": 0.829,
+      "text": "GHSA-j544-7q9p-6xp8 (CVE-2019-14322)\npackage: werkzeug\nsummary: Pallets Werkzeug vulnerable to Path Traversal\naffected: >=0, <0.15.5",
+      "vuln_id": "GHSA-j544-7q9p-6xp8"
+     }
+    ],
+    "symbols": [],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 34.4,
+   "output": {
+    "package": "werkzeug",
+    "import_names": [
+     "werkzeug"
+    ],
+    "symbols": [],
+    "imported": true,
+    "import_locations": [
+     "CTFd/__init__.py:13",
+     "CTFd/__init__.py:14",
+     "CTFd/errors.py:3",
+     "CTFd/utils/initialization/__init__.py:8",
+     "CTFd/utils/sessions/__init__.py:6",
+     "CTFd/utils/uploads/uploaders.py:10"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 17,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/__init__.py:37",
+      "code": "@cached_property",
+      "function": "CTFd:CTFdRequest.path",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:250",
+      "code": "app.wsgi_app = ProxyFix(app.wsgi_app, *proxyfix_args)",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:252",
+      "code": "app.wsgi_app = ProxyFix(",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:8",
+      "code": "isinstance(error, InternalServerError)",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:9",
+      "code": "and error.description == InternalServerError.description",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/initialization/__init__.py:307",
+      "code": "app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {application_root: app})",
+      "function": "CTFd.utils.initialization:init_request_processors",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/sessions/__init__.py:28",
+      "code": "CallbackDict.__init__(self, initial, on_update)",
+      "function": "CTFd.utils.sessions:CachedSession.__init__",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:57",
+      "code": "filename = secure_filename(filename)",
+      "function": "CTFd.utils.uploads.uploaders:FilesystemUploader.upload",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:105",
+      "code": "self._clean_filename, secure_filename(filename).replace(\" \", \"_\")",
+      "function": "CTFd.utils.uploads.uploaders:S3Uploader.upload",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "werkzeug: imported in 6 non-test location(s); 17 package call/reference site(s); named vulnerable symbols none found; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 31.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/utils/security/sanitize.py:module",
+      "score": 0.675,
+      "text": "# CTFd/utils/security/sanitize.py (module level)\nfrom pybluemonday import UGCPolicy\n# Copied from lxml:\n# https://github.com/lxml/lxml/blob/e986a9cb5d54827c59aefa8803bc90954d67221e/src/lxml/html/defs.py#L38\n# fmt: off\nSAFE_ATTRS = (\n    'abbr', 'accept', 'accept-charset', 'accesskey', 'action', 'align',\n    'alt', 'axis', 'border', 'cellpadding', 'cellspacing', 'char', 'charoff',\n    'charset', 'checked', 'cite', 'class', 'clear', 'cols', 'colspan',\n    'color', 'compact', 'coords', 'datetime', 'dir', 'disabled', 'enctype',\n    'for', 'frame', 'headers', 'height', 'href', 'hreflang', 'hspace', 'id',\n    'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'media', 'method',\n    'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt', 'readonly',\n    'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape',\n    'size', 'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title',\n    'type', 'usemap', 'valign', 'value', 'vspace', 'width'\n)\n# fmt: on\nPAGE_STRUCTURE_TAGS = {\n    \"title\": [],\n}\nMETA_TAGS = {\n    \"meta\": [\"name\", \"content\", \"property\"],\n}\nFORM_TAGS = {\n    \"form\": [\"method\", \"action\"],\n    \"button\": [\"name\", \"type\", \"value\", \"disabled\"],\n    \"input\": [\"name\", \"type\", \"value\", \"placeholder\"],\n    \"select\": [\"name\", \"value\", \"placeholder\"],\n    \"option\": [\"value\"],\n    \"textarea\": [\"name\", \"value\", \"placeholder\"],\n    \"label\": [\"for\"],\n}\nANNOYING_TAGS = {\n    \"blink\": [],\n    \"marquee\": [],\n}\nMEDIA_TAGS = {\n    \"audio\": [\"autoplay\", \"controls\", \"crossorigin\", \"loop\", \"muted\", \"preload\", \"src\"],\n    \"video\": [\n        \"autoplay\",\n        \"buffered\",\n        \"controls\",\n        \"crossorigin\",\n        \"loop\",\n        \"muted\",\n        \"playsinline\",\n        \"poster\",\n        \"preload\",\n        \"src\",\n    ],\n    \"source\": [\"src\", \"type\"],\n    \"iframe\": [\"width\", \"height\", \"src\", \"frameborder\", \"allow\", \"allowfullscreen\"],\n}\nSANITIZER = UGCPolicy()\nfor TAGS in (PAGE_STRUCTURE_TAGS, META_TAGS, FORM_TAGS, ANNOYING_TAGS, MEDIA_TAGS):\n    for element in TAGS:\n        SANITIZER.AllowElements(element)\n        SANITIZER.AllowAttrs(*TAGS[element]).OnElements(element)\n# Allow safe attrs copied from lxml\nSANITIZER.AllowAttrs(*SAFE_ATTRS).Globally()",
+      "file": "CTFd/utils/security/sanitize.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:14",
+      "score": 0.668,
+      "text": "# CTFd/utils/validators/__init__.py:14-17  is_safe_url\ndef is_safe_url(target):\n    ref_url = urlparse(request.host_url)\n    test_url = urlparse(urljoin(request.host_url, target))\n    return test_url.scheme in (\"http\", \"https\") and ref_url.netloc == test_url.netloc",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 14,
+      "qualname": "is_safe_url"
+     },
+     {
+      "id": "ctfd:CTFd/utils/sessions/__init__.py:module",
+      "score": 0.667,
+      "text": "# CTFd/utils/sessions/__init__.py (module level)\nfrom uuid import uuid4\nfrom flask.json.tag import TaggedJSONSerializer\nfrom flask.sessions import SessionInterface, SessionMixin\nfrom itsdangerous import BadSignature, want_bytes\nfrom werkzeug.datastructures import CallbackDict\nfrom CTFd.cache import cache\nfrom CTFd.utils import text_type\nfrom CTFd.utils.security.signing import sign, unsign\nclass CachedSession(CallbackDict, SessionMixin):\n    \"\"\"\n    This code is mostly based off of the ServerSideSession from Flask-Session.\n    https://github.com/fengsp/flask-session/blob/master/flask_session/sessions.py#L37\n    \"\"\"\nclass CachingSessionInterface(SessionInterface):\n    \"\"\"\n    This code is partially based off of the RedisSessionInterface from Flask-Session with updates to properly\n    interoperate with Flask-Caching and be more inline with modern Flask (i.e. doesn't use pickle).\n    https://github.com/fengsp/flask-session/blob/master/flask_session/sessions.py#L90\n    \"\"\"\n    serializer = TaggedJSONSerializer()\n    session_class = CachedSession",
+      "file": "CTFd/utils/sessions/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/encoding/__init__.py:39",
+      "score": 0.66,
+      "text": "# CTFd/utils/encoding/__init__.py:39-48  base64decode\ndef base64decode(s):\n    if isinstance(s, string_types):\n        s = s.encode(\"utf-8\")\n\n    decoded = base64.urlsafe_b64decode(s.ljust(len(s) + len(s) % 4, b\"=\"))\n    try:\n        decoded = decoded.decode(\"utf-8\")\n    except UnicodeDecodeError:\n        pass\n    return decoded",
+      "file": "CTFd/utils/encoding/__init__.py",
+      "start": 39,
+      "qualname": "base64decode"
+     },
+     {
+      "id": "ctfd:CTFd/utils/validators/__init__.py:module",
+      "score": 0.657,
+      "text": "# CTFd/utils/validators/__init__.py (module level)\nimport re\nfrom urllib.parse import urljoin, urlparse\nfrom flask import request\nfrom marshmallow import ValidationError\nfrom CTFd.models import Users\nfrom CTFd.utils.countries import lookup_country_code\nfrom CTFd.utils.user import get_current_user, is_admin\nEMAIL_REGEX = r\"(^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$)\"",
+      "file": "CTFd/utils/validators/__init__.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 15213.4,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.62,
+    "vulnerable_symbols": [
+     "Werkzeug dev server HTTP request body parsing (multiple requests in body)"
+    ],
+    "reasoning": "This advisory is explicitly disputed by Werkzeug's maintainers, who state the smuggling behavior only manifests when running Werkzeug's development server behind an external, non-Werkzeug HTTP server/proxy in an unsupported configuration \u2014 not a vulnerability in Werkzeug's WSGI request-parsing logic used in normal deployments. The static evidence shows werkzeug is used only for ProxyFix, DispatcherMiddleware, CallbackDict, secure_filename, and cached_property (CTFd/__init__.py:37,250,252; CTFd/utils/initialization/__init__.py:307; CTFd/utils/sessions/__init__.py:28; CTFd/utils/uploads/uploaders.py:57,105) \u2014 none of which touch the HTTP request-body/chunked parsing path the advisory concerns. There is no evidence the application runs Werkzeug's `run_simple`/dev server in production fronted by an external HTTP server that would reintroduce the smuggling scenario; no named vulnerable symbol was found at any call site. Given the vendor's stated unsupported-configuration caveat and the absence of any code exercising the disputed parsing path or running the dev server as a production front-end, the vulnerable behavior is not exercised by this application's architecture.",
+    "evidence": [
+     {
+      "location": "CTFd/__init__.py:250-252",
+      "explanation": "werkzeug.ProxyFix is applied to app.wsgi_app, unrelated to HTTP body request-smuggling parsing."
+     },
+     {
+      "location": "CTFd/utils/initialization/__init__.py:307",
+      "explanation": "DispatcherMiddleware mounts the app under a path prefix; does not involve the vulnerable body-parsing behavior."
+     },
+     {
+      "location": "CTFd/utils/sessions/__init__.py:6,28",
+      "explanation": "Only CallbackDict (a dict subclass) is used, not request parsing internals."
+     },
+     {
+      "location": "CTFd/utils/uploads/uploaders.py:57,105",
+      "explanation": "secure_filename is used for filename sanitization, unrelated to HTTP parsing."
+     },
+     {
+      "location": "advisory",
+      "explanation": "Vendor disputes the CVE, stating the issue only occurs in unsupported configs with the dev server behind an external HTTP server, which is not evidenced here."
+     }
+    ]
+   },
+   "tokens_in": 4640,
+   "tokens_out": 1300,
+   "llm_calls": 1,
+   "llm_seconds": 15.2,
+   "cost_usd_est": 0.03342,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.62,\"vulnerable_symbols\":[\"Werkzeug dev server HTTP request body parsing (multiple requests in body)\"],\"reasoning\":\"This advisory is explicitly disputed by Werkzeug's maintainers, who state the smuggling behavior only manifests when running Werkzeug's development server behind an external, non-Werkzeug HTTP server/proxy in an unsupported configuration \u2014 not a vulnerability in Werkzeug's WSGI request-parsing logic used in normal deployments. The static evidence shows werkzeug is used only for ProxyFix, DispatcherMiddleware, CallbackDict, secure_filename, and cached_property (CTFd/__init__.py:37,250,252; CTFd/utils/initialization/__init__.py:307; CTFd/utils/sessions/__init__.py:28; CTFd/utils/uploads/uploaders.py:57,105) \u2014 none of which touch the HTTP request-body/chunked parsing path the advisory concerns. There is no evidence the application runs Werkzeug's `run_simple`/dev server in production fronted by an external HTTP server that would reintroduce the smuggling scenario; no named vulnerable symbol was found at any call site. Given the vendor's stated unsupported-configuration caveat and the absence of any code exercising the disputed parsing path or running the dev server as a production front-end, the vulnerable behavior is not exercised by this application's architecture.\",\"evidence\":[{\"location\":\"CTFd/__init__.py:250-252\",\"explanation\":\"werkzeug.ProxyFix is applied to app.wsgi_app, unrelated to HTTP body request-smuggling parsing.\"},{\"location\":\"CTFd/utils/initialization/__init__.py:307\",\"explanation\":\"DispatcherMiddleware mounts the app under a path prefix; does not involve the vulnerable body-parsing behavior.\"},{\"location\":\"CTFd/utils/sessions/__init__.py:6,28\",\"explanation\":\"Only CallbackDict (a dict subclass) is used, not request parsing internals.\"},{\"location\":\"CTFd/utils/uploads/uploaders.py:57,105\",\"explanation\":\"secure_filename is used for filename sanitization, unrelated to HTTP parsing.\"},{\"location\":\"advisory\",\"explanation\":\"Vendor disputes the CVE, stating the issue only occurs in unsupported configs with the dev server behind an external HTTP server, which is not evidenced here.\"}]}",
+     "in": 4640,
+     "out": 1300,
+     "s": 15.2,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.62,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 1,
+  "tokens_in": 4640,
+  "tokens_out": 1300,
+  "cost_usd_est": 0.03342,
+  "seconds": 15.31
+ },
+ "created": "2026-11-10T20:33:37+00:00",
+ "code_version": "ea5880b"
+}

@@ -1,0 +1,319 @@
+{
+ "finding_id": "mealie/requests@2.31.0/GHSA-9wx4-h78v-vm56",
+ "config": "no-retrieval",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": false,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2024-35195",
+   "GHSA-9wx4-h78v-vm56",
+   "PYSEC-2026-1873"
+  ],
+  "cves": [
+   "CVE-2024-35195"
+  ],
+  "cwes": [
+   "CWE-670"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/requests@2.31.0/GHSA-9wx4-h78v-vm56",
+  "first_fixed_above_installed": "2.32.0",
+  "fixed_versions": [
+   "2.32.0"
+  ],
+  "max_cvss": "5.6",
+  "package": "requests",
+  "published": "2024-05-20T20:15:00Z",
+  "summary": "Requests `Session` object does not verify requests after making first request with verify=False",
+  "target": "mealie",
+  "version": "2.31.0",
+  "vuln_id": "GHSA-9wx4-h78v-vm56"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.9,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.88,
+  "vulnerable_symbols": [
+   "Session",
+   "Session.verify"
+  ],
+  "reasoning": "The advisory affects requests.Session objects that are reused after an initial request with verify=False, where a subsequent request's verify=True (or default) setting can be silently overridden to insecure. The application never instantiates or uses a requests.Session object anywhere in first-party code; all four usages are one-off module-level calls (requests.get/requests.post) which create and discard a fresh Session internally per call, so there's no persistent Session object whose verify flag could be poisoned across requests. None of the call sites pass verify=False at all, so even the single-request path doesn't trigger the vulnerable state. Since the vulnerable symbol (Session reuse with verify toggling) has zero call sites and no instantiation anywhere in production code, the vulnerable behavior is not exercised.",
+  "evidence": [
+   {
+    "location": "mealie/core/release_checker.py:19",
+    "explanation": "Uses requests.get() directly (ephemeral Session, no verify=False, no reuse)."
+   },
+   {
+    "location": "mealie/scripts/healthcheck.py:15",
+    "explanation": "Uses requests.get() directly with no Session object or verify parameter."
+   },
+   {
+    "location": "mealie/scripts/install_model.py:13",
+    "explanation": "Uses requests.get() with stream/allow_redirects but no verify param or persistent Session."
+   },
+   {
+    "location": "mealie/services/event_bus_service/publisher.py:48",
+    "explanation": "Uses requests.post() directly with a timeout, no Session reuse or verify=False."
+   },
+   {
+    "location": "advisory",
+    "explanation": "0 production call sites of the Session symbol means the vulnerable Session-reuse pattern is never instantiated in this codebase."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict correctly models the advisory's actual trigger condition: CVE-2024-35195 requires persistent reuse of a single requests.Session object where an initial request with verify=False poisons a cached SSL-context setting that silently overrides a later verify=True (or default-True) call on the same Session. The requests.api.request()-level helpers (requests.get/requests.post) internally create a fresh, single-use Session via a context manager and tear it down after one call, so there's no cross-request state to poison. The strongest pushback would be: did the scan miss any first-party code that builds a long-lived Session (e.g., a custom HTTP client wrapper, retry/adapter mounting, or a background task reusing a module-level requests.Session instance)? The evidence states 322 first-party files were searched for the Session symbol with zero matches, and all four requests usages are explicitly one-off get/post calls with no verify parameter at all \u2014 which also forecloses even the initial verify=False precondition. There's no wrapper, dispatch table, or config flag indicated in the evidence that would construct and reuse a Session. The critique doesn't overturn the verdict; the evidence genuinely shows the vulnerable pattern (Session reuse + verify toggling) is absent, and the search methodology (AST across all first-party files, not just the 4 import sites) is broad enough to catch an indirect Session instantiation.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.9
+ },
+ "symbols": [
+  "Session"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/requests@2.31.0/GHSA-9wx4-h78v-vm56",
+    "package": "requests",
+    "version": "2.31.0",
+    "vuln_id": "GHSA-9wx4-h78v-vm56",
+    "aliases": [
+     "CVE-2024-35195",
+     "GHSA-9wx4-h78v-vm56",
+     "PYSEC-2026-1873"
+    ],
+    "summary": "Requests `Session` object does not verify requests after making first request with verify=False",
+    "max_cvss": "5.6",
+    "fixed_versions": [
+     "2.32.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 0.0,
+   "output": {
+    "chunks": [],
+    "symbols": [
+     "Session"
+    ],
+    "retrieval": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 18.5,
+   "output": {
+    "package": "requests",
+    "import_names": [
+     "requests"
+    ],
+    "symbols": [
+     "Session"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/core/release_checker.py:4",
+     "mealie/scripts/healthcheck.py:4",
+     "mealie/scripts/install_model.py:1",
+     "mealie/services/event_bus_service/publisher.py:4"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 14,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/core/release_checker.py:19",
+      "code": "response = requests.get(url)",
+      "function": "mealie.core.release_checker:get_latest_github_release",
+      "in_test": false
+     },
+     {
+      "location": "mealie/core/release_checker.py:43",
+      "code": "except requests.RequestException:",
+      "function": "mealie.core.release_checker:get_latest_version",
+      "in_test": false
+     },
+     {
+      "location": "mealie/scripts/healthcheck.py:15",
+      "code": "r = requests.get(url)",
+      "function": "mealie.scripts.healthcheck:main",
+      "in_test": false
+     },
+     {
+      "location": "mealie/scripts/install_model.py:13",
+      "code": "r = requests.get(MODEL_URL, stream=True, allow_redirects=True)",
+      "function": "mealie.scripts.install_model:main",
+      "in_test": false
+     },
+     {
+      "location": "mealie/services/event_bus_service/publisher.py:48",
+      "code": "r = requests.post(url, json=event_payload, timeout=15)",
+      "function": "mealie.services.event_bus_service.publisher:WebhookPublisher.publish",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "requests: imported in 4 non-test location(s); 14 package call/reference site(s); named vulnerable symbols ['Session']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 0.0,
+   "output": {
+    "chunks": []
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 8073.1,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "vulnerable_symbols": [
+     "Session",
+     "Session.verify"
+    ],
+    "reasoning": "The advisory affects requests.Session objects that are reused after an initial request with verify=False, where a subsequent request's verify=True (or default) setting can be silently overridden to insecure. The application never instantiates or uses a requests.Session object anywhere in first-party code; all four usages are one-off module-level calls (requests.get/requests.post) which create and discard a fresh Session internally per call, so there's no persistent Session object whose verify flag could be poisoned across requests. None of the call sites pass verify=False at all, so even the single-request path doesn't trigger the vulnerable state. Since the vulnerable symbol (Session reuse with verify toggling) has zero call sites and no instantiation anywhere in production code, the vulnerable behavior is not exercised.",
+    "evidence": [
+     {
+      "location": "mealie/core/release_checker.py:19",
+      "explanation": "Uses requests.get() directly (ephemeral Session, no verify=False, no reuse)."
+     },
+     {
+      "location": "mealie/scripts/healthcheck.py:15",
+      "explanation": "Uses requests.get() directly with no Session object or verify parameter."
+     },
+     {
+      "location": "mealie/scripts/install_model.py:13",
+      "explanation": "Uses requests.get() with stream/allow_redirects but no verify param or persistent Session."
+     },
+     {
+      "location": "mealie/services/event_bus_service/publisher.py:48",
+      "explanation": "Uses requests.post() directly with a timeout, no Session reuse or verify=False."
+     },
+     {
+      "location": "advisory",
+      "explanation": "0 production call sites of the Session symbol means the vulnerable Session-reuse pattern is never instantiated in this codebase."
+     }
+    ]
+   },
+   "tokens_in": 2215,
+   "tokens_out": 593,
+   "llm_calls": 1,
+   "llm_seconds": 8.06,
+   "cost_usd_est": 0.01554,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\"verdict\":\"not_reachable\",\"confidence\":0.88,\"vulnerable_symbols\":[\"Session\",\"Session.verify\"],\"reasoning\":\"The advisory affects requests.Session objects that are reused after an initial request with verify=False, where a subsequent request's verify=True (or default) setting can be silently overridden to insecure. The application never instantiates or uses a requests.Session object anywhere in first-party code; all four usages are one-off module-level calls (requests.get/requests.post) which create and discard a fresh Session internally per call, so there's no persistent Session object whose verify flag could be poisoned across requests. None of the call sites pass verify=False at all, so even the single-request path doesn't trigger the vulnerable state. Since the vulnerable symbol (Session reuse with verify toggling) has zero call sites and no instantiation anywhere in production code, the vulnerable behavior is not exercised.\",\"evidence\":[{\"location\":\"mealie/core/release_checker.py:19\",\"explanation\":\"Uses requests.get() directly (ephemeral Session, no verify=False, no reuse).\"},{\"location\":\"mealie/scripts/healthcheck.py:15\",\"explanation\":\"Uses requests.get() directly with no Session object or verify parameter.\"},{\"location\":\"mealie/scripts/install_model.py:13\",\"explanation\":\"Uses requests.get() with stream/allow_redirects but no verify param or persistent Session.\"},{\"location\":\"mealie/services/event_bus_service/publisher.py:48\",\"explanation\":\"Uses requests.post() directly with a timeout, no Session reuse or verify=False.\"},{\"location\":\"advisory\",\"explanation\":\"0 production call sites of the Session symbol means the vulnerable Session-reuse pattern is never instantiated in this codebase.\"}]}\n```",
+     "in": 2215,
+     "out": 593,
+     "s": 8.06,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 16279.3,
+   "output": {
+    "critique": "The verdict correctly models the advisory's actual trigger condition: CVE-2024-35195 requires persistent reuse of a single requests.Session object where an initial request with verify=False poisons a cached SSL-context setting that silently overrides a later verify=True (or default-True) call on the same Session. The requests.api.request()-level helpers (requests.get/requests.post) internally create a fresh, single-use Session via a context manager and tear it down after one call, so there's no cross-request state to poison. The strongest pushback would be: did the scan miss any first-party code that builds a long-lived Session (e.g., a custom HTTP client wrapper, retry/adapter mounting, or a background task reusing a module-level requests.Session instance)? The evidence states 322 first-party files were searched for the Session symbol with zero matches, and all four requests usages are explicitly one-off get/post calls with no verify parameter at all \u2014 which also forecloses even the initial verify=False precondition. There's no wrapper, dispatch table, or config flag indicated in the evidence that would construct and reuse a Session. The critique doesn't overturn the verdict; the evidence genuinely shows the vulnerable pattern (Session reuse + verify toggling) is absent, and the search methodology (AST across all first-party files, not just the 4 import sites) is broad enough to catch an indirect Session instantiation.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.9
+   },
+   "tokens_in": 2161,
+   "tokens_out": 1186,
+   "llm_calls": 1,
+   "llm_seconds": 16.27,
+   "cost_usd_est": 0.024273,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\": \"The verdict correctly models the advisory's actual trigger condition: CVE-2024-35195 requires persistent reuse of a single requests.Session object where an initial request with verify=False poisons a cached SSL-context setting that silently overrides a later verify=True (or default-True) call on the same Session. The requests.api.request()-level helpers (requests.get/requests.post) internally create a fresh, single-use Session via a context manager and tear it down after one call, so there's no cross-request state to poison. The strongest pushback would be: did the scan miss any first-party code that builds a long-lived Session (e.g., a custom HTTP client wrapper, retry/adapter mounting, or a background task reusing a module-level requests.Session instance)? The evidence states 322 first-party files were searched for the Session symbol with zero matches, and all four requests usages are explicitly one-off get/post calls with no verify parameter at all \u2014 which also forecloses even the initial verify=False precondition. There's no wrapper, dispatch table, or config flag indicated in the evidence that would construct and reuse a Session. The critique doesn't overturn the verdict; the evidence genuinely shows the vulnerable pattern (Session reuse + verify toggling) is absent, and the search methodology (AST across all first-party files, not just the 4 import sites) is broad enough to catch an indirect Session instantiation.\", \"agrees\": true, \"retry\": false, \"final_verdict\": \"not_reachable\", \"confidence\": 0.9}",
+     "in": 2161,
+     "out": 1186,
+     "s": 16.27,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.9,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 4376,
+  "tokens_out": 1779,
+  "cost_usd_est": 0.039813,
+  "seconds": 24.37
+ },
+ "created": "2026-11-10T20:17:16+00:00",
+ "code_version": "225d357"
+}

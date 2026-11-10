@@ -1,0 +1,450 @@
+{
+ "finding_id": "mealie/pillow@10.2.0/GHSA-phj9-mv4w-65pm",
+ "config": "no-reflection",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": false,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-55380",
+   "GHSA-phj9-mv4w-65pm",
+   "PYSEC-2026-2256"
+  ],
+  "cves": [
+   "CVE-2026-55380"
+  ],
+  "cwes": [
+   "CWE-789"
+  ],
+  "direct_dependency": true,
+  "finding_id": "mealie/pillow@10.2.0/GHSA-phj9-mv4w-65pm",
+  "first_fixed_above_installed": "12.3.0",
+  "fixed_versions": [
+   "12.3.0"
+  ],
+  "max_cvss": "7.5",
+  "package": "pillow",
+  "published": "2026-07-20T21:13:35Z",
+  "summary": "Pillow `GdImageFile._open()`: image dimensions accepted without `_decompression_bomb_check()`",
+  "target": "mealie",
+  "version": "10.2.0",
+  "vuln_id": "GHSA-phj9-mv4w-65pm"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "vulnerable_symbols": [
+   "PIL.GdImageFile.open",
+   "GdImageFile._open",
+   "GdImageFile"
+  ],
+  "reasoning": "The advisory is specific to the GdImageFile plugin (GD 2.x format), which is reached only via the non-standard entry point PIL.GdImageFile.open(fp), since GdImageFile is never registered with Image.register_open() and thus never used by the normal Image.open() dispatch. The application's only Pillow usage is via mealie/pkgs/img/minify.py, which calls the generic Image.open(image) / Image.open(image_file) (lines 15, 68, 120) \u2014 this is the standard, format-sniffing Image.open() entry point that does perform decompression-bomb checks for all formats it dispatches to, and it would never route into GdImageFile because that plugin isn't registered with register_open at all. There is no call anywhere in the 322 scanned first-party files to PIL.GdImageFile.open, GdImageFile, or GdImageFile._open \u2014 the static evidence shows zero matches for those symbols. Since the vulnerable code path can only be reached by explicitly importing and calling PIL.GdImageFile.open(fp), and the app never does that (it only uses PIL.Image.open), the vulnerable feature is unused by production code.",
+  "evidence": [
+   {
+    "location": "mealie/pkgs/img/minify.py:15",
+    "explanation": "Uses generic Image.open(image), not PIL.GdImageFile.open; dead function anyway (no callers)."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:68",
+    "explanation": "Image.open(image_file) in to_webp uses standard dispatch, which doesn't route through the unregistered GdImageFile plugin."
+   },
+   {
+    "location": "mealie/pkgs/img/minify.py:120",
+    "explanation": "Image.open(image_file) in minify() reachable from UserImageController.update_user_image but still uses the safe standard Image.open path, not GdImageFile.open."
+   },
+   {
+    "location": "advisory",
+    "explanation": "States GdImageFile is not registered with Image.register_open(), so standard Image.open() never dispatches to it; only direct PIL.GdImageFile.open(fp) calls are vulnerable."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 matches found anywhere in 322 first-party files for PIL.GdImageFile.open, GdImageFile, or GdImageFile._open."
+   }
+  ]
+ },
+ "reflection": null,
+ "symbols": [
+  "PIL.GdImageFile.open",
+  "GdImageFile._open",
+  "GdImageFile",
+  "_decompression_bomb_check",
+  "Image._decompression_bomb_check",
+  "Image.register_open",
+  "Image.open",
+  "load"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/pillow@10.2.0/GHSA-phj9-mv4w-65pm",
+    "package": "pillow",
+    "version": "10.2.0",
+    "vuln_id": "GHSA-phj9-mv4w-65pm",
+    "aliases": [
+     "CVE-2026-55380",
+     "GHSA-phj9-mv4w-65pm",
+     "PYSEC-2026-2256"
+    ],
+    "summary": "Pillow `GdImageFile._open()`: image dimensions accepted without `_decompression_bomb_check()`",
+    "max_cvss": "7.5",
+    "fixed_versions": [
+     "12.3.0"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 37.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-phj9-mv4w-65pm#0",
+      "score": 0.873,
+      "text": "GHSA-phj9-mv4w-65pm (CVE-2026-55380)\npackage: pillow\nsummary: Pillow `GdImageFile._open()`: image dimensions accepted without `_decompression_bomb_check()`\naffected: >=0, <12.3.0",
+      "vuln_id": "GHSA-phj9-mv4w-65pm"
+     },
+     {
+      "id": "GHSA-phj9-mv4w-65pm#1",
+      "score": 0.849,
+      "text": "GHSA-phj9-mv4w-65pm (pillow) details:\n## Description\n\n`PIL/GdImageFile.py` `GdImageFile._open()` reads image dimensions from the GD 2.x header and stores them in `self._size` without calling `Image._decompression_bomb_check()`. Because `GdImageFile` is **not registered with `Image.register_open()`**, it never passes through the standard `Image.open()` code path that enforces Pillow's decompression bomb guard. The plugin exposes its own entry point \u2014 `PIL.GdImageFile.open(fp)` \u2014 which directly instantiates the class, fully bypassing the documented protection.\n\n**Vulnerable code (`PIL/GdImageFile.py` lines 50\u201361):**",
+      "vuln_id": "GHSA-phj9-mv4w-65pm"
+     },
+     {
+      "id": "GHSA-phj9-mv4w-65pm#9",
+      "score": 0.835,
+      "text": "GHSA-phj9-mv4w-65pm (pillow) details:\nAny service that calls `PIL.GdImageFile.open(user_file)` followed by `.load()` (or any lazy-load trigger) is vulnerable. Because the attack requires only a 1,037-byte file, network bandwidth is not a constraint.\n\nConfirmed unpatched on `python-pillow/Pillow` `main` branch as of 2026-06-08.",
+      "vuln_id": "GHSA-phj9-mv4w-65pm"
+     },
+     {
+      "id": "GHSA-phj9-mv4w-65pm#2",
+      "score": 0.814,
+      "text": "GHSA-phj9-mv4w-65pm (pillow) details:\n```python\ndef _open(self) -> None:\n    s = self.fp.read(1037)\n    if i16(s) not in [65534, 65535]:\n        raise SyntaxError(\"Not a valid GD 2.x .gd file\")\n    self._mode = \"P\"\n    self._size = i16(s, 2), i16(s, 4)   # \u2190 unsigned 16-bit; max 65535 each\n    # NO _decompression_bomb_check() call here \u2190\n    ...\n    self.tile = [ImageFile._Tile(\"raw\", (0, 0) + self.size, 1037, \"L\")]\n```\n\nWhen `load()` is subsequently called on the returned image object:\n\n```python\nload() \u2192 load_prepare() \u2192 Image.core.new(\"P\", (65535, 65535))\n# \u2191 C-level allocation of 4,294,836,225 bytes \u2248 4.3 GB \u2014 no Python bomb check precedes this\n```\n\n**Dimension arithmetic:**",
+      "vuln_id": "GHSA-phj9-mv4w-65pm"
+     },
+     {
+      "id": "GHSA-5gm3-px64-rw72#1",
+      "score": 0.821,
+      "text": "GHSA-5gm3-px64-rw72 (pillow) details:\nThere is a DoS vulnerability in Pillow before 6.2.2 caused by FpxImagePlugin.py calling the range function on an unvalidated 32-bit integer if the number of bands is large. On Windows running 32-bit Python, this results in an OverflowError or MemoryError due to the 2 GB limit. However, on Linux running 64-bit Python this results in the process being terminated by the OOM killer.",
+      "vuln_id": "GHSA-5gm3-px64-rw72"
+     },
+     {
+      "id": "GHSA-45hq-cxwh-f6vc#2",
+      "score": 0.811,
+      "text": "GHSA-45hq-cxwh-f6vc (pillow) details:\n**Vulnerable code (`PIL/BdfFontFile.py` lines 84\u201388):**\n```python\n# width, height from attacker-controlled \"BBX width height x y\" line\ntry:\n    im = Image.frombytes(\"1\", (width, height), bitmap, \"hex\", \"1\")\nexcept ValueError:\n    # TRIGGERED when BITMAP section is empty (zero hex lines)\n    im = Image.new(\"1\", (width, height))   # \u2190 NO _decompression_bomb_check()!\n    # ^ This image is stored in self.glyph[ch] \u2014 persists in memory\n```\n\n**Attack trigger:** A BDF glyph with `BBX 20000 20000` and an empty `BITMAP` section causes `Image.frombytes()` to raise `ValueError`, then `Image.new(\"1\", (20000, 20000))` allocates **50 MB** of C-heap silently. Image.open() would raise `DecompressionBombError` for the same dimensions.\n\n## Steps to reproduce",
+      "vuln_id": "GHSA-45hq-cxwh-f6vc"
+     }
+    ],
+    "symbols": [
+     "PIL.GdImageFile.open",
+     "GdImageFile._open",
+     "GdImageFile",
+     "_decompression_bomb_check",
+     "Image._decompression_bomb_check",
+     "Image.register_open",
+     "Image.open",
+     "load"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 86.5,
+   "output": {
+    "package": "pillow",
+    "import_names": [
+     "PIL"
+    ],
+    "symbols": [
+     "PIL.GdImageFile.open",
+     "GdImageFile._open",
+     "GdImageFile",
+     "_decompression_bomb_check",
+     "Image._decompression_bomb_check",
+     "Image.register_open",
+     "Image.open",
+     "load"
+    ],
+    "imported": true,
+    "import_locations": [
+     "mealie/pkgs/img/minify.py:6"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 10,
+    "vulnerable_call_sites": [
+     {
+      "file": "mealie/pkgs/img/minify.py",
+      "line": 15,
+      "code": "img = Image.open(image)",
+      "resolved": "PIL.Image.open",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": false,
+      "path": [],
+      "callers": 0,
+      "snippet": "   12  \n   13  \n   14  def get_format(image: Path) -> str:\n   15      img = Image.open(image)\n   16      return img.format\n   17  \n   18  "
+     },
+     {
+      "file": "mealie/pkgs/img/minify.py",
+      "line": 68,
+      "code": "img = Image.open(image_file)",
+      "resolved": "PIL.Image.open",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.users.images:UserImageController.update_user_image",
+       "mealie.pkgs.img.minify:PillowMinifier.to_webp"
+      ],
+      "callers": 3,
+      "snippet": "   65          Converts an image to the webp format in-place. The original image is not\n   66          removed By default, the quality is set to 100.\n   67          \"\"\"\n   68          img = Image.open(image_file)\n   69  \n   70          dest = dest or image_file.with_suffix(WEBP)\n   71          img.save(dest, FORMAT, quality=quality)"
+     },
+     {
+      "file": "mealie/pkgs/img/minify.py",
+      "line": 120,
+      "code": "img = Image.open(image_file)",
+      "resolved": "PIL.Image.open",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "mealie.routes.users.images:UserImageController.update_user_image",
+       "mealie.pkgs.img.minify:PillowMinifier.minify"
+      ],
+      "callers": 3,
+      "snippet": "  117              if not force and tiny_dest.exists():\n  118                  self._logger.info(f\"{image_file.name} already minified\")\n  119              else:\n  120                  img = Image.open(image_file)\n  121                  tiny_image = PillowMinifier.crop_center(img)\n  122                  tiny_image.save(tiny_dest, FORMAT, quality=70)\n  123                  self._logger.info(\"Tiny image saved\")"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "code": "img = Image.open(image)",
+      "function": "mealie.pkgs.img.minify:get_format",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:76",
+      "code": "def crop_center(pil_img: Image, crop_width=300, crop_height=300):",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.crop_center",
+      "in_test": false
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "code": "img = Image.open(image_file)",
+      "function": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [
+     [
+      "mealie.routes.users.images:UserImageController.update_user_image",
+      "mealie.pkgs.img.minify:PillowMinifier.to_webp"
+     ],
+     [
+      "mealie.routes.users.images:UserImageController.update_user_image",
+      "mealie.pkgs.img.minify:PillowMinifier.minify"
+     ]
+    ],
+    "summary": "pillow: imported in 1 non-test location(s); 10 package call/reference site(s); named vulnerable symbols ['PIL.GdImageFile.open', 'GdImageFile._open', 'GdImageFile', '_decompression_bomb_check', 'Image._decompression_bomb_check', 'Image.register_open', 'Image.open', 'load']; 3 production call site(s) of those symbols, 2 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 51.8,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:mealie/pkgs/img/minify.py:120",
+      "score": 1.0,
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 120,
+      "qualname": "mealie.pkgs.img.minify:PillowMinifier.minify",
+      "text": "# mealie/pkgs/img/minify.py around line 120\n  117              if not force and tiny_dest.exists():\n  118                  self._logger.info(f\"{image_file.name} already minified\")\n  119              else:\n  120                  img = Image.open(image_file)\n  121                  tiny_image = PillowMinifier.crop_center(img)\n  122                  tiny_image.save(tiny_dest, FORMAT, quality=70)\n  123                  self._logger.info(\"Tiny image saved\")"
+     },
+     {
+      "id": "site:mealie/pkgs/img/minify.py:68",
+      "score": 1.0,
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 68,
+      "qualname": "mealie.pkgs.img.minify:PillowMinifier.to_webp",
+      "text": "# mealie/pkgs/img/minify.py around line 68\n   65          Converts an image to the webp format in-place. The original image is not\n   66          removed By default, the quality is set to 100.\n   67          \"\"\"\n   68          img = Image.open(image_file)\n   69  \n   70          dest = dest or image_file.with_suffix(WEBP)\n   71          img.save(dest, FORMAT, quality=quality)"
+     },
+     {
+      "id": "site:mealie/pkgs/img/minify.py:15",
+      "score": 1.0,
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 15,
+      "qualname": "mealie.pkgs.img.minify:get_format",
+      "text": "# mealie/pkgs/img/minify.py around line 15\n   12  \n   13  \n   14  def get_format(image: Path) -> str:\n   15      img = Image.open(image)\n   16      return img.format\n   17  \n   18  "
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:87",
+      "score": 0.698,
+      "text": "# mealie/pkgs/img/minify.py:87-127  PillowMinifier.minify\n    def minify(self, image_file: Path, force=True):\n        if not image_file.exists():\n            raise FileNotFoundError(f\"{image_file.name} does not exist\")\n\n        org_dest = image_file.parent.joinpath(\"original.webp\")\n        min_dest = image_file.parent.joinpath(\"min-original.webp\")\n        tiny_dest = image_file.parent.joinpath(\"tiny-original.webp\")\n\n        if not force and min_dest.exists() and tiny_dest.exists() and org_dest.exists():\n            self._logger.info(f\"{image_file.name} already minified\")\n            return\n\n        success = False\n\n        if self._opts.original:\n            if not force and org_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, org_dest, quality=70)\n                success = True\n\n        if self._opts.miniature:\n            if not force and min_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                PillowMinifier.to_webp(image_file, min_dest, quality=70)\n                self._logger.info(f\"{image_file.name} minified\")\n                success = True\n\n        if self._opts.tiny:\n            if not force and tiny_dest.exists():\n                self._logger.info(f\"{image_file.name} already minified\")\n            else:\n                img = Image.open(image_file)\n                tiny_image = PillowMinifier.crop_center(img)\n                tiny_image.save(tiny_dest, FORMAT, quality=70)\n                self._logger.info(\"Tiny image saved\")\n                success = True\n\n        if self._purge and success:\n            self.purge(image_file)",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 87,
+      "qualname": "PillowMinifier.minify"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:19",
+      "score": 0.695,
+      "text": "# mealie/pkgs/img/minify.py:19-27  sizeof_fmt\ndef sizeof_fmt(file_path: Path, decimal_places=2):\n    if not file_path.exists():\n        return \"(File Not Found)\"\n    size: int | float = file_path.stat().st_size\n    for unit in [\"B\", \"kB\", \"MB\", \"GB\", \"TB\", \"PB\"]:\n        if size < 1024 or unit == \"PiB\":\n            break\n        size /= 1024\n    return f\"{size:.{decimal_places}f} {unit}\"",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 19,
+      "qualname": "sizeof_fmt"
+     },
+     {
+      "id": "mealie:mealie/pkgs/img/minify.py:76",
+      "score": 0.658,
+      "text": "# mealie/pkgs/img/minify.py:76-85  PillowMinifier.crop_center\n    def crop_center(pil_img: Image, crop_width=300, crop_height=300):\n        img_width, img_height = pil_img.size\n        return pil_img.crop(\n            (\n                (img_width - crop_width) // 2,\n                (img_height - crop_height) // 2,\n                (img_width + crop_width) // 2,\n                (img_height + crop_height) // 2,\n            )\n        )",
+      "file": "mealie/pkgs/img/minify.py",
+      "start": 76,
+      "qualname": "PillowMinifier.crop_center"
+     },
+     {
+      "id": "mealie:mealie/services/recipe/recipe_data_service.py:105",
+      "score": 0.651,
+      "text": "# mealie/services/recipe/recipe_data_service.py:105-116  RecipeDataService._validate_image_url\n    def _validate_image_url(url: str) -> bool:\n        # sourcery skip: invert-any-all, use-any\n        \"\"\"\n        Validates that the URL is of an allowed source and restricts certain sources to prevent\n        malicious images from being downloaded.\n        \"\"\"\n        invalid_domains = {\"127.0.0.1\", \"localhost\"}\n        for domain in invalid_domains:\n            if domain in url:\n                return False\n\n        return True",
+      "file": "mealie/services/recipe/recipe_data_service.py",
+      "start": 105,
+      "qualname": "RecipeDataService._validate_image_url"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 9800.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "vulnerable_symbols": [
+     "PIL.GdImageFile.open",
+     "GdImageFile._open",
+     "GdImageFile"
+    ],
+    "reasoning": "The advisory is specific to the GdImageFile plugin (GD 2.x format), which is reached only via the non-standard entry point PIL.GdImageFile.open(fp), since GdImageFile is never registered with Image.register_open() and thus never used by the normal Image.open() dispatch. The application's only Pillow usage is via mealie/pkgs/img/minify.py, which calls the generic Image.open(image) / Image.open(image_file) (lines 15, 68, 120) \u2014 this is the standard, format-sniffing Image.open() entry point that does perform decompression-bomb checks for all formats it dispatches to, and it would never route into GdImageFile because that plugin isn't registered with register_open at all. There is no call anywhere in the 322 scanned first-party files to PIL.GdImageFile.open, GdImageFile, or GdImageFile._open \u2014 the static evidence shows zero matches for those symbols. Since the vulnerable code path can only be reached by explicitly importing and calling PIL.GdImageFile.open(fp), and the app never does that (it only uses PIL.Image.open), the vulnerable feature is unused by production code.",
+    "evidence": [
+     {
+      "location": "mealie/pkgs/img/minify.py:15",
+      "explanation": "Uses generic Image.open(image), not PIL.GdImageFile.open; dead function anyway (no callers)."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:68",
+      "explanation": "Image.open(image_file) in to_webp uses standard dispatch, which doesn't route through the unregistered GdImageFile plugin."
+     },
+     {
+      "location": "mealie/pkgs/img/minify.py:120",
+      "explanation": "Image.open(image_file) in minify() reachable from UserImageController.update_user_image but still uses the safe standard Image.open path, not GdImageFile.open."
+     },
+     {
+      "location": "advisory",
+      "explanation": "States GdImageFile is not registered with Image.register_open(), so standard Image.open() never dispatches to it; only direct PIL.GdImageFile.open(fp) calls are vulnerable."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 matches found anywhere in 322 first-party files for PIL.GdImageFile.open, GdImageFile, or GdImageFile._open."
+     }
+    ]
+   },
+   "tokens_in": 5237,
+   "tokens_out": 824,
+   "llm_calls": 1,
+   "llm_seconds": 9.78,
+   "cost_usd_est": 0.028071,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.85,\"vulnerable_symbols\":[\"PIL.GdImageFile.open\",\"GdImageFile._open\",\"GdImageFile\"],\"reasoning\":\"The advisory is specific to the GdImageFile plugin (GD 2.x format), which is reached only via the non-standard entry point PIL.GdImageFile.open(fp), since GdImageFile is never registered with Image.register_open() and thus never used by the normal Image.open() dispatch. The application's only Pillow usage is via mealie/pkgs/img/minify.py, which calls the generic Image.open(image) / Image.open(image_file) (lines 15, 68, 120) \u2014 this is the standard, format-sniffing Image.open() entry point that does perform decompression-bomb checks for all formats it dispatches to, and it would never route into GdImageFile because that plugin isn't registered with register_open at all. There is no call anywhere in the 322 scanned first-party files to PIL.GdImageFile.open, GdImageFile, or GdImageFile._open \u2014 the static evidence shows zero matches for those symbols. Since the vulnerable code path can only be reached by explicitly importing and calling PIL.GdImageFile.open(fp), and the app never does that (it only uses PIL.Image.open), the vulnerable feature is unused by production code.\",\"evidence\":[{\"location\":\"mealie/pkgs/img/minify.py:15\",\"explanation\":\"Uses generic Image.open(image), not PIL.GdImageFile.open; dead function anyway (no callers).\"},{\"location\":\"mealie/pkgs/img/minify.py:68\",\"explanation\":\"Image.open(image_file) in to_webp uses standard dispatch, which doesn't route through the unregistered GdImageFile plugin.\"},{\"location\":\"mealie/pkgs/img/minify.py:120\",\"explanation\":\"Image.open(image_file) in minify() reachable from UserImageController.update_user_image but still uses the safe standard Image.open path, not GdImageFile.open.\"},{\"location\":\"advisory\",\"explanation\":\"States GdImageFile is not registered with Image.register_open(), so standard Image.open() never dispatches to it; only direct PIL.GdImageFile.open(fp) calls are vulnerable.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 matches found anywhere in 322 first-party files for PIL.GdImageFile.open, GdImageFile, or GdImageFile._open.\"}]}",
+     "in": 5237,
+     "out": 824,
+     "s": 9.78,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 1,
+  "tokens_in": 5237,
+  "tokens_out": 824,
+  "cost_usd_est": 0.028071,
+  "seconds": 9.98
+ },
+ "created": "2026-11-10T20:36:16+00:00",
+ "code_version": "ea5880b"
+}

@@ -1,0 +1,330 @@
+{
+ "finding_id": "mealie/urllib3@1.26.14/GHSA-38jv-5279-wg99",
+ "config": "no-reflection",
+ "dataset": "real",
+ "split": null,
+ "target": "mealie",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": false,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-21441",
+   "GHSA-38jv-5279-wg99",
+   "PYSEC-2026-1996"
+  ],
+  "cves": [
+   "CVE-2026-21441"
+  ],
+  "cwes": [
+   "CWE-409"
+  ],
+  "direct_dependency": false,
+  "finding_id": "mealie/urllib3@1.26.14/GHSA-38jv-5279-wg99",
+  "first_fixed_above_installed": "2.6.3",
+  "fixed_versions": [
+   "2.6.3"
+  ],
+  "max_cvss": "8.9",
+  "package": "urllib3",
+  "published": "2026-01-07T19:18:14Z",
+  "summary": "Decompression-bomb safeguards bypassed when following HTTP redirects (streaming API)",
+  "target": "mealie",
+  "version": "1.26.14",
+  "vuln_id": "GHSA-38jv-5279-wg99"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.78,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.78,
+  "vulnerable_symbols": [
+   "preload_content=False",
+   "HTTPResponse streaming decode (gzip/deflate/br/zstd) during redirects"
+  ],
+  "reasoning": "The advisory requires application code to call urllib3's streaming API with preload_content=False while not disabling redirects. Static analysis shows zero non-test imports of urllib3 and zero call sites referencing preload_content or the affected encodings anywhere in first-party code. The application's actual HTTP streaming logic (mealie/services/scraper/scraper_strategies.py:27-70) uses httpx's AsyncClient.stream/aiter_bytes, not urllib3's HTTPResponse streaming API, so the vulnerable code path is never invoked by this app even though urllib3 may be present as a transitive dependency (e.g., pulled in by requests). No other retrieved code touches HTTP response streaming or redirect handling via urllib3. Since the vulnerable feature is never used by production code and only unaffected/unrelated HTTP client code is used, this is not reachable.",
+  "evidence": [
+   {
+    "location": "advisory",
+    "explanation": "Vulnerability requires urllib3 streaming API called with preload_content=False and redirects not disabled."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 non-test imports of urllib3 and 0 production call sites of preload_content/gzip/deflate/zstd symbols in 322 scanned files."
+   },
+   {
+    "location": "mealie/services/scraper/scraper_strategies.py:27-40",
+    "explanation": "The app's streaming fetch of untrusted URLs uses httpx's AsyncClient.stream/aiter_bytes, not urllib3's HTTPResponse streaming/preload_content mechanism."
+   },
+   {
+    "location": "mealie/routes/recipe/recipe_crud_routes.py:208-218",
+    "explanation": "URL scraping entry point delegates to RecipeScraperPackage, not shown to use urllib3 streaming directly."
+   }
+  ]
+ },
+ "reflection": null,
+ "symbols": [
+  "gzip",
+  "deflate",
+  "zstd",
+  "preload_content"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "mealie/urllib3@1.26.14/GHSA-38jv-5279-wg99",
+    "package": "urllib3",
+    "version": "1.26.14",
+    "vuln_id": "GHSA-38jv-5279-wg99",
+    "aliases": [
+     "CVE-2026-21441",
+     "GHSA-38jv-5279-wg99",
+     "PYSEC-2026-1996"
+    ],
+    "summary": "Decompression-bomb safeguards bypassed when following HTTP redirects (streaming API)",
+    "max_cvss": "8.9",
+    "fixed_versions": [
+     "2.6.3"
+    ],
+    "direct_dependency": false
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-38jv-5279-wg99#0",
+      "score": 0.904,
+      "text": "GHSA-38jv-5279-wg99 (CVE-2026-21441)\npackage: urllib3\nsummary: Decompression-bomb safeguards bypassed when following HTTP redirects (streaming API)\naffected: >=1.22, <2.6.3",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#2",
+      "score": 0.861,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\nHowever, for HTTP redirect responses, the library would read the entire response body to drain the connection and decompress the content unnecessarily. This decompression occurred even before any read methods were called, and configured read limits did not restrict the amount of decompressed data. As a result, there was no safeguard against decompression bombs. A malicious server could exploit this to trigger excessive resource consumption on the client (high CPU usage and large memory allocations for decompressed data; CWE-409).\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.6.2 and earlier to stream content from untrusted sources by setting `preload_content=False` when they do not disable redirects.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.3 in which the library does not decode content of redirect responses when `preload_content=False`.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#1",
+      "score": 0.801,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\n### Impact\n\nurllib3's [streaming API](https://urllib3.readthedocs.io/en/2.6.2/advanced-usage.html#streaming-and-i-o) is designed for the efficient handling of large HTTP responses by reading the content in chunks, rather than loading the entire response body into memory at once.\n\nurllib3 can perform decoding or decompression based on the HTTP `Content-Encoding` header (e.g., `gzip`, `deflate`, `br`, or `zstd`). When using the streaming API, the library decompresses only the necessary bytes, enabling partial content consumption.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     },
+     {
+      "id": "GHSA-38jv-5279-wg99#3",
+      "score": 0.779,
+      "text": "GHSA-38jv-5279-wg99 (urllib3) details:\nIf upgrading is not immediately possible, disable [redirects](https://urllib3.readthedocs.io/en/2.6.2/user-guide.html#retrying-requests) by setting `redirect=False` for requests to untrusted source.",
+      "vuln_id": "GHSA-38jv-5279-wg99"
+     },
+     {
+      "id": "GHSA-mf9v-mfxr-j63j#0",
+      "score": 0.867,
+      "text": "GHSA-mf9v-mfxr-j63j (CVE-2026-44432)\npackage: urllib3\nsummary: urllib3: Decompression-bomb safeguards bypassed in parts of the streaming API\naffected: >=2.6.0, <2.7.0",
+      "vuln_id": "GHSA-mf9v-mfxr-j63j"
+     },
+     {
+      "id": "GHSA-2xpw-w6gg-jr37#2",
+      "score": 0.826,
+      "text": "GHSA-2xpw-w6gg-jr37 (urllib3) details:\nThe decompression logic could cause urllib3 to fully decode a small amount of highly compressed data in a single operation. This can result in excessive resource consumption (high CPU usage and massive memory allocation for the decompressed data; CWE-409) on the client side, even if the application only requested a small chunk of data.\n\n### Affected usages\n\nApplications and libraries using urllib3 version 2.5.0 and earlier to stream large compressed responses or content from untrusted sources.\n\n`stream()`, `read(amt=256)`, `read1(amt=256)`, `read_chunked(amt=256)`, `readinto(b)` are examples of `urllib3.HTTPResponse` method calls using the affected logic unless decoding is disabled explicitly.\n\n### Remediation\n\nUpgrade to at least urllib3 v2.6.0 in which the library avoids decompressing data that exceeds the requested amount.",
+      "vuln_id": "GHSA-2xpw-w6gg-jr37"
+     }
+    ],
+    "symbols": [
+     "gzip",
+     "deflate",
+     "zstd",
+     "preload_content"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 40.9,
+   "output": {
+    "package": "urllib3",
+    "import_names": [
+     "urllib3"
+    ],
+    "symbols": [
+     "gzip",
+     "deflate",
+     "zstd",
+     "preload_content"
+    ],
+    "imported": false,
+    "import_locations": [],
+    "imported_in_tests_only": false,
+    "package_call_sites": 0,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [],
+    "searched": {
+     "python_files": 322,
+     "template_dirs": [],
+     "template_files": 0
+    },
+    "entry_points": 244,
+    "paths": [],
+    "summary": "urllib3: imported in 0 non-test location(s); 0 package call/reference site(s); named vulnerable symbols ['gzip', 'deflate', 'zstd', 'preload_content']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 37.2,
+   "output": {
+    "chunks": [
+     {
+      "id": "mealie:mealie/services/scraper/scraper_strategies.py:27",
+      "score": 0.688,
+      "text": "# mealie/services/scraper/scraper_strategies.py:27-70  safe_scrape_html\nasync def safe_scrape_html(url: str) -> str:\n    \"\"\"\n    Scrapes the html from a url but will cancel the request\n    if the request takes longer than 15 seconds. This is used to mitigate\n    DDOS attacks from users providing a url with arbitrary large content.\n    \"\"\"\n    async with AsyncClient() as client:\n        html_bytes = b\"\"\n        async with client.stream(\"GET\", url, timeout=SCRAPER_TIMEOUT, headers={\"User-Agent\": _FIREFOX_UA}) as resp:\n            start_time = time.time()\n\n            async for chunk in resp.aiter_bytes(chunk_size=1024):\n                html_bytes += chunk\n\n                if time.time() - start_time > SCRAPER_TIMEOUT:\n                    raise ForceTimeoutException()\n\n        # =====================================\n        # Copied from requests text property\n\n        # Try charset from content-type\n        content = None\n        encoding = resp.encoding\n\n        if not html_bytes:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if encoding is None:\n            encoding = resp.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(html_bytes, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(html_bytes, errors=\"replace\")\n\n        return content",
+      "file": "mealie/services/scraper/scraper_strategies.py",
+      "start": 27,
+      "qualname": "safe_scrape_html"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:118",
+      "score": 0.675,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:118-133  RecipeExportController.get_recipe_as_zip\n    def get_recipe_as_zip(self, slug: str, token: str, temp_path=Depends(temporary_zip_path)):\n        \"\"\"Get a Recipe and It's Original Image as a Zip File\"\"\"\n        slug = validate_recipe_token(token)\n\n        if slug != slug:\n            raise HTTPException(status_code=400, detail=\"Invalid Slug\")\n\n        recipe: Recipe = self.mixins.get_one(slug)\n        image_asset = recipe.image_dir.joinpath(RecipeImageTypes.original.value)\n        with ZipFile(temp_path, \"w\") as myzip:\n            myzip.writestr(f\"{slug}.json\", recipe.json())\n\n            if image_asset.is_file():\n                myzip.write(image_asset, arcname=image_asset.name)\n\n        return FileResponse(temp_path, filename=f\"{slug}.zip\")",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 118,
+      "qualname": "RecipeExportController.get_recipe_as_zip"
+     },
+     {
+      "id": "mealie:mealie/routes/recipe/recipe_crud_routes.py:208",
+      "score": 0.673,
+      "text": "# mealie/routes/recipe/recipe_crud_routes.py:208-218  RecipeController.test_parse_recipe_url\n    async def test_parse_recipe_url(self, url: ScrapeRecipeTest):\n        # Debugger should produce the same result as the scraper sees before cleaning\n        try:\n            if scraped_data := await RecipeScraperPackage(url.url).scrape_url():\n                return scraped_data.schema.data\n        except ForceTimeoutException as e:\n            raise HTTPException(\n                status_code=408, detail=ErrorResponse.respond(message=\"Recipe Scraping Timed Out\")\n            ) from e\n\n        return \"recipe_scrapers was unable to scrape this URL\"",
+      "file": "mealie/routes/recipe/recipe_crud_routes.py",
+      "start": 208,
+      "qualname": "RecipeController.test_parse_recipe_url"
+     },
+     {
+      "id": "mealie:mealie/core/dependencies/dependencies.py:208",
+      "score": 0.667,
+      "text": "# mealie/core/dependencies/dependencies.py:208-215  temporary_zip_path\nasync def temporary_zip_path() -> AsyncGenerator[Path, None]:\n    app_dirs.TEMP_DIR.mkdir(exist_ok=True, parents=True)\n    temp_path = app_dirs.TEMP_DIR.joinpath(\"my_zip_archive.zip\")\n\n    try:\n        yield temp_path\n    finally:\n        temp_path.unlink(missing_ok=True)",
+      "file": "mealie/core/dependencies/dependencies.py",
+      "start": 208,
+      "qualname": "temporary_zip_path"
+     },
+     {
+      "id": "mealie:mealie/core/settings/settings.py:70",
+      "score": 0.666,
+      "text": "# mealie/core/settings/settings.py:70-71  AppSettings.REDOC_URL\n    def REDOC_URL(self) -> str | None:\n        return \"/redoc\" if self.API_DOCS else None",
+      "file": "mealie/core/settings/settings.py",
+      "start": 70,
+      "qualname": "AppSettings.REDOC_URL"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 14620.3,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.78,
+    "vulnerable_symbols": [
+     "preload_content=False",
+     "HTTPResponse streaming decode (gzip/deflate/br/zstd) during redirects"
+    ],
+    "reasoning": "The advisory requires application code to call urllib3's streaming API with preload_content=False while not disabling redirects. Static analysis shows zero non-test imports of urllib3 and zero call sites referencing preload_content or the affected encodings anywhere in first-party code. The application's actual HTTP streaming logic (mealie/services/scraper/scraper_strategies.py:27-70) uses httpx's AsyncClient.stream/aiter_bytes, not urllib3's HTTPResponse streaming API, so the vulnerable code path is never invoked by this app even though urllib3 may be present as a transitive dependency (e.g., pulled in by requests). No other retrieved code touches HTTP response streaming or redirect handling via urllib3. Since the vulnerable feature is never used by production code and only unaffected/unrelated HTTP client code is used, this is not reachable.",
+    "evidence": [
+     {
+      "location": "advisory",
+      "explanation": "Vulnerability requires urllib3 streaming API called with preload_content=False and redirects not disabled."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 non-test imports of urllib3 and 0 production call sites of preload_content/gzip/deflate/zstd symbols in 322 scanned files."
+     },
+     {
+      "location": "mealie/services/scraper/scraper_strategies.py:27-40",
+      "explanation": "The app's streaming fetch of untrusted URLs uses httpx's AsyncClient.stream/aiter_bytes, not urllib3's HTTPResponse streaming/preload_content mechanism."
+     },
+     {
+      "location": "mealie/routes/recipe/recipe_crud_routes.py:208-218",
+      "explanation": "URL scraping entry point delegates to RecipeScraperPackage, not shown to use urllib3 streaming directly."
+     }
+    ]
+   },
+   "tokens_in": 4468,
+   "tokens_out": 1203,
+   "llm_calls": 1,
+   "llm_seconds": 14.61,
+   "cost_usd_est": 0.031449,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.78,\"vulnerable_symbols\":[\"preload_content=False\",\"HTTPResponse streaming decode (gzip/deflate/br/zstd) during redirects\"],\"reasoning\":\"The advisory requires application code to call urllib3's streaming API with preload_content=False while not disabling redirects. Static analysis shows zero non-test imports of urllib3 and zero call sites referencing preload_content or the affected encodings anywhere in first-party code. The application's actual HTTP streaming logic (mealie/services/scraper/scraper_strategies.py:27-70) uses httpx's AsyncClient.stream/aiter_bytes, not urllib3's HTTPResponse streaming API, so the vulnerable code path is never invoked by this app even though urllib3 may be present as a transitive dependency (e.g., pulled in by requests). No other retrieved code touches HTTP response streaming or redirect handling via urllib3. Since the vulnerable feature is never used by production code and only unaffected/unrelated HTTP client code is used, this is not reachable.\",\"evidence\":[{\"location\":\"advisory\",\"explanation\":\"Vulnerability requires urllib3 streaming API called with preload_content=False and redirects not disabled.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 non-test imports of urllib3 and 0 production call sites of preload_content/gzip/deflate/zstd symbols in 322 scanned files.\"},{\"location\":\"mealie/services/scraper/scraper_strategies.py:27-40\",\"explanation\":\"The app's streaming fetch of untrusted URLs uses httpx's AsyncClient.stream/aiter_bytes, not urllib3's HTTPResponse streaming/preload_content mechanism.\"},{\"location\":\"mealie/routes/recipe/recipe_crud_routes.py:208-218\",\"explanation\":\"URL scraping entry point delegates to RecipeScraperPackage, not shown to use urllib3 streaming directly.\"}]}",
+     "in": 4468,
+     "out": 1203,
+     "s": 14.61,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.78,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 1,
+  "tokens_in": 4468,
+  "tokens_out": 1203,
+  "cost_usd_est": 0.031449,
+  "seconds": 14.73
+ },
+ "created": "2026-11-10T20:39:30+00:00",
+ "code_version": "ea5880b"
+}

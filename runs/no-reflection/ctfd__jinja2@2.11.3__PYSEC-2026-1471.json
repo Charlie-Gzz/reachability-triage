@@ -1,0 +1,368 @@
+{
+ "finding_id": "ctfd/jinja2@2.11.3/PYSEC-2026-1471",
+ "config": "no-reflection",
+ "dataset": "real",
+ "split": null,
+ "target": "ctfd",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": false,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2025-27516",
+   "GHSA-cpwx-vrp4-4pq7",
+   "PYSEC-2026-1471"
+  ],
+  "cves": [
+   "CVE-2025-27516"
+  ],
+  "cwes": [],
+  "direct_dependency": true,
+  "finding_id": "ctfd/jinja2@2.11.3/PYSEC-2026-1471",
+  "first_fixed_above_installed": "3.1.6",
+  "fixed_versions": [
+   "3.1.6"
+  ],
+  "max_cvss": "5.4",
+  "package": "jinja2",
+  "published": "2026-07-07T14:34:50.446969Z",
+  "summary": "Jinja2 vulnerable to sandbox breakout through attr filter selecting format method",
+  "target": "ctfd",
+  "version": "2.11.3",
+  "vuln_id": "PYSEC-2026-1471"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.72,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.72,
+  "vulnerable_symbols": [
+   "Environment.getattr via |attr filter -> str.format bypass"
+  ],
+  "reasoning": "CTFd explicitly sets self.jinja_environment = SandboxedBaseEnvironment (CTFd/__init__.py:50-61, 71-75), which wraps Jinja2's SandboxedEnvironment \u2014 a feature that exists precisely because the application renders template content that is not fully trusted (e.g., CTFd's admin-configurable 'pages'/custom content feature, which is rendered through Jinja specifically to prevent arbitrary code execution by lower-trust users such as non-superadmin staff). The advisory's entire premise is that the sandbox fails to properly restrict the `|attr` filter from exposing `str.format`, letting template authors escape the sandbox \u2014 this directly undermines the exact protection CTFd relies on. The static scan only checked CTFd's own first-party templates/themes for use of `|attr`/str.format, but that is the wrong signal: the attacker in this CVE is the person supplying the *template content itself* (e.g., page content), not a first-party template author, so absence of `|attr` in CTFd's shipped .html files does not establish non-reachability. Because the sandbox is actively used as a security boundary and its only job is to contain exactly the kind of payload this CVE unlocks, the vulnerable feature (SandboxedEnvironment's attribute/|attr handling) is in active use on a path where lower-privileged/untrusted input can reach it. Without stronger evidence that no user- or lower-privilege-controlled string is ever passed to this sandboxed environment as template source, this should not be downgraded to not_reachable.",
+  "evidence": [
+   {
+    "location": "CTFd/__init__.py:50-61",
+    "explanation": "CTFdFlask overrides jinja_environment with SandboxedBaseEnvironment, indicating the app intentionally sandboxes some template rendering as a security boundary."
+   },
+   {
+    "location": "CTFd/__init__.py:71-75",
+    "explanation": "SandboxedBaseEnvironment.__init__ calls jinja2.sandbox.SandboxedEnvironment.__init__, the exact component this CVE bypasses via the |attr filter."
+   },
+   {
+    "location": "CTFd/__init__.py:161",
+    "explanation": "app.overridden_templates loaded via DictLoader shows template content can come from configurable/admin-supplied sources rather than only static files on disk."
+   },
+   {
+    "location": "advisory",
+    "explanation": "The CVE requires an attacker that controls template content rendered in the sandbox; CTFd's sandboxed environment exists to safely render such content, making the attack surface plausible even though it wasn't found in first-party .html template files."
+   }
+  ]
+ },
+ "reflection": null,
+ "symbols": [
+  "str.format"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "ctfd/jinja2@2.11.3/PYSEC-2026-1471",
+    "package": "jinja2",
+    "version": "2.11.3",
+    "vuln_id": "PYSEC-2026-1471",
+    "aliases": [
+     "CVE-2025-27516",
+     "GHSA-cpwx-vrp4-4pq7",
+     "PYSEC-2026-1471"
+    ],
+    "summary": "Jinja2 vulnerable to sandbox breakout through attr filter selecting format method",
+    "max_cvss": "5.4",
+    "fixed_versions": [
+     "3.1.6"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 30.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-cpwx-vrp4-4pq7#1",
+      "score": 0.887,
+      "text": "GHSA-cpwx-vrp4-4pq7 (jinja2) details:\nAn oversight in how the Jinja sandboxed environment interacts with the `|attr` filter allows an attacker that controls the content of a template to execute arbitrary Python code.\n\nTo exploit the vulnerability, an attacker needs to control the content of a template. Whether that is the case depends on the type of application using Jinja. This vulnerability impacts users of applications which execute untrusted templates.\n\nJinja's sandbox does catch calls to `str.format` and ensures they don't escape the sandbox. However, it's possible to use the `|attr` filter to get a reference to a string's plain format method, bypassing the sandbox. After the fix, the `|attr` filter no longer bypasses the environment's attribute lookup.",
+      "vuln_id": "GHSA-cpwx-vrp4-4pq7"
+     },
+     {
+      "id": "GHSA-cpwx-vrp4-4pq7#0",
+      "score": 0.883,
+      "text": "GHSA-cpwx-vrp4-4pq7 (CVE-2025-27516)\npackage: jinja2\nsummary: Jinja2 vulnerable to sandbox breakout through attr filter selecting format method\naffected: >=0, <3.1.6",
+      "vuln_id": "GHSA-cpwx-vrp4-4pq7"
+     },
+     {
+      "id": "GHSA-q2x7-8rv6-6q7h#1",
+      "score": 0.843,
+      "text": "GHSA-q2x7-8rv6-6q7h (jinja2) details:\nAn oversight in how the Jinja sandboxed environment detects calls to `str.format` allows an attacker that controls the content of a template to execute arbitrary Python code.\n\nTo exploit the vulnerability, an attacker needs to control the content of a template. Whether that is the case depends on the type of application using Jinja. This vulnerability impacts users of applications which execute untrusted templates.\n\nJinja's sandbox does catch calls to `str.format` and ensures they don't escape the sandbox. However, it's possible to store a reference to a malicious string's `format` method, then pass that to a filter that calls it. No such filters are built-in to Jinja, but could be present through custom filters in an application. After the fix, such indirect calls are also handled by the sandbox.",
+      "vuln_id": "GHSA-q2x7-8rv6-6q7h"
+     },
+     {
+      "id": "GHSA-q2x7-8rv6-6q7h#0",
+      "score": 0.804,
+      "text": "GHSA-q2x7-8rv6-6q7h (CVE-2024-56326)\npackage: jinja2\nsummary: Jinja has a sandbox breakout through indirect reference to format method\naffected: >=0, <3.1.5",
+      "vuln_id": "GHSA-q2x7-8rv6-6q7h"
+     }
+    ],
+    "symbols": [
+     "str.format"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 46.3,
+   "output": {
+    "package": "jinja2",
+    "import_names": [
+     "jinja2"
+    ],
+    "symbols": [
+     "str.format"
+    ],
+    "imported": true,
+    "import_locations": [
+     "CTFd/__init__.py:7",
+     "CTFd/__init__.py:11",
+     "CTFd/__init__.py:12",
+     "CTFd/errors.py:1",
+     "CTFd/views.py:7"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 25,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "CTFd/__init__.py:74",
+      "code": "SandboxedEnvironment.__init__(self, **options)",
+      "function": "CTFd:SandboxedBaseEnvironment.__init__",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:127",
+      "code": "raise jinja2.TemplateNotFound(template)",
+      "function": "CTFd:ThemeLoader.get_source",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:161",
+      "code": "loaders.append(jinja2.DictLoader(app.overridden_templates))",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:173",
+      "code": "loaders.append(jinja2.PrefixLoader(prefix_loader_dict))",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:180",
+      "code": "plugin_loader = jinja2.FileSystemLoader(",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:183",
+      "code": "loaders.append(jinja2.PrefixLoader({\"plugins\": plugin_loader}))",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/__init__.py:185",
+      "code": "app.jinja_loader = jinja2.ChoiceLoader(loaders)",
+      "function": "CTFd:create_app",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/errors.py:19",
+      "code": "except jinja2.exceptions.TemplateNotFound:",
+      "function": "CTFd.errors:render_error",
+      "in_test": false
+     },
+     {
+      "location": "CTFd/views.py:262",
+      "code": "except TemplateNotFound:",
+      "function": "CTFd.views:setup",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 142,
+     "template_dirs": [
+      "CTFd/themes"
+     ],
+     "template_files": 87
+    },
+    "entry_points": 252,
+    "paths": [],
+    "summary": "jinja2: imported in 5 non-test location(s); 25 package call/reference site(s); named vulnerable symbols ['str.format']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 25.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "ctfd:CTFd/constants/config.py:module",
+      "score": 0.704,
+      "text": "# CTFd/constants/config.py (module level)\nimport json\nfrom flask import url_for\nfrom CTFd.constants import JinjaEnum, RawEnum\nfrom CTFd.utils import get_config\nclass ConfigTypes(str, RawEnum):\n    CHALLENGE_VISIBILITY = \"challenge_visibility\"\n    SCORE_VISIBILITY = \"score_visibility\"\n    ACCOUNT_VISIBILITY = \"account_visibility\"\n    REGISTRATION_VISIBILITY = \"registration_visibility\"\n@JinjaEnum\nclass UserModeTypes(str, RawEnum):\n    USERS = \"users\"\n    TEAMS = \"teams\"\n@JinjaEnum\nclass ChallengeVisibilityTypes(str, RawEnum):\n    PUBLIC = \"public\"\n    PRIVATE = \"private\"\n    ADMINS = \"admins\"\n@JinjaEnum\nclass ScoreVisibilityTypes(str, RawEnum):\n    PUBLIC = \"public\"\n    PRIVATE = \"private\"\n    HIDDEN = \"hidden\"\n    ADMINS = \"admins\"\n@JinjaEnum\nclass AccountVisibilityTypes(str, RawEnum):\n    PUBLIC = \"public\"\n    PRIVATE = \"private\"\n    ADMINS = \"admins\"\n@JinjaEnum\nclass RegistrationVisibilityTypes(str, RawEnum):\n    PUBLIC = \"public\"\n    PRIVATE = \"private\"\nclass _ConfigsWrapper:\n    @property\n    @property\n    @property\n    @property\n    @property\n    @property\n    @property\n    @property\nConfigs = _ConfigsWrapper()",
+      "file": "CTFd/constants/config.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "ctfd:CTFd/utils/formatters/__init__.py:4",
+      "score": 0.692,
+      "text": "# CTFd/utils/formatters/__init__.py:4-11  safe_format\ndef safe_format(fmt, **kwargs):\n    \"\"\"\n    Function that safely formats strings with arbitrary potentially user-supplied format strings\n    Looks for interpolation placeholders like {target} or {{ target }}\n    \"\"\"\n    return re.sub(\n        r\"\\{?\\{([^{}]*)\\}\\}?\", lambda m: kwargs.get(m.group(1).strip(), m.group(0)), fmt\n    )",
+      "file": "CTFd/utils/formatters/__init__.py",
+      "start": 4,
+      "qualname": "safe_format"
+     },
+     {
+      "id": "ctfd:CTFd/__init__.py:71",
+      "score": 0.691,
+      "text": "# CTFd/__init__.py:71-75  SandboxedBaseEnvironment.__init__\n    def __init__(self, app, **options):\n        if \"loader\" not in options:\n            options[\"loader\"] = app.create_global_jinja_loader()\n        SandboxedEnvironment.__init__(self, **options)\n        self.app = app",
+      "file": "CTFd/__init__.py",
+      "start": 71,
+      "qualname": "SandboxedBaseEnvironment.__init__"
+     },
+     {
+      "id": "ctfd:CTFd/constants/__init__.py:55",
+      "score": 0.689,
+      "text": "# CTFd/constants/__init__.py:55-66  JinjaEnum\ndef JinjaEnum(cls):\n    \"\"\"\n    This is a decorator used to inject the decorated Enum into Jinja globals\n    which allows you to access it from the front end. If you need to access\n    an Enum from JS, a better tool to use is the JSEnum decorator.\n    \"\"\"\n    if cls.__name__ not in current_app.jinja_env.globals:\n        current_app.jinja_env.globals[cls.__name__] = cls\n        JINJA_ENUMS[cls.__name__] = cls\n    else:\n        raise KeyError(\"{} was already defined as a JinjaEnum\".format(cls.__name__))\n    return cls",
+      "file": "CTFd/constants/__init__.py",
+      "start": 55,
+      "qualname": "JinjaEnum"
+     },
+     {
+      "id": "ctfd:CTFd/__init__.py:50",
+      "score": 0.684,
+      "text": "# CTFd/__init__.py:50-61  CTFdFlask.__init__\n    def __init__(self, *args, **kwargs):\n        \"\"\"Overriden Jinja constructor setting a custom jinja_environment\"\"\"\n        self.jinja_environment = SandboxedBaseEnvironment\n        self.session_interface = CachingSessionInterface(key_prefix=\"session\")\n        self.request_class = CTFdRequest\n\n        # Store server start time\n        self.start_time = datetime.datetime.utcnow()\n\n        # Create generally unique run identifier\n        self.run_id = sha256(str(self.start_time))[0:8]\n        Flask.__init__(self, *args, **kwargs)",
+      "file": "CTFd/__init__.py",
+      "start": 50,
+      "qualname": "CTFdFlask.__init__"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 24488.2,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.72,
+    "vulnerable_symbols": [
+     "Environment.getattr via |attr filter -> str.format bypass"
+    ],
+    "reasoning": "CTFd explicitly sets self.jinja_environment = SandboxedBaseEnvironment (CTFd/__init__.py:50-61, 71-75), which wraps Jinja2's SandboxedEnvironment \u2014 a feature that exists precisely because the application renders template content that is not fully trusted (e.g., CTFd's admin-configurable 'pages'/custom content feature, which is rendered through Jinja specifically to prevent arbitrary code execution by lower-trust users such as non-superadmin staff). The advisory's entire premise is that the sandbox fails to properly restrict the `|attr` filter from exposing `str.format`, letting template authors escape the sandbox \u2014 this directly undermines the exact protection CTFd relies on. The static scan only checked CTFd's own first-party templates/themes for use of `|attr`/str.format, but that is the wrong signal: the attacker in this CVE is the person supplying the *template content itself* (e.g., page content), not a first-party template author, so absence of `|attr` in CTFd's shipped .html files does not establish non-reachability. Because the sandbox is actively used as a security boundary and its only job is to contain exactly the kind of payload this CVE unlocks, the vulnerable feature (SandboxedEnvironment's attribute/|attr handling) is in active use on a path where lower-privileged/untrusted input can reach it. Without stronger evidence that no user- or lower-privilege-controlled string is ever passed to this sandboxed environment as template source, this should not be downgraded to not_reachable.",
+    "evidence": [
+     {
+      "location": "CTFd/__init__.py:50-61",
+      "explanation": "CTFdFlask overrides jinja_environment with SandboxedBaseEnvironment, indicating the app intentionally sandboxes some template rendering as a security boundary."
+     },
+     {
+      "location": "CTFd/__init__.py:71-75",
+      "explanation": "SandboxedBaseEnvironment.__init__ calls jinja2.sandbox.SandboxedEnvironment.__init__, the exact component this CVE bypasses via the |attr filter."
+     },
+     {
+      "location": "CTFd/__init__.py:161",
+      "explanation": "app.overridden_templates loaded via DictLoader shows template content can come from configurable/admin-supplied sources rather than only static files on disk."
+     },
+     {
+      "location": "advisory",
+      "explanation": "The CVE requires an attacker that controls template content rendered in the sandbox; CTFd's sandboxed environment exists to safely render such content, making the attack surface plausible even though it wasn't found in first-party .html template files."
+     }
+    ]
+   },
+   "tokens_in": 4478,
+   "tokens_out": 1941,
+   "llm_calls": 1,
+   "llm_seconds": 24.48,
+   "cost_usd_est": 0.042549,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"reachable\",\"confidence\":0.72,\"vulnerable_symbols\":[\"Environment.getattr via |attr filter -> str.format bypass\"],\"reasoning\":\"CTFd explicitly sets self.jinja_environment = SandboxedBaseEnvironment (CTFd/__init__.py:50-61, 71-75), which wraps Jinja2's SandboxedEnvironment \u2014 a feature that exists precisely because the application renders template content that is not fully trusted (e.g., CTFd's admin-configurable 'pages'/custom content feature, which is rendered through Jinja specifically to prevent arbitrary code execution by lower-trust users such as non-superadmin staff). The advisory's entire premise is that the sandbox fails to properly restrict the `|attr` filter from exposing `str.format`, letting template authors escape the sandbox \u2014 this directly undermines the exact protection CTFd relies on. The static scan only checked CTFd's own first-party templates/themes for use of `|attr`/str.format, but that is the wrong signal: the attacker in this CVE is the person supplying the *template content itself* (e.g., page content), not a first-party template author, so absence of `|attr` in CTFd's shipped .html files does not establish non-reachability. Because the sandbox is actively used as a security boundary and its only job is to contain exactly the kind of payload this CVE unlocks, the vulnerable feature (SandboxedEnvironment's attribute/|attr handling) is in active use on a path where lower-privileged/untrusted input can reach it. Without stronger evidence that no user- or lower-privilege-controlled string is ever passed to this sandboxed environment as template source, this should not be downgraded to not_reachable.\",\"evidence\":[{\"location\":\"CTFd/__init__.py:50-61\",\"explanation\":\"CTFdFlask overrides jinja_environment with SandboxedBaseEnvironment, indicating the app intentionally sandboxes some template rendering as a security boundary.\"},{\"location\":\"CTFd/__init__.py:71-75\",\"explanation\":\"SandboxedBaseEnvironment.__init__ calls jinja2.sandbox.SandboxedEnvironment.__init__, the exact component this CVE bypasses via the |attr filter.\"},{\"location\":\"CTFd/__init__.py:161\",\"explanation\":\"app.overridden_templates loaded via DictLoader shows template content can come from configurable/admin-supplied sources rather than only static files on disk.\"},{\"location\":\"advisory\",\"explanation\":\"The CVE requires an attacker that controls template content rendered in the sandbox; CTFd's sandboxed environment exists to safely render such content, making the attack surface plausible even though it wasn't found in first-party .html template files.\"}]}",
+     "in": 4478,
+     "out": 1941,
+     "s": 24.48,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.72,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 1,
+  "tokens_in": 4478,
+  "tokens_out": 1941,
+  "cost_usd_est": 0.042549,
+  "seconds": 24.59
+ },
+ "created": "2026-11-10T20:31:45+00:00",
+ "code_version": "ea5880b"
+}

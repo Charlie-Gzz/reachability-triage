@@ -1,0 +1,348 @@
+{
+ "finding_id": "bench/comments-hub/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+ "config": "no-reflection",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/comments-hub",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": false,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-28957",
+   "GHSA-jq4v-f5q6-mjqq",
+   "PYSEC-2021-19"
+  ],
+  "cves": [
+   "CVE-2021-28957"
+  ],
+  "cwes": [
+   "CWE-79"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/comments-hub/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+  "first_fixed_above_installed": "4.6.3",
+  "fixed_versions": [
+   "4.6.3",
+   "a5f9cb52079dc57477c460dbe6ba0f775e14a999"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+  "package": "lxml",
+  "published": "2021-03-22T16:53:53Z",
+  "split": "test",
+  "summary": "lxml vulnerable to Cross-Site Scripting ",
+  "target": "bench/comments-hub",
+  "version": "4.6.2",
+  "vuln_id": "GHSA-jq4v-f5q6-mjqq"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.72,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.72,
+  "vulnerable_symbols": [
+   "Cleaner",
+   "forms",
+   "safe_attrs_only",
+   "formaction"
+  ],
+  "reasoning": "The advisory states that lxml's html.clean.Cleaner fails to strip the `formaction` attribute, allowing JS/XSS bypass, when the `forms` (and `safe_attrs_only`) options are configured away from their safe defaults. In comments/sanitize.py:3 the app instantiates `Cleaner(..., forms=False, safe_attrs_only=True)` \u2014 `forms=False` is exactly the condition the advisory calls out as exposing the flaw (form tags, and thus form-related attributes like `formaction`, are preserved rather than stripped). This Cleaner instance is used directly on attacker-controlled input: the Flask route POST /threads/<id>/comments (comments/views.py:10-12) reads `request.form['body']` \u2014 untrusted, remote-attacker-controlled HTML \u2014 and passes it straight to `sanitize()`, which calls `_cleaner.clean_html(html)` (comments/sanitize.py:8-9). Because `safe_attrs_only=True` is set, there is some chance the specific bypass vector is mitigated, but the advisory text ties the vulnerability to the `forms` option being disabled and the app matches that condition exactly, so I cannot confidently rule out exploitability. Given the cost asymmetry of false negatives and a clear, reachable, remotely-triggerable call path to the vulnerable Cleaner configuration, this should be treated as reachable rather than dismissed.",
+  "evidence": [
+   {
+    "location": "comments/sanitize.py:1-3",
+    "explanation": "Imports lxml.html.clean.Cleaner and instantiates it with forms=False, matching the advisory's described vulnerable configuration trigger."
+   },
+   {
+    "location": "comments/sanitize.py:6-9",
+    "explanation": "sanitize() calls _cleaner.clean_html(html) on the raw input, invoking the vulnerable Cleaner instance."
+   },
+   {
+    "location": "comments/views.py:10-12",
+    "explanation": "Flask POST route /threads/<id>/comments passes attacker-controlled request.form['body'] into sanitize(), providing a remote entry point and attacker-controlled HTML."
+   }
+  ]
+ },
+ "reflection": null,
+ "symbols": [
+  "forms",
+  "Cleaner",
+  "formaction",
+  "safe_attrs_only"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/comments-hub/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+    "package": "lxml",
+    "version": "4.6.2",
+    "vuln_id": "GHSA-jq4v-f5q6-mjqq",
+    "aliases": [
+     "CVE-2021-28957",
+     "GHSA-jq4v-f5q6-mjqq",
+     "PYSEC-2021-19"
+    ],
+    "summary": "lxml vulnerable to Cross-Site Scripting ",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+    "fixed_versions": [
+     "4.6.3",
+     "a5f9cb52079dc57477c460dbe6ba0f775e14a999"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 26.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-jq4v-f5q6-mjqq#0",
+      "score": 0.836,
+      "text": "GHSA-jq4v-f5q6-mjqq (CVE-2021-28957)\npackage: lxml\nsummary: lxml vulnerable to Cross-Site Scripting \naffected: >=0, <4.6.3",
+      "vuln_id": "GHSA-jq4v-f5q6-mjqq"
+     },
+     {
+      "id": "GHSA-jq4v-f5q6-mjqq#1",
+      "score": 0.788,
+      "text": "GHSA-jq4v-f5q6-mjqq (lxml) details:\nAn XSS vulnerability was discovered in the python `lxml` clean module versions before 4.6.3. When disabling `the safe_attrs_only` and `forms` arguments, the `Cleaner` class does not remove the `formaction` attribute allowing for JS to bypass the sanitizer. A remote attacker could exploit this flaw to run arbitrary JS code on users who interact with incorrectly sanitized HTML. This issue is patched in `lxml` 4.6.3.",
+      "vuln_id": "GHSA-jq4v-f5q6-mjqq"
+     },
+     {
+      "id": "GHSA-pgww-xf46-h92r#0",
+      "score": 0.853,
+      "text": "GHSA-pgww-xf46-h92r (CVE-2020-27783)\npackage: lxml\nsummary: lxml vulnerable to Cross-site Scripting\naffected: >=0, <4.6.2",
+      "vuln_id": "GHSA-pgww-xf46-h92r"
+     },
+     {
+      "id": "GHSA-57qw-cc2g-pv5p#0",
+      "score": 0.831,
+      "text": "GHSA-57qw-cc2g-pv5p (CVE-2014-3146)\npackage: lxml\nsummary: lxml Cross-site Scripting Via Control Characters\naffected: >=0, <3.3.5",
+      "vuln_id": "GHSA-57qw-cc2g-pv5p"
+     }
+    ],
+    "symbols": [
+     "forms",
+     "Cleaner",
+     "formaction",
+     "safe_attrs_only"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 2.7,
+   "output": {
+    "package": "lxml",
+    "import_names": [
+     "lxml"
+    ],
+    "symbols": [
+     "forms",
+     "Cleaner",
+     "formaction",
+     "safe_attrs_only"
+    ],
+    "imported": true,
+    "import_locations": [
+     "comments/sanitize.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 1,
+    "vulnerable_call_sites": [
+     {
+      "file": "comments/sanitize.py",
+      "line": 3,
+      "code": "_cleaner = Cleaner(scripts=True, javascript=True, style=True, forms=False, safe_attrs_only=True)",
+      "resolved": "lxml.html.clean.Cleaner",
+      "function": "comments.sanitize:<module>",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "comments.sanitize:<module>"
+      ],
+      "callers": null,
+      "snippet": "    1  from lxml.html.clean import Cleaner\n    2  \n    3  _cleaner = Cleaner(scripts=True, javascript=True, style=True, forms=False, safe_attrs_only=True)\n    4  \n    5  \n    6  def sanitize(html: str) -> str:"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "comments/sanitize.py:3",
+      "code": "_cleaner = Cleaner(scripts=True, javascript=True, style=True, forms=False, safe_attrs_only=True)",
+      "function": "comments.sanitize:<module>",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [
+     [
+      "comments.sanitize:<module>"
+     ]
+    ],
+    "summary": "lxml: imported in 1 non-test location(s); 1 package call/reference site(s); named vulnerable symbols ['forms', 'Cleaner', 'formaction', 'safe_attrs_only']; 1 production call site(s) of those symbols, 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 26.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:comments/sanitize.py:3",
+      "score": 1.0,
+      "file": "comments/sanitize.py",
+      "start": 3,
+      "qualname": "comments.sanitize:<module>",
+      "text": "# comments/sanitize.py around line 3\n    1  from lxml.html.clean import Cleaner\n    2  \n    3  _cleaner = Cleaner(scripts=True, javascript=True, style=True, forms=False, safe_attrs_only=True)\n    4  \n    5  \n    6  def sanitize(html: str) -> str:"
+     },
+     {
+      "id": "bench/comments-hub:comments/sanitize.py:module",
+      "score": 0.792,
+      "text": "# comments/sanitize.py (module level)\nfrom lxml.html.clean import Cleaner\n_cleaner = Cleaner(scripts=True, javascript=True, style=True, forms=False, safe_attrs_only=True)",
+      "file": "comments/sanitize.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/comments-hub:comments/sanitize.py:6",
+      "score": 0.631,
+      "text": "# comments/sanitize.py:6-9  sanitize\ndef sanitize(html: str) -> str:\n    if not html.strip():\n        return \"\"\n    return _cleaner.clean_html(html)",
+      "file": "comments/sanitize.py",
+      "start": 6,
+      "qualname": "sanitize"
+     },
+     {
+      "id": "bench/comments-hub:comments/views.py:module",
+      "score": 0.595,
+      "text": "# comments/views.py (module level)\nfrom flask import Blueprint, request\nfrom comments.sanitize import sanitize\nbp = Blueprint(\"comments\", __name__)\nCOMMENTS = []\n@bp.post(\"/threads/<int:thread_id>/comments\")",
+      "file": "comments/views.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/comments-hub:comments/views.py:10",
+      "score": 0.549,
+      "text": "# comments/views.py:10-12  add_comment\ndef add_comment(thread_id):\n    COMMENTS.append({\"thread\": thread_id, \"html\": sanitize(request.form[\"body\"])})\n    return {\"count\": len(COMMENTS)}, 201",
+      "file": "comments/views.py",
+      "start": 10,
+      "qualname": "add_comment"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 42768.3,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.72,
+    "vulnerable_symbols": [
+     "Cleaner",
+     "forms",
+     "safe_attrs_only",
+     "formaction"
+    ],
+    "reasoning": "The advisory states that lxml's html.clean.Cleaner fails to strip the `formaction` attribute, allowing JS/XSS bypass, when the `forms` (and `safe_attrs_only`) options are configured away from their safe defaults. In comments/sanitize.py:3 the app instantiates `Cleaner(..., forms=False, safe_attrs_only=True)` \u2014 `forms=False` is exactly the condition the advisory calls out as exposing the flaw (form tags, and thus form-related attributes like `formaction`, are preserved rather than stripped). This Cleaner instance is used directly on attacker-controlled input: the Flask route POST /threads/<id>/comments (comments/views.py:10-12) reads `request.form['body']` \u2014 untrusted, remote-attacker-controlled HTML \u2014 and passes it straight to `sanitize()`, which calls `_cleaner.clean_html(html)` (comments/sanitize.py:8-9). Because `safe_attrs_only=True` is set, there is some chance the specific bypass vector is mitigated, but the advisory text ties the vulnerability to the `forms` option being disabled and the app matches that condition exactly, so I cannot confidently rule out exploitability. Given the cost asymmetry of false negatives and a clear, reachable, remotely-triggerable call path to the vulnerable Cleaner configuration, this should be treated as reachable rather than dismissed.",
+    "evidence": [
+     {
+      "location": "comments/sanitize.py:1-3",
+      "explanation": "Imports lxml.html.clean.Cleaner and instantiates it with forms=False, matching the advisory's described vulnerable configuration trigger."
+     },
+     {
+      "location": "comments/sanitize.py:6-9",
+      "explanation": "sanitize() calls _cleaner.clean_html(html) on the raw input, invoking the vulnerable Cleaner instance."
+     },
+     {
+      "location": "comments/views.py:10-12",
+      "explanation": "Flask POST route /threads/<id>/comments passes attacker-controlled request.form['body'] into sanitize(), providing a remote entry point and attacker-controlled HTML."
+     }
+    ]
+   },
+   "tokens_in": 2986,
+   "tokens_out": 3880,
+   "llm_calls": 1,
+   "llm_seconds": 42.75,
+   "cost_usd_est": 0.067158,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"reachable\",\"confidence\":0.72,\"vulnerable_symbols\":[\"Cleaner\",\"forms\",\"safe_attrs_only\",\"formaction\"],\"reasoning\":\"The advisory states that lxml's html.clean.Cleaner fails to strip the `formaction` attribute, allowing JS/XSS bypass, when the `forms` (and `safe_attrs_only`) options are configured away from their safe defaults. In comments/sanitize.py:3 the app instantiates `Cleaner(..., forms=False, safe_attrs_only=True)` \u2014 `forms=False` is exactly the condition the advisory calls out as exposing the flaw (form tags, and thus form-related attributes like `formaction`, are preserved rather than stripped). This Cleaner instance is used directly on attacker-controlled input: the Flask route POST /threads/<id>/comments (comments/views.py:10-12) reads `request.form['body']` \u2014 untrusted, remote-attacker-controlled HTML \u2014 and passes it straight to `sanitize()`, which calls `_cleaner.clean_html(html)` (comments/sanitize.py:8-9). Because `safe_attrs_only=True` is set, there is some chance the specific bypass vector is mitigated, but the advisory text ties the vulnerability to the `forms` option being disabled and the app matches that condition exactly, so I cannot confidently rule out exploitability. Given the cost asymmetry of false negatives and a clear, reachable, remotely-triggerable call path to the vulnerable Cleaner configuration, this should be treated as reachable rather than dismissed.\",\"evidence\":[{\"location\":\"comments/sanitize.py:1-3\",\"explanation\":\"Imports lxml.html.clean.Cleaner and instantiates it with forms=False, matching the advisory's described vulnerable configuration trigger.\"},{\"location\":\"comments/sanitize.py:6-9\",\"explanation\":\"sanitize() calls _cleaner.clean_html(html) on the raw input, invoking the vulnerable Cleaner instance.\"},{\"location\":\"comments/views.py:10-12\",\"explanation\":\"Flask POST route /threads/<id>/comments passes attacker-controlled request.form['body'] into sanitize(), providing a remote entry point and attacker-controlled HTML.\"}]}",
+     "in": 2986,
+     "out": 3880,
+     "s": 42.75,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.72,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 1,
+  "tokens_in": 2986,
+  "tokens_out": 3880,
+  "cost_usd_est": 0.067158,
+  "seconds": 42.83
+ },
+ "created": "2026-11-10T20:24:33+00:00",
+ "code_version": "ea5880b"
+}
