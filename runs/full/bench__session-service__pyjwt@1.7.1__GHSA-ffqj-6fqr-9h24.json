@@ -1,0 +1,452 @@
+{
+ "finding_id": "bench/session-service/pyjwt@1.7.1/GHSA-ffqj-6fqr-9h24",
+ "config": "full",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/session-service",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2022-29217",
+   "GHSA-ffqj-6fqr-9h24",
+   "PYSEC-2022-202"
+  ],
+  "cves": [
+   "CVE-2022-29217"
+  ],
+  "cwes": [
+   "CWE-327"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/session-service/pyjwt@1.7.1/GHSA-ffqj-6fqr-9h24",
+  "first_fixed_above_installed": "2.4.0",
+  "fixed_versions": [
+   "2.4.0",
+   "9c528670c455b8d948aff95ed50e22940d1ad3fc"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+  "package": "pyjwt",
+  "published": "2022-05-24T22:17:27Z",
+  "split": "test",
+  "summary": "Key confusion through non-blocklisted public key formats",
+  "target": "bench/session-service",
+  "version": "1.7.1",
+  "vuln_id": "GHSA-ffqj-6fqr-9h24"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.85,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.82,
+  "vulnerable_symbols": [
+   "jwt.decode",
+   "jwt.algorithms.get_default_algorithms"
+  ],
+  "reasoning": "The CVE describes a key-confusion attack that occurs when an application calls jwt.decode with multiple/all algorithms enabled (e.g. via jwt.algorithms.get_default_algorithms()) and passes a key that is actually an asymmetric public key, allowing an attacker to resign tokens using HMAC with the known public key. In this app, sessions/auth.py:10 calls jwt.decode(token, SECRET, algorithms=[\"HS256\"]) with a single, explicitly pinned symmetric algorithm, and SECRET (sessions/auth.py:4) is a plain environment-derived secret string, not an asymmetric public key in PEM/SSH format. There is no call to get_default_algorithms() or any algorithm list that includes asymmetric algorithms alongside HMAC, and the encode side (sessions/auth.py:14) also hardcodes HS256 with the same symmetric SECRET. Because the application restricts to a single symmetric algorithm and never feeds a public key into HMAC verification, the specific vulnerable condition (HMAC verification accepting an asymmetric public key as the HMAC secret) cannot be triggered through this code path.",
+  "evidence": [
+   {
+    "location": "sessions/auth.py:10",
+    "explanation": "jwt.decode is called with algorithms=[\"HS256\"] only, not the full default algorithm set, so algorithm confusion between asymmetric and HMAC is not possible here."
+   },
+   {
+    "location": "sessions/auth.py:4",
+    "explanation": "SECRET is a symmetric string from an environment variable, not an SSH/PEM-encoded public key, so it cannot be mistaken for an asymmetric key in PKCS1/OpenSSH format."
+   },
+   {
+    "location": "sessions/auth.py:14",
+    "explanation": "jwt.encode also hardcodes algorithm=\"HS256\" with the same symmetric SECRET, consistent with a single-algorithm symmetric design that the advisory does not flag as vulnerable."
+   },
+   {
+    "location": "advisory",
+    "explanation": "The advisory's PoC requires calling decode with jwt.algorithms.get_default_algorithms() (or otherwise mixing algorithm types) and using a public key file as the HMAC secret, neither of which occurs in this codebase."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict correctly identifies that the advisory's core precondition\u2014HMAC verification accepting an asymmetric public key as the secret, typically enabled via get_default_algorithms() or a mixed algorithm list\u2014is absent here. Both decode and encode hardcode algorithms=[\"HS256\"]/\"HS256\" with a symmetric SECRET from an env var, never a PEM/SSH-formatted public key. Attempting to argue against this: could an attacker somehow supply a malicious 'alg' or key? No\u2014algorithms is explicitly pinned by the server, not attacker-controlled, and SECRET is never attacker-influenced or asymmetric-key-shaped. The static evidence confirms only 2 call sites, both consistent with a narrow symmetric-only usage, and no production code path introduces get_default_algorithms() or multi-algorithm decode. There's no wrapper, middleware, or config flag shown that widens the algorithm set or swaps in a public key. The verdict's reasoning matches the evidence precisely and the advisory's specific precondition (mixed/default algorithms + public-key-as-HMAC-secret) is not met. This suppression looks well-justified rather than a false negative.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.85
+ },
+ "symbols": [
+  "jwt.algorithms.get_default_algorithms",
+  "jwt.decode",
+  "jwt.encode",
+  "get_default_algorithms",
+  "generate",
+  "NoEncryption",
+  "public_key",
+  "ed25519.Ed25519PrivateKey.generate"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/session-service/pyjwt@1.7.1/GHSA-ffqj-6fqr-9h24",
+    "package": "pyjwt",
+    "version": "1.7.1",
+    "vuln_id": "GHSA-ffqj-6fqr-9h24",
+    "aliases": [
+     "CVE-2022-29217",
+     "GHSA-ffqj-6fqr-9h24",
+     "PYSEC-2022-202"
+    ],
+    "summary": "Key confusion through non-blocklisted public key formats",
+    "max_cvss": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+    "fixed_versions": [
+     "2.4.0",
+     "9c528670c455b8d948aff95ed50e22940d1ad3fc"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 38.6,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-ffqj-6fqr-9h24#0",
+      "score": 0.862,
+      "text": "GHSA-ffqj-6fqr-9h24 (CVE-2022-29217)\npackage: pyjwt\nsummary: Key confusion through non-blocklisted public key formats\naffected: >=1.5.0, <2.4.0",
+      "vuln_id": "GHSA-ffqj-6fqr-9h24"
+     },
+     {
+      "id": "GHSA-ffqj-6fqr-9h24#2",
+      "score": 0.757,
+      "text": "GHSA-ffqj-6fqr-9h24 (pyjwt) details:\n> PyJWT supports multiple different JWT signing algorithms. With JWT, an \n> attacker submitting the JWT token can choose the used signing algorithm.\n> \n> The PyJWT library requires that the application chooses what algorithms \n> are supported. The application can specify \n> \"jwt.algorithms.get_default_algorithms()\" to get support for all \n> algorithms. They can also specify a single one of them (which is the \n> usual use case if calling jwt.decode directly. However, if calling \n> jwt.decode in a helper function, all algorithms might be enabled.)\n> \n> For example, if the user chooses \"none\" algorithm and the JWT checker \n> supports that, there will be no signature checking. This is a common \n> security issue with some JWT implementations.\n> \n> PyJWT combats this by requiring that the if the \"none\" algorithm is \n> used, the key has to be empty. As the key is given by the application \n> running the checker, attacker cannot force \"none\" cipher to be used.\n> \n> Similarly with HMAC (symmetric) algorithm, PyJWT checks that the key is \n> not a public key meant for asymmetric algorithm i.e. HMAC cannot be used \n> if the key begins with \"ssh-rsa\". If HMAC is used with a public key, the \n> attacker can just use the publicly known public key to sign the token \n> and the checker would use the same key to verify.\n> \n>  From PyJWT 2.0.0 onwards, PyJWT supports ed25519 asymmetric algorithm. \n> With ed25519, PyJWT supports public keys that start with \"ssh-\", for \n> example \"ssh-ed25519\".",
+      "vuln_id": "GHSA-ffqj-6fqr-9h24"
+     },
+     {
+      "id": "GHSA-ffqj-6fqr-9h24#3",
+      "score": 0.755,
+      "text": "GHSA-ffqj-6fqr-9h24 (pyjwt) details:\n```python\nimport jwt\nfrom cryptography.hazmat.primitives import serialization\nfrom cryptography.hazmat.primitives.asymmetric import ed25519\n\n# Generate ed25519 private key\nprivate_key = ed25519.Ed25519PrivateKey.generate()\n\n# Get private key bytes as they would be stored in a file\npriv_key_bytes = \nprivate_key.private_bytes(encoding=serialization.Encoding.PEM,format=serialization.PrivateFormat.PKCS8, \nencryption_algorithm=serialization.NoEncryption())\n\n# Get public key bytes as they would be stored in a file\npub_key_bytes = \nprivate_key.public_key().public_bytes(encoding=serialization.Encoding.OpenSSH,format=serialization.PublicFormat.OpenSSH)\n\n# Making a good jwt token that should work by signing it with the \nprivate key\nencoded_good = jwt.encode({\"test\": 1234}, priv_key_bytes, algorithm=\"EdDSA\")",
+      "vuln_id": "GHSA-ffqj-6fqr-9h24"
+     },
+     {
+      "id": "GHSA-ffqj-6fqr-9h24#4",
+      "score": 0.754,
+      "text": "GHSA-ffqj-6fqr-9h24 (pyjwt) details:\n# Using HMAC with the public key to trick the receiver to think that the \npublic key is a HMAC secret\nencoded_bad = jwt.encode({\"test\": 1234}, pub_key_bytes, algorithm=\"HS256\")\n\n# Both of the jwt tokens are validated as valid\ndecoded_good = jwt.decode(encoded_good, pub_key_bytes, \nalgorithms=jwt.algorithms.get_default_algorithms())\ndecoded_bad = jwt.decode(encoded_bad, pub_key_bytes, \nalgorithms=jwt.algorithms.get_default_algorithms())\n\nif decoded_good == decoded_bad:\n \u00a0\u00a0\u00a0 print(\"POC Successfull\")",
+      "vuln_id": "GHSA-ffqj-6fqr-9h24"
+     },
+     {
+      "id": "GHSA-r9jw-mwhq-wp62#0",
+      "score": 0.824,
+      "text": "GHSA-r9jw-mwhq-wp62 (CVE-2017-11424)\npackage: pyjwt\nsummary: PyJWT vulnerable to key confusion attacks\naffected: >=0, <1.5.1",
+      "vuln_id": "GHSA-r9jw-mwhq-wp62"
+     },
+     {
+      "id": "GHSA-r9jw-mwhq-wp62#1",
+      "score": 0.817,
+      "text": "GHSA-r9jw-mwhq-wp62 (pyjwt) details:\nIn PyJWT 1.5.0 and below the `invalid_strings` check in `HMACAlgorithm.prepare_key` does not account for all PEM encoded public keys. Specifically, the PKCS1 PEM encoded format would be allowed because it is prefaced with the string `-----BEGIN RSA PUBLIC KEY-----` which is not accounted for. This enables symmetric/asymmetric key confusion attacks against users using the PKCS1 PEM encoded public keys, which would allow an attacker to craft JWTs from scratch.",
+      "vuln_id": "GHSA-r9jw-mwhq-wp62"
+     }
+    ],
+    "symbols": [
+     "jwt.algorithms.get_default_algorithms",
+     "jwt.decode",
+     "jwt.encode",
+     "get_default_algorithms",
+     "generate",
+     "NoEncryption",
+     "public_key",
+     "ed25519.Ed25519PrivateKey.generate"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.8,
+   "output": {
+    "package": "pyjwt",
+    "import_names": [
+     "jwt"
+    ],
+    "symbols": [
+     "jwt.algorithms.get_default_algorithms",
+     "jwt.decode",
+     "jwt.encode",
+     "get_default_algorithms",
+     "generate",
+     "NoEncryption",
+     "public_key",
+     "ed25519.Ed25519PrivateKey.generate"
+    ],
+    "imported": true,
+    "import_locations": [
+     "sessions/auth.py:4"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [
+     {
+      "file": "sessions/auth.py",
+      "line": 10,
+      "code": "return jwt.decode(token, SECRET, algorithms=[\"HS256\"])",
+      "resolved": "jwt.decode",
+      "function": "sessions.auth:read_session",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "sessions.views:whoami",
+       "sessions.auth:read_session"
+      ],
+      "callers": 1,
+      "snippet": "    7  \n    8  \n    9  def read_session(token: str) -> dict:\n   10      return jwt.decode(token, SECRET, algorithms=[\"HS256\"])\n   11  \n   12  \n   13  def new_session(user_id: int) -> str:"
+     },
+     {
+      "file": "sessions/auth.py",
+      "line": 14,
+      "code": "return jwt.encode({\"sub\": user_id, \"exp\": int(time.time()) + 3600}, SECRET, algorithm=\"HS256\")",
+      "resolved": "jwt.encode",
+      "function": "sessions.auth:new_session",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "sessions.views:login",
+       "sessions.auth:new_session"
+      ],
+      "callers": 1,
+      "snippet": "   11  \n   12  \n   13  def new_session(user_id: int) -> str:\n   14      return jwt.encode({\"sub\": user_id, \"exp\": int(time.time()) + 3600}, SECRET, algorithm=\"HS256\")"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "sessions/auth.py:10",
+      "code": "return jwt.decode(token, SECRET, algorithms=[\"HS256\"])",
+      "function": "sessions.auth:read_session",
+      "in_test": false
+     },
+     {
+      "location": "sessions/auth.py:14",
+      "code": "return jwt.encode({\"sub\": user_id, \"exp\": int(time.time()) + 3600}, SECRET, algorithm=\"HS256\")",
+      "function": "sessions.auth:new_session",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 2,
+    "paths": [
+     [
+      "sessions.views:whoami",
+      "sessions.auth:read_session"
+     ],
+     [
+      "sessions.views:login",
+      "sessions.auth:new_session"
+     ]
+    ],
+    "summary": "pyjwt: imported in 1 non-test location(s); 6 package call/reference site(s); named vulnerable symbols ['jwt.algorithms.get_default_algorithms', 'jwt.decode', 'jwt.encode', 'get_default_algorithms', 'generate', 'NoEncryption', 'public_key', 'ed25519.Ed25519PrivateKey.generate']; 2 production call site(s) of those symbols, 2 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 28.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:sessions/auth.py:14",
+      "score": 1.0,
+      "file": "sessions/auth.py",
+      "start": 14,
+      "qualname": "sessions.auth:new_session",
+      "text": "# sessions/auth.py around line 14\n   11  \n   12  \n   13  def new_session(user_id: int) -> str:\n   14      return jwt.encode({\"sub\": user_id, \"exp\": int(time.time()) + 3600}, SECRET, algorithm=\"HS256\")"
+     },
+     {
+      "id": "site:sessions/auth.py:10",
+      "score": 1.0,
+      "file": "sessions/auth.py",
+      "start": 10,
+      "qualname": "sessions.auth:read_session",
+      "text": "# sessions/auth.py around line 10\n    7  \n    8  \n    9  def read_session(token: str) -> dict:\n   10      return jwt.decode(token, SECRET, algorithms=[\"HS256\"])\n   11  \n   12  \n   13  def new_session(user_id: int) -> str:"
+     },
+     {
+      "id": "bench/session-service:sessions/auth.py:13",
+      "score": 0.717,
+      "text": "# sessions/auth.py:13-14  new_session\ndef new_session(user_id: int) -> str:\n    return jwt.encode({\"sub\": user_id, \"exp\": int(time.time()) + 3600}, SECRET, algorithm=\"HS256\")",
+      "file": "sessions/auth.py",
+      "start": 13,
+      "qualname": "new_session"
+     },
+     {
+      "id": "bench/session-service:sessions/auth.py:module",
+      "score": 0.697,
+      "text": "# sessions/auth.py (module level)\nimport os\nimport time\nimport jwt\nSECRET = os.environ.get(\"SESSION_SECRET\", \"dev-secret\")",
+      "file": "sessions/auth.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/session-service:sessions/auth.py:9",
+      "score": 0.695,
+      "text": "# sessions/auth.py:9-10  read_session\ndef read_session(token: str) -> dict:\n    return jwt.decode(token, SECRET, algorithms=[\"HS256\"])",
+      "file": "sessions/auth.py",
+      "start": 9,
+      "qualname": "read_session"
+     },
+     {
+      "id": "bench/session-service:sessions/views.py:9",
+      "score": 0.552,
+      "text": "# sessions/views.py:9-10  login\ndef login():\n    return {\"token\": new_session(int(request.form[\"user_id\"]))}",
+      "file": "sessions/views.py",
+      "start": 9,
+      "qualname": "login"
+     },
+     {
+      "id": "bench/session-service:sessions/views.py:14",
+      "score": 0.547,
+      "text": "# sessions/views.py:14-15  whoami\ndef whoami():\n    return read_session(request.headers[\"X-Session\"])",
+      "file": "sessions/views.py",
+      "start": 14,
+      "qualname": "whoami"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 13121.9,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.82,
+    "vulnerable_symbols": [
+     "jwt.decode",
+     "jwt.algorithms.get_default_algorithms"
+    ],
+    "reasoning": "The CVE describes a key-confusion attack that occurs when an application calls jwt.decode with multiple/all algorithms enabled (e.g. via jwt.algorithms.get_default_algorithms()) and passes a key that is actually an asymmetric public key, allowing an attacker to resign tokens using HMAC with the known public key. In this app, sessions/auth.py:10 calls jwt.decode(token, SECRET, algorithms=[\"HS256\"]) with a single, explicitly pinned symmetric algorithm, and SECRET (sessions/auth.py:4) is a plain environment-derived secret string, not an asymmetric public key in PEM/SSH format. There is no call to get_default_algorithms() or any algorithm list that includes asymmetric algorithms alongside HMAC, and the encode side (sessions/auth.py:14) also hardcodes HS256 with the same symmetric SECRET. Because the application restricts to a single symmetric algorithm and never feeds a public key into HMAC verification, the specific vulnerable condition (HMAC verification accepting an asymmetric public key as the HMAC secret) cannot be triggered through this code path.",
+    "evidence": [
+     {
+      "location": "sessions/auth.py:10",
+      "explanation": "jwt.decode is called with algorithms=[\"HS256\"] only, not the full default algorithm set, so algorithm confusion between asymmetric and HMAC is not possible here."
+     },
+     {
+      "location": "sessions/auth.py:4",
+      "explanation": "SECRET is a symmetric string from an environment variable, not an SSH/PEM-encoded public key, so it cannot be mistaken for an asymmetric key in PKCS1/OpenSSH format."
+     },
+     {
+      "location": "sessions/auth.py:14",
+      "explanation": "jwt.encode also hardcodes algorithm=\"HS256\" with the same symmetric SECRET, consistent with a single-algorithm symmetric design that the advisory does not flag as vulnerable."
+     },
+     {
+      "location": "advisory",
+      "explanation": "The advisory's PoC requires calling decode with jwt.algorithms.get_default_algorithms() (or otherwise mixing algorithm types) and using a public key file as the HMAC secret, neither of which occurs in this codebase."
+     }
+    ]
+   },
+   "tokens_in": 4370,
+   "tokens_out": 1089,
+   "llm_calls": 1,
+   "llm_seconds": 13.12,
+   "cost_usd_est": 0.029445,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.82,\"vulnerable_symbols\":[\"jwt.decode\",\"jwt.algorithms.get_default_algorithms\"],\"reasoning\":\"The CVE describes a key-confusion attack that occurs when an application calls jwt.decode with multiple/all algorithms enabled (e.g. via jwt.algorithms.get_default_algorithms()) and passes a key that is actually an asymmetric public key, allowing an attacker to resign tokens using HMAC with the known public key. In this app, sessions/auth.py:10 calls jwt.decode(token, SECRET, algorithms=[\\\"HS256\\\"]) with a single, explicitly pinned symmetric algorithm, and SECRET (sessions/auth.py:4) is a plain environment-derived secret string, not an asymmetric public key in PEM/SSH format. There is no call to get_default_algorithms() or any algorithm list that includes asymmetric algorithms alongside HMAC, and the encode side (sessions/auth.py:14) also hardcodes HS256 with the same symmetric SECRET. Because the application restricts to a single symmetric algorithm and never feeds a public key into HMAC verification, the specific vulnerable condition (HMAC verification accepting an asymmetric public key as the HMAC secret) cannot be triggered through this code path.\",\"evidence\":[{\"location\":\"sessions/auth.py:10\",\"explanation\":\"jwt.decode is called with algorithms=[\\\"HS256\\\"] only, not the full default algorithm set, so algorithm confusion between asymmetric and HMAC is not possible here.\"},{\"location\":\"sessions/auth.py:4\",\"explanation\":\"SECRET is a symmetric string from an environment variable, not an SSH/PEM-encoded public key, so it cannot be mistaken for an asymmetric key in PKCS1/OpenSSH format.\"},{\"location\":\"sessions/auth.py:14\",\"explanation\":\"jwt.encode also hardcodes algorithm=\\\"HS256\\\" with the same symmetric SECRET, consistent with a single-algorithm symmetric design that the advisory does not flag as vulnerable.\"},{\"location\":\"advisory\",\"explanation\":\"The advisory's PoC requires calling decode with jwt.algorithms.get_default_algorithms() (or otherwise mixing algorithm types) and using a public key file as the HMAC secret, neither of which occurs in this codebase.\"}]}",
+     "in": 4370,
+     "out": 1089,
+     "s": 13.12,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 7363.6,
+   "output": {
+    "critique": "The verdict correctly identifies that the advisory's core precondition\u2014HMAC verification accepting an asymmetric public key as the secret, typically enabled via get_default_algorithms() or a mixed algorithm list\u2014is absent here. Both decode and encode hardcode algorithms=[\"HS256\"]/\"HS256\" with a symmetric SECRET from an env var, never a PEM/SSH-formatted public key. Attempting to argue against this: could an attacker somehow supply a malicious 'alg' or key? No\u2014algorithms is explicitly pinned by the server, not attacker-controlled, and SECRET is never attacker-influenced or asymmetric-key-shaped. The static evidence confirms only 2 call sites, both consistent with a narrow symmetric-only usage, and no production code path introduces get_default_algorithms() or multi-algorithm decode. There's no wrapper, middleware, or config flag shown that widens the algorithm set or swaps in a public key. The verdict's reasoning matches the evidence precisely and the advisory's specific precondition (mixed/default algorithms + public-key-as-HMAC-secret) is not met. This suppression looks well-justified rather than a false negative.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.85
+   },
+   "tokens_in": 4528,
+   "tokens_out": 441,
+   "llm_calls": 1,
+   "llm_seconds": 7.36,
+   "cost_usd_est": 0.020199,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict correctly identifies that the advisory's core precondition\u2014HMAC verification accepting an asymmetric public key as the secret, typically enabled via get_default_algorithms() or a mixed algorithm list\u2014is absent here. Both decode and encode hardcode algorithms=[\\\"HS256\\\"]/\\\"HS256\\\" with a symmetric SECRET from an env var, never a PEM/SSH-formatted public key. Attempting to argue against this: could an attacker somehow supply a malicious 'alg' or key? No\u2014algorithms is explicitly pinned by the server, not attacker-controlled, and SECRET is never attacker-influenced or asymmetric-key-shaped. The static evidence confirms only 2 call sites, both consistent with a narrow symmetric-only usage, and no production code path introduces get_default_algorithms() or multi-algorithm decode. There's no wrapper, middleware, or config flag shown that widens the algorithm set or swaps in a public key. The verdict's reasoning matches the evidence precisely and the advisory's specific precondition (mixed/default algorithms + public-key-as-HMAC-secret) is not met. This suppression looks well-justified rather than a false negative.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.85}",
+     "in": 4528,
+     "out": 441,
+     "s": 7.36,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.85,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 8898,
+  "tokens_out": 1530,
+  "cost_usd_est": 0.049644,
+  "seconds": 20.56
+ },
+ "created": "2026-11-10T00:23:34+00:00",
+ "code_version": "144cabc"
+}

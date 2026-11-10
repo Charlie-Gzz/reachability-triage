@@ -1,0 +1,402 @@
+{
+ "finding_id": "bench/ops-runbook/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+ "config": "full",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/ops-runbook",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2020-14343",
+   "GHSA-8q59-q68h-6hv4",
+   "PYSEC-2021-142"
+  ],
+  "cves": [
+   "CVE-2020-14343"
+  ],
+  "cwes": [
+   "CWE-20"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/ops-runbook/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+  "first_fixed_above_installed": "5.4",
+  "fixed_versions": [
+   "5.4"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+  "package": "pyyaml",
+  "published": "2021-03-25T21:26:26Z",
+  "split": "test",
+  "summary": "Improper Input Validation in PyYAML",
+  "target": "bench/ops-runbook",
+  "version": "5.3.1",
+  "vuln_id": "GHSA-8q59-q68h-6hv4"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.88,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.9,
+  "vulnerable_symbols": [
+   "yaml.full_load",
+   "FullLoader"
+  ],
+  "reasoning": "The advisory states yaml.full_load() (and FullLoader) in PyYAML <5.4 permit arbitrary code execution via python/object/new when loading untrusted YAML. The application calls yaml.full_load(stream) directly at runbook/serialization.py:6 inside load_document, which is the single shared loader for all runbook YAML parsing. Static analysis confirms a concrete call path from the CLI entry point (__main__) through engine.run_book into serialization.load_document, so the vulnerable sink is reachable from a framework/CLI entry point, not dead code. The stream passed in ultimately derives from sys.argv[1] (a user-supplied file path in __main__.py), i.e., the YAML content loaded is whatever external file is given to the runbook tool \u2014 plausibly attacker-controlled if runbooks are shared, downloaded, or come from an untrusted source. No sanitization, schema restriction, or safe_load/SafeLoader substitution is used for the load path (only dump_document uses safe_dump, which is unrelated and safe). Given the exact vulnerable API is invoked on a path reachable from the program's entry point with externally supplied content, this should be treated as reachable.",
+  "evidence": [
+   {
+    "location": "runbook/serialization.py:6",
+    "explanation": "Direct call to yaml.full_load(stream), the exact vulnerable API named in the advisory."
+   },
+   {
+    "location": "runbook/serialization.py:1",
+    "explanation": "Confirms pyyaml is imported and used in this module, establishing the vulnerable dependency's entry into the app."
+   },
+   {
+    "location": "runbook/engine.py (import) -> runbook/__main__.py",
+    "explanation": "Call path from CLI entry point __main__ -> engine.run_book -> serialization.load_document shows this is on a live, invoked path, not dead code."
+   },
+   {
+    "location": "runbook/__main__.py",
+    "explanation": "sys.argv[1] is passed into run_book and ultimately into load_document, meaning the YAML content loaded originates from an external file path supplied at runtime, satisfying the 'untrusted input' precondition of the advisory."
+   },
+   {
+    "location": "runbook/serialization.py:10",
+    "explanation": "dump_document uses yaml.safe_dump, confirming the developers distinguished safe vs unsafe YAML operations but did not apply that distinction to the loader."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The only plausible counter is that the YAML source is a CLI file-path argument (sys.argv[1]) supplied by the person running the tool, which could be read as 'trusted, self-authored input' rather than truly untrusted/attacker-controlled data, weakening the advisory's threat-model precondition. However, this doesn't overturn the verdict: (1) the exact named vulnerable symbols (FullLoader/full_load) are called directly and unconditionally, with no safe_load/SafeLoader substitution anywhere in the single shared loader path; (2) runbook files are a natural artifact to be shared, downloaded, or copy-pasted between users/environments, so treating the file argument as potentially attacker-supplied is a reasonable and conservative threat model, consistent with how CLI-driven parsers are typically assessed; (3) there is a concrete, non-hypothetical call path from the entry point (__main__ -> engine.run_book -> load_document) with no gating logic, feature flags, or alternate safe code path observed. The verdict correctly distinguishes the safe dump_document (safe_dump) from the vulnerable load_document (full_load), showing it engaged with the actual evidence rather than pattern-matching on the import alone. No evidence was ignored or misread.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.88
+ },
+ "symbols": [
+  "FullLoader",
+  "full_load"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/ops-runbook/pyyaml@5.3.1/GHSA-8q59-q68h-6hv4",
+    "package": "pyyaml",
+    "version": "5.3.1",
+    "vuln_id": "GHSA-8q59-q68h-6hv4",
+    "aliases": [
+     "CVE-2020-14343",
+     "GHSA-8q59-q68h-6hv4",
+     "PYSEC-2021-142"
+    ],
+    "summary": "Improper Input Validation in PyYAML",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "fixed_versions": [
+     "5.4"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 53.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-8q59-q68h-6hv4#1",
+      "score": 0.855,
+      "text": "GHSA-8q59-q68h-6hv4 (pyyaml) details:\nA vulnerability was discovered in the PyYAML library in versions before 5.4, where it is susceptible to arbitrary code execution when it processes untrusted YAML files through the full_load method or with the FullLoader loader. Applications that use the library to process untrusted input may be vulnerable to this flaw. This flaw allows an attacker to execute arbitrary code on the system by abusing the python/object/new constructor. This flaw is due to an incomplete fix for CVE-2020-1747.",
+      "vuln_id": "GHSA-8q59-q68h-6hv4"
+     },
+     {
+      "id": "GHSA-8q59-q68h-6hv4#0",
+      "score": 0.851,
+      "text": "GHSA-8q59-q68h-6hv4 (CVE-2020-14343)\npackage: pyyaml\nsummary: Improper Input Validation in PyYAML\naffected: >=0, <5.4",
+      "vuln_id": "GHSA-8q59-q68h-6hv4"
+     },
+     {
+      "id": "GHSA-6757-jp84-gxfx#0",
+      "score": 0.834,
+      "text": "GHSA-6757-jp84-gxfx (CVE-2020-1747)\npackage: pyyaml\nsummary: Improper Input Validation in PyYAML\naffected: >=5.1b7, <5.3.1",
+      "vuln_id": "GHSA-6757-jp84-gxfx"
+     },
+     {
+      "id": "GHSA-6757-jp84-gxfx#1",
+      "score": 0.828,
+      "text": "GHSA-6757-jp84-gxfx (pyyaml) details:\nA vulnerability was discovered in the PyYAML library in versions before 5.3.1, where it is susceptible to arbitrary code execution when it processes untrusted YAML files through the full_load method or with the FullLoader loader. Applications that use the library to process untrusted input may be vulnerable to this flaw. An attacker could use this flaw to execute arbitrary code on the system by abusing the python/object/new constructor.",
+      "vuln_id": "GHSA-6757-jp84-gxfx"
+     }
+    ],
+    "symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 4.0,
+   "output": {
+    "package": "pyyaml",
+    "import_names": [
+     "yaml"
+    ],
+    "symbols": [
+     "FullLoader",
+     "full_load"
+    ],
+    "imported": true,
+    "import_locations": [
+     "runbook/serialization.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 6,
+    "vulnerable_call_sites": [
+     {
+      "file": "runbook/serialization.py",
+      "line": 6,
+      "code": "return yaml.full_load(stream)",
+      "resolved": "yaml.full_load",
+      "function": "runbook.serialization:load_document",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "runbook.__main__:<main>",
+       "runbook.engine:run_book",
+       "runbook.serialization:load_document"
+      ],
+      "callers": 1,
+      "snippet": "    3  \n    4  def load_document(stream):\n    5      \"\"\"Shared loader so every runbook format goes through one place.\"\"\"\n    6      return yaml.full_load(stream)\n    7  \n    8  \n    9  def dump_document(data) -> str:"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "runbook/serialization.py:6",
+      "code": "return yaml.full_load(stream)",
+      "function": "runbook.serialization:load_document",
+      "in_test": false
+     },
+     {
+      "location": "runbook/serialization.py:10",
+      "code": "return yaml.safe_dump(data)",
+      "function": "runbook.serialization:dump_document",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 4,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [
+     [
+      "runbook.__main__:<main>",
+      "runbook.engine:run_book",
+      "runbook.serialization:load_document"
+     ]
+    ],
+    "summary": "pyyaml: imported in 1 non-test location(s); 6 package call/reference site(s); named vulnerable symbols ['FullLoader', 'full_load']; 1 production call site(s) of those symbols, 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 49.4,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:runbook/serialization.py:6",
+      "score": 1.0,
+      "file": "runbook/serialization.py",
+      "start": 6,
+      "qualname": "runbook.serialization:load_document",
+      "text": "# runbook/serialization.py around line 6\n    3  \n    4  def load_document(stream):\n    5      \"\"\"Shared loader so every runbook format goes through one place.\"\"\"\n    6      return yaml.full_load(stream)\n    7  \n    8  \n    9  def dump_document(data) -> str:"
+     },
+     {
+      "id": "bench/ops-runbook:runbook/serialization.py:4",
+      "score": 0.66,
+      "text": "# runbook/serialization.py:4-6  load_document\ndef load_document(stream):\n    \"\"\"Shared loader so every runbook format goes through one place.\"\"\"\n    return yaml.full_load(stream)",
+      "file": "runbook/serialization.py",
+      "start": 4,
+      "qualname": "load_document"
+     },
+     {
+      "id": "bench/ops-runbook:runbook/serialization.py:module",
+      "score": 0.618,
+      "text": "# runbook/serialization.py (module level)\nimport yaml",
+      "file": "runbook/serialization.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/ops-runbook:runbook/engine.py:module",
+      "score": 0.592,
+      "text": "# runbook/engine.py (module level)\nimport subprocess\nfrom runbook.serialization import load_document",
+      "file": "runbook/engine.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/ops-runbook:runbook/serialization.py:9",
+      "score": 0.585,
+      "text": "# runbook/serialization.py:9-10  dump_document\ndef dump_document(data) -> str:\n    return yaml.safe_dump(data)",
+      "file": "runbook/serialization.py",
+      "start": 9,
+      "qualname": "dump_document"
+     },
+     {
+      "id": "bench/ops-runbook:runbook/__main__.py:module",
+      "score": 0.53,
+      "text": "# runbook/__main__.py (module level)\nimport sys\nfrom runbook.engine import run_book\nif __name__ == \"__main__\":\n    n = run_book(sys.argv[1], dry_run=\"--dry-run\" in sys.argv)\n    print(f\"{n} steps\")",
+      "file": "runbook/__main__.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 15084.5,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.9,
+    "vulnerable_symbols": [
+     "yaml.full_load",
+     "FullLoader"
+    ],
+    "reasoning": "The advisory states yaml.full_load() (and FullLoader) in PyYAML <5.4 permit arbitrary code execution via python/object/new when loading untrusted YAML. The application calls yaml.full_load(stream) directly at runbook/serialization.py:6 inside load_document, which is the single shared loader for all runbook YAML parsing. Static analysis confirms a concrete call path from the CLI entry point (__main__) through engine.run_book into serialization.load_document, so the vulnerable sink is reachable from a framework/CLI entry point, not dead code. The stream passed in ultimately derives from sys.argv[1] (a user-supplied file path in __main__.py), i.e., the YAML content loaded is whatever external file is given to the runbook tool \u2014 plausibly attacker-controlled if runbooks are shared, downloaded, or come from an untrusted source. No sanitization, schema restriction, or safe_load/SafeLoader substitution is used for the load path (only dump_document uses safe_dump, which is unrelated and safe). Given the exact vulnerable API is invoked on a path reachable from the program's entry point with externally supplied content, this should be treated as reachable.",
+    "evidence": [
+     {
+      "location": "runbook/serialization.py:6",
+      "explanation": "Direct call to yaml.full_load(stream), the exact vulnerable API named in the advisory."
+     },
+     {
+      "location": "runbook/serialization.py:1",
+      "explanation": "Confirms pyyaml is imported and used in this module, establishing the vulnerable dependency's entry into the app."
+     },
+     {
+      "location": "runbook/engine.py (import) -> runbook/__main__.py",
+      "explanation": "Call path from CLI entry point __main__ -> engine.run_book -> serialization.load_document shows this is on a live, invoked path, not dead code."
+     },
+     {
+      "location": "runbook/__main__.py",
+      "explanation": "sys.argv[1] is passed into run_book and ultimately into load_document, meaning the YAML content loaded originates from an external file path supplied at runtime, satisfying the 'untrusted input' precondition of the advisory."
+     },
+     {
+      "location": "runbook/serialization.py:10",
+      "explanation": "dump_document uses yaml.safe_dump, confirming the developers distinguished safe vs unsafe YAML operations but did not apply that distinction to the loader."
+     }
+    ]
+   },
+   "tokens_in": 2980,
+   "tokens_out": 1135,
+   "llm_calls": 1,
+   "llm_seconds": 15.08,
+   "cost_usd_est": 0.025965,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"reachable\",\"confidence\":0.9,\"vulnerable_symbols\":[\"yaml.full_load\",\"FullLoader\"],\"reasoning\":\"The advisory states yaml.full_load() (and FullLoader) in PyYAML <5.4 permit arbitrary code execution via python/object/new when loading untrusted YAML. The application calls yaml.full_load(stream) directly at runbook/serialization.py:6 inside load_document, which is the single shared loader for all runbook YAML parsing. Static analysis confirms a concrete call path from the CLI entry point (__main__) through engine.run_book into serialization.load_document, so the vulnerable sink is reachable from a framework/CLI entry point, not dead code. The stream passed in ultimately derives from sys.argv[1] (a user-supplied file path in __main__.py), i.e., the YAML content loaded is whatever external file is given to the runbook tool \u2014 plausibly attacker-controlled if runbooks are shared, downloaded, or come from an untrusted source. No sanitization, schema restriction, or safe_load/SafeLoader substitution is used for the load path (only dump_document uses safe_dump, which is unrelated and safe). Given the exact vulnerable API is invoked on a path reachable from the program's entry point with externally supplied content, this should be treated as reachable.\",\"evidence\":[{\"location\":\"runbook/serialization.py:6\",\"explanation\":\"Direct call to yaml.full_load(stream), the exact vulnerable API named in the advisory.\"},{\"location\":\"runbook/serialization.py:1\",\"explanation\":\"Confirms pyyaml is imported and used in this module, establishing the vulnerable dependency's entry into the app.\"},{\"location\":\"runbook/engine.py (import) -> runbook/__main__.py\",\"explanation\":\"Call path from CLI entry point __main__ -> engine.run_book -> serialization.load_document shows this is on a live, invoked path, not dead code.\"},{\"location\":\"runbook/__main__.py\",\"explanation\":\"sys.argv[1] is passed into run_book and ultimately into load_document, meaning the YAML content loaded originates from an external file path supplied at runtime, satisfying the 'untrusted input' precondition of the advisory.\"},{\"location\":\"runbook/serialization.py:10\",\"explanation\":\"dump_document uses yaml.safe_dump, confirming the developers distinguished safe vs unsafe YAML operations but did not apply that distinction to the loader.\"}]}",
+     "in": 2980,
+     "out": 1135,
+     "s": 15.08,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 18327.1,
+   "output": {
+    "critique": "The only plausible counter is that the YAML source is a CLI file-path argument (sys.argv[1]) supplied by the person running the tool, which could be read as 'trusted, self-authored input' rather than truly untrusted/attacker-controlled data, weakening the advisory's threat-model precondition. However, this doesn't overturn the verdict: (1) the exact named vulnerable symbols (FullLoader/full_load) are called directly and unconditionally, with no safe_load/SafeLoader substitution anywhere in the single shared loader path; (2) runbook files are a natural artifact to be shared, downloaded, or copy-pasted between users/environments, so treating the file argument as potentially attacker-supplied is a reasonable and conservative threat model, consistent with how CLI-driven parsers are typically assessed; (3) there is a concrete, non-hypothetical call path from the entry point (__main__ -> engine.run_book -> load_document) with no gating logic, feature flags, or alternate safe code path observed. The verdict correctly distinguishes the safe dump_document (safe_dump) from the vulnerable load_document (full_load), showing it engaged with the actual evidence rather than pattern-matching on the import alone. No evidence was ignored or misread.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.88
+   },
+   "tokens_in": 3153,
+   "tokens_out": 1343,
+   "llm_calls": 1,
+   "llm_seconds": 18.31,
+   "cost_usd_est": 0.029604,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\": \"The only plausible counter is that the YAML source is a CLI file-path argument (sys.argv[1]) supplied by the person running the tool, which could be read as 'trusted, self-authored input' rather than truly untrusted/attacker-controlled data, weakening the advisory's threat-model precondition. However, this doesn't overturn the verdict: (1) the exact named vulnerable symbols (FullLoader/full_load) are called directly and unconditionally, with no safe_load/SafeLoader substitution anywhere in the single shared loader path; (2) runbook files are a natural artifact to be shared, downloaded, or copy-pasted between users/environments, so treating the file argument as potentially attacker-supplied is a reasonable and conservative threat model, consistent with how CLI-driven parsers are typically assessed; (3) there is a concrete, non-hypothetical call path from the entry point (__main__ -> engine.run_book -> load_document) with no gating logic, feature flags, or alternate safe code path observed. The verdict correctly distinguishes the safe dump_document (safe_dump) from the vulnerable load_document (full_load), showing it engaged with the actual evidence rather than pattern-matching on the import alone. No evidence was ignored or misread.\", \"agrees\": true, \"retry\": false, \"final_verdict\": \"reachable\", \"confidence\": 0.88}",
+     "in": 3153,
+     "out": 1343,
+     "s": 18.31,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.88,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 6133,
+  "tokens_out": 2478,
+  "cost_usd_est": 0.055569,
+  "seconds": 33.53
+ },
+ "created": "2026-11-10T00:18:51+00:00",
+ "code_version": "144cabc"
+}

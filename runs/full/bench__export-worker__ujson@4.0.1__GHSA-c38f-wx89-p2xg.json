@@ -1,0 +1,406 @@
+{
+ "finding_id": "bench/export-worker/ujson@4.0.1/GHSA-c38f-wx89-p2xg",
+ "config": "full",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/export-worker",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2026-44660",
+   "GHSA-c38f-wx89-p2xg",
+   "PYSEC-2026-2293"
+  ],
+  "cves": [
+   "CVE-2026-44660"
+  ],
+  "cwes": [
+   "CWE-401"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/export-worker/ujson@4.0.1/GHSA-c38f-wx89-p2xg",
+  "first_fixed_above_installed": "5.12.1",
+  "fixed_versions": [
+   "5.12.1"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+  "package": "ujson",
+  "published": "2026-05-12T22:25:11Z",
+  "split": "test",
+  "summary": "UltraJSON has a Memory Leak in ujson.dump() on Write Failure",
+  "target": "bench/export-worker",
+  "version": "4.0.1",
+  "vuln_id": "GHSA-c38f-wx89-p2xg"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.82,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.88,
+  "vulnerable_symbols": [
+   "ujson.dump"
+  ],
+  "reasoning": "The advisory affects ujson.dump() when writing to a file-like object that raises on write(); ujson.dumps()-only usage is explicitly unaffected. The only call to the vulnerable API in this app is exporter/compat.py:7 inside write_export_ujson, but the static analysis confirms this function has zero callers anywhere in the project, and the module docstring states it was 'Kept for the old nightly job (removed in 2023)', confirming it is dead/legacy code. The application's actual production export path, exporter/run.py's export() function, uses the standard library's json.dump (exporter/run.py:9-10), not ujson at all. Since the vulnerable call site is unreachable dead code and the live code path doesn't use ujson.dump, no outside party can trigger the leak through this application.",
+  "evidence": [
+   {
+    "location": "exporter/compat.py:7",
+    "explanation": "This is the only call to ujson.dump() in the codebase, the vulnerable API per the advisory."
+   },
+   {
+    "location": "exporter/compat.py:1",
+    "explanation": "Module docstring 'Kept for the old nightly job (removed in 2023)' confirms this module is legacy/unused code."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "Confirms write_export_ujson 'has NO callers anywhere in the project' and no path from an entry point."
+   },
+   {
+    "location": "exporter/run.py:7-10",
+    "explanation": "The actual production export() entry point uses json.dump, not ujson, so the real export flow never touches the vulnerable function."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument: static call-graph analysis of a non-test, non-entrypoint module can miss dynamic invocation paths (e.g., a cron/nightly job script, a CLI entry point, or dynamic import via getattr/importlib that the AST walker wouldn't trace as a 'caller'). The module is explicitly described as serving an 'old nightly job' \u2014 if that nightly job still exists as a separate scheduled script (e.g., a cron entry, a Makefile target, or a CI job invoking `python -m exporter.compat` or similar) outside the Python call graph the scanner traversed, the function would be reachable despite having zero in-repo callers. However, the evidence provided does include a docstring explicitly stating the nightly job was 'removed in 2023,' which is a strong first-party signal of intentional deprecation, not just an absence-of-evidence gap. Combined with zero callers found anywhere in the project and the real production path (exporter/run.py) using stdlib json instead, this is about as solid a dead-code case as static evidence can produce. The residual risk is only that some external scheduler/script not captured in this repo could still invoke exporter.compat directly, which the analysis cannot fully rule out \u2014 but that's speculative without contrary evidence, not a misreading of what's present.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.82
+ },
+ "symbols": [
+  "ujson.dump",
+  "ujson.dumps",
+  "write",
+  "objToJSONFile",
+  "ujson_dumps_internal",
+  "Py_DECREF",
+  "file.write",
+  "dump"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/export-worker/ujson@4.0.1/GHSA-c38f-wx89-p2xg",
+    "package": "ujson",
+    "version": "4.0.1",
+    "vuln_id": "GHSA-c38f-wx89-p2xg",
+    "aliases": [
+     "CVE-2026-44660",
+     "GHSA-c38f-wx89-p2xg",
+     "PYSEC-2026-2293"
+    ],
+    "summary": "UltraJSON has a Memory Leak in ujson.dump() on Write Failure",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+    "fixed_versions": [
+     "5.12.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-c38f-wx89-p2xg#0",
+      "score": 0.898,
+      "text": "GHSA-c38f-wx89-p2xg (CVE-2026-44660)\npackage: ujson\nsummary: UltraJSON has a Memory Leak in ujson.dump() on Write Failure\naffected: >=0, <5.12.1",
+      "vuln_id": "GHSA-c38f-wx89-p2xg"
+     },
+     {
+      "id": "GHSA-c38f-wx89-p2xg#1",
+      "score": 0.873,
+      "text": "GHSA-c38f-wx89-p2xg (ujson) details:\n### Summary\n\nWhen `ujson.dump()` writes to a file-like object and the write operation raises an exception, the serialized JSON string object is not decremented, leaking memory. Each failed write operation leaks the full size of the serialized payload.\n\nCode that uses `ujson.dumps()` rather than `ujson.dump()` or only JSON load/decode methods is unaffected.\n\n### Details\n\n**Vulnerability Location:**\n- `src/ujson/python/objToJSON.c:913` - `objToJSONFile()` function start\n- `src/ujson/python/objToJSON.c:931` - Error return on write failure\n- `src/ujson/python/objToJSON.c:942` - Early return without cleanup\n\n**Root Cause:**\n\nThe `objToJSONFile()` function allocates a Python string object via `ujson_dumps_internal()`, calls the file's `write()` method, and returns early if `write()` raises an exception\u2014but never calls `Py_DECREF(string)` on the early exit path.",
+      "vuln_id": "GHSA-c38f-wx89-p2xg"
+     },
+     {
+      "id": "GHSA-c38f-wx89-p2xg#3",
+      "score": 0.806,
+      "text": "GHSA-c38f-wx89-p2xg (ujson) details:\nThe missing dec-refs were added in 82af1d0ac01d09aa40c887b460d44b9d9f4bccd9. We recommend upgrading to [UltraJSON 5.12.1](https://github.com/ultrajson/ultrajson/releases/tag/5.12.1).\n\n### Workarounds\n\nReplacing `ujson.dump(obj, file)` with `file.write(ujson.dumps(obj))` is equivalent (contrary to popular misconception, there are no streaming benefits to using `ujson.dump()`) and will avoid the memory leak.",
+      "vuln_id": "GHSA-c38f-wx89-p2xg"
+     },
+     {
+      "id": "GHSA-c38f-wx89-p2xg#2",
+      "score": 0.764,
+      "text": "GHSA-c38f-wx89-p2xg (ujson) details:\n### PoC\n```python\nimport gc, tracemalloc, ujson\n\nclass BadFile:\n    def write(self, s):\n        raise RuntimeError(\"boom\")\n\nobj = {\"x\": \"A\" * 200000}\n\ndef run():\n    try:\n        ujson.dump(obj, BadFile())\n    except RuntimeError:\n        pass\n\nrun()\ntracemalloc.start()\ngc.collect()\nbase = tracemalloc.get_traced_memory()[0]\n\nfor i in range(5):\n    run()\n    gc.collect()\n    cur = tracemalloc.get_traced_memory()[0]\n    print(i, cur - base)\n```\n\n### Impact\n\nAny application that serializes data through `ujson.dump()` to an attacker-influenced file-like object that can fail can be driven into linear memory growth. An attacker can quickly use up all the memory of say a web server that sends JSON responses using `ujson.dump()` by repeatedly making requests then closing the connection mid response.\n\n### Remediation",
+      "vuln_id": "GHSA-c38f-wx89-p2xg"
+     },
+     {
+      "id": "GHSA-fh56-85cw-5pq6#0",
+      "score": 0.834,
+      "text": "GHSA-fh56-85cw-5pq6 (CVE-2021-45958)\npackage: ujson\nsummary: UltraJSON vulnerable to Out-of-bounds Write\naffected: >=1.34, <5.2.0",
+      "vuln_id": "GHSA-fh56-85cw-5pq6"
+     },
+     {
+      "id": "GHSA-c8rr-9gxc-jprv#2",
+      "score": 0.824,
+      "text": "GHSA-c8rr-9gxc-jprv (ujson) details:\nTo be vulnerable, a service must call `ujson.dump()`/`ujson.dumps()`/`ujson.encode()` whilst giving untrusted users control over the `indent` parameter and not restrict that indentation to reasonably small non-negative values. (Even with the fix for this vulnerability, such usage is strongly advised against since even a bug-free JSON serialiser would be vulnerable to denial of service simply by the attacker requesting indents that have the server needlessly filling out gigabytes of whitespace.)",
+      "vuln_id": "GHSA-c8rr-9gxc-jprv"
+     }
+    ],
+    "symbols": [
+     "ujson.dump",
+     "ujson.dumps",
+     "write",
+     "objToJSONFile",
+     "ujson_dumps_internal",
+     "Py_DECREF",
+     "file.write",
+     "dump"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.8,
+   "output": {
+    "package": "ujson",
+    "import_names": [
+     "ujson"
+    ],
+    "symbols": [
+     "ujson.dump",
+     "ujson.dumps",
+     "write",
+     "objToJSONFile",
+     "ujson_dumps_internal",
+     "Py_DECREF",
+     "file.write",
+     "dump"
+    ],
+    "imported": true,
+    "import_locations": [
+     "exporter/compat.py:2"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3,
+    "vulnerable_call_sites": [
+     {
+      "file": "exporter/compat.py",
+      "line": 7,
+      "code": "ujson.dump(rows, f, ensure_ascii=False)",
+      "resolved": "ujson.dump",
+      "function": "exporter.compat:write_export_ujson",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": false,
+      "path": [],
+      "callers": 0,
+      "snippet": "    4  \n    5  def write_export_ujson(rows, path):\n    6      with open(path, \"w\") as f:\n    7          ujson.dump(rows, f, ensure_ascii=False)"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "exporter/compat.py:7",
+      "code": "ujson.dump(rows, f, ensure_ascii=False)",
+      "function": "exporter.compat:write_export_ujson",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 4,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [],
+    "summary": "ujson: imported in 1 non-test location(s); 3 package call/reference site(s); named vulnerable symbols ['ujson.dump', 'ujson.dumps', 'write', 'objToJSONFile', 'ujson_dumps_internal', 'Py_DECREF', 'file.write', 'dump']; 1 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 73.9,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:exporter/compat.py:7",
+      "score": 1.0,
+      "file": "exporter/compat.py",
+      "start": 7,
+      "qualname": "exporter.compat:write_export_ujson",
+      "text": "# exporter/compat.py around line 7\n    4  \n    5  def write_export_ujson(rows, path):\n    6      with open(path, \"w\") as f:\n    7          ujson.dump(rows, f, ensure_ascii=False)"
+     },
+     {
+      "id": "bench/export-worker:exporter/compat.py:5",
+      "score": 0.754,
+      "text": "# exporter/compat.py:5-7  write_export_ujson\ndef write_export_ujson(rows, path):\n    with open(path, \"w\") as f:\n        ujson.dump(rows, f, ensure_ascii=False)",
+      "file": "exporter/compat.py",
+      "start": 5,
+      "qualname": "write_export_ujson"
+     },
+     {
+      "id": "bench/export-worker:exporter/compat.py:module",
+      "score": 0.687,
+      "text": "# exporter/compat.py (module level)\n\"\"\"Kept for the old nightly job (removed in 2023).\"\"\"\nimport ujson",
+      "file": "exporter/compat.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/export-worker:exporter/run.py:7",
+      "score": 0.601,
+      "text": "# exporter/run.py:7-11  export\ndef export(table: str, out_path: str) -> int:\n    rows = fetch_rows(table)\n    with open(out_path, \"w\") as f:\n        json.dump(rows, f, default=str)\n    return len(rows)",
+      "file": "exporter/run.py",
+      "start": 7,
+      "qualname": "export"
+     },
+     {
+      "id": "bench/export-worker:exporter/run.py:module",
+      "score": 0.566,
+      "text": "# exporter/run.py (module level)\nimport json\nimport sys\nfrom exporter.query import fetch_rows\nif __name__ == \"__main__\":\n    print(export(sys.argv[1], sys.argv[2]))",
+      "file": "exporter/run.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/export-worker:exporter/query.py:4",
+      "score": 0.472,
+      "text": "# exporter/query.py:4-7  fetch_rows\ndef fetch_rows(table: str) -> list:\n    con = sqlite3.connect(\"warehouse.db\")\n    con.row_factory = sqlite3.Row\n    return [dict(r) for r in con.execute(f\"SELECT * FROM {table}\")]  # table names come from our own config",
+      "file": "exporter/query.py",
+      "start": 4,
+      "qualname": "fetch_rows"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 9230.8,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "vulnerable_symbols": [
+     "ujson.dump"
+    ],
+    "reasoning": "The advisory affects ujson.dump() when writing to a file-like object that raises on write(); ujson.dumps()-only usage is explicitly unaffected. The only call to the vulnerable API in this app is exporter/compat.py:7 inside write_export_ujson, but the static analysis confirms this function has zero callers anywhere in the project, and the module docstring states it was 'Kept for the old nightly job (removed in 2023)', confirming it is dead/legacy code. The application's actual production export path, exporter/run.py's export() function, uses the standard library's json.dump (exporter/run.py:9-10), not ujson at all. Since the vulnerable call site is unreachable dead code and the live code path doesn't use ujson.dump, no outside party can trigger the leak through this application.",
+    "evidence": [
+     {
+      "location": "exporter/compat.py:7",
+      "explanation": "This is the only call to ujson.dump() in the codebase, the vulnerable API per the advisory."
+     },
+     {
+      "location": "exporter/compat.py:1",
+      "explanation": "Module docstring 'Kept for the old nightly job (removed in 2023)' confirms this module is legacy/unused code."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "Confirms write_export_ujson 'has NO callers anywhere in the project' and no path from an entry point."
+     },
+     {
+      "location": "exporter/run.py:7-10",
+      "explanation": "The actual production export() entry point uses json.dump, not ujson, so the real export flow never touches the vulnerable function."
+     }
+    ]
+   },
+   "tokens_in": 3897,
+   "tokens_out": 748,
+   "llm_calls": 1,
+   "llm_seconds": 9.22,
+   "cost_usd_est": 0.022911,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.88,\"vulnerable_symbols\":[\"ujson.dump\"],\"reasoning\":\"The advisory affects ujson.dump() when writing to a file-like object that raises on write(); ujson.dumps()-only usage is explicitly unaffected. The only call to the vulnerable API in this app is exporter/compat.py:7 inside write_export_ujson, but the static analysis confirms this function has zero callers anywhere in the project, and the module docstring states it was 'Kept for the old nightly job (removed in 2023)', confirming it is dead/legacy code. The application's actual production export path, exporter/run.py's export() function, uses the standard library's json.dump (exporter/run.py:9-10), not ujson at all. Since the vulnerable call site is unreachable dead code and the live code path doesn't use ujson.dump, no outside party can trigger the leak through this application.\",\"evidence\":[{\"location\":\"exporter/compat.py:7\",\"explanation\":\"This is the only call to ujson.dump() in the codebase, the vulnerable API per the advisory.\"},{\"location\":\"exporter/compat.py:1\",\"explanation\":\"Module docstring 'Kept for the old nightly job (removed in 2023)' confirms this module is legacy/unused code.\"},{\"location\":\"static evidence summary\",\"explanation\":\"Confirms write_export_ujson 'has NO callers anywhere in the project' and no path from an entry point.\"},{\"location\":\"exporter/run.py:7-10\",\"explanation\":\"The actual production export() entry point uses json.dump, not ujson, so the real export flow never touches the vulnerable function.\"}]}",
+     "in": 3897,
+     "out": 748,
+     "s": 9.22,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 7737.4,
+   "output": {
+    "critique": "The strongest counter-argument: static call-graph analysis of a non-test, non-entrypoint module can miss dynamic invocation paths (e.g., a cron/nightly job script, a CLI entry point, or dynamic import via getattr/importlib that the AST walker wouldn't trace as a 'caller'). The module is explicitly described as serving an 'old nightly job' \u2014 if that nightly job still exists as a separate scheduled script (e.g., a cron entry, a Makefile target, or a CI job invoking `python -m exporter.compat` or similar) outside the Python call graph the scanner traversed, the function would be reachable despite having zero in-repo callers. However, the evidence provided does include a docstring explicitly stating the nightly job was 'removed in 2023,' which is a strong first-party signal of intentional deprecation, not just an absence-of-evidence gap. Combined with zero callers found anywhere in the project and the real production path (exporter/run.py) using stdlib json instead, this is about as solid a dead-code case as static evidence can produce. The residual risk is only that some external scheduler/script not captured in this repo could still invoke exporter.compat directly, which the analysis cannot fully rule out \u2014 but that's speculative without contrary evidence, not a misreading of what's present.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.82
+   },
+   "tokens_in": 3809,
+   "tokens_out": 464,
+   "llm_calls": 1,
+   "llm_seconds": 7.74,
+   "cost_usd_est": 0.018387,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument: static call-graph analysis of a non-test, non-entrypoint module can miss dynamic invocation paths (e.g., a cron/nightly job script, a CLI entry point, or dynamic import via getattr/importlib that the AST walker wouldn't trace as a 'caller'). The module is explicitly described as serving an 'old nightly job' \u2014 if that nightly job still exists as a separate scheduled script (e.g., a cron entry, a Makefile target, or a CI job invoking `python -m exporter.compat` or similar) outside the Python call graph the scanner traversed, the function would be reachable despite having zero in-repo callers. However, the evidence provided does include a docstring explicitly stating the nightly job was 'removed in 2023,' which is a strong first-party signal of intentional deprecation, not just an absence-of-evidence gap. Combined with zero callers found anywhere in the project and the real production path (exporter/run.py) using stdlib json instead, this is about as solid a dead-code case as static evidence can produce. The residual risk is only that some external scheduler/script not captured in this repo could still invoke exporter.compat directly, which the analysis cannot fully rule out \u2014 but that's speculative without contrary evidence, not a misreading of what's present.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.82}",
+     "in": 3809,
+     "out": 464,
+     "s": 7.74,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.82,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 7706,
+  "tokens_out": 1212,
+  "cost_usd_est": 0.041298,
+  "seconds": 17.08
+ },
+ "created": "2026-11-10T00:25:55+00:00",
+ "code_version": "144cabc"
+}

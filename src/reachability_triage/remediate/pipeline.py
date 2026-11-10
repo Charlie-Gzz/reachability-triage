@@ -35,7 +35,8 @@ endpoint), not by calling the library directly unless the app calls it the same 
 behaviour (e.g. the escaped output, the rejected input, the stripped header), with a clear assertion message.
 Use only the test tooling the project already uses. No network access. Keep it short and deterministic."""
 
-PATCH_SYSTEM = """Upgrading the vulnerable dependency broke the application's test suite, so write the smallest change
+PATCH_SYSTEM = """Upgrading the vulnerable dependency could not be accepted (it broke the suite or did not fix the
+behaviour), so write the smallest change
 to the APPLICATION code that removes the vulnerable behaviour (e.g. validate or escape input before it reaches the
 vulnerable function, or stop using the vulnerable option). Do not modify tests. Return full new contents for each
 changed file."""
@@ -182,7 +183,7 @@ def remediate_one(cfg: Config, provider, f: dict, rec: dict, out_dir: Path) -> d
         workspace.remove_worktree(t, wt)
     new_res, suite_res = _result(new.output), _result(suite.output)
     new_green = new_res["passed"] > 0 and new_res["failed"] == 0 and not new.timed_out
-    regressions = sorted(set(suite_res["failing"]) - base_fail - {test.test_id})
+    regressions = _regressions(suite_res, base_fail, test.test_id)
     suite_ok = not suite.timed_out and not regressions and suite_res["passed"] > 0
     log("apply_fix", st, kind="upgrade", command=pip, diff=_lock_diff(t, f["package"], f["version"], fix),
         new_test={**new_res, "seconds": new.seconds, "output": _tail(new.output)},
@@ -199,8 +200,8 @@ def remediate_one(cfg: Config, provider, f: dict, rec: dict, out_dir: Path) -> d
     else:
         result["reason"] = "upgrade_broke_suite"
 
-    # ---------------- 3. code patch (only when the upgrade broke the suite)
-    if result["reason"] != "upgrade_broke_suite":
+    # ---------------- 3. code patch (only when the upgrade can't be accepted)
+    if result["reason"] == "timeout":
         result["test"] = test.model_dump()
         return result
     feedback = ""
@@ -210,7 +211,9 @@ def remediate_one(cfg: Config, provider, f: dict, rec: dict, out_dir: Path) -> d
         src = "\n\n".join(f"## {p}\n```python\n{(t.checkout / p).read_text(encoding='utf-8', errors='replace')[:6000]}\n```"
                           for p in sorted(files)[:3])
         prompt = (f"## Vulnerability\n{adv[:3000]}\n\n## Failing regression test ({test.test_path})\n```python\n{test.code}\n```"
-                  f"\n\n## Upgrade to {fix} broke these existing tests\n{', '.join(regressions[:15])}\n\n"
+                  f"\n\n## Why the upgrade to {fix} was rejected\n{result['reason']}; suite regressions: "
+                  f"{', '.join(regressions[:15]) or 'none'}; new test after upgrade: {new_res['passed']} passed, "
+                  f"{new_res['failed']} failed\n\n"
                   f"## Application files on the vulnerable path\n{src}{feedback}")
         obj, meta, err = structured(provider, PATCH_SYSTEM, prompt, Patch, task="patch")
         result["llm_calls"] += meta.calls
@@ -236,7 +239,7 @@ def remediate_one(cfg: Config, provider, f: dict, rec: dict, out_dir: Path) -> d
         finally:
             workspace.remove_worktree(t, wt)
         new_res, suite_res = _result(new.output), _result(suite.output)
-        regressions = sorted(set(suite_res["failing"]) - base_fail - {test.test_id})
+        regressions = _regressions(suite_res, base_fail, test.test_id)
         ok = new_res["passed"] > 0 and new_res["failed"] == 0 and not regressions and not suite.timed_out
         log("apply_fix", st, kind="patch", attempt=attempt, diff=diff, rationale=obj.rationale,
             new_test={**new_res, "output": _tail(new.output)},
@@ -248,6 +251,15 @@ def remediate_one(cfg: Config, provider, f: dict, rec: dict, out_dir: Path) -> d
         feedback = f"\n\n## Previous patch failed\nnew test: {new_res}\nregressions: {regressions[:10]}\n{_tail(new.output, 1500)}"
     result.update(reason="patch_failed", test=test.model_dump())
     return result
+
+
+def _regressions(suite_res: dict, base_fail: set[str], new_test: str) -> list[str]:
+    """Failures beyond the container baseline. Falls back to counts when failures can't be parsed into ids."""
+    regs = sorted(set(suite_res["failing"]) - base_fail - {new_test})
+    unexplained = suite_res["failed"] - len(base_fail) - len(regs) - (1 if new_test in suite_res["failing"] else 0)
+    if unexplained > 0:
+        regs.append(f"<{unexplained} more failures/errors without test ids>")
+    return regs
 
 
 def _collection_error(out: str) -> bool:

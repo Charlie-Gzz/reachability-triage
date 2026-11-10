@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sieve · Reachability Triage</title>
+<link rel="icon" href="logo.svg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config = { corePlugins: { preflight: false } };</script>
+<link rel="stylesheet" href="sieve.css">
+<script src="common.js"></script>
+<script src="data/index.js"></script>
+</head>
+<body>
+<main class="wrap" style="padding-top:36px">
+  <section style="margin-bottom:26px">
+    <div class="eyebrow">Sieve · agentic reachability triage</div>
+    <h1>Scanners flag hundreds of vulnerable dependencies.<br><span style="color:var(--accent)">Most can't be reached from your code.</span></h1>
+    <p class="muted" style="max-width:780px;font-size:17px;margin:0">This agent separates the real ones from the noise, shows its evidence,
+      and fixes the real ones with a test that proves it. Every number and case below is built from committed run records.</p>
+  </section>
+  <div id="banner"></div>
+  <section class="grid g4" id="stats" style="margin:18px 0 28px"></section>
+  <section class="grid g2" style="margin-bottom:28px">
+    <div class="panel"><h2>Verdicts</h2><div id="verdicts"></div></div>
+    <div class="panel"><h2>Ablations</h2><div id="ablations" class="scroll"></div></div>
+  </section>
+  <section style="margin-bottom:28px">
+    <h2>Featured cases</h2>
+    <div class="grid g3" id="featured"></div>
+  </section>
+  <section style="margin-bottom:28px">
+    <h2>Charts</h2>
+    <div class="grid g2" id="charts"></div>
+    <p class="muted" style="font-size:14px">Interactive version: <a href="assets/charts/interactive.html">ablations with hover</a>.</p>
+  </section>
+  <section class="panel" style="margin-bottom:28px">
+    <h2>How it works</h2>
+    <img src="assets/diagram/langgraph.png" alt="LangGraph state graph of the agent" style="max-width:100%;max-height:640px;display:block;margin:0 auto">
+  </section>
+  <footer id="foot"></footer>
+</main>
+<script>
+nav("overview");
+const D = window.SIEVE, R = D.results || {}, C = R.configs || {};
+const full = C.full || {}, bench = full["bench-test"], real = full["real-eval"];
+if (R.labels && R.labels.real_pending) {
+  document.getElementById("banner").innerHTML = `<div class="banner"><b>Real-repo numbers are provisional.</b>
+    ${R.labels.real_pending} of ${R.labels.real_total} real-set labels were drafted by a deterministic script (no LLM) and
+    are still pending human review. Benchmark labels are final (fixed when each case was built).</div>`;
+}
+const tile = (label, v, ci, sub) => `<div class="panel"><div class="eyebrow">${label}</div>
+  <div class="stat">${v}</div><div class="ci">${ci || "&nbsp;"}</div><div class="muted" style="font-size:13px;margin-top:6px">${sub}</div></div>`;
+const rem = R.remediation;
+document.getElementById("stats").innerHTML = bench ? [
+  tile("False-suppression rate", pct(bench.false_suppression_rate), ciTxt(bench.false_suppression_rate_ci95),
+       `real issues wrongly suppressed · benchmark test split, n=${bench.n}`),
+  tile("Noise reduction", pct(bench.noise_reduction), ciTxt(bench.noise_reduction_ci95), "findings safely suppressed · benchmark"),
+  tile("Recall on reachable", pct(bench.recall), ciTxt(bench.recall_ci95), `precision ${pct(bench.precision)} · benchmark`),
+  tile("Fixed test-first", rem ? `${rem.fixed}<span class="muted" style="font-size:22px"> / ${rem.attempted}</span>` : "–", "",
+       "red → green with the existing suite intact"),
+].join("") : `<div class="panel">No results yet. Run <code>rt eval</code>.</div>`;
+
+function verdictBar(m, title) {
+  if (!m) return "";
+  const p = m.predictions || {}, n = m.findings_run;
+  const seg = ["reachable", "not_reachable", "uncertain"].map(k => p[k] ? `<div style="width:${100 * p[k] / n}%;background:var(--${k === "reachable" ? "red" : k === "not_reachable" ? "green" : "amber"})"></div>` : "").join("");
+  return `<div style="margin:12px 0 18px"><div style="display:flex;justify-content:space-between"><b>${title}</b><span class="muted">${n} findings</span></div>
+    <div class="bar" style="margin:8px 0">${seg}</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px">${["reachable", "not_reachable", "uncertain"].map(k => `${pill(k)} <span>${p[k] || 0}</span>`).join("")}</div></div>`;
+}
+document.getElementById("verdicts").innerHTML = verdictBar(bench, "Synthetic benchmark (test split)") +
+  verdictBar(real, "Real repos: healthchecks, CTFd, mealie" + (real && real.provisional ? " · provisional" : ""));
+
+const metrics = [["false_suppression_rate", "False supp."], ["precision", "Precision"], ["recall", "Recall"], ["noise_reduction", "Noise red."], ["uncertain_rate", "Uncertain"]];
+document.getElementById("ablations").innerHTML = `<table><tr><th>Config · benchmark</th>${metrics.map(m => `<th>${m[1]}</th>`).join("")}</tr>
+  ${Object.entries(C).filter(([, v]) => v["bench-test"]).map(([k, v]) => `<tr><td><b>${CONFIG[k] || k}</b><div class="muted" style="font-size:12px">${esc(v.model)}</div></td>
+  ${metrics.map(([m]) => `<td>${pct(v["bench-test"][m])}</td>`).join("")}</tr>`).join("")}</table>
+  <p class="muted" style="font-size:13px;margin-bottom:0">n = ${bench ? bench.n : "?"} per config. Differences inside the confidence intervals are noise.</p>`;
+
+const byslug = Object.fromEntries(D.rows.map(r => [r.slug, r]));
+document.getElementById("featured").innerHTML = (D.featured || []).map(f => {
+  const r = byslug[f.slug];
+  return `<a class="panel" href="case.html?id=${encodeURIComponent(f.slug)}" style="color:inherit;text-decoration:none;display:block">
+    <div class="eyebrow">${esc(f.why)}</div>
+    <div class="mono" style="margin:8px 0 6px;color:var(--text)">${esc(r.target)}</div>
+    <div style="font-weight:600">${esc(r.package)} ${esc(r.version)} · ${esc(r.vuln_id)}</div>
+    <div class="muted" style="font-size:13px;margin:6px 0 10px">${esc(r.summary)}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${pill(r.verdict)} ${r.remediation === "fixed" ? pill("fixed") : ""}
+      ${r.truth ? `<span class="badge">truth: ${esc(LABEL[r.truth] || r.truth)}${r.truth_status === "pending_review" ? " (draft)" : ""}</span>` : ""}</div></a>`;
+}).join("");
+
+const charts = [["ablation", "Ablations"], ["retrieval", "Retrieval: Chroma vs FAISS"], ["remediation_funnel", "Remediation funnel"],
+  ["cost_latency", "Cost and latency"], ["local_vs_claude", "Local model vs Claude"]];
+document.getElementById("charts").innerHTML = charts.map(([f, t]) => `<a class="panel" href="assets/charts/${f}.png" style="padding:10px">
+  <img src="assets/charts/${f}.png" alt="${t}" style="width:100%;display:block;border-radius:8px" onerror="this.closest('a').remove()"></a>`).join("");
+document.getElementById("foot").innerHTML = `Generated ${esc(D.generated || "")} · ${D.rows.length} case records ·
+  Claude calls used: ${R.claude_calls_total ?? "?"} · cost figures are API-price estimates · targets are read-only references, see THIRD_PARTY.md`;
+</script>
+</body>
+</html>

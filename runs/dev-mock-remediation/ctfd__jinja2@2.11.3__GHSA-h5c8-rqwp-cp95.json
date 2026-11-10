@@ -1,0 +1,69 @@
+{
+ "finding_id": "ctfd/jinja2@2.11.3/GHSA-h5c8-rqwp-cp95",
+ "target": "ctfd",
+ "package": "jinja2",
+ "from": "2.11.3",
+ "to": "3.1.3",
+ "status": "failed",
+ "reason": "upgrade_did_not_turn_test_green",
+ "steps": [
+  {
+   "node": "write_test",
+   "ms": 26815,
+   "attempt": 1,
+   "test_path": "tests/test_rt_vuln.py",
+   "test_id": "tests/test_rt_vuln.py::test_vuln",
+   "code": "def test_vuln():\n    assert False, 'mock'\n",
+   "rationale": "mock",
+   "run": {
+    "outcome": "red",
+    "runner": "pytest",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "failing": [
+     "tests/test_rt_vuln.py::test_vuln"
+    ],
+    "seconds": 25.9,
+    "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________________________________ test_vuln ___________________________________\n\n    def test_vuln():\n>       assert False, 'mock'\nE       AssertionError: mock\nE       assert False\n\ntests/test_rt_vuln.py:2: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_rt_vuln.py::test_vuln - AssertionError: mock\n1 failed in 0.16s\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:169: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  xdist_version = LooseVersion(xdist.__version__)\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:170: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  if xdist_version >= LooseVersion('1.14'):\n"
+   }
+  },
+  {
+   "node": "apply_fix",
+   "ms": 39234,
+   "kind": "upgrade",
+   "command": "uv pip install -q -p $PY \"jinja2==3.1.3\"",
+   "diff": "--- a/locks/ctfd.runtime.txt\n+++ b/locks/ctfd.runtime.txt\n@@ -27,7 +27,7 @@\n idna==2.10\n importlib-metadata==3.7.3\n itsdangerous==1.1.0\n-jinja2==2.11.3\n+jinja2==3.1.3\n jmespath==0.10.0\n jsonschema==3.2.0\n mako==1.1.3\n",
+   "new_test": {
+    "runner": "pytest",
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "failing": [
+     "tests/test_rt_vuln.py::test_vuln"
+    ],
+    "seconds": 23.2,
+    "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________________________________ test_vuln ___________________________________\n\n    def test_vuln():\n>       assert False, 'mock'\nE       AssertionError: mock\nE       assert False\n\ntests/test_rt_vuln.py:2: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_rt_vuln.py::test_vuln - AssertionError: mock\n1 failed in 0.16s\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:169: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  xdist_version = LooseVersion(xdist.__version__)\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:170: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  if xdist_version >= LooseVersion('1.14'):\n"
+   },
+   "suite": {
+    "passed": 0,
+    "failed": 82,
+    "regressions": [],
+    "seconds": 15.0,
+    "timed_out": false,
+    "output": "('1.14'):\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:169: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  xdist_version = LooseVersion(xdist.__version__)\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:170: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  if xdist_version >= LooseVersion('1.14'):\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:169: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  xdist_version = LooseVersion(xdist.__version__)\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:170: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  if xdist_version >= LooseVersion('1.14'):\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:169: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  xdist_version = LooseVersion(xdist.__version__)\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:170: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  if xdist_version >= LooseVersion('1.14'):\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:169: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  xdist_version = LooseVersion(xdist.__version__)\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:170: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  if xdist_version >= LooseVersion('1.14'):\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:169: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  xdist_version = LooseVersion(xdist.__version__)\n/opt/venv/lib/python3.8/site-packages/pytest_sugar.py:170: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n  if xdist_version >= LooseVersion('1.14'):\n"
+   }
+  }
+ ],
+ "llm_calls": 1,
+ "tokens_in": 1302,
+ "tokens_out": 40,
+ "test": {
+  "test_path": "tests/test_rt_vuln.py",
+  "test_id": "tests/test_rt_vuln.py::test_vuln",
+  "code": "def test_vuln():\n    assert False, 'mock'\n",
+  "rationale": "mock"
+ },
+ "seconds": 66.4,
+ "created": "2026-11-10T00:21:07+00:00"
+}

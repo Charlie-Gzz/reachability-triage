@@ -1,0 +1,224 @@
+{
+  "generated": "2026-11-10T03:23:54+00:00",
+  "configs": {
+    "full": {
+      "bench-test": {
+        "n": 20,
+        "true_reachable": 11,
+        "tp": 10,
+        "predicted_reachable": 10,
+        "false_suppressions": 1,
+        "precision": 1.0,
+        "recall": 0.909,
+        "false_suppression_rate": 0.091,
+        "noise_reduction": 0.45,
+        "uncertain_rate": 0.0,
+        "suppressed_rate": 0.5,
+        "accuracy": 0.95,
+        "precision_ci95": [
+          1.0,
+          1.0
+        ],
+        "recall_ci95": [
+          0.714,
+          1.0
+        ],
+        "false_suppression_rate_ci95": [
+          0.0,
+          0.286
+        ],
+        "noise_reduction_ci95": [
+          0.25,
+          0.65
+        ],
+        "uncertain_rate_ci95": [
+          0.0,
+          0.0
+        ],
+        "findings_run": 20,
+        "excluded_truth_uncertain": 0,
+        "labels_reviewed": 20,
+        "provisional": false,
+        "predictions": {
+          "reachable": 10,
+          "not_reachable": 10
+        },
+        "llm_calls_per_finding": 2,
+        "tokens_in_per_finding": 6723,
+        "tokens_out_per_finding": 2037,
+        "cost_usd_est_per_finding": 0.0507,
+        "seconds_per_finding_p50": 19.7,
+        "seconds_per_finding_mean": 26.7,
+        "parse_errors": 0,
+        "changed_by_reflection": 0,
+        "by_category": {
+          "direct_call": {
+            "n": 7,
+            "correct": 6
+          },
+          "config_disabled": {
+            "n": 3,
+            "correct": 3
+          },
+          "config_enabled": {
+            "n": 2,
+            "correct": 2
+          },
+          "test_only": {
+            "n": 1,
+            "correct": 1
+          },
+          "safe_api_only": {
+            "n": 3,
+            "correct": 3
+          },
+          "dead_code": {
+            "n": 1,
+            "correct": 1
+          },
+          "indirect_call": {
+            "n": 2,
+            "correct": 2
+          },
+          "imported_not_called": {
+            "n": 1,
+            "correct": 1
+          }
+        },
+        "errors": [
+          {
+            "finding_id": "bench/comments-hub/lxml@4.6.2/GHSA-jq4v-f5q6-mjqq",
+            "truth": "reachable",
+            "predicted": "not_reachable"
+          }
+        ]
+      },
+      "real-eval": {
+        "n": 1,
+        "true_reachable": 0,
+        "tp": 0,
+        "predicted_reachable": 0,
+        "false_suppressions": 0,
+        "precision": null,
+        "recall": null,
+        "false_suppression_rate": null,
+        "noise_reduction": 1.0,
+        "uncertain_rate": 0.0,
+        "suppressed_rate": 1.0,
+        "accuracy": 1.0,
+        "precision_ci95": null,
+        "recall_ci95": null,
+        "false_suppression_rate_ci95": null,
+        "noise_reduction_ci95": [
+          1.0,
+          1.0
+        ],
+        "uncertain_rate_ci95": [
+          0.0,
+          0.0
+        ],
+        "findings_run": 2,
+        "excluded_truth_uncertain": 1,
+        "labels_reviewed": 0,
+        "provisional": true,
+        "predictions": {
+          "not_reachable": 1,
+          "reachable": 1
+        },
+        "llm_calls_per_finding": 2,
+        "tokens_in_per_finding": 9034,
+        "tokens_out_per_finding": 4092,
+        "cost_usd_est_per_finding": 0.0885,
+        "seconds_per_finding_p50": 48.2,
+        "seconds_per_finding_mean": 48.2,
+        "parse_errors": 0,
+        "changed_by_reflection": 0,
+        "errors": []
+      },
+      "provider": "claude-code",
+      "model": "claude-sonnet-5"
+    }
+  },
+  "remediation": null,
+  "retrieval": {
+    "embed_model": "BAAI/bge-small-en-v1.5",
+    "advisory": {
+      "chroma": {
+        "recall@1": 0.925,
+        "recall@3": 0.978,
+        "recall@5": 0.978,
+        "recall@10": 0.995,
+        "mrr": 0.949,
+        "n": 186,
+        "latency_ms_p50": 1.86,
+        "latency_ms_p95": 2.21,
+        "index_size": 2039
+      },
+      "faiss": {
+        "recall@1": 0.925,
+        "recall@3": 0.978,
+        "recall@5": 0.978,
+        "recall@10": 0.995,
+        "mrr": 0.949,
+        "n": 186,
+        "latency_ms_p50": 0.1,
+        "latency_ms_p95": 0.13,
+        "index_size": 2039
+      }
+    },
+    "code": {
+      "chroma": {
+        "recall@1": 0.5,
+        "recall@3": 0.909,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 0.702,
+        "n": 22,
+        "latency_ms_p50": 4.02,
+        "latency_ms_p95": 4.55,
+        "index_size": 4149
+      },
+      "faiss": {
+        "recall@1": 0.5,
+        "recall@3": 0.909,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 0.702,
+        "n": 22,
+        "latency_ms_p50": 9.75,
+        "latency_ms_p95": 13.37,
+        "index_size": 4149
+      }
+    },
+    "index": {
+      "embed_model": "BAAI/bge-small-en-v1.5",
+      "dim": 384,
+      "advisories": {
+        "chunks": 2039,
+        "seconds": 129.6
+      },
+      "code": {
+        "chunks": 4149,
+        "seconds": 192.5,
+        "per_codebase": {
+          "healthchecks": 1931,
+          "ctfd": 734,
+          "mealie": 1340
+        },
+        "bench_chunks": 144
+      }
+    }
+  },
+  "labels": {
+    "real_total": 50,
+    "real_reviewed": 0,
+    "real_pending": 50,
+    "real_label_counts": {
+      "uncertain": 29,
+      "not_reachable": 13,
+      "reachable": 8
+    }
+  },
+  "claude_calls_total": 82,
+  "headline": "Suppresses 45% of scanner noise with a 9% false-suppression rate (benchmark test split), and fixed 0 real vulnerabilities test-first."
+}

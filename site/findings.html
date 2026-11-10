@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sieve · Findings</title>
+<link rel="icon" href="logo.svg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config = { corePlugins: { preflight: false } };</script>
+<link rel="stylesheet" href="sieve.css">
+<script src="common.js"></script>
+<script src="data/index.js"></script>
+</head>
+<body>
+<main class="wrap" style="padding-top:30px">
+  <h1 style="font-size:30px">Findings</h1>
+  <p class="muted" style="margin-top:0">Every scanner finding the agent triaged, per config. Click a row for the full timeline.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0" id="filters">
+    <select id="f-config"></select>
+    <select id="f-dataset"><option value="">All datasets</option><option value="bench">Synthetic benchmark</option><option value="real">Real repos</option></select>
+    <select id="f-target"><option value="">All targets</option></select>
+    <select id="f-verdict"><option value="">All verdicts</option><option value="reachable">Reachable</option><option value="not_reachable">Not reachable</option><option value="uncertain">Uncertain</option></select>
+    <select id="f-correct"><option value="">Correct + incorrect</option><option value="true">Correct</option><option value="false">Incorrect</option><option value="none">Not graded</option></select>
+    <input type="search" id="f-q" placeholder="Search package, id…">
+  </div>
+  <div class="panel scroll" style="padding:4px 6px"><table id="tbl"></table></div>
+  <p class="muted" id="count" style="font-size:13px"></p>
+</main>
+<script>
+nav("findings");
+const D = window.SIEVE, rows = D.rows;
+const $ = id => document.getElementById(id);
+const configs = [...new Set(rows.map(r => r.config))];
+$("f-config").innerHTML = configs.map(c => `<option value="${c}">${CONFIG[c] || c}</option>`).join("");
+const targets = [...new Set(rows.map(r => r.dataset === "bench" ? "bench" : r.target))].sort();
+$("f-target").innerHTML += targets.map(t => `<option value="${t}">${t === "bench" ? "benchmark apps" : t}</option>`).join("");
+const params = new URLSearchParams(location.search);
+for (const k of ["config", "dataset", "target", "verdict", "correct"]) if (params.get(k)) $("f-" + k).value = params.get(k);
+function render() {
+  const f = { c: $("f-config").value, d: $("f-dataset").value, t: $("f-target").value, v: $("f-verdict").value, ok: $("f-correct").value, q: $("f-q").value.toLowerCase() };
+  const list = rows.filter(r => r.config === f.c && (!f.d || r.dataset === f.d) && (!f.t || (f.t === "bench" ? r.dataset === "bench" : r.target === f.t))
+    && (!f.v || r.verdict === f.v) && (!f.ok || String(r.correct === null ? "none" : r.correct) === f.ok)
+    && (!f.q || (r.finding_id + " " + r.summary).toLowerCase().includes(f.q)));
+  $("tbl").innerHTML = `<tr><th>Finding</th><th>Verdict</th><th>Truth</th><th>Conf.</th><th>Fix</th><th>Tokens</th><th>Time</th></tr>` +
+    list.map(r => `<tr class="row" onclick="location.href='case.html?id=${encodeURIComponent(r.slug)}'">
+      <td><div class="mono" style="color:var(--text)">${esc(r.target)}</div><div><b>${esc(r.package)} ${esc(r.version)}</b> <span class="muted mono">${esc(r.vuln_id)}</span></div>
+        <div class="muted" style="font-size:13px">${esc(r.summary)}</div></td>
+      <td>${pill(r.verdict)}</td>
+      <td>${r.truth ? `${pill(r.truth)}${r.truth_status === "pending_review" ? '<div class="badge" style="margin-top:4px;display:inline-block">draft label</div>' : ""}` : '<span class="muted">–</span>'}
+        ${r.correct === false ? '<div style="color:var(--red);font-size:12px;margin-top:4px">✗ incorrect</div>' : r.correct ? '<div style="color:var(--green);font-size:12px;margin-top:4px">✓ correct</div>' : ""}</td>
+      <td class="mono">${r.confidence.toFixed(2)}</td>
+      <td>${r.remediation ? (r.remediation === "fixed" ? pill("fixed") : '<span class="muted">attempted</span>') : ""}</td>
+      <td class="mono">${(r.tokens / 1000).toFixed(1)}k</td><td class="mono">${Math.round(r.seconds)}s</td></tr>`).join("");
+  $("count").textContent = `${list.length} of ${rows.filter(r => r.config === f.c).length} findings in this config`;
+}
+document.querySelectorAll("#filters select, #filters input").forEach(e => e.addEventListener("input", render));
+render();
+</script>
+</body>
+</html>

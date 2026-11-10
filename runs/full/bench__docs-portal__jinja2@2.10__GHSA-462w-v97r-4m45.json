@@ -1,0 +1,346 @@
+{
+ "finding_id": "bench/docs-portal/jinja2@2.10/GHSA-462w-v97r-4m45",
+ "config": "full",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/docs-portal",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2019-10906",
+   "GHSA-462w-v97r-4m45",
+   "PYSEC-2019-217"
+  ],
+  "cves": [
+   "CVE-2019-10906"
+  ],
+  "cwes": [
+   "CWE-693"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/docs-portal/jinja2@2.10/GHSA-462w-v97r-4m45",
+  "first_fixed_above_installed": "2.10.1",
+  "fixed_versions": [
+   "2.10.1"
+  ],
+  "max_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N",
+  "package": "jinja2",
+  "published": "2019-04-10T14:30:24Z",
+  "split": "test",
+  "summary": "Jinja2 sandbox escape via string formatting",
+  "target": "bench/docs-portal",
+  "version": "2.10",
+  "vuln_id": "GHSA-462w-v97r-4m45"
+ },
+ "final": {
+  "verdict": "not_reachable",
+  "confidence": 0.88,
+  "action": "suppress",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "not_reachable",
+  "confidence": 0.9,
+  "vulnerable_symbols": [
+   "str.format_map",
+   "SandboxedEnvironment.is_safe_attribute"
+  ],
+  "reasoning": "CVE-2019-10906 is a sandbox-escape vulnerability that only matters to applications using Jinja2's SandboxedEnvironment (or ImmutableSandboxedEnvironment) to render untrusted, attacker-controlled template content via str.format_map. This app instantiates a plain jinja2.Environment (portal/render.py:5), not the sandboxed variant, so the sandbox restrictions the advisory targets are never engaged at all. Additionally, templates are loaded from a local FileSystemLoader('theme') directory that ships with the application, not from untrusted/user-supplied template strings, and render_page() only passes page/nav as render context data, not as template source. Static analysis found zero production call sites of str.format, str.format_map, format_map, or is_safe_attribute. Since the exploited feature (sandbox bypass) is never invoked \u2014 the app doesn't use the sandbox at all \u2014 the vulnerable code path is unused.",
+  "evidence": [
+   {
+    "location": "portal/render.py:5",
+    "explanation": "Uses plain Environment, not SandboxedEnvironment/ImmutableSandboxedEnvironment, so the advisory's sandbox-bypass mechanism is irrelevant here."
+   },
+   {
+    "location": "portal/render.py:8-10",
+    "explanation": "render_page loads templates from the local theme/ directory via FileSystemLoader, not from untrusted user input, and template.render() just supplies context data."
+   },
+   {
+    "location": "static evidence summary",
+    "explanation": "0 production call sites of str.format_map/format_map/is_safe_attribute were found anywhere in the first-party code or templates."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The strongest counter-argument would be that the JSON page data fed into render_page (via __main__.py's sys.argv[1] input) is attacker-influenced, and that page.get('layout', 'page.html') lets external input select which template to load \u2014 a potential template-injection/path-traversal vector distinct from this CVE. However, that argument doesn't rescue the reachability finding for THIS advisory: CVE-2019-10906 is specifically about bypassing the restrictions imposed by jinja2.sandbox.SandboxedEnvironment/ImmutableSandboxedEnvironment via str.format_map on string objects. The vulnerable mechanism only has meaning when the application is relying on the sandbox as a security boundary. Here the code uses a plain jinja2.Environment (render.py:5), which never installs sandbox restrictions in the first place \u2014 there's no sandbox to escape, so the 'bypass' primitive is vacuous. The cited layout/JSON-input concern is a separate potential SSTI/path issue, not an instance of this GHSA. Static evidence corroborates: zero call sites of format_map/is_safe_attribute, and templates are filesystem-loaded application assets, not attacker-supplied template source. The verdict's reasoning correctly targets the advisory's actual precondition (sandbox usage) and finds it absent.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "not_reachable",
+  "confidence": 0.88
+ },
+ "symbols": [
+  "str.format_map",
+  "str.format",
+  "format_map",
+  "is_safe_attribute"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/docs-portal/jinja2@2.10/GHSA-462w-v97r-4m45",
+    "package": "jinja2",
+    "version": "2.10",
+    "vuln_id": "GHSA-462w-v97r-4m45",
+    "aliases": [
+     "CVE-2019-10906",
+     "GHSA-462w-v97r-4m45",
+     "PYSEC-2019-217"
+    ],
+    "summary": "Jinja2 sandbox escape via string formatting",
+    "max_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N",
+    "fixed_versions": [
+     "2.10.1"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 180.7,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-462w-v97r-4m45#0",
+      "score": 0.874,
+      "text": "GHSA-462w-v97r-4m45 (CVE-2019-10906)\npackage: jinja2\nsummary: Jinja2 sandbox escape via string formatting\naffected: >=0, <2.10.1",
+      "vuln_id": "GHSA-462w-v97r-4m45"
+     },
+     {
+      "id": "GHSA-462w-v97r-4m45#1",
+      "score": 0.837,
+      "text": "GHSA-462w-v97r-4m45 (jinja2) details:\nIn Pallets Jinja before 2.10.1, `str.format_map` allows a sandbox escape.\n\nThe sandbox is used to restrict what code can be evaluated when rendering untrusted, user-provided templates. Due to the way string formatting works in Python, the `str.format_map` method could be used to escape the sandbox.\n\nThis issue was previously addressed for the `str.format` method in Jinja 2.8.1, which discusses the issue in detail. However, the less-common `str.format_map` method was overlooked. This release applies the same sandboxing to both methods.\n\nIf you cannot upgrade Jinja, you can override the `is_safe_attribute` method on the sandbox and explicitly disallow the `format_map` method on string objects.",
+      "vuln_id": "GHSA-462w-v97r-4m45"
+     },
+     {
+      "id": "GHSA-q2x7-8rv6-6q7h#1",
+      "score": 0.86,
+      "text": "GHSA-q2x7-8rv6-6q7h (jinja2) details:\nAn oversight in how the Jinja sandboxed environment detects calls to `str.format` allows an attacker that controls the content of a template to execute arbitrary Python code.\n\nTo exploit the vulnerability, an attacker needs to control the content of a template. Whether that is the case depends on the type of application using Jinja. This vulnerability impacts users of applications which execute untrusted templates.\n\nJinja's sandbox does catch calls to `str.format` and ensures they don't escape the sandbox. However, it's possible to store a reference to a malicious string's `format` method, then pass that to a filter that calls it. No such filters are built-in to Jinja, but could be present through custom filters in an application. After the fix, such indirect calls are also handled by the sandbox.",
+      "vuln_id": "GHSA-q2x7-8rv6-6q7h"
+     },
+     {
+      "id": "GHSA-hj2j-77xm-mc5v#0",
+      "score": 0.829,
+      "text": "GHSA-hj2j-77xm-mc5v (CVE-2016-10745)\npackage: jinja2\nsummary: Jinja2 sandbox escape vulnerability\naffected: >=0, <2.8.1",
+      "vuln_id": "GHSA-hj2j-77xm-mc5v"
+     }
+    ],
+    "symbols": [
+     "str.format_map",
+     "str.format",
+     "format_map",
+     "is_safe_attribute"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 4.1,
+   "output": {
+    "package": "jinja2",
+    "import_names": [
+     "jinja2"
+    ],
+    "symbols": [
+     "str.format_map",
+     "str.format",
+     "format_map",
+     "is_safe_attribute"
+    ],
+    "imported": true,
+    "import_locations": [
+     "portal/render.py:3"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 3,
+    "vulnerable_call_sites": [],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "portal/render.py:5",
+      "code": "env = Environment(loader=FileSystemLoader(\"theme\"), autoescape=select_autoescape([\"html\"]))",
+      "function": "portal.render:<module>",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [],
+    "summary": "jinja2: imported in 1 non-test location(s); 3 package call/reference site(s); named vulnerable symbols ['str.format_map', 'str.format', 'format_map', 'is_safe_attribute']; 0 production call site(s) of those symbols, 0 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 324.5,
+   "output": {
+    "chunks": [
+     {
+      "id": "bench/docs-portal:portal/render.py:module",
+      "score": 0.681,
+      "text": "# portal/render.py (module level)\nfrom pathlib import Path\nfrom jinja2 import Environment, FileSystemLoader, select_autoescape\nenv = Environment(loader=FileSystemLoader(\"theme\"), autoescape=select_autoescape([\"html\"]))",
+      "file": "portal/render.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/docs-portal:portal/render.py:13",
+      "score": 0.605,
+      "text": "# portal/render.py:13-18  build\ndef build(pages: list, out_dir: str = \"public\") -> None:\n    out = Path(out_dir)\n    out.mkdir(exist_ok=True)\n    nav = [{\"title\": p[\"title\"], \"slug\": p[\"slug\"]} for p in pages]\n    for page in pages:\n        (out / f\"{page['slug']}.html\").write_text(render_page(page, nav))",
+      "file": "portal/render.py",
+      "start": 13,
+      "qualname": "build"
+     },
+     {
+      "id": "bench/docs-portal:portal/__main__.py:module",
+      "score": 0.598,
+      "text": "# portal/__main__.py (module level)\nimport json\nimport sys\nfrom portal.render import build\nif __name__ == \"__main__\":\n    build(json.load(open(sys.argv[1])))",
+      "file": "portal/__main__.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/docs-portal:portal/render.py:8",
+      "score": 0.561,
+      "text": "# portal/render.py:8-10  render_page\ndef render_page(page: dict, nav: list) -> str:\n    template = env.get_template(page.get(\"layout\", \"page.html\"))\n    return template.render(page=page, nav=nav)",
+      "file": "portal/render.py",
+      "start": 8,
+      "qualname": "render_page"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 10710.5,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.9,
+    "vulnerable_symbols": [
+     "str.format_map",
+     "SandboxedEnvironment.is_safe_attribute"
+    ],
+    "reasoning": "CVE-2019-10906 is a sandbox-escape vulnerability that only matters to applications using Jinja2's SandboxedEnvironment (or ImmutableSandboxedEnvironment) to render untrusted, attacker-controlled template content via str.format_map. This app instantiates a plain jinja2.Environment (portal/render.py:5), not the sandboxed variant, so the sandbox restrictions the advisory targets are never engaged at all. Additionally, templates are loaded from a local FileSystemLoader('theme') directory that ships with the application, not from untrusted/user-supplied template strings, and render_page() only passes page/nav as render context data, not as template source. Static analysis found zero production call sites of str.format, str.format_map, format_map, or is_safe_attribute. Since the exploited feature (sandbox bypass) is never invoked \u2014 the app doesn't use the sandbox at all \u2014 the vulnerable code path is unused.",
+    "evidence": [
+     {
+      "location": "portal/render.py:5",
+      "explanation": "Uses plain Environment, not SandboxedEnvironment/ImmutableSandboxedEnvironment, so the advisory's sandbox-bypass mechanism is irrelevant here."
+     },
+     {
+      "location": "portal/render.py:8-10",
+      "explanation": "render_page loads templates from the local theme/ directory via FileSystemLoader, not from untrusted user input, and template.render() just supplies context data."
+     },
+     {
+      "location": "static evidence summary",
+      "explanation": "0 production call sites of str.format_map/format_map/is_safe_attribute were found anywhere in the first-party code or templates."
+     }
+    ]
+   },
+   "tokens_in": 3115,
+   "tokens_out": 865,
+   "llm_calls": 1,
+   "llm_seconds": 10.69,
+   "cost_usd_est": 0.02232,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"verdict\":\"not_reachable\",\"confidence\":0.9,\"vulnerable_symbols\":[\"str.format_map\",\"SandboxedEnvironment.is_safe_attribute\"],\"reasoning\":\"CVE-2019-10906 is a sandbox-escape vulnerability that only matters to applications using Jinja2's SandboxedEnvironment (or ImmutableSandboxedEnvironment) to render untrusted, attacker-controlled template content via str.format_map. This app instantiates a plain jinja2.Environment (portal/render.py:5), not the sandboxed variant, so the sandbox restrictions the advisory targets are never engaged at all. Additionally, templates are loaded from a local FileSystemLoader('theme') directory that ships with the application, not from untrusted/user-supplied template strings, and render_page() only passes page/nav as render context data, not as template source. Static analysis found zero production call sites of str.format, str.format_map, format_map, or is_safe_attribute. Since the exploited feature (sandbox bypass) is never invoked \u2014 the app doesn't use the sandbox at all \u2014 the vulnerable code path is unused.\",\"evidence\":[{\"location\":\"portal/render.py:5\",\"explanation\":\"Uses plain Environment, not SandboxedEnvironment/ImmutableSandboxedEnvironment, so the advisory's sandbox-bypass mechanism is irrelevant here.\"},{\"location\":\"portal/render.py:8-10\",\"explanation\":\"render_page loads templates from the local theme/ directory via FileSystemLoader, not from untrusted user input, and template.render() just supplies context data.\"},{\"location\":\"static evidence summary\",\"explanation\":\"0 production call sites of str.format_map/format_map/is_safe_attribute were found anywhere in the first-party code or templates.\"}]}",
+     "in": 3115,
+     "out": 865,
+     "s": 10.69,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 18501.0,
+   "output": {
+    "critique": "The strongest counter-argument would be that the JSON page data fed into render_page (via __main__.py's sys.argv[1] input) is attacker-influenced, and that page.get('layout', 'page.html') lets external input select which template to load \u2014 a potential template-injection/path-traversal vector distinct from this CVE. However, that argument doesn't rescue the reachability finding for THIS advisory: CVE-2019-10906 is specifically about bypassing the restrictions imposed by jinja2.sandbox.SandboxedEnvironment/ImmutableSandboxedEnvironment via str.format_map on string objects. The vulnerable mechanism only has meaning when the application is relying on the sandbox as a security boundary. Here the code uses a plain jinja2.Environment (render.py:5), which never installs sandbox restrictions in the first place \u2014 there's no sandbox to escape, so the 'bypass' primitive is vacuous. The cited layout/JSON-input concern is a separate potential SSTI/path issue, not an instance of this GHSA. Static evidence corroborates: zero call sites of format_map/is_safe_attribute, and templates are filesystem-loaded application assets, not attacker-supplied template source. The verdict's reasoning correctly targets the advisory's actual precondition (sandbox usage) and finds it absent.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "not_reachable",
+    "confidence": 0.88
+   },
+   "tokens_in": 3074,
+   "tokens_out": 1471,
+   "llm_calls": 1,
+   "llm_seconds": 18.48,
+   "cost_usd_est": 0.031287,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The strongest counter-argument would be that the JSON page data fed into render_page (via __main__.py's sys.argv[1] input) is attacker-influenced, and that page.get('layout', 'page.html') lets external input select which template to load \u2014 a potential template-injection/path-traversal vector distinct from this CVE. However, that argument doesn't rescue the reachability finding for THIS advisory: CVE-2019-10906 is specifically about bypassing the restrictions imposed by jinja2.sandbox.SandboxedEnvironment/ImmutableSandboxedEnvironment via str.format_map on string objects. The vulnerable mechanism only has meaning when the application is relying on the sandbox as a security boundary. Here the code uses a plain jinja2.Environment (render.py:5), which never installs sandbox restrictions in the first place \u2014 there's no sandbox to escape, so the 'bypass' primitive is vacuous. The cited layout/JSON-input concern is a separate potential SSTI/path issue, not an instance of this GHSA. Static evidence corroborates: zero call sites of format_map/is_safe_attribute, and templates are filesystem-loaded application assets, not attacker-supplied template source. The verdict's reasoning correctly targets the advisory's actual precondition (sandbox usage) and finds it absent.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"not_reachable\",\"confidence\":0.88}",
+     "in": 3074,
+     "out": 1471,
+     "s": 18.48,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "suppress",
+   "ms": 0.0,
+   "output": {
+    "verdict": "not_reachable",
+    "confidence": 0.88,
+    "action": "suppress",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 6189,
+  "tokens_out": 2336,
+  "cost_usd_est": 0.053607,
+  "seconds": 29.73
+ },
+ "created": "2026-11-10T00:19:46+00:00",
+ "code_version": "144cabc"
+}

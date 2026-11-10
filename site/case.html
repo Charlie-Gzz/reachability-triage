@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sieve · Case</title>
+<link rel="icon" href="logo.svg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config = { corePlugins: { preflight: false } };</script>
+<link rel="stylesheet" href="sieve.css">
+<script src="common.js"></script>
+</head>
+<body>
+<main class="wrap" style="padding-top:28px;max-width:980px">
+  <div id="head"></div>
+  <div class="timeline" id="tl"></div>
+  <footer id="foot"></footer>
+</main>
+<script>
+nav("findings");
+const id = new URLSearchParams(location.search).get("id");
+const meta = s => `<div class="meta">${s.ms != null ? `<span>⏱ ${s.ms >= 1000 ? (s.ms / 1000).toFixed(1) + " s" : Math.round(s.ms) + " ms"}</span>` : ""}
+  ${s.tokens_in ? `<span>${s.tokens_in.toLocaleString()} tokens in · ${s.tokens_out.toLocaleString()} out</span>` : ""}
+  ${s.llm_calls ? `<span>${s.llm_calls} LLM call${s.llm_calls > 1 ? "s" : ""}</span>` : ""}</div>`;
+const step = (color, title, s, body) => `<div class="step" style="--dot:${color}"><div class="panel">
+  <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>${title}</b>${s ? meta(s) : ""}</div>${body}</div></div>`;
+const codeBlock = (txt, cls = "", hl = null) => `<pre class="code ${cls}">${esc(txt).split("\n").map(l => hl && hl(l) ? `<span class="hl">${l}</span>` : l).join("\n")}</pre>`;
+const diff = txt => `<pre class="code diff">${esc(txt).split("\n").map(l => l.startsWith("+") && !l.startsWith("+++") ? `<span class="add">${l}</span>`
+  : l.startsWith("-") && !l.startsWith("---") ? `<span class="del">${l}</span>` : l.startsWith("@@") ? `<span class="hunk">${l}</span>` : l).join("\n")}</pre>`;
+const link = (C, loc) => {
+  const [f, line] = loc.split(":");
+  return C.upstream && line ? `<a class="mono" target="_blank" rel="noopener" href="${C.upstream}/${f}#L${line}">${esc(loc)}</a>` : `<span class="mono">${esc(loc)}</span>`;
+};
+
+loadScript(`data/cases/${encodeURIComponent(id)}.js`).then(() => {
+  const C = window.SIEVE_CASE, f = C.finding, S = Object.fromEntries([]), steps = C.steps;
+  document.title = `Sieve · ${f.package} ${f.vuln_id}`;
+  const truth = C.truth && C.truth.label ? `<span class="badge">ground truth: ${esc(LABEL[C.truth.label])}${C.truth.status === "pending_review" ? " (draft, pending review)" : C.truth.status === "final" ? " (benchmark)" : " (reviewed)"}</span>` : "";
+  document.getElementById("head").innerHTML = `
+    <div class="eyebrow">${esc(CONFIG[C.config] || C.config)} · ${esc(C.model || C.provider)} · ${C.dataset === "bench" ? "synthetic benchmark (" + esc(C.split) + ")" : "real repo"}</div>
+    <h1 style="font-size:28px;margin-top:6px">${esc(f.package)} ${esc(f.version)} in <span class="mono" style="font-size:24px">${esc(C.target)}</span></h1>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:24px">${pill(C.final.verdict)}
+      <span class="muted">confidence ${C.final.confidence.toFixed(2)}</span>${C.remediation && C.remediation.status === "fixed" ? pill("fixed") : ""} ${truth}
+      <span class="muted">· ${C.totals.llm_calls} LLM calls · ${(C.totals.tokens_in + C.totals.tokens_out).toLocaleString()} tokens · ${C.totals.seconds}s</span></div>`;
+  let html = "";
+  for (const s of steps) {
+    const o = s.output;
+    if (s.node === "scanner_alert") {
+      html += step("var(--muted)", "1 · Scanner alert", s, `<div style="margin-top:8px"><b class="mono">${esc(o.vuln_id)}</b>
+        <span class="muted">${esc((o.aliases || []).filter(a => a !== o.vuln_id).join(", "))}</span></div>
+        <div>${esc(o.summary)}</div><div class="muted" style="font-size:13px;margin-top:4px">CVSS ${esc(o.max_cvss || "n/a")} ·
+        ${o.direct_dependency ? "direct" : "transitive"} dependency · fixed in ${esc((o.fixed_versions || []).join(", ") || "n/a")}</div>`);
+    } else if (s.node === "advisory_retrieved") {
+      html += step("var(--accent)", "2 · Advisory retrieved (Chroma)", s, (o.chunks || []).length ? `<div class="muted" style="font-size:13px;margin-top:6px">
+        vulnerable symbols extracted: <span class="mono" style="color:var(--text)">${esc((o.symbols || []).join(", ") || "none named")}</span></div>
+        ${o.chunks.slice(0, 3).map(c => `<details style="margin-top:8px"><summary class="mono" style="cursor:pointer">${esc(c.id)} <span class="muted">score ${c.score}</span></summary>${codeBlock(c.text)}</details>`).join("")}`
+        : `<div class="muted" style="margin-top:6px">Retrieval off for this config: only the scanner summary was available. Symbols: ${esc((o.symbols || []).join(", ") || "none")}</div>`);
+    } else if (s.node === "static_evidence") {
+      const sites = (o.vulnerable_call_sites || []);
+      const prod = sites.filter(x => !x.in_test);
+      html += step("var(--accent)", "3 · Static evidence (AST)", s, `<div style="margin-top:6px">${esc(o.summary)}</div>
+        ${prod.slice(0, 4).map(x => `<div style="margin-top:12px">${link(C, x.file + ":" + x.line)} ${x.weak ? '<span class="badge">name-only match</span>' : ""}
+          ${x.path && x.path.length ? `<div class="path">${x.path.map((n, i) => `<span class="node mono ${i === x.path.length - 1 ? "vuln" : ""}">${esc(n)}</span>`).join("<span class='muted'>→</span>")}
+            <span class="muted">→</span><span class="node mono vuln">${esc(x.resolved)}</span></div>` : `<div class="muted" style="font-size:13px">no caller chain from an entry point${x.callers === 0 ? " · function has no callers" : ""}</div>`}
+          ${x.snippet ? codeBlock(x.snippet, "", l => l.trimStart().startsWith(String(x.line) + " ")) : codeBlock(x.code)}</div>`).join("")}
+        ${sites.filter(x => x.in_test).slice(0, 2).map(x => `<div style="margin-top:10px">${link(C, x.file + ":" + x.line)} <span class="badge">test only</span>${codeBlock(x.code)}</div>`).join("")}
+        ${(o.config_references || []).slice(0, 3).map(x => `<div style="margin-top:6px" class="muted">config reference ${link(C, x.location)}: <span class="mono">${esc(x.value)}</span></div>`).join("")}
+        ${(o.template_references || []).slice(0, 3).map(x => `<div style="margin-top:6px" class="muted">template use ${link(C, x.location)}: <span class="mono">|${esc(x.symbol)}</span></div>`).join("")}`);
+    } else if (s.node === "code_context") {
+      html += step("var(--accent)", "4 · Code context retrieved", s, (o.chunks || []).length ? `<div class="muted" style="font-size:13px;margin-top:6px">${o.chunks.length} chunks (call-site context first, then similarity hits)</div>
+        ${o.chunks.slice(0, 4).map(c => `<details style="margin-top:8px"><summary class="mono" style="cursor:pointer">${esc(c.file)}:${c.start} ${esc(c.qualname)} <span class="muted">score ${c.score}</span></summary>${codeBlock(c.text)}</details>`).join("")}`
+        : `<div class="muted" style="margin-top:6px">Retrieval off for this config.</div>`);
+    } else if (s.node === "verdict") {
+      html += step(`var(--${o.verdict === "reachable" ? "red" : o.verdict === "not_reachable" ? "green" : "amber"})`,
+        `5 · Verdict${s.attempt > 1 ? " (retry after critique)" : ""}`, s, `<div style="margin:8px 0;display:flex;gap:10px;align-items:center">${pill(o.verdict)}<span class="muted">confidence ${o.confidence}</span></div>
+        <div>${esc(o.reasoning)}</div>
+        <ul style="margin:8px 0 0;padding-left:18px">${(o.evidence || []).map(e => `<li>${/\.\w+:\d+/.test(e.location) ? link(C, e.location) : `<span class="mono">${esc(e.location)}</span>`} — ${esc(e.explanation)}</li>`).join("")}</ul>`);
+    } else if (s.node === "reflection") {
+      html += step("var(--accent)", "6 · Self-reflection", s, `<div style="margin:8px 0;display:flex;gap:10px;align-items:center">
+        ${o.agrees ? '<span class="badge">agrees</span>' : '<span class="badge" style="color:var(--amber)">disagrees</span>'} ${o.retry ? '<span class="badge">asked for a retry</span>' : ""}
+        → ${pill(o.final_verdict)}</div><div>${esc(o.critique)}</div>`);
+    } else if (["suppress", "flag_for_human", "remediate"].includes(s.node)) {
+      const t = { suppress: "Suppressed with evidence", flag_for_human: "Flagged for a human", remediate: "Routed to remediation" }[s.node];
+      html += step(`var(--${s.node === "suppress" ? "green" : s.node === "remediate" ? "red" : "amber"})`, `7 · ${t}`, s,
+        `<div class="muted" style="margin-top:6px">final ${pill(o.verdict)} · confidence ${o.confidence}${o.changed_by_reflection ? " · changed by reflection" : ""}${o.uncertain_reason ? " · " + esc(o.uncertain_reason) : ""}</div>`);
+    }
+  }
+  const R = C.remediation;
+  if (R) {
+    for (const s of R.steps) {
+      if (s.node === "write_test") {
+        const run = s.run || {};
+        html += step(run.outcome === "red" ? "var(--red)" : "var(--muted)", `8 · Failing test written (attempt ${s.attempt})`, s,
+          s.error ? `<div class="muted">${esc(s.error)}</div>` : `<div class="muted" style="font-size:13px;margin-top:6px"><span class="mono">${esc(s.test_path)}</span> · ${esc(s.rationale)}</div>
+          ${codeBlock(s.code)}<div style="margin-top:10px"><b style="color:${run.outcome === "red" ? "var(--red)" : "var(--amber)"}">${run.outcome === "red" ? "RED on the vulnerable version" : esc(run.outcome)}</b></div>
+          ${codeBlock((run.output || "").split("\n").slice(-25).join("\n"), run.outcome === "red" ? "red" : "")}`);
+      } else if (s.node === "apply_fix") {
+        const ok = s.new_test && s.new_test.failed === 0 && s.new_test.passed > 0 && !(s.suite && s.suite.regressions && s.suite.regressions.length);
+        html += step(ok ? "var(--cyan)" : "var(--muted)", `9 · Fix: ${s.kind === "upgrade" ? "upgrade to the fixed version" : "minimal code patch"}${s.attempt ? " (attempt " + s.attempt + ")" : ""}`, s,
+          s.error ? `<div class="muted">${esc(s.error)}</div>` : `${s.diff ? diff(s.diff) : ""}
+          <div style="margin-top:10px">new test: <b style="color:${s.new_test.failed ? "var(--red)" : "var(--green)"}">${s.new_test.passed} passed, ${s.new_test.failed} failed</b>
+          · suite: ${s.suite.passed} passed, ${s.suite.failed} failed${s.suite.regressions && s.suite.regressions.length ? `, <span style="color:var(--red)">${s.suite.regressions.length} new failures</span>` : " (no failures beyond baseline)"}</div>
+          ${codeBlock((s.new_test.output || "").split("\n").slice(-12).join("\n"), s.new_test.failed ? "red" : "green")}`);
+      }
+    }
+    html += step(R.status === "fixed" ? "var(--cyan)" : "var(--amber)", R.status === "fixed" ? "10 · Fix accepted: red → green, suite intact" : `10 · Not fixed: ${esc(R.reason)} → flagged for a human`, null,
+      `<div class="muted" style="margin-top:6px">${R.llm_calls} LLM calls · ${R.seconds}s including test-suite runs in throwaway containers</div>`);
+  }
+  document.getElementById("tl").innerHTML = html;
+  document.getElementById("foot").innerHTML = `Finding <span class="mono">${esc(C.finding_id)}</span> · run ${esc(C.created)} · code ${esc(C.code_version)}
+    ${C.upstream ? ` · source excerpts link to the <a href="${C.upstream.split("/blob/")[0]}" target="_blank" rel="noopener">upstream project</a>` : ""}`;
+}).catch(() => { document.getElementById("head").innerHTML = `<div class="panel">Case not found: <span class="mono">${esc(id)}</span></div>`; });
+</script>
+</body>
+</html>

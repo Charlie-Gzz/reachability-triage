@@ -1,0 +1,386 @@
+{
+ "finding_id": "bench/query-console/sqlparse@0.4.1/GHSA-p5w8-wqhj-9hhf",
+ "config": "full",
+ "dataset": "bench",
+ "split": "test",
+ "target": "bench/query-console",
+ "provider": "claude-code",
+ "model": "sonnet",
+ "options": {
+  "retrieval": true,
+  "reflection": true,
+  "store": "chroma"
+ },
+ "finding": {
+  "aliases": [
+   "CVE-2021-32839",
+   "GHSA-p5w8-wqhj-9hhf",
+   "PYSEC-2021-333"
+  ],
+  "cves": [
+   "CVE-2021-32839"
+  ],
+  "cwes": [
+   "CWE-400"
+  ],
+  "direct_dependency": true,
+  "finding_id": "bench/query-console/sqlparse@0.4.1/GHSA-p5w8-wqhj-9hhf",
+  "first_fixed_above_installed": "0.4.2",
+  "fixed_versions": [
+   "0.4.2",
+   "8238a9e450ed1524e40cb3a8b0b3c00606903aeb"
+  ],
+  "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+  "package": "sqlparse",
+  "published": "2021-09-10T17:56:06Z",
+  "split": "test",
+  "summary": "StripComments filter contains a regular expression that is vulnerable to ReDOS (Regular Expression Denial of Service)",
+  "target": "bench/query-console",
+  "version": "0.4.1",
+  "vuln_id": "GHSA-p5w8-wqhj-9hhf"
+ },
+ "final": {
+  "verdict": "reachable",
+  "confidence": 0.93,
+  "action": "remediate",
+  "uncertain_reason": null,
+  "changed_by_reflection": false,
+  "verdict_attempts": 1
+ },
+ "verdict": {
+  "verdict": "reachable",
+  "confidence": 0.95,
+  "vulnerable_symbols": [
+   "sqlparse.format(strip_comments=True)",
+   "StripComments filter"
+  ],
+  "reasoning": "The advisory states the vulnerable regex is only triggered when sqlformat.format is called with strip_comments=True. The application calls sqlparse.format(sql, strip_comments=True, reindent=False) directly in console/formatting.py:6, exactly the vulnerable configuration. This normalize() function is invoked from console/routes.py's run_query, which is a FastAPI POST endpoint (/console/run) accepting a user-supplied sql field in the request body. Thus untrusted, externally-controlled SQL text reaches the vulnerable strip_comments path with no sanitization or length limiting, making the ReDoS exploitable via a single crafted HTTP request as the advisory describes.",
+  "evidence": [
+   {
+    "location": "console/formatting.py:6",
+    "explanation": "Calls sqlparse.format with strip_comments=True, the exact vulnerable configuration named in the advisory."
+   },
+   {
+    "location": "console/formatting.py:1",
+    "explanation": "Imports sqlparse, confirming the vulnerable package is actually used by production code."
+   },
+   {
+    "location": "console/routes.py:15-17",
+    "explanation": "run_query() calls normalize(q.sql), passing the request body's sql field into the vulnerable code path."
+   },
+   {
+    "location": "console/routes.py (module level, @router.post(\"/console/run\"))",
+    "explanation": "This is a FastAPI entry point reachable from outside, so an attacker can supply the SQL string that triggers the regex."
+   }
+  ]
+ },
+ "reflection": {
+  "critique": "The verdict correctly matches the advisory's precondition (strip_comments=True) to the exact call at formatting.py:6, and traces an unauthenticated HTTP path from the FastAPI POST /console/run endpoint through run_query -> normalize -> sqlparse.format with no intervening sanitization, length cap, or regex-based filtering on the Query.sql field (declared as a bare str with no Pydantic constraints). The only plausible pushback is whether some upstream validation or size limit mitigates the attack, but nothing in the retrieved code (Query model, router definition) shows any such control, so the ReDoS payload (SQL text with many '\\r\\n' repetitions in a comment) would reach the vulnerable regex unimpeded. The evidence cited is accurately read, not misrepresented, and the precondition match is exact rather than approximate.",
+  "agrees": true,
+  "retry": false,
+  "final_verdict": "reachable",
+  "confidence": 0.93
+ },
+ "symbols": [
+  "sqlformat.format",
+  "sqlformat",
+  "StripComments",
+  "strip_comments"
+ ],
+ "errors": [],
+ "steps": [
+  {
+   "node": "scanner_alert",
+   "ms": 0.0,
+   "output": {
+    "finding_id": "bench/query-console/sqlparse@0.4.1/GHSA-p5w8-wqhj-9hhf",
+    "package": "sqlparse",
+    "version": "0.4.1",
+    "vuln_id": "GHSA-p5w8-wqhj-9hhf",
+    "aliases": [
+     "CVE-2021-32839",
+     "GHSA-p5w8-wqhj-9hhf",
+     "PYSEC-2021-333"
+    ],
+    "summary": "StripComments filter contains a regular expression that is vulnerable to ReDOS (Regular Expression Denial of Service)",
+    "max_cvss": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+    "fixed_versions": [
+     "0.4.2",
+     "8238a9e450ed1524e40cb3a8b0b3c00606903aeb"
+    ],
+    "direct_dependency": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "advisory_retrieved",
+   "ms": 27.1,
+   "output": {
+    "chunks": [
+     {
+      "id": "GHSA-p5w8-wqhj-9hhf#0",
+      "score": 0.921,
+      "text": "GHSA-p5w8-wqhj-9hhf (CVE-2021-32839)\npackage: sqlparse\nsummary: StripComments filter contains a regular expression that is vulnerable to ReDOS (Regular Expression Denial of Service)\naffected: >=0.4.0, <0.4.2",
+      "vuln_id": "GHSA-p5w8-wqhj-9hhf"
+     },
+     {
+      "id": "GHSA-p5w8-wqhj-9hhf#1",
+      "score": 0.832,
+      "text": "GHSA-p5w8-wqhj-9hhf (sqlparse) details:\n### Impact\nThe formatter function that strips comments from a SQL contains a regular expression that is vulnerable to [ReDoS](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS) (Regular Expression Denial of Service). The regular expression may cause exponential backtracking on strings containing many repetitions of '\\r\\n' in SQL comments.\n\n### Patches\nThe issues has been fixed in sqlparse 0.4.2.\n\n### Workarounds\nOnly the formatting feature that removes comments from SQL statements is affected by this regular expression. As a workaround don't use the `sqlformat.format` function with keyword `strip_comments=True` or the `--strip-comments` command line flag when using the `sqlformat` command line tool.",
+      "vuln_id": "GHSA-p5w8-wqhj-9hhf"
+     },
+     {
+      "id": "GHSA-rrm6-wvj7-cwh2#1",
+      "score": 0.858,
+      "text": "GHSA-rrm6-wvj7-cwh2 (sqlparse) details:\n### Impact\nThe SQL parser contains a regular expression that is vulnerable to [ReDoS](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS) (Regular Expression Denial of Service). The vulnerability may lead to Denial of Service (DoS).\n\n### Patches\nThis issues has been fixed in sqlparse 0.4.4.\n\n### Workarounds\nNone.",
+      "vuln_id": "GHSA-rrm6-wvj7-cwh2"
+     },
+     {
+      "id": "GHSA-prg7-hcfm-mfcr#9",
+      "score": 0.844,
+      "text": "GHSA-prg7-hcfm-mfcr (sqlparse) details:\nThis is a **Regular Expression Denial of Service (ReDoS)** vulnerability. Any application or service that passes user-controlled SQL text to `sqlparse.parse()`, `sqlparse.format()`, or `sqlparse.split()` is affected. No authentication, special configuration, or elevated privileges are required \u2014 a single crafted HTTP request (or any other input channel carrying SQL text) is sufficient.\n\nUnder sustained attack, one or more CPU cores can be kept at 100% utilization, degrading or completely blocking service for all other users. Because the grouping-stage token limit fires only after the regex work is done, it provides no protection against this attack.\n\nAffected use cases include: web applications that accept and display or format SQL; database administration tools; ORM query inspectors; SQL linters and formatters exposed as APIs.\n\n### Reproduction artifacts\n\n#### `Dockerfile`",
+      "vuln_id": "GHSA-prg7-hcfm-mfcr"
+     }
+    ],
+    "symbols": [
+     "sqlformat.format",
+     "sqlformat",
+     "StripComments",
+     "strip_comments"
+    ],
+    "retrieval": true
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "static_evidence",
+   "ms": 3.2,
+   "output": {
+    "package": "sqlparse",
+    "import_names": [
+     "sqlparse"
+    ],
+    "symbols": [
+     "sqlformat.format",
+     "sqlformat",
+     "StripComments",
+     "strip_comments"
+    ],
+    "imported": true,
+    "import_locations": [
+     "console/formatting.py:1"
+    ],
+    "imported_in_tests_only": false,
+    "package_call_sites": 5,
+    "vulnerable_call_sites": [
+     {
+      "file": "console/formatting.py",
+      "line": 6,
+      "code": "return sqlparse.format(sql, strip_comments=True, reindent=False).strip()  [strip_comments=True]",
+      "resolved": "sqlparse.format",
+      "function": "console.formatting:normalize",
+      "in_test": false,
+      "weak": false,
+      "reachable_from_entry": true,
+      "path": [
+       "console.routes:run_query",
+       "console.formatting:normalize"
+      ],
+      "callers": 1,
+      "snippet": "    3  \n    4  def normalize(sql: str) -> str:\n    5      \"\"\"Strip comments so the audit log stores just the statement.\"\"\"\n    6      return sqlparse.format(sql, strip_comments=True, reindent=False).strip()"
+     }
+    ],
+    "config_references": [],
+    "template_references": [],
+    "package_usages": [
+     {
+      "location": "console/formatting.py:6",
+      "code": "return sqlparse.format(sql, strip_comments=True, reindent=False).strip()",
+      "function": "console.formatting:normalize",
+      "in_test": false
+     }
+    ],
+    "searched": {
+     "python_files": 3,
+     "template_dirs": [
+      "."
+     ],
+     "template_files": 0
+    },
+    "entry_points": 1,
+    "paths": [
+     [
+      "console.routes:run_query",
+      "console.formatting:normalize"
+     ]
+    ],
+    "summary": "sqlparse: imported in 1 non-test location(s); 5 package call/reference site(s); named vulnerable symbols ['sqlformat.format', 'sqlformat', 'StripComments', 'strip_comments']; 1 production call site(s) of those symbols, 1 with a path from an entry point"
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "code_context",
+   "ms": 27.0,
+   "output": {
+    "chunks": [
+     {
+      "id": "site:console/formatting.py:6",
+      "score": 1.0,
+      "file": "console/formatting.py",
+      "start": 6,
+      "qualname": "console.formatting:normalize",
+      "text": "# console/formatting.py around line 6\n    3  \n    4  def normalize(sql: str) -> str:\n    5      \"\"\"Strip comments so the audit log stores just the statement.\"\"\"\n    6      return sqlparse.format(sql, strip_comments=True, reindent=False).strip()"
+     },
+     {
+      "id": "bench/query-console:console/formatting.py:4",
+      "score": 0.799,
+      "text": "# console/formatting.py:4-6  normalize\ndef normalize(sql: str) -> str:\n    \"\"\"Strip comments so the audit log stores just the statement.\"\"\"\n    return sqlparse.format(sql, strip_comments=True, reindent=False).strip()",
+      "file": "console/formatting.py",
+      "start": 4,
+      "qualname": "normalize"
+     },
+     {
+      "id": "bench/query-console:console/formatting.py:module",
+      "score": 0.672,
+      "text": "# console/formatting.py (module level)\nimport sqlparse",
+      "file": "console/formatting.py",
+      "start": 1,
+      "qualname": "<module>"
+     },
+     {
+      "id": "bench/query-console:console/routes.py:15",
+      "score": 0.602,
+      "text": "# console/routes.py:15-17  run_query\ndef run_query(q: Query):\n    AUDIT.append(normalize(q.sql))\n    return {\"queued\": True, \"position\": len(AUDIT)}",
+      "file": "console/routes.py",
+      "start": 15,
+      "qualname": "run_query"
+     },
+     {
+      "id": "bench/query-console:console/routes.py:module",
+      "score": 0.594,
+      "text": "# console/routes.py (module level)\nfrom fastapi import APIRouter\nfrom pydantic import BaseModel\nfrom console.formatting import normalize\nrouter = APIRouter()\nAUDIT = []\nclass Query(BaseModel):\n    sql: str\n@router.post(\"/console/run\")",
+      "file": "console/routes.py",
+      "start": 1,
+      "qualname": "<module>"
+     }
+    ]
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  },
+  {
+   "node": "verdict",
+   "ms": 7658.2,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.95,
+    "vulnerable_symbols": [
+     "sqlparse.format(strip_comments=True)",
+     "StripComments filter"
+    ],
+    "reasoning": "The advisory states the vulnerable regex is only triggered when sqlformat.format is called with strip_comments=True. The application calls sqlparse.format(sql, strip_comments=True, reindent=False) directly in console/formatting.py:6, exactly the vulnerable configuration. This normalize() function is invoked from console/routes.py's run_query, which is a FastAPI POST endpoint (/console/run) accepting a user-supplied sql field in the request body. Thus untrusted, externally-controlled SQL text reaches the vulnerable strip_comments path with no sanitization or length limiting, making the ReDoS exploitable via a single crafted HTTP request as the advisory describes.",
+    "evidence": [
+     {
+      "location": "console/formatting.py:6",
+      "explanation": "Calls sqlparse.format with strip_comments=True, the exact vulnerable configuration named in the advisory."
+     },
+     {
+      "location": "console/formatting.py:1",
+      "explanation": "Imports sqlparse, confirming the vulnerable package is actually used by production code."
+     },
+     {
+      "location": "console/routes.py:15-17",
+      "explanation": "run_query() calls normalize(q.sql), passing the request body's sql field into the vulnerable code path."
+     },
+     {
+      "location": "console/routes.py (module level, @router.post(\"/console/run\"))",
+      "explanation": "This is a FastAPI entry point reachable from outside, so an attacker can supply the SQL string that triggers the regex."
+     }
+    ]
+   },
+   "tokens_in": 3426,
+   "tokens_out": 572,
+   "llm_calls": 1,
+   "llm_seconds": 7.64,
+   "cost_usd_est": 0.018858,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "```json\n{\n  \"verdict\": \"reachable\",\n  \"confidence\": 0.95,\n  \"vulnerable_symbols\": [\"sqlparse.format(strip_comments=True)\", \"StripComments filter\"],\n  \"reasoning\": \"The advisory states the vulnerable regex is only triggered when sqlformat.format is called with strip_comments=True. The application calls sqlparse.format(sql, strip_comments=True, reindent=False) directly in console/formatting.py:6, exactly the vulnerable configuration. This normalize() function is invoked from console/routes.py's run_query, which is a FastAPI POST endpoint (/console/run) accepting a user-supplied sql field in the request body. Thus untrusted, externally-controlled SQL text reaches the vulnerable strip_comments path with no sanitization or length limiting, making the ReDoS exploitable via a single crafted HTTP request as the advisory describes.\",\n  \"evidence\": [\n    {\"location\": \"console/formatting.py:6\", \"explanation\": \"Calls sqlparse.format with strip_comments=True, the exact vulnerable configuration named in the advisory.\"},\n    {\"location\": \"console/formatting.py:1\", \"explanation\": \"Imports sqlparse, confirming the vulnerable package is actually used by production code.\"},\n    {\"location\": \"console/routes.py:15-17\", \"explanation\": \"run_query() calls normalize(q.sql), passing the request body's sql field into the vulnerable code path.\"},\n    {\"location\": \"console/routes.py (module level, @router.post(\\\"/console/run\\\"))\", \"explanation\": \"This is a FastAPI entry point reachable from outside, so an attacker can supply the SQL string that triggers the regex.\"}\n  ]\n}\n```",
+     "in": 3426,
+     "out": 572,
+     "s": 7.64,
+     "model": "claude-sonnet-5"
+    }
+   ],
+   "attempt": 1
+  },
+  {
+   "node": "reflection",
+   "ms": 9374.9,
+   "output": {
+    "critique": "The verdict correctly matches the advisory's precondition (strip_comments=True) to the exact call at formatting.py:6, and traces an unauthenticated HTTP path from the FastAPI POST /console/run endpoint through run_query -> normalize -> sqlparse.format with no intervening sanitization, length cap, or regex-based filtering on the Query.sql field (declared as a bare str with no Pydantic constraints). The only plausible pushback is whether some upstream validation or size limit mitigates the attack, but nothing in the retrieved code (Query model, router definition) shows any such control, so the ReDoS payload (SQL text with many '\\r\\n' repetitions in a comment) would reach the vulnerable regex unimpeded. The evidence cited is accurately read, not misrepresented, and the precondition match is exact rather than approximate.",
+    "agrees": true,
+    "retry": false,
+    "final_verdict": "reachable",
+    "confidence": 0.93
+   },
+   "tokens_in": 3309,
+   "tokens_out": 610,
+   "llm_calls": 1,
+   "llm_seconds": 9.36,
+   "cost_usd_est": 0.019077,
+   "attempts": [
+    {
+     "attempt": 0,
+     "raw": "{\"critique\":\"The verdict correctly matches the advisory's precondition (strip_comments=True) to the exact call at formatting.py:6, and traces an unauthenticated HTTP path from the FastAPI POST /console/run endpoint through run_query -> normalize -> sqlparse.format with no intervening sanitization, length cap, or regex-based filtering on the Query.sql field (declared as a bare str with no Pydantic constraints). The only plausible pushback is whether some upstream validation or size limit mitigates the attack, but nothing in the retrieved code (Query model, router definition) shows any such control, so the ReDoS payload (SQL text with many '\\\\r\\\\n' repetitions in a comment) would reach the vulnerable regex unimpeded. The evidence cited is accurately read, not misrepresented, and the precondition match is exact rather than approximate.\",\"agrees\":true,\"retry\":false,\"final_verdict\":\"reachable\",\"confidence\":0.93}",
+     "in": 3309,
+     "out": 610,
+     "s": 9.36,
+     "model": "claude-sonnet-5"
+    }
+   ]
+  },
+  {
+   "node": "remediate",
+   "ms": 0.0,
+   "output": {
+    "verdict": "reachable",
+    "confidence": 0.93,
+    "action": "remediate",
+    "uncertain_reason": null,
+    "changed_by_reflection": false,
+    "verdict_attempts": 1
+   },
+   "tokens_in": 0,
+   "tokens_out": 0,
+   "llm_calls": 0,
+   "llm_seconds": 0.0,
+   "cost_usd_est": 0.0
+  }
+ ],
+ "totals": {
+  "llm_calls": 2,
+  "tokens_in": 6735,
+  "tokens_out": 1182,
+  "cost_usd_est": 0.037935,
+  "seconds": 17.09
+ },
+ "created": "2026-11-10T00:21:59+00:00",
+ "code_version": "144cabc"
+}

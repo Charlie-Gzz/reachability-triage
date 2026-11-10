@@ -1,35 +1,82 @@
 # Progress
 
-Resume point for `/autonomous-build`. Newest status at the top of each section.
+Resume point for the next session. Read this first, then `PLAN.md` (the spec) and `docs/DECISIONS.md` (the why).
+Last updated: 2026-11-09 evening (session paused by Charlie).
 
 ## Status
 
-| Milestone | State |
-|---|---|
-| M0 Setup + Phase 0 import | in progress |
-| M1 RAG layer | not started |
-| M2 Reachability agent | not started |
-| M3 Test-first remediation | not started |
-| M4 Synthetic benchmark | not started |
-| M5 Real-set labels + review page | not started |
-| M6 Evaluation | not started |
-| M7 Case explorer, assets, kit | not started |
-| M8 README + handoff | not started |
+| Milestone | State | Notes |
+|---|---|---|
+| M0 Setup + Phase 0 import | **done** (one gap) | Phase 0 imported; images built and verified against locks; rescan reproduces all 156 findings exactly; container baselines recorded. **Gap:** GitHub repo not created (see QUESTIONS #1). |
+| M1 RAG layer | **done** | Chroma + FAISS, bge-small. `rt index`, `rt retrieval-check` → `eval/results/retrieval.json` |
+| M2 Reachability agent | **done** | LangGraph graph; mock on all 186 findings; Claude on 10 dev + 3 non-eval real findings |
+| M3 Test-first remediation | **built, not yet run on Claude** | Plumbing verified on mock (worktree → container → red → upgrade → gate). Needs `full` triage on the real set first. |
+| M4 Synthetic benchmark | **done** | 30 cases, 10 dev / 20 test, validated with osv-scanner. **One label error found** (QUESTIONS #2). |
+| M5 Real-set labels + review page | **done, labels pending review** | 50 sampled, drafted (8 reachable / 13 not / 29 uncertain), all `pending_review`. `rt review` works. |
+| M6 Evaluation | **partially run** | `full` on bench test: complete (20/20). `full` on real set: 2/50, then stopped on the Claude session limit. Ablations, remediation, local: not run. |
+| M7 Case explorer, assets, kit | **built, needs final data** | Site, charts, diagrams, screenshots all generate. Still to write: DEMO_SCRIPT, SLIDES_OUTLINE, PORTFOLIO_CARD; GitHub Pages workflow. |
+| M8 README + handoff | **not started** | |
 
-## Provider status (M0 step 7)
+## Current results (partial, regenerate with `rt eval`)
 
-| Provider | Status |
-|---|---|
-| mock | ok |
-| claude-code | ok: nested `claude -p` works once `CLAUDECODE` is removed from the child env (claude-sonnet-5, ~600 input tokens for a ping) |
-| local | LM Studio server found on :1235; Qwen2.5-Coder-14B present but not loaded (loaded on demand for the local run) |
+- Benchmark test split, `full` (claude-sonnet-5), n=20: false-suppression 9% [0–29], precision 100%, recall 91% [71–100],
+  noise reduction 45% [25–65], 0 uncertain, ~2 calls and ~20 s per finding, ~$0.05 API-price estimate per finding.
+  The single false suppression is `bench/comments-hub`, which is a **benchmark label error**, not an agent error (QUESTIONS #2).
+- Retrieval: advisory recall@5 0.98 (n=186), code recall@5 1.00 (n=22); Chroma = FAISS on recall, FAISS faster unfiltered
+  (0.1 vs 1.9 ms), Chroma faster with the codebase filter (4.0 vs 9.8 ms).
+- Container baselines: healthchecks 1061/1061; CTFd 483 pass + 1 known failure; mealie 853 pass + 1 known failure.
 
 ## Claude call budget
 
-Cap 1,500. Used: see `runs/_ledger.jsonl` (one line per call). Running total is updated here after each eval stage.
+82 of 1,500 used (`runs/_ledger.jsonl`, one line per call). The `full` run stopped on the **claude.ai session (5-hour)
+limit** at 2026-11-09 19:28 local ("resets 10:20pm America/New_York"). Not a crash; the cache resumes it.
+Expected remaining cost: ~48 real × 2.3 + 140 ablation × 2.2 + ~50 remediation ≈ 470 calls. That will likely take
+2–3 session windows on Pro, so run it when Claude Code isn't being used for anything else.
+
+## Next steps, in order
+
+1. **Decide QUESTIONS #2** (the lxml benchmark label). Recommended: relabel `comments-hub` → `not_reachable`
+   (`config_disabled`) in `bench/build_cases.py`, regenerate with `uv run python bench/build_cases.py .`, and log it in
+   DECISIONS as a post-hoc correction found via an agent disagreement and confirmed by running lxml 4.6.2.
+2. **Resume the eval** (unattended, resumable): `uv run rt showcase --skip-local` in a normal terminal.
+   Order: full real → no-retrieval → no-reflection (bench test + real) → remediation (max 10).
+3. **Local model run:** load it with `lms load qwen2.5-coder-14b-instruct` (LM Studio server is on :1235), then
+   `uv run rt showcase` (cached stages are skipped; local runs bench test + 20 real findings).
+4. Charlie: review the 50 real labels: `uv run rt review` (keys C/R/N/U, ←/→, J = next pending).
+5. `uv run rt refresh` (eval + assets + site), then look at every chart/screenshot again.
+6. Write `docs/DEMO_SCRIPT.md`, `docs/SLIDES_OUTLINE.md`, `docs/PORTFOLIO_CARD.md`, `README.md`, `docs/HANDOFF.md`;
+   add `.github/workflows/ci.yml` (ruff + pytest) and a Pages workflow with `workflow_dispatch` only (do not enable Pages).
+7. Unit tests for the new code: static analysis on bench cases, symbol extraction, metrics/bootstrap, remediation
+   `_regressions`, provider JSON retry (mock). Currently only the 7 Phase 0 tests exist.
+8. Small polish noted in the audit: case page header shows the config alias "sonnet" (should show the resolved
+   model from the step attempts); featured cases need a remediation "full fix" once one exists.
+
+## Commands cheat-sheet
+
+```
+uv run rt triage --all --dataset bench --split test --config full   # one stage by hand
+uv run rt remediate --config full --max 10
+uv run rt eval            # numbers only, no LLM
+uv run rt site            # site/ from runs/
+uv run rt assets          # charts, diagrams, screenshots
+uv run rt review          # label review page (http://127.0.0.1:8765)
+```
+
+## Environment notes
+
+- Windows Defender quarantines some GHSA advisory files (exploit strings). The DB build reads advisories from git
+  objects instead, and the checked-out advisory files were deleted from `.work/`. Don't re-check them out.
+- Avoid shell heredocs for Python edits containing backslash escapes: Git Bash mangled `\b`/`\n` twice this session.
+- Docker images: `rt-target-{healthchecks,ctfd,mealie}` (label `project=reachability-triage`), ~3.6 GB total.
 
 ## Log
 
 - 2026-11-09: environment checks passed. Docker Desktop 28.2.2 (12 CPU, 16 GB), uv 0.13.7, gh logged in as
   Charlie-Gzz, claude 2.1.275 logged in via claude.ai (Pro), `ANTHROPIC_API_KEY` not set.
-- 2026-11-09: Phase 0 imported from `Charlie-Gzz/agentic-vuln-triage@436a48a` (no history). 6 unit tests pass.
+- 2026-11-09: Phase 0 imported from `Charlie-Gzz/agentic-vuln-triage@436a48a` (no history). Phase 0 unit tests pass.
+- 2026-11-09: advisory DB rebuilt (6,069 GHSA + 7,254 PyPA PyPI records); rescan identical to committed findings
+  after fixing a non-deterministic sort of PEP 440-equal fixed versions (certifi `2022.12.7` / `2022.12.07`).
+- 2026-11-09: container baselines: healthchecks 25 s, CTFd 122 s, mealie 212 s.
+- 2026-11-09: bench committed (a3e1ef4) before prompts; eval config frozen (144cabc).
+- 2026-11-09 19:28: `full` stopped on a usage/credit limit after 2 new findings (0 cached). Rerun the same command to resume.
+- 2026-11-09: session paused by Charlie; audit, commit.

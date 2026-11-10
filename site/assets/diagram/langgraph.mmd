@@ -1,0 +1,28 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__(["OSV-Scanner finding"]):::first
+	load_finding("load finding")
+	retrieve_advisory("retrieve advisory · Chroma")
+	static_evidence("static evidence · AST")
+	retrieve_code("retrieve code context · Chroma")
+	verdict("reachability verdict · LLM")
+	reflect("self-reflection · LLM")
+	decide("route: suppress / flag / remediate")
+	__end__(["run record → runs/"]):::last
+	__start__ --> load_finding;
+	load_finding --> retrieve_advisory;
+	reflect -.-> decide;
+	reflect -.-> verdict;
+	retrieve_advisory --> static_evidence;
+	retrieve_code --> verdict;
+	static_evidence --> retrieve_code;
+	verdict -.-> decide;
+	verdict -.-> reflect;
+	decide --> __end__;
+    classDef default fill:#131A26,stroke:#A78BFA,color:#E5E7EB,stroke-width:1.5px
+    classDef first fill:#131A26,stroke:#9CA3AF,color:#E5E7EB,stroke-dasharray:4 3
+    classDef last fill:#131A26,stroke:#38BDF8,color:#E5E7EB,stroke-width:2px

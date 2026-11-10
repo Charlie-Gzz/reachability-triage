@@ -1,0 +1,54 @@
+{
+ "finding_id": "healthchecks/django@4.0.1/GHSA-3h9f-r86x-qvjx",
+ "target": "healthchecks",
+ "package": "django",
+ "from": "4.0.1",
+ "to": "5.2.16",
+ "status": "failed",
+ "reason": "no_failing_test",
+ "steps": [
+  {
+   "node": "write_test",
+   "ms": 23725,
+   "attempt": 1,
+   "test_path": "tests/test_rt_vuln.py",
+   "test_id": "tests/test_rt_vuln.py::test_vuln",
+   "code": "def test_vuln():\n    assert False, 'mock'\n",
+   "rationale": "mock",
+   "run": {
+    "outcome": "error",
+    "runner": "django",
+    "total": 1,
+    "failed": 1,
+    "passed": 0,
+    "failing": [],
+    "seconds": 22.1,
+    "output": "Found 1 test(s).\nSystem check identified no issues (0 silenced).\nE\n======================================================================\nERROR: tests/test_rt_vuln (unittest.loader._FailedTest)\n----------------------------------------------------------------------\nImportError: Failed to import test module: tests/test_rt_vuln\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.10/unittest/loader.py\", line 154, in loadTestsFromName\n    module = __import__(module_name)\nModuleNotFoundError: No module named 'tests/test_rt_vuln'\n\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nFAILED (errors=1)\n"
+   }
+  },
+  {
+   "node": "write_test",
+   "ms": 20597,
+   "attempt": 2,
+   "test_path": "tests/test_rt_vuln.py",
+   "test_id": "tests/test_rt_vuln.py::test_vuln",
+   "code": "def test_vuln():\n    assert False, 'mock'\n",
+   "rationale": "mock",
+   "run": {
+    "outcome": "error",
+    "runner": "django",
+    "total": 1,
+    "failed": 1,
+    "passed": 0,
+    "failing": [],
+    "seconds": 19.5,
+    "output": "Found 1 test(s).\nSystem check identified no issues (0 silenced).\nE\n======================================================================\nERROR: tests/test_rt_vuln (unittest.loader._FailedTest)\n----------------------------------------------------------------------\nImportError: Failed to import test module: tests/test_rt_vuln\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.10/unittest/loader.py\", line 154, in loadTestsFromName\n    module = __import__(module_name)\nModuleNotFoundError: No module named 'tests/test_rt_vuln'\n\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nFAILED (errors=1)\n"
+   }
+  }
+ ],
+ "llm_calls": 2,
+ "tokens_in": 1738,
+ "tokens_out": 80,
+ "seconds": 44.7,
+ "created": "2026-11-10T00:19:49+00:00"
+}

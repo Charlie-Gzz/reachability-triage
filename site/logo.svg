@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Sieve logo">
+  <title>Sieve</title>
+  <rect width="64" height="64" rx="14" fill="#131A26"/>
+  <path d="M12 16h40l-14 17v11l-12 6V33z" fill="none" stroke="#A78BFA" stroke-width="3.2" stroke-linejoin="round"/>
+  <g stroke="#A78BFA" stroke-width="1.6" opacity=".55">
+    <path d="M17.5 22.5h29M22.5 28.5h19"/>
+    <path d="M24 16.5l4.5 16M32 16.5v16M40 16.5l-4.5 16"/>
+  </g>
+  <circle cx="32" cy="10" r="2.6" fill="#EF4444"/>
+  <circle cx="22" cy="9" r="2.2" fill="#22C55E" opacity=".9"/>
+  <circle cx="42" cy="9" r="2.2" fill="#22C55E" opacity=".9"/>
+  <circle cx="32" cy="55" r="2.6" fill="#EF4444"/>
+</svg>

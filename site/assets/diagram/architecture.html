@@ -1,0 +1,33 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#0B0F17;} #d{display:inline-block;padding:32px;background:#0B0F17}</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script></head>
+<body><div id="d"><pre class="mermaid">flowchart TD
+    A[OSV-Scanner finding]:::io -->|1. load finding| B[Retrieve advisory · Chroma]
+    B -->|2. vulnerable symbols + fixed version| C[Static evidence · imports and call sites]
+    C -->|3. matching code locations| D[Retrieve code context · Chroma]
+    D -->|4. code snippets + call paths| E[Reachability verdict · LLM]:::llm
+    E -->|5. verdict + evidence| F[Self-reflection · LLM critique]:::llm
+    F -->|weak evidence, retry once| E
+    F -->|not reachable| G[Suppress with evidence]:::nr
+    F -->|uncertain| H[Flag for human]:::unc
+    F -->|reachable| I[Write failing test · LLM]:::r
+    I -->|6. run test, must be red| J[Apply fix · upgrade or patch]
+    J -->|7. run new test + full suite| K{Red to green and suite green?}
+    K -->|yes| L[Accept fix + diff]:::fixed
+    K -->|no, retry up to 2x| J
+    K -->|still failing| H
+    G --> M[(runs/ JSON cache)]
+    H --> M
+    L --> M
+    M -->|build| N[Case explorer + charts]:::io
+    classDef llm stroke:#A78BFA,stroke-width:2px
+    classDef r stroke:#EF4444,stroke-width:2px
+    classDef nr stroke:#22C55E,stroke-width:2px
+    classDef unc stroke:#F59E0B,stroke-width:2px
+    classDef fixed stroke:#38BDF8,stroke-width:2px
+    classDef io stroke:#9CA3AF,stroke-dasharray:4 3
+</pre></div>
+<script>mermaid.initialize(Object.assign({startOnLoad:false}, {"theme": "base", "themeVariables": {"background": "#0B0F17", "primaryColor": "#131A26", "primaryTextColor": "#E5E7EB", "primaryBorderColor": "#A78BFA", "lineColor": "#9CA3AF", "secondaryColor": "#131A26", "tertiaryColor": "#131A26", "fontFamily": "Inter, sans-serif", "fontSize": "18px", "edgeLabelBackground": "#0B0F17"}}));
+// measure text only after Inter has loaded, or node labels get clipped
+document.fonts.load("18px Inter").then(() => document.fonts.ready).then(() => mermaid.run());</script></body></html>
