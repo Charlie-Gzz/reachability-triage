@@ -6,7 +6,7 @@ human-reviewed, and the README, charts, site and portfolio kit are built from th
 ## The two items the plan asks for
 
 1. **Real-set labels pending review: 0 of 50.** All 50 were reviewed by Charlie (23 drafts confirmed, 27 changed).
-   Final split: 5 reachable, 13 not reachable, 32 uncertain. To revisit any label: `uv run rt review`
+   Final split: 5 reachable, 14 not reachable, 31 uncertain. To revisit any label: `uv run rt review`
    (http://127.0.0.1:8765), then `uv run rt refresh`.
 2. **Claude calls used: 472 of the 1,500 cap** (`runs/_ledger.jsonl`, one line per call). **Yes, runs stopped on
    the claude.ai session (5-hour) limit**: once on 2026-11-09 (resumed manually) and once on 2026-11-10 at

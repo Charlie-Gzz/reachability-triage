@@ -49,7 +49,7 @@ The 95% intervals in brackets are percentile bootstraps over findings. With samp
 fall inside the intervals are noise. Full tables: [`eval/results/results.md`](eval/results/results.md).
 
 **Real repos:** healthchecks (Django), CTFd (Flask), mealie (FastAPI). 50 findings sampled from 156, all
-labels human-reviewed. 32 of the 50 labels are `uncertain` and excluded from grading, leaving 19 graded findings,
+labels human-reviewed. 31 of the 50 labels are `uncertain` and excluded from grading, leaving 19 graded findings,
 of which 5 are truly reachable.
 
 | Config | Reachable suppressed | Caught | False alarms | Noise reduction | Uncertain | Calls / finding | p50 latency |
@@ -148,7 +148,7 @@ These are carried over from [agentic-vuln-triage](https://github.com/Charlie-Gzz
 
 - **Small samples.** 19 graded real findings with 5 truly reachable, and 20 benchmark cases. Treat the real-set
   rows as a field test, not a precise rate. The benchmark is probably on the easy side.
-- **Many findings resist labelling.** 32 of 50 real findings were labelled `uncertain`: mostly transitive or
+- **Many findings resist labelling.** 31 of 50 real findings were labelled `uncertain`: mostly transitive or
   framework-internal vulnerabilities where proving reachability means tracing library internals. That is also
   where the agent hands off to a human.
 - **One labeller.** Every real label came from a single reviewer. There was no inter-rater check.

@@ -31,7 +31,7 @@
    *Asset:* `assets/charts/local_vs_claude.png`, `assets/charts/cost_latency.png`.
 
 8. **Lessons.**
-   - Labelling is the bottleneck: 32 of 50 real findings stayed `uncertain` even for a human.
+   - Labelling is the bottleneck: 31 of 50 real findings stayed `uncertain` even for a human.
    - Retrieval matters more than self-critique.
    - "Tests pass" isn't a sufficient gate; dependency constraints matter too.
    - Freeze the eval before looking, and disclose every post-hoc change.

@@ -85,7 +85,7 @@ Each entry: what was decided, why, and what it affects. Newest at the bottom of 
   upgrading urllib3 to 2.6.0, but the installed `requests==2.27.1` declares `urllib3<1.27,>=1.21.1`. The gate checks
   tests, not resolver consistency, so this is a passing upgrade, not a mergeable fix; a real fix also bumps `requests`
   (≥2.30). Reported as "1 of 9 turned green" with this caveat; the gate gains a `pip check` step as follow-up.
-- **2026-11-10 · Headline states counts.** The real set has 5 truly reachable findings after review (32 of 50
+- **2026-11-10 · Headline states counts.** The real set has 5 truly reachable findings after review (31 of 50
   labelled uncertain), so a bare "20% false-suppression rate" overstates precision. The headline and overview tiles
   give counts ("1 of 5 truly reachable suppressed") next to the benchmark rates.
 - **2026-11-10 · Late label change accepted.** Charlie changed `mealie/urllib3 GHSA-v845` from uncertain to
