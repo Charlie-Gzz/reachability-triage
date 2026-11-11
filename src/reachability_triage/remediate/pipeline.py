@@ -178,14 +178,16 @@ def remediate_one(cfg: Config, provider, f: dict, rec: dict, out_dir: Path) -> d
         (wt / test.test_path).parent.mkdir(parents=True, exist_ok=True)
         (wt / test.test_path).write_text(test.code, encoding="utf-8", newline="\n")
         new = sandbox.run_tests(t, wt, [test.test_id], setup=[pip], timeout=TEST_TIMEOUT)
-        suite = sandbox.run_tests(t, wt, None, setup=[pip], timeout=TEST_TIMEOUT) if not new.timed_out else new
+        suite = (sandbox.run_tests(t, wt, None, setup=[pip, PIP_CHECK], timeout=TEST_TIMEOUT)
+                 if not new.timed_out else new)
     finally:
         workspace.remove_worktree(t, wt)
     new_res, suite_res = _result(new.output), _result(suite.output)
     new_green = new_res["passed"] > 0 and new_res["failed"] == 0 and not new.timed_out
     regressions = _regressions(suite_res, base_fail, test.test_id)
-    suite_ok = not suite.timed_out and not regressions and suite_res["passed"] > 0
-    log("apply_fix", st, kind="upgrade", command=pip, diff=_lock_diff(t, f["package"], f["version"], fix),
+    conflict = CONFLICT_MARK in suite.output       # e.g. requests pins urllib3<1.27 but the upgrade installs 2.x
+    suite_ok = not suite.timed_out and not regressions and suite_res["passed"] > 0 and not conflict
+    log("apply_fix", st, kind="upgrade", command=pip, dependency_conflict=conflict, diff=_lock_diff(t, f["package"], f["version"], fix),
         new_test={**new_res, "seconds": new.seconds, "output": _tail(new.output)},
         suite={**{k: suite_res[k] for k in ("passed", "failed")}, "regressions": regressions[:20],
                "seconds": suite.seconds, "timed_out": suite.timed_out, "output": _tail(suite.output, 2000)})
@@ -197,6 +199,8 @@ def remediate_one(cfg: Config, provider, f: dict, rec: dict, out_dir: Path) -> d
         result["reason"] = "timeout"
     elif not new_green:
         result["reason"] = "upgrade_did_not_turn_test_green"
+    elif conflict:
+        result["reason"] = "upgrade_breaks_dependency_pins"
     else:
         result["reason"] = "upgrade_broke_suite"
 
@@ -251,6 +255,12 @@ def remediate_one(cfg: Config, provider, f: dict, rec: dict, out_dir: Path) -> d
         feedback = f"\n\n## Previous patch failed\nnew test: {new_res}\nregressions: {regressions[:10]}\n{_tail(new.output, 1500)}"
     result.update(reason="patch_failed", test=test.model_dump())
     return result
+
+
+# Gate: the upgraded environment must still satisfy every installed package's declared requirements.
+# Every target image passes `uv pip check` at baseline (checked 2026-11-10), so any conflict is the upgrade's.
+CONFLICT_MARK = "RT_DEPENDENCY_CONFLICT"
+PIP_CHECK = f"uv pip check -p $PY || echo {CONFLICT_MARK}"
 
 
 def _regressions(suite_res: dict, base_fail: set[str], new_test: str) -> list[str]:

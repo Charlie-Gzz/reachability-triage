@@ -182,8 +182,9 @@ def run_eval(quiet: bool = False) -> dict:
         # Counts, not just rates: with a handful of truly reachable findings a bare percentage overstates precision.
         results["headline"] = (f"Suppresses {_pct(src['noise_reduction'])} of scanner noise "
                                f"({src['n']} graded findings) while suppressing {src['false_suppressions']} of "
-                               f"{src['true_reachable']} truly reachable ones{tag}, and fixed "
-                               f"{fixed} real vulnerabilit{'y' if fixed == 1 else 'ies'} test-first.")
+                               f"{src['true_reachable']} truly reachable ones{tag}; test-first remediation turned "
+                               f"{fixed} of {(results['remediation'] or {}).get('attempted', 0)} attempts green "
+                               f"with the suite intact.")
     out = EVAL / "results"
     out.mkdir(parents=True, exist_ok=True)
     (out / "results.json").write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8", newline="\n")

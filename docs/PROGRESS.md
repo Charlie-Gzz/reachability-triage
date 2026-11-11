@@ -36,20 +36,8 @@ Expected remaining cost: ~48 real × 2.3 + 140 ablation × 2.2 + ~50 remediation
 
 ## Next steps, in order
 
-1. ~~Decide QUESTIONS #2~~ done: `comments-hub` relabelled (disclosed in DECISIONS).
-2. **Eval running unattended** since 2026-11-10 10:18 via `bash scripts/eval_unattended.sh` (log
-   `.work/eval_unattended.log`; retries every 30 min on usage limits, then local model, then `rt refresh`).
-   If it was killed (e.g. VS Code closed), just rerun the script: everything is cached.
-   Order: full real → no-retrieval → no-reflection (bench test + real) → remediation (max 10).
-3. **Local model run:** load it with `lms load qwen2.5-coder-14b-instruct` (LM Studio server is on :1235), then
-   `uv run rt showcase` (cached stages are skipped; local runs bench test + 20 real findings).
-4. Charlie: review the 50 real labels (criteria: `docs/LABEL_GUIDE.md`): `uv run rt review` (keys C/R/N/U, ←/→, J = next pending).
-5. `uv run rt refresh` (eval + assets + site), then look at every chart/screenshot again.
-6. Write `docs/DEMO_SCRIPT.md`, `docs/SLIDES_OUTLINE.md`, `docs/PORTFOLIO_CARD.md`, `README.md`, `docs/HANDOFF.md`
-   (needs final numbers). ~~CI + manual Pages workflow~~ done 2026-11-10 (`.github/workflows/`; Pages not enabled).
-7. ~~Unit tests for the new code~~ done 2026-11-10: 39 tests (`test_static`, `test_metrics`, `test_providers`).
-8. Polish: ~~case page header shows the config alias~~ done (shows resolved model); featured cases need a
-   remediation "full fix" once one exists.
+All milestones are done; see `docs/HANDOFF.md`. Optional: make the repo public and run the Pages workflow; re-run
+remediation under the new `uv pip check` gate; stretch items (case-page GIF, 7B local model, transitive case set).
 
 ## Commands cheat-sheet
 
@@ -93,3 +81,8 @@ uv run rt review          # label review page (http://127.0.0.1:8765)
 - 2026-11-10 13:36: `no-retrieval` stopped on a usage/credit limit after 0 new findings (31 cached). Rerun the same command to resume.
 - 2026-11-10 14:06: `no-retrieval` stopped on a usage/credit limit after 0 new findings (31 cached). Rerun the same command to resume.
 - 2026-11-10 14:36: `no-retrieval` stopped on a usage/credit limit after 0 new findings (31 cached). Rerun the same command to resume.
+- 2026-11-10 18:11: unattended eval finished (exit 0): all configs, remediation (9 attempts, 1 green), local model
+  (40 findings). One usage-limit stop, auto-resumed. 472 Claude calls total.
+- 2026-11-10: all 50 real labels reviewed by Charlie. Headline now states counts; overview tiles show the real-set
+  result; the urllib3 upgrade's dependency-pin conflict was found and disclosed, and the gate gained `uv pip check`.
+  README, HANDOFF, DEMO_SCRIPT, SLIDES_OUTLINE, PORTFOLIO_CARD written.

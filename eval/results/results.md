@@ -1,8 +1,8 @@
 # Results
 
-_Generated 2026-11-10T23:12:15+00:00 by `rt eval` from `runs/` (no LLM calls)._
+_Generated 2026-11-10T23:14:41+00:00 by `rt eval` from `runs/` (no LLM calls)._
 
-**Suppresses 58% of scanner noise (19 graded findings) while suppressing 1 of 5 truly reachable ones (real set), and fixed 1 real vulnerability test-first.**
+**Suppresses 58% of scanner noise (19 graded findings) while suppressing 1 of 5 truly reachable ones (real set); test-first remediation turned 1 of 9 attempts green with the suite intact.**
 
 Brackets are 95% bootstrap confidence intervals. With samples this small, differences inside the intervals are noise.
 
